@@ -73,8 +73,10 @@ export class FineStructureComponent extends BaseComponent {
         });
     }
 
-    update(bridge, scenarioId) {
+    update(bridge, scenarioId, metrics = null) {
         if (!SCENARIO_IDS.has(scenarioId)) {
+            if (this._lastRenderKey === `hidden:${scenarioId}`) return;
+            this._lastRenderKey = `hidden:${scenarioId}`;
             this.refs.root.style.display = 'none';
             this.bridgeRef = null;
             return;
@@ -82,7 +84,7 @@ export class FineStructureComponent extends BaseComponent {
         this.refs.root.style.display = '';
         this.bridgeRef = bridge;
 
-        const m = bridge.getThomsonScatteringMetrics?.() || null;
+        const m = metrics;
         // A missing metrics source is not a zero measurement. Mirrors the guard
         // in the sibling thomson.js: without `active` metrics the card renders
         // its configured constants only, and emits no [M]/[E] badged row.
@@ -93,6 +95,11 @@ export class FineStructureComponent extends BaseComponent {
         const forceK = COULOMB_K_FORCE;
         const damping = constants.DAMPING ?? DAMPING;
         const t = m?.toggles || {};
+        const toggleKey = ['wave_propagation', 'coupling', 'emergent_forces', 'movement', 'poisson_coulomb']
+            .map(key => readToggle(bridge, t, key, key === 'wave_propagation') ? '1' : '0').join('');
+        const renderKey = `${scenarioId}:${m?.active ? 1 : 0}:${m?.tick ?? 'pending'}:${toggleKey}`;
+        if (renderKey === this._lastRenderKey) return;
+        this._lastRenderKey = renderKey;
         const fc = m?.fluxCentroid || {};
         const fd = fc.delta || {};
         const p = m?.poynting || {};

@@ -1,11 +1,6 @@
 import { getScale5ScenarioToolbarTemplate, getScale5TelemetryToolbarTemplate } from './template.js';
 import { bindScale5ToggleCheckboxes } from '../toggle-sync.js';
-
-function htmlToElement(markup) {
-    const template = document.createElement('template');
-    template.innerHTML = markup.trim();
-    return template.content.firstElementChild;
-}
+import { htmlToElement } from '../../../../ui/utils/scale-toolbar.js';
 
 // The scenario toolbar group is built ONCE at app start (TopbarComponent
 // mounts every registered toolbar factory a single time; visibility across

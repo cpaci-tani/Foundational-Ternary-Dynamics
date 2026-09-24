@@ -214,12 +214,13 @@
 }
 
 .solar-physics-copy strong {
-    overflow: hidden;
+    overflow: visible;
+    overflow-wrap: anywhere;
     color: var(--text-primary);
     font-size: var(--fs-sm);
     font-weight: 550;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    text-overflow: clip;
+    white-space: normal;
 }
 
 .solar-physics-copy small,
@@ -332,9 +333,10 @@
 
 .solar-system-body-copy strong,
 .solar-system-body-copy small {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
 }
 
 .solar-system-body-copy strong {

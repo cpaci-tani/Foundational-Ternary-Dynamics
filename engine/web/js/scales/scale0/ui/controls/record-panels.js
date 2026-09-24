@@ -19,11 +19,6 @@ export function syncRecordPanels(active) {
         for (const [host, entry] of managed) { delete host.dataset.recordObservation; entry.body.remove(); }
         managed.clear(); activeOwner = null; activeStatus = null; return;
     }
-    if (!document.getElementById('record-panels-style')) {
-        const style = node('style'); style.id = 'record-panels-style';
-        style.textContent = '[data-record-observation="true"]>:not(.record-panel-observation){display:none!important}.record-panel-observation{padding:14px;overflow:auto}.record-panel-observation table{width:100%;border-collapse:collapse;margin:12px 0;font-variant-numeric:tabular-nums}.record-panel-observation th,.record-panel-observation td{padding:5px;text-align:left;border-bottom:1px solid var(--border-light)}.record-panel-observation p{overflow-wrap:anywhere}.record-panel-observation svg{width:100%;height:140px;color:var(--text-primary)}';
-        document.head.append(style);
-    }
     for (const def of getPanelsForScale(0)) {
         if (RECORD_PANEL_CONTRACTS[def.id] === 'existing') continue;
         const host = document.getElementById(`panel-${def.id}`); if (!host) continue;

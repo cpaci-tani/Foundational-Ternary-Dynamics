@@ -7,7 +7,7 @@ export const charts = [
     {
         id: 'pe-energy',
         title: 'Particle Energy (active potential terms)',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: 'MeV',
         defaultActive: true,
         series: [
@@ -22,7 +22,7 @@ export const charts = [
         // Sim units (mass·lattice-velocity): no MeV/c or ħ conversion exists
         // in the engine (FTD-0401) — never label these with physical units.
         title: 'Momentum & Angular Momentum',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: 'sim units',
         defaultActive: true,
         series: [
@@ -33,7 +33,7 @@ export const charts = [
     {
         id: 'pe-forces',
         title: 'Net Forces',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: '|F|',
         defaultActive: true,
         series: [
@@ -44,7 +44,7 @@ export const charts = [
     {
         id: 'pe-counts',
         title: 'Particle Counts',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: 'ct',
         defaultActive: false,
         series: [
@@ -56,7 +56,7 @@ export const charts = [
     {
         id: 'pe-orbit',
         title: 'Two-Body Orbit',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: 'lu / c',
         defaultActive: false,
         series: [
@@ -67,7 +67,7 @@ export const charts = [
     {
         id: 'pe-thermo',
         title: 'Virial & RMS Velocity',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: 'ratio / c',
         defaultActive: true,
         series: [

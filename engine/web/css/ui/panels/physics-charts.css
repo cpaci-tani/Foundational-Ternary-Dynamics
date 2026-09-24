@@ -55,3 +55,13 @@
     text-align: left;
     padding: 2px 4px;
 }
+
+.panel.panel-mount-left .pc-grid-2,
+.panel.panel-mount-right .pc-grid-2 {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.pc-table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+}

@@ -123,6 +123,10 @@
 .panel.panel-mount-right .charts-chip {
     font-size: var(--fs-sm);
     padding: 6px 14px;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: left;
 }
 
 .panel.panel-mount-left .chart-card-plot,
@@ -153,14 +157,19 @@
     justify-content: space-between;
     margin-bottom: 10px;
 }
+.chart-card-head > * {
+    min-width: 0;
+}
 .chart-card-title {
     font-size: var(--fs-base);
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;
+    overflow-wrap: anywhere;
 }
 
 .chart-card-freshness {
+    flex: 0 0 auto;
     margin-left: auto;
     color: var(--text-muted);
     font-size: var(--fs-xs);

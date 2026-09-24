@@ -6,11 +6,24 @@ import { getActiveScale0Bridge } from '../../state/store.js';
 import { FIELD_TOGGLE_BINDINGS } from '../dom.js';
 
 let catalog = null, initialization = null;
+let catalogStatus = Object.freeze({ status: 'initial', available: false, registeredCount: 0, reason: null });
 export function getWebRecordCatalog() { return catalog; }
+/** Catalog coverage only; this does not create, tick, or sample an owner. */
+export function getRecordCatalogStatus() { return catalogStatus; }
+function publishCatalogStatus(status, registeredCount = 0, reason = null) {
+    catalogStatus = Object.freeze({ status, available: status === 'ready', registeredCount, reason });
+    if (typeof document !== 'undefined') {
+        document.dispatchEvent(new CustomEvent('ftd:record-catalog-status', { detail: catalogStatus }));
+    }
+}
 export function initializeRecordScenarios(ctx) {
     if (initialization) return initialization;
+    publishCatalogStatus('loading');
     initialization = loadRecordCatalog().then(value => {
-        catalog = value; registerScale0RecordScenarios(value);
+        registerScale0RecordScenarios(value); catalog = value;
+        // Registry availability is independent of the controls card. A later
+        // presentation error must not hide already registered preparations.
+        publishCatalogStatus('ready', value.scenarios.length);
         const select = document.getElementById('scenario-select');
         populateScale0ScenarioSelect(select, select.value);
         const card = document.createElement('section'); card.className = 'card'; card.id = 'record-observation-card'; card.hidden = true;
@@ -44,7 +57,14 @@ export function initializeRecordScenarios(ctx) {
         };
         document.getElementById('record-test-filter').oninput = showTests; showTests();
         return value;
-    }).catch(() => null); // Static/hosted dashboard has no local compiled-record endpoint.
+    }).catch(error => {
+        // Static/hosted dashboards may have no local compiled-record endpoint.
+        // Existing controls keep their graceful fallback; consumers can now
+        // distinguish an incomplete catalog from a successfully empty one.
+        if (catalogStatus.status !== 'ready') publishCatalogStatus('unavailable', 0,
+            error instanceof Error ? error.message : 'Finite-record catalog is unavailable.');
+        return null;
+    });
     return initialization;
 }
 

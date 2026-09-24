@@ -1,11 +1,10 @@
 import { createScale3ScenarioToolbarGroup } from './toolbar/component.js';
+import { registerScaleToolbarFactories } from '../../../ui/utils/scale-toolbar.js';
 
 export function registerScale3ToolbarUI(toolbarRegistry) {
-    toolbarRegistry.registerFactory({
+    registerScaleToolbarFactories(toolbarRegistry, 3, [{
         id: 'scale3-scenario',
-        slot: 'secondary',
-        scales: ['3'],
         order: 40,
         factory: () => createScale3ScenarioToolbarGroup(),
-    });
+    }]);
 }

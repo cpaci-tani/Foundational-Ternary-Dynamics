@@ -725,11 +725,20 @@ export class WasmBridge {
             d.totalEnergy = ledger.ECurr;
             d.energySampleSource = 'per-tick-ledger';
         }
-        const audit = this._getScale0AuditForTick(d?.tick ?? this.currentTick());
+        // Diagnostics are an always-on, per-tick view.  Do not turn this
+        // inexpensive read into an EnergyAudit request: the audit scans the
+        // lattice and is owned by telemetry/demand.js.  A same-tick completed
+        // audit may enrich diagnostics, but a prior-tick audit must remain a
+        // separately-provenanced observation.
+        const tick = d?.tick ?? this.currentTick();
+        const audit = this._lastScale0Audit && this._lastScale0AuditTick === tick
+            ? this._lastScale0Audit : null;
         if (audit && Number.isFinite(audit.dynamicEnergy)) {
             // Conservation charts use the rest-offset-free accounted channel.
             // Keep rest and total accounted energy visible as separate fields.
-            d.vacuumBaselineEnergy = d.totalEnergy;
+            if (!Object.hasOwn(d, 'vacuumBaselineEnergy')) {
+                d.vacuumBaselineEnergy = d.totalEnergy;
+            }
             d.accountedEnergy = audit.totalEnergy;
             d.restEnergy = audit.particleRestEnergy;
             // Status-bar decomposition (whole-box channels, sim units) —

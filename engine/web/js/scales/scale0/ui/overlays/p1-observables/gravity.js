@@ -9,6 +9,13 @@ import { getScale0Scenario } from '../../../scenario-registry.js';
 
 
 const TWO_PI = 2.0 * Math.PI;
+const PANEL_SAMPLER_OWNER = 'p1-gravity';
+const TARGET_AXIS_SAMPLES = 25;
+
+export function p1GravitySampleStride(latticeSize) {
+    const L = Math.max(1, Math.trunc(Number(latticeSize) || 1));
+    return Math.max(2, Math.ceil(L / TARGET_AXIS_SAMPLES));
+}
 
 const TEMPLATE = `
     <section data-section="gravity" style="${cardStyle(140)}">
@@ -24,6 +31,10 @@ export class GravityComponent extends BaseComponent {
         super(TEMPLATE);
         this.renderedFor = null;
         this.startTime = performance.now();
+        this._samplerBridge = null;
+        this._sampleKey = '';
+        this._sampleVersion = null;
+        this._cachedProbe = null;
     }
 
     update(bridge, scenarioId, now) {
@@ -35,6 +46,7 @@ export class GravityComponent extends BaseComponent {
             this._renderGravitySection(this.refs.body, probe, tickPhase);
             this.renderedFor = scenarioId;
         } else if (this.renderedFor !== null) {
+            this.releaseSamplerDemand();
             this.refs.body.className = 'p1-empty-state';
             this.refs.body.innerHTML = 'Load <code>s0-seed-schwarzschild</code> to see proper-time ratio.';
             this.renderedFor = null;
@@ -42,13 +54,27 @@ export class GravityComponent extends BaseComponent {
     }
 
     _probeTimeDilation(bridge) {
-        const latSample = bridge?.getLatencySampled?.(2);
+        const caps = bridge?.capabilities?.scale0;
+        const L = Number(caps?.latticeSize ?? bridge?.getLatticeSize?.() ?? bridge?.latticeSize);
+        if (!Number.isInteger(L) || L < 1) return null;
+        const stride = p1GravitySampleStride(L);
+        const sampleKey = `latency@${stride}`;
+        if (bridge !== this._samplerBridge || sampleKey !== this._sampleKey) {
+            this.releaseSamplerDemand();
+            this._samplerBridge = bridge;
+            this._sampleKey = sampleKey;
+            this._sampleVersion = null;
+            this._cachedProbe = null;
+        }
+        bridge?.replaceSamplerWants?.(PANEL_SAMPLER_OWNER, [sampleKey]);
+        const version = caps?.getScale0SamplerSnapshotVersion?.('latency', stride) ?? null;
+        if (version !== null && Object.is(version, this._sampleVersion)) return this._cachedProbe;
+        const latSample = caps?.getScale0FieldSamples?.({ kind: 'latency', stride })
+            ?? bridge?.getLatencySampled?.(stride);
         if (!latSample || !Number.isInteger(latSample.count) || latSample.count <= 0
             || latSample.values?.length < latSample.count || latSample.positions?.length < 3*latSample.count
             || !latSample.values || !latSample.positions) return null;
 
-        const L = Number(bridge?.getLatticeSize?.() ?? bridge?.latticeSize);
-        if (!Number.isInteger(L) || L < 1) return null;
         const mid = L / 2;
         let bestCenter = { d2: Infinity, idx: 0 };
         let bestCorner = { d2: Infinity, idx: 0 };
@@ -69,7 +95,13 @@ export class GravityComponent extends BaseComponent {
         const tauCenter = Math.sqrt(Math.max(0, 1.0 - latCenter));
         const tauCorner = Math.sqrt(1.0 - latCorner);
         const ratio = tauCorner > 0 ? tauCenter / tauCorner : null;
-        return { latCenter, latCorner, tauCenter, tauCorner, ratio, latticeSize: L };
+        this._sampleVersion = version;
+        this._cachedProbe = {
+            latCenter, latCorner, tauCenter, tauCorner, ratio,
+            latticeSize: L,
+            sampleStride: latSample.effectiveStride ?? stride,
+        };
+        return this._cachedProbe;
     }
 
     _renderGravitySection(container, probe, tickPhase) {
@@ -78,7 +110,7 @@ export class GravityComponent extends BaseComponent {
             return;
         }
         container.className = '';
-        const { latCenter, latCorner, tauCenter, tauCorner, ratio, latticeSize } = probe;
+        const { latCenter, latCorner, tauCenter, tauCorner, ratio, latticeSize, sampleStride } = probe;
         const angCorner = (tickPhase * tauCorner) % TWO_PI;
         const angCenter = (tickPhase * tauCenter) % TWO_PI;
         const farX = 18 + 14 * Math.cos(angCorner - Math.PI / 2);
@@ -87,7 +119,7 @@ export class GravityComponent extends BaseComponent {
         const wellY = 22 + 14 * Math.sin(angCenter - Math.PI / 2);
 
         container.innerHTML = `
-            <div class="p1-gravity-grid">
+            <div class="p1-gravity-grid" data-panel-grid="2">
                 <div class="p1-gravity-col">
                     <svg viewBox="0 0 36 44" class="p1-gravity-clock">
                         <circle cx="18" cy="22" r="16" fill="none" stroke="var(--text-muted,#666)" stroke-width="1"/>
@@ -112,8 +144,20 @@ export class GravityComponent extends BaseComponent {
                 <span class="p1-bell-desc">${ratio === 0 ? ' (zero center proxy rate)' : ''}</span>
             </div>
             <div class="p1-gravity-footer">
-                Selected clock illustration τ′=√(1−latency), sampled on the ${latticeSize}³ reference-engine lattice. The hands use display time; this panel does not measure accumulated proper time or certify a gravitational continuum limit.
+                Selected clock illustration τ′=√(1−latency), sampled at stride ${sampleStride}a on the ${latticeSize}³ reference-engine lattice. The hands use display time; this panel does not measure accumulated proper time or certify a gravitational continuum limit.
             </div>
         `;
+    }
+
+    releaseSamplerDemand() {
+        this._samplerBridge?.replaceSamplerWants?.(PANEL_SAMPLER_OWNER, []);
+        this._samplerBridge = null;
+        this._sampleKey = '';
+        this._sampleVersion = null;
+        this._cachedProbe = null;
+    }
+
+    onUnmount() {
+        this.releaseSamplerDemand();
     }
 }

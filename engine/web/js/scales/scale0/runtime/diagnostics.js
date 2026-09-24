@@ -91,11 +91,11 @@ export function updateDiagnosticsAndPanels(ctx, state) {
         if (typeof ctx.isPanelVisible === 'function' && ctx.isPanelVisible('inspector')) ctx.inspector?.update();
         return;
     }
-    // Present cached worker/native telemetry at 30+ Hz on ordinary 60–75 Hz
-    // displays. The expensive audit itself remains demand/cadence gated; this
-    // only consumes completed samples and removes the visibly stepped 20–24 Hz
-    // chart path.
-    if (ctx.frameCount % 2 !== 0) return;
+    // A completed worker observation is already reduced off-thread. Consume
+    // its cache on every display frame so a live chart is not artificially
+    // halved to 30 Hz. Direct acquisition retains the lower-rate work gate.
+    const statusFrame = ctx.frameCount % 2 === 0;
+    if (!statusFrame && !recordOwner?.isWorker) return;
 
     // collectScale0 is cheap (status bar + primary history) — always runs.
     const diag = telemetryHub.collectScale0(ctx.bridge, state.fluxMock, state.useFluxMock);
@@ -119,6 +119,9 @@ export function updateDiagnosticsAndPanels(ctx, state) {
     } else if (ctx.activeTab === 'lagrangian') {
         ctx.lagrangianPanel?.update();
     }
+
+    // Text/status/inspector work has no bearing on chart acquisition latency.
+    if (!statusFrame) return;
 
     const diagMeta = telemetryHub.getScale0TelemetryMeta?.('diagnostics') ?? null;
     const auditMeta = telemetryHub.getScale0TelemetryMeta?.('audit') ?? null;

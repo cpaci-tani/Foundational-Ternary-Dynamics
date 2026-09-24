@@ -39,6 +39,16 @@
     transform: none;
 }
 
+/* Tablet portrait uses a multi-row topbar and a 50dvh bottom Dashboard. The
+   legacy fixed 48px top offset placed transport over session controls. Anchor
+   it above the sheet instead, where both surfaces remain reachable. */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .play-bar.panel-mount-bottom {
+        top: calc(234px + var(--sp-md));
+        bottom: auto;
+    }
+}
+
 /* Shared semantic grouping */
 .play-bar-section {
     display: flex;

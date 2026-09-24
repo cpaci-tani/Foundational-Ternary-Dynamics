@@ -1,9 +1,32 @@
 #include "ftd/lagrangian.h"
+#include "ftd/parallel.h"
 #include "ftd/volumetric_measure.h"
 #include <cmath>
 #include <algorithm>
 
 namespace ftd {
+
+namespace {
+
+void merge_lagrangian(LagrangianDiag& into, const LagrangianDiag& from) {
+    into.field_kinetic_sum += from.field_kinetic_sum;
+    into.field_gradient_sum += from.field_gradient_sum;
+    into.born_infeld_sum += from.born_infeld_sum;
+    into.coupling_sum += from.coupling_sum;
+    into.velocity_coupling_sum += from.velocity_coupling_sum;
+    into.gauss_sum += from.gauss_sum;
+    into.dissipation_sum += from.dissipation_sum;
+    into.total_lagrangian += from.total_lagrangian;
+    into.total_hamiltonian += from.total_hamiltonian;
+    into.gauss_violation += from.gauss_violation;
+    into.max_gauss_error = std::max(into.max_gauss_error, from.max_gauss_error);
+    into.total_flux_mag += from.total_flux_mag;
+    into.total_wave_energy += from.total_wave_energy;
+    into.manifested_count += from.manifested_count;
+    into.locked_count += from.locked_count;
+}
+
+}  // namespace
 
 LagrangianDiag compute_lagrangian_diagnostics(const RenderBridge& rb) {
     LagrangianDiag d;
@@ -11,8 +34,20 @@ LagrangianDiag compute_lagrangian_diagnostics(const RenderBridge& rb) {
     const int N = static_cast<int>(rb.lattice().total_sites());
     const auto& voxels = rb.voxels();
 
-    for (int i = 0; i < N; ++i) {
-        const auto& v = voxels[i];
+    // Fixed chunk identities make the floating-point reduction order
+    // independent of the active parallel backend and thread count.  Serial
+    // WASM, the pthread WASM build, and native OpenMP therefore merge the same
+    // partial sums in the same order.
+    constexpr int CHUNK_SIZE = 2048;
+    const int chunk_count = (N + CHUNK_SIZE - 1) / CHUNK_SIZE;
+    std::vector<LagrangianDiag> chunks(static_cast<std::size_t>(chunk_count));
+    parallel_for(0, chunk_count, [&](int chunk_lo, int chunk_hi) {
+      for (int chunk = chunk_lo; chunk < chunk_hi; ++chunk) {
+        LagrangianDiag& local = chunks[static_cast<std::size_t>(chunk)];
+        const int begin = chunk * CHUNK_SIZE;
+        const int end = std::min(N, begin + CHUNK_SIZE);
+        for (int i = begin; i < end; ++i) {
+          const auto& v = voxels[i];
 
         // Compute field quantities at this site
         double divJ = rb.divergence_flux(i);
@@ -20,10 +55,23 @@ LagrangianDiag compute_lagrangian_diagnostics(const RenderBridge& rb) {
 
         // --- Field-sector terms (the wave equation's energy) ---
         double fk = field_kinetic_term(v.wave_vel);
-        double fg = field_gradient_term(v.flux,
-                        rb.lattice().neighbors_6(i),
-                        rb.lattice().neighbors_12(i),
-                        voxels);
+        // Global pairs-once gradient: visit one orientation from every
+        // periodic reversal pair (3 faces + 6 plane diagonals).  The -1/2
+        // coefficient gives the same action as the public per-site
+        // half-share's directed 18-neighbor sum with coefficient -1/4.
+        // Degenerate L=1/L=2 quotients retain their oriented multiplicities.
+        double grad_sq = 0.0;
+        const auto face = rb.lattice().neighbors_6(i);
+        const auto edge = rb.lattice().neighbors_12(i);
+        for (int slot : {0, 2, 4}) {
+            const Vec3 delta = voxels[face[slot]].flux - v.flux;
+            grad_sq += (1.0 / 3.0) * delta.mag2();
+        }
+        for (int slot : {0, 1, 4, 5, 8, 9}) {
+            const Vec3 delta = voxels[edge[slot]].flux - v.flux;
+            grad_sq += (1.0 / 6.0) * delta.mag2();
+        }
+        const double fg = -0.5 * (C_WAVE * C_WAVE) * grad_sq;
 
         // --- Kinematic/interaction diagnostic terms (4 terms) ---
         // The Born core is currently state-independent and evaluated at every
@@ -35,35 +83,41 @@ LagrangianDiag compute_lagrangian_diagnostics(const RenderBridge& rb) {
         double dissip   = rayleigh_dissipation(v);
 
         // Accumulate per-term sums
-        d.field_kinetic_sum     += integrate_voxel_density(fk);
-        d.field_gradient_sum    += integrate_voxel_density(fg);
-        d.born_infeld_sum       += integrate_voxel_density(bi);
-        d.coupling_sum          += integrate_voxel_density(coup);
-        d.velocity_coupling_sum += integrate_voxel_density(vel_coup);
-        d.gauss_sum             += integrate_voxel_density(gauss);
-        d.dissipation_sum       += integrate_voxel_density(dissip);
+        local.field_kinetic_sum     += integrate_voxel_density(fk);
+        local.field_gradient_sum    += integrate_voxel_density(fg);
+        local.born_infeld_sum       += integrate_voxel_density(bi);
+        local.coupling_sum          += integrate_voxel_density(coup);
+        local.velocity_coupling_sum += integrate_voxel_density(vel_coup);
+        local.gauss_sum             += integrate_voxel_density(gauss);
+        local.dissipation_sum       += integrate_voxel_density(dissip);
 
         // Complete Lagrangian = field sector + interaction sector
         double L_site = fk + fg + bi + coup + vel_coup + gauss;
-        d.total_lagrangian += integrate_voxel_density(L_site);
-        d.total_hamiltonian += integrate_voxel_density(
+        local.total_lagrangian += integrate_voxel_density(L_site);
+        local.total_hamiltonian += integrate_voxel_density(
             hamiltonian_density(v, divJ, rho));
 
         // Gauss constraint violation
         double gauss_v = divJ - rho;
-        d.gauss_violation += gauss_v * gauss_v;
-        d.max_gauss_error = std::max(d.max_gauss_error, std::abs(gauss_v));
+        local.gauss_violation += gauss_v * gauss_v;
+        local.max_gauss_error = std::max(local.max_gauss_error, std::abs(gauss_v));
 
         // Conservation checks
-        d.total_flux_mag += v.density();
-        d.total_wave_energy += integrate_voxel_density(
+        local.total_flux_mag += v.density();
+        local.total_wave_energy += integrate_voxel_density(
             quadratic_field_energy_density(v.wave_vel.mag2()));
 
         // Counters
         if (v.state != 0) {
-            d.manifested_count++;
-            if (v.locked) d.locked_count++;
+            local.manifested_count++;
+            if (v.locked) local.locked_count++;
         }
+        }
+      }
+    });
+
+    for (const auto& chunk : chunks) {
+        merge_lagrangian(d, chunk);
     }
 
     // Discrete action = volume-integrated Lagrangian (one time slice).

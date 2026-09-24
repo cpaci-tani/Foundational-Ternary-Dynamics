@@ -7,14 +7,9 @@
  * as a genuine, mountable scale, following the BaseLifecycleController
  * pattern used by scale0-5.
  *
- * Design choice (2026-07-14): rather than wiring into the panel-dock/tab
- * subsystem (a large, separate area with its own visibility rules that
- * every other scale's panels participate in), this controller follows the
- * simpler self-contained floating-panel pattern already established by
- * scales/scale0/ui/overlays/genesis-burst-panel.js — the pedagogy panel is
- * appended directly to the viewport on mount and removed on destroy. This
- * delivers the same functional outcome (a real, interactive, clickable
- * Scale-6 exhibit) without touching the tab-dock system other scales share.
+ * The pedagogy panel uses the shared instrument-panel lifecycle owner. Its
+ * responsive placement is CSS-owned and consumes the shell safe-area
+ * contract rather than an inline fixed-width style island.
  *
  * MetaUnit itself needs only (scene, camera, renderer) — no bridge, no
  * physics tick loop. Self-driven via the shared rafCoordinator (matching
@@ -27,6 +22,7 @@ import { BaseLifecycleController } from '../../lifecycle.js';
 import { MetaUnit } from '../../meta-unit.js';
 import { buildMetaInfoPanel, buildSiteInspectPanel } from '../../meta-pedagogy.js';
 import { rafCoordinator } from '../../lib/raf-coordinator.js';
+import { mountInstrumentPanel } from '../../ui/utils/instrument-panel.js';
 import { hideScale0Overlays, saveScaleCameraState, restoreScaleCameraState } from '../scale-utils.js';
 
 const META_LOOP_ID = 'scale6-meta-loop';
@@ -37,6 +33,7 @@ class Scale6LifecycleController extends BaseLifecycleController {
     constructor() {
         super();
         this.metaUnit = null;
+        this._panelOwner = null;
         this._panelEl = null;
         this._raycaster = null;
         this._pointerDownHandler = null;
@@ -59,12 +56,8 @@ class Scale6LifecycleController extends BaseLifecycleController {
         // visually clutters the meta-unit exhibit.
         hideScale0Overlays(viewport);
 
-        if (this.metaUnit) {
-            this.metaUnit.dispose();
-            this.metaUnit = null;
-        }
+        this._disposeMetaUnit();
         this.metaUnit = new MetaUnit(viewport.scene, viewport.camera, viewport.renderer);
-        this.trackThreeObject(this.metaUnit._root);
 
         // Camera framing — capture pre-Scale-6 state once (mirrors Scale 4's
         // P1-8a restore pattern) so destroy() can put other scales' camera
@@ -91,21 +84,20 @@ class Scale6LifecycleController extends BaseLifecycleController {
     }
 
     _mountPanel(ctx) {
-        const host = document.getElementById('viewport') || document.body;
-        document.getElementById(PANEL_ID)?.remove();
-        const panel = document.createElement('div');
-        panel.id = PANEL_ID;
-        panel.className = 'meta-floating-panel';
-        panel.style.cssText =
-            'position:absolute; top:12px; left:12px; z-index:40; width:300px; ' +
-            'max-height:calc(100% - 24px); overflow-y:auto; border-radius:12px; ' +
-            'font-family:var(--font-sans,sans-serif); font-size:16px; ' +
-            'background:var(--color-background-primary,rgba(20,20,24,0.92)); ' +
-            'border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.25)); ' +
-            'color:var(--color-text-primary,#eee); box-shadow:0 2px 12px rgba(0,0,0,0.3);';
-        host.appendChild(panel);
-        this._panelEl = panel;
-        buildMetaInfoPanel(panel, this.metaUnit);
+        // Shell-level portal: viewport establishes its own stacking context, so
+        // short/mobile instrument panels mounted inside it cannot rise above
+        // transport and dock siblings even with a larger z-index.
+        const host = document.getElementById('app') || document.body;
+        this._panelOwner?.dispose();
+        this._panelOwner = mountInstrumentPanel({
+            id: PANEL_ID,
+            host,
+            className: 'meta-floating-panel',
+            label: 'Existential unit details',
+            build: (panel) => buildMetaInfoPanel(panel, this.metaUnit),
+            collapsible: true,
+        });
+        this._panelEl = this._panelOwner.element;
     }
 
     _bindClickInspector(ctx) {
@@ -135,6 +127,7 @@ class Scale6LifecycleController extends BaseLifecycleController {
             hz: META_LOOP_HZ,
             cb: () => {
                 if (ctx.engineMode !== 'meta') return;
+                if (ctx.presentationSuspended) return;
                 const now = performance.now();
                 const dt = lastT === null ? 0 : (now - lastT) / 1000;
                 lastT = now;
@@ -151,20 +144,22 @@ class Scale6LifecycleController extends BaseLifecycleController {
         }
     }
 
+    _disposeMetaUnit() {
+        if (!this.metaUnit) return;
+        this.metaUnit.dispose();
+        this.metaUnit = null;
+    }
+
     destroy(ctx) {
         this._stopLoop();
         super.destroy(ctx); // unbinds the pointerdown listener tracked via bindEvent
         this._pointerDownHandler = null;
         this._raycaster = null;
 
-        if (this._panelEl) {
-            this._panelEl.remove();
-            this._panelEl = null;
-        }
-        if (this.metaUnit) {
-            this.metaUnit.dispose();
-            this.metaUnit = null;
-        }
+        this._panelOwner?.dispose();
+        this._panelOwner = null;
+        this._panelEl = null;
+        this._disposeMetaUnit();
 
         if (ctx && ctx.viewport) {
             restoreScaleCameraState(this, ctx.viewport);
@@ -184,4 +179,13 @@ export function destroy(ctx) {
 
 export function loadScenario(ctx) {
     _lifecycleController.loadScenario(ctx);
+}
+
+/** MetaUnit has no independent axes/grid/clock render layers. */
+export function getViewControlCapabilities() {
+    return { axes: false, grid: false, boundaryOrientation: false, globalClock: false };
+}
+
+export function getViewControlState() {
+    return { axes: false, grid: false };
 }

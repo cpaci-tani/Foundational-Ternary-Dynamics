@@ -498,12 +498,22 @@ export class ViewportFluxRenderer {
     }
 
     _scheduleFluxAsyncSlice() {
-        if (this._fluxAsyncRaf || typeof requestAnimationFrame !== 'function') return;
+        if (this._presentationSuspended || this._fluxAsyncRaf || typeof requestAnimationFrame !== 'function') return;
         this._fluxAsyncRaf = requestAnimationFrame(() => this._runFluxAsyncSlice());
+    }
+
+    /** Preserve partially prepared attributes while another workspace renders. */
+    setPresentationSuspended(suspended) {
+        this._presentationSuspended = !!suspended;
+        if (suspended && this._fluxAsyncRaf) {
+            cancelAnimationFrame(this._fluxAsyncRaf);
+            this._fluxAsyncRaf = 0;
+        } else if (!suspended && this._fluxAsyncJob) this._scheduleFluxAsyncSlice();
     }
 
     _runFluxAsyncSlice() {
         this._fluxAsyncRaf = 0;
+        if (this._presentationSuspended) return;
         const frame = this._fluxAsyncJob;
         if (!frame || !this._fluxVolume) return;
         const deadline = performance.now() + FLUX_ASYNC_FRAME_BUDGET_MS;

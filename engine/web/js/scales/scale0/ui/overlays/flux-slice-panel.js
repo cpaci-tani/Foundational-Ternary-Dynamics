@@ -51,6 +51,9 @@
  * is released rather than rendering black tiles as putative vacuum evidence.
  */
 
+import { ScenarioApplicabilityBinding } from '../../../../ui/utils/scenario-applicability-binding.js';
+import { buildFluxSliceSampleCache } from './flux-slice-sample-source.js';
+
 import { rampViridis } from '../../../../viewport/color-ramps.js';
 import {
     getFieldStateSnapshot,
@@ -66,8 +69,6 @@ import {
     DENSE_CANVAS_PX,
     FLOOR_FRAC,
     DENSE_THRESHOLD,
-    SLOT_TO_KIND,
-    STRIDE_ONE_SLOTS,
     FIELD_DRIVERS,
     DRIVER_BY_KEY,
     DEFAULT_FIELD_OVERRIDE,
@@ -75,27 +76,24 @@ import {
 } from './flux-slice-helpers.js';
 
 /**
- * Keep the native WebSocket command stream interactive at large L. FTS1
- * transport has its own in-flight cap, but repainting 81 heatmaps at 30 Hz can
- * still monopolize the browser main thread while CUDA ticks are completing.
- * WASM/Mock retain the configured cadence because their sampler lifecycle is
- * worker/local and already separately budgeted.
+ * Keep every large-L owner interactive. Even when a worker produces sampler
+ * frames, converting and repainting as many as 81 N² heatmaps still runs on
+ * the browser main thread; direct WASM additionally produces dense slices
+ * synchronously. Small lattices retain the configured cadence.
  */
 export function effectiveFluxSliceUpdateEvery(bridge, configured = 2) {
     const base = Math.max(1, Math.trunc(Number(configured) || 1));
-    if (!bridge?.isNativeGPU) return base;
     const N = Math.max(0, Math.trunc(Number(bridge.latticeSize) || 0));
-    // The panel's single self-drive loop runs at 24 Hz. Four to six visual
-    // samples per second is ample for a heatmap instrument while keeping its
-    // three independent plane requests from competing with simulation and
-    // scientific telemetry on the native socket.
-    const nativeFloor = N > 96 ? 8 : (N > 64 ? 6 : (N > 48 ? 5 : 4));
-    return Math.max(base, nativeFloor);
+    // The panel's single self-drive loop runs at 24 Hz. Three to six visual
+    // samples per second is ample for a heatmap instrument at large L.
+    const floor = bridge?.isNativeGPU
+        ? (N > 96 ? 8 : (N > 64 ? 6 : (N > 48 ? 5 : 4)))
+        : (N > 96 ? 8 : (N > 64 ? 6 : (N > 48 ? 4 : base)));
+    return Math.max(base, floor);
 }
 
 const FLUX_SLICE_DRIVER_HZ = 24;
 const EMPTY_SCENARIO_ID = 'empty';
-const SCENARIO_SYNC_MAX_FRAMES = 120;
 
 function setTextIfChanged(element, text) {
     if (element && element.textContent !== text) element.textContent = text;
@@ -147,12 +145,10 @@ export class FluxSlicePanel {
         this._rowFragment = null;
         this._emptyMessage = null;
         this._emptyInapplicable = false;
-        this._scenarioSelect = null;
-        this._scenarioSyncRaf = 0;
-        this._scenarioSyncToken = 0;
-        this._onScenarioChange = (event) => {
-            this._handleScenarioIntent(String(event.currentTarget?.value || ''));
-        };
+        this._scenarioBinding = new ScenarioApplicabilityBinding({
+            getCurrentScenarioId: () => getScale0State().currentScenarioId,
+            onIntent: (scenarioId) => this._handleScenarioIntent(scenarioId),
+        });
 
         // Per-axis (xy/xz/yz) visibility — applies globally across all rows.
         this._axisVisible = { xy: true, xz: true, yz: true };
@@ -321,7 +317,7 @@ export class FluxSlicePanel {
             this._releaseAllWantedSamplers();
             this._scratch = Object.fromEntries(FIELD_DRIVERS.map(d => [d.key, {}]));
             for (const key of Object.keys(this._fieldGlobalMax)) this._fieldGlobalMax[key] = 0;
-            this._handleScenarioIntent(q.scenarioId);
+            this._scenarioBinding.intent(q.scenarioId);
         });
         if (this.visible && !this._emptyInapplicable) this._startSelfDrive();
 
@@ -346,21 +342,10 @@ export class FluxSlicePanel {
     }
 
     _bindScenarioApplicability() {
-        const select = document.getElementById('scenario-select');
-        if (select !== this._scenarioSelect) {
-            this._scenarioSelect?.removeEventListener('change', this._onScenarioChange);
-            this._scenarioSelect = select;
-            this._scenarioSelect?.addEventListener('change', this._onScenarioChange);
-        }
-        const intendedId = String(select?.value || getScale0State().currentScenarioId || '');
-        this._handleScenarioIntent(intendedId);
+        this._scenarioBinding.bind();
     }
 
     _handleScenarioIntent(scenarioId) {
-        const token = ++this._scenarioSyncToken;
-        if (this._scenarioSyncRaf) cancelAnimationFrame(this._scenarioSyncRaf);
-        this._scenarioSyncRaf = 0;
-
         // Suspend immediately on the user's empty request. This occurs before
         // the asynchronous worker replacement can publish any transitional
         // field sample, so a superseded nonempty generation is never painted
@@ -373,19 +358,12 @@ export class FluxSlicePanel {
         // Resume only after canonical state agrees with the requested
         // nonempty scenario. The bounded transition watcher never runs while
         // `empty` is active and is generation-cancelled by a newer request.
-        let remaining = SCENARIO_SYNC_MAX_FRAMES;
-        const reconcile = () => {
-            this._scenarioSyncRaf = 0;
-            if (this._disposed || token !== this._scenarioSyncToken) return;
-            if (getScale0State().currentScenarioId === scenarioId
-                && isScale0AuthoritativeGenerationReady(getScale0State())) {
-                this._setEmptyApplicability(false);
-                return;
-            }
-            remaining--;
-            if (remaining > 0) this._scenarioSyncRaf = requestAnimationFrame(reconcile);
-        };
-        reconcile();
+        this._scenarioBinding.reconcile({
+            scenarioId,
+            isReady: () => getScale0State().currentScenarioId === scenarioId
+                && isScale0AuthoritativeGenerationReady(getScale0State()),
+            onReady: () => this._setEmptyApplicability(false),
+        });
     }
 
     _setEmptyApplicability(inapplicable) {
@@ -622,16 +600,20 @@ export class FluxSlicePanel {
         slot.chip.classList.toggle('override-on', ov === 'on');
         slot.chip.classList.toggle('override-off', ov === 'off');
         if (ov === 'on') {
-            setTextIfChanged(slot.chip, 'force on');
+            setTextIfChanged(slot.chip, 'on');
             setTitleIfChanged(slot.chip, 'Forced visible. Click to force-off.');
+            slot.chip.setAttribute('aria-label', 'Forced visible. Click to force off.');
         } else if (ov === 'off') {
-            setTextIfChanged(slot.chip, 'force off');
+            setTextIfChanged(slot.chip, 'off');
             setTitleIfChanged(slot.chip, 'Forced hidden. Click to return to mirror.');
+            slot.chip.setAttribute('aria-label', 'Forced hidden. Click to return to mirror mode.');
         } else {
             setTextIfChanged(slot.chip, 'mirror');
             setTitleIfChanged(slot.chip,
                 `Following viz toggle (currently ${mirrorOn ? 'on' : 'off'}). ` +
                 'Click to force-on.');
+            slot.chip.setAttribute('aria-label',
+                `Mirroring the visualization toggle, currently ${mirrorOn ? 'on' : 'off'}. Click to force on.`);
         }
     }
 
@@ -886,88 +868,7 @@ export class FluxSlicePanel {
     // visits multiples of stride starting at 0, so a mismatched stride
     // makes the slice come back completely EMPTY, not just coarser.
     _buildFrameSampleCache(bridge, visibleDrivers, mid) {
-        if (this._samplerBridge && this._samplerBridge !== bridge) this._releaseAllWantedSamplers();
-        this._samplerBridge = bridge;
-        const sampled = {};
-        const neededSlots = new Set();
-        for (const drv of visibleDrivers) {
-            if (drv.slot && !drv.forceType) neededSlots.add(drv.slot);
-            if (drv.requiredSampledKeys) {
-                for (const slot of drv.requiredSampledKeys) neededSlots.add(slot);
-            }
-        }
-        // mid % 2 === 0  ⟺  N ≡ 1 (mod 4), since mid = (N-1)/2 for the odd
-        // lattice sizes this app uses. Every size the "Size" dropdown offers
-        // today (9, 17, 25, 33, 49, 65, 97, 113, 145, 181) satisfies this, so
-        // coarseStride is always 2 in practice — but the fallback to 1 is a
-        // real correctness case (stride-2 sampling from index 0 would MISS
-        // an odd mid-plane entirely), not dead code. If a future lattice
-        // size ≡ 3 (mod 4) is ever added to that dropdown, every kind here
-        // (including the force fields) silently drops to full-resolution
-        // sampling — an 8x cost multiplier. The get_em_force_field /
-        // get_strong_force_field budget guards in ftd_wasm.cpp are the real
-        // backstop against that regressing into a worker stall again; this
-        // comment exists so a future edit to the size list doesn't reopen
-        // the gap unknowingly.
-        const coarseStride = (mid % 2 === 0) ? 2 : 1;
-        // Native-GPU bridge only: fetch just the three center mid-planes we draw
-        // (getFieldSlices) instead of the whole field cube — the cube is several
-        // MiB per field over the WebSocket and we discard ~95% of it. The WASM
-        // bridge samples in-process (a cheap heap view, no transfer), so it has
-        // no getFieldSlices and keeps the full-cube getSamplerOr path unchanged.
-        const useSlices = typeof bridge.getFieldSlices === 'function';
-        const wantedKeys = new Set();
-        for (const slot of neededSlots) {
-            const kind = SLOT_TO_KIND[slot];
-            if (!kind) continue;
-            const stride = STRIDE_ONE_SLOTS.has(slot) ? 1 : coarseStride;
-            sampled[slot] = useSlices
-                ? (bridge.getFieldSlices(kind, mid, stride) ?? null)
-                : (bridge.getSamplerOr?.(kind, stride) ?? null);
-            wantedKeys.add(`${kind}@${stride}`);
-        }
-        // Force fields: getEMForceField / getGravityForceField /
-        // getStrongForceField, not a sampler `kind` — fetched directly,
-        // once per visible force row, at the same coarse stride as raw kinds
-        // (their own defaults are stride 2 too, so this matches, not
-        // regresses, established convention).
-        // Force fields ('em'/'gravity'/'strong') are valid sample kinds too, so
-        // on the GPU bridge they take the same slice fast path; the WASM bridge
-        // keeps its dedicated getEM/Gravity/StrongForceField cube getters.
-        for (const drv of visibleDrivers) {
-            if (!drv.forceType || sampled[drv.slot] !== undefined) continue;
-            if (useSlices) {
-                sampled[drv.slot] = bridge.getFieldSlices(drv.forceType, mid, coarseStride) ?? null;
-            } else if (drv.forceType === 'em') {
-                sampled[drv.slot] = bridge.getEMForceField?.(coarseStride) ?? null;
-            } else if (drv.forceType === 'gravity') {
-                sampled[drv.slot] = bridge.getGravityForceField?.(coarseStride) ?? null;
-            } else if (drv.forceType === 'strong') {
-                sampled[drv.slot] = bridge.getStrongForceField?.(coarseStride) ?? null;
-            }
-            wantedKeys.add(`${drv.forceType}@${coarseStride}`);
-        }
-        // Release any kind@stride that was wanted last frame but has no
-        // visible consumer this frame — WasmBridgeProxy._wantSampler's
-        // registration is otherwise permanently sticky (the worker computes
-        // every wanted kind on every postFrame() forever; there is no
-        // un-want without this). Diffed here (not per-driver-hide) because
-        // several rows share the same slot (e.g. eField feeds |E|, emEnergy,
-        // ePressure, ℒ(x) — only release once NONE of them are visible).
-        if (typeof bridge.replaceSamplerWants === 'function') {
-            bridge.replaceSamplerWants('flux-slice', [...wantedKeys]);
-            this._prevWantedKeys = wantedKeys;
-        } else if (typeof bridge.unwantSampler === 'function') {
-            if (this._prevWantedKeys) {
-                for (const key of this._prevWantedKeys) {
-                    if (wantedKeys.has(key)) continue;
-                    const at = key.lastIndexOf('@');
-                    bridge.unwantSampler(key.slice(0, at), Number(key.slice(at + 1)));
-                }
-            }
-            this._prevWantedKeys = wantedKeys;
-        }
-        return sampled;
+        return buildFluxSliceSampleCache(this, bridge, visibleDrivers, mid);
     }
 
     _paintSlice(drv, axis, data, N, norm, axisFrameMax, simTick, isRunning) {
@@ -1222,11 +1123,7 @@ export class FluxSlicePanel {
         this._disposed = true;     // self-drive guard (Audit pass 2 FLUX-2)
         this._stopSelfDrive();
         this._releaseAllWantedSamplers();
-        if (this._scenarioSyncRaf) cancelAnimationFrame(this._scenarioSyncRaf);
-        this._scenarioSyncRaf = 0;
-        this._scenarioSyncToken++;
-        this._scenarioSelect?.removeEventListener('change', this._onScenarioChange);
-        this._scenarioSelect = null;
+        this._scenarioBinding.dispose();
         if (this._expanded) this._collapse();
         this._resizeObs?.disconnect();
         this._resizeObs = null;

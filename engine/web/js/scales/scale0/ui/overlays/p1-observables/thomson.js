@@ -5,7 +5,6 @@
 
 import { BaseComponent } from '../../../../../core/component.js';
 import { cardStyle, titleStyle, tagBadge, formatExp } from '../_card-helpers.js';
-import { getScale0Scenario } from '../../../scenario-registry.js';
 import {
     commitScale0ScientificMutation,
     SCALE0_MUTATION_REASONS,
@@ -59,9 +58,10 @@ export class ThomsonComponent extends BaseComponent {
         });
     }
 
-    update(bridge, scenarioId) {
-        const scenario = getScale0Scenario(scenarioId);
+    update(bridge, scenarioId, metrics = null) {
         if (!SCENARIO_IDS.has(scenarioId)) {
+            if (this._lastRenderKey === `hidden:${scenarioId}`) return;
+            this._lastRenderKey = `hidden:${scenarioId}`;
             this.refs.root.style.display = 'none';
             this.bridgeRef = null;
             return;
@@ -72,8 +72,11 @@ export class ThomsonComponent extends BaseComponent {
         this.refs.title.textContent = unlocked
             ? 'Native flux-gradient recoil probe'
             : 'Locked-source superposition null';
-        const m = bridge.getThomsonScatteringMetrics?.();
+        const m = metrics;
         const fluxUnlocked = m?.toggles?.wave_propagation ?? bridge.getToggle?.('wave_propagation') ?? true;
+        const renderKey = `${scenarioId}:${m?.active ? 1 : 0}:${m?.tick ?? 'pending'}:${fluxUnlocked ? 1 : 0}`;
+        if (renderKey === this._lastRenderKey) return;
+        this._lastRenderKey = renderKey;
         if (!m || !m.active) {
             this.refs.body.innerHTML = `
                 ${this._modeControl(unlocked, fluxUnlocked)}

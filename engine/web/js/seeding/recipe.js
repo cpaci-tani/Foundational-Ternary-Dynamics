@@ -23,7 +23,10 @@ const PARAMETER_KEY = /^[a-zA-Z][a-zA-Z0-9_]{0,31}$/;
  * the compiler's own legal alphabet — not the 32-character finite parameter-key limit. */
 const OVERRIDE_KEY = /^[a-zA-Z][a-zA-Z0-9_.]{0,159}$/;
 const UINT32_MAX = 4294967295;
-const SEED_KEY = /seed/i;
+// Exact RNG leaves in the constructor catalogs: random.seed,
+// protocol.bathSeed, and the finite recipe/component seed fields. A physical
+// quantity such as packet.seedSpeed is a real value, not a random stream ID.
+const RNG_SEED_KEY = /(?:^|\.)(?:seed|randomSeed|bathSeed)$/;
 
 export const cloneRecipe = value => JSON.parse(JSON.stringify(value));
 
@@ -114,16 +117,17 @@ const exactKeys = (value, keys, name) => {
 const integer = (value, lo, hi, name) => {
     if (!Number.isSafeInteger(value) || value < lo || value > hi) throw new Error(`${name}: integer from ${lo} to ${hi} required`);
 };
-/** `key` (the bare, undotted parameter/override name) decides the legal numeric
- * range: a seed-like key is a full uint32 stream identity (0..4294967295, integer
- * only), never the generic ±1e7 sanity bound used for ordinary numeric parameters. */
+/** `key` may be a finite parameter name or a dotted native override path.
+ * Catalog RNG leaves are exact uint32 stream identities; other scalar values
+ * retain the generic ±1e7 sanity bound before compiler-specific validation. */
 function sanitizeParameterValue(value, name, key) {
+    if (key && RNG_SEED_KEY.test(key)) {
+        if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0 || value > UINT32_MAX)
+            throw new Error(`${name}: seed must be an integer from 0 to ${UINT32_MAX}`);
+        return;
+    }
     if (typeof value === 'boolean') return;
     if (typeof value === 'number') {
-        if (key && SEED_KEY.test(key)) {
-            if (!Number.isInteger(value) || value < 0 || value > UINT32_MAX) throw new Error(`${name}: seed must be an integer from 0 to ${UINT32_MAX}`);
-            return;
-        }
         if (!Number.isFinite(value) || Math.abs(value) > 1e7) throw new Error(`${name}: must be a finite number`);
         return;
     }

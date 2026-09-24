@@ -365,13 +365,13 @@ test('worker sampler batch protocol has a matching cache-busted client and handl
         path.join(webRoot, 'js', 'bridge', 'wasm-bridge.worker.js'),
         'utf8',
     );
-    expect(proxy).toContain("wasm-bridge.worker.js?v=9");
+    expect(proxy).toContain("wasm-bridge.worker.js?v=15");
     expect(proxy).toContain("type: 'replaceSamplerWants'");
     expect(proxy).toContain('wantGravity: g');
     expect(proxy).toContain("owner === 'gravity-panel' || owner === 'time-panel'");
     expect(proxy).toContain("cadenceClass: boundedInstrument ? 'bounded-instrument' : 'realtime'");
     expect(worker).toContain("case 'replaceSamplerWants'");
-    expect(worker).toContain('sampler-cadence.classic.js?v=2');
+    expect(worker).toContain('sampler-cadence.classic.js?v=6');
     expect(worker).toContain('visitScheduledSamplers(wantedSamplers');
 });
 

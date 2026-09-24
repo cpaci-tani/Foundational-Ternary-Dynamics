@@ -1,19 +1,14 @@
 import { createScale5ScenarioToolbarGroup, createScale5TelemetryToolbarGroup } from './toolbar/component.js';
+import { registerScaleToolbarFactories } from '../../../ui/utils/scale-toolbar.js';
 
 export function registerScale5ToolbarUI(toolbarRegistry) {
-    toolbarRegistry.registerFactory({
+    registerScaleToolbarFactories(toolbarRegistry, 5, [{
         id: 'scale5-scenario',
-        slot: 'secondary',
-        scales: ['5'],
         order: 90,
         factory: () => createScale5ScenarioToolbarGroup(),
-    });
-
-    toolbarRegistry.registerFactory({
+    }, {
         id: 'scale5-telemetry',
-        slot: 'secondary',
-        scales: ['5'],
         order: 100,
         factory: () => createScale5TelemetryToolbarGroup(),
-    });
+    }]);
 }

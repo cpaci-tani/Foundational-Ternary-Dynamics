@@ -208,6 +208,12 @@ test.describe('Scale 0 discrete gravity overlay audit gate', () => {
             let readoutBeforePoison = null;
             const caps = {
                 latticeSize: N,
+                getScale0FieldSamples({ kind }) {
+                    order.push(`scalar:${kind}`);
+                    // Direct telemetry uses bounded scalar samples; the dense
+                    // view below is owned only by the heatmap renderer.
+                    return { values: new Float64Array([kind === 'latency' ? Math.sqrt(0.998) : 0]), count: 1 };
+                },
                 getScale0ForceField() {
                     order.push('force');
                     return { vectors: new Float32Array([0.25, 0, 0]), count: 1 };

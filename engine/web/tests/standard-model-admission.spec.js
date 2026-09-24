@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { gotoAndReady, attachConsoleWatcher, realErrors } from './_helpers.js';
+import { gotoAndReady, attachConsoleWatcher, realErrors, switchMode } from './_helpers.js';
 
 test('catalog injection preserves supported native charges and refuses substitutions', async ({ page }) => {
     test.setTimeout(120_000);
     const errors = attachConsoleWatcher(page);
     await gotoAndReady(page, {path: '/?engine=wasm', timeout: 90_000});
-    await page.selectOption('#engine-mode', 'particles');
+    await switchMode(page, 'particles');
     await page.selectOption('#pe-scenario-select', 's1-empty-zoo');
     const result = await page.evaluate(async () => {
         const bridge = window.__ftdCtx.bridge;

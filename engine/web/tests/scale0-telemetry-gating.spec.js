@@ -6,9 +6,8 @@
  * On the WasmBridgeProxy worker path:
  *   • Lagrangian is actually gated. With no dock consumer, the proxy's last
  *     Lagrangian snapshot FREEZES while the sim keeps ticking.
- *   • Energy-audit is still computed in the worker (postFrame rewrites
- *     diag.totalEnergy from it). Demand still must not *request* extra
- *     main-thread / native audit just because the conservation overlay is on.
+ *   • Energy-audit is demand-gated too. Cheap diagnostics read the per-tick
+ *     ledger without forcing a lattice reduction for the conservation overlay.
  *   • Opening Lagrangian turns wantLag (and wantAudit) back on; the lag
  *     snapshot moves again.
  *
@@ -19,7 +18,7 @@
  * the test skips: freeze is a worker-proxy observable.
  */
 import { test, expect } from '@playwright/test';
-import { gotoAndReady } from './_helpers.js';
+import { gotoAndReady, selectScale0Scenario } from './_helpers.js';
 
 async function readProbe(page) {
     return page.evaluate(async () => {
@@ -50,17 +49,14 @@ test.describe('Scale-0 demand-gated telemetry (FTD_TELEMETRY_ONDEMAND)', () => {
     test('audit freezes when no consumer is visible, stays live when a panel is open', async ({ page }) => {
         test.setTimeout(90_000);
         await page.addInitScript(() => { window.__ftdTelemetryOnDemand = true; });
-        await gotoAndReady(page, { timeout: 90_000 });
+        await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
         await expect.poll(
             () => page.evaluate(() => !!(window.__ftdCtx && window.__ftdCtx.bridge)),
             { timeout: 20_000 },
         ).toBe(true);
 
         // flux-pulse on the worker path; start playback.
-        await page.evaluate(() => {
-            const sel = document.getElementById('scenario-select');
-            if (sel) { sel.value = 'flux-pulse'; sel.dispatchEvent(new Event('change', { bubbles: true })); }
-        });
+        await selectScale0Scenario(page, 'flux-pulse');
         await page.evaluate(() => {
             const btn = document.getElementById('btn-play');
             if (btn && btn.getAttribute('data-paused') === 'true') btn.click();
@@ -75,10 +71,8 @@ test.describe('Scale-0 demand-gated telemetry (FTD_TELEMETRY_ONDEMAND)', () => {
         test.skip(!pre.worker, 'WASM worker path inactive (no cross-origin isolation) — gating freeze is a worker observable');
 
         // ── Phase A: Controls + conservation overlay, no dock consumer ──
-        // The worker still runs getEnergyAudit at a reduced cadence to rewrite
-        // diag.totalEnergy (see wasm-bridge.worker.js postFrame). The stream
-        // that actually gates is Lagrangian. Demand must not pin audit just
-        // because the always-on conservation overlay is visible.
+        // Diagnostics use the inexpensive ledger. Neither reduction is pinned
+        // by the always-on conservation overlay.
         await page.waitForTimeout(1500);
         const a0 = await readProbe(page);
         await page.waitForTimeout(800);
@@ -87,6 +81,8 @@ test.describe('Scale-0 demand-gated telemetry (FTD_TELEMETRY_ONDEMAND)', () => {
         expect(a1.tick, 'sim must keep ticking').toBeGreaterThan(a0.tick);
         expect(a1.wantAudit, 'Controls + conservation must not request audit').toBe(false);
         expect(a1.wantLag, 'Controls must not request Lagrangian').toBe(false);
+        expect(a1.hasAudit, 'Controls must not retain a live audit stream').toBe(false);
+        expect(a1.hasLag, 'Controls must not retain a live Lagrangian stream').toBe(false);
 
         const conservationVisible = await page.evaluate(() => {
             const el = document.getElementById('conservation-micropanel');

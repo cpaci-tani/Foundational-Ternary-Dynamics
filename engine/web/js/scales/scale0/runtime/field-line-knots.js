@@ -57,6 +57,10 @@ export class FieldLineKnotTracker {
     }
 
     reset() {
+        // The worker observes this monotonic boundary on its next request.
+        // It never adopts a result from a pre-reset tracker namespace.
+        this._workerResetVersion = (this._workerResetVersion || 0) + 1;
+        this._adoptedWorkerProvenance = null;
         this._prevCellToId = new Map();  // cellIndex → knotId (previous record)
         this._prevIdSize = new Map();    // knotId → cellCount (previous record)
         this._histories = new Map();     // id → { birth, peak, lastTick }
@@ -264,7 +268,9 @@ export class FieldLineKnotTracker {
         // ── Assemble telemetry ───────────────────────────────────────────
         const STRIDE = 8;
         const fields = new Float32Array(K * STRIDE);
-        const age = new Int32Array(K), peak = new Int32Array(K), birth = new Int32Array(K);
+        // Tick counters are safe integers, not 32-bit simulation counters.
+        // Keep age/birth lossless past 2^31; peak remains a bounded cell count.
+        const age = new Float64Array(K), peak = new Int32Array(K), birth = new Float64Array(K);
         for (let k = 0; k < K; k++) {
             const h = this._histories.get(ids[k]);
             age[k] = h ? (tick - h.birth) : 0;
@@ -296,6 +302,76 @@ export class FieldLineKnotTracker {
     setSensitivity(v) { this._sensitivity = clamp01(v); }
     getSensitivity() { return this._sensitivity; }
     setRequireCrossings(on) { this.requireCrossings = !!on; }
+
+    /** Plain-data request state for the persistent overlay-worker namespace. */
+    getWorkerRecordConfig() {
+        return {
+            resetVersion: this._workerResetVersion,
+            sensitivity: this._sensitivity,
+            perKnotColor: this._perKnotColor,
+        };
+    }
+
+    getAdoptedWorkerProvenance() {
+        return this._adoptedWorkerProvenance ? { ...this._adoptedWorkerProvenance } : null;
+    }
+
+    /** Compatibility path for environments that do not expose Worker. */
+    adoptDirectRecordProvenance(provenance) {
+        this._adoptedWorkerProvenance = provenance ? { ...provenance } : null;
+    }
+
+    /**
+     * Apply a detached worker snapshot. The worker remains the sole owner of
+     * identity/genealogy state; this mirror exposes the same public read API to
+     * panels, contributions, and viewport coloring.
+     */
+    applyWorkerRecord(record) {
+        const snapshot = record?.snapshot;
+        const tel = snapshot?.telemetry;
+        const zones = snapshot?.zones;
+        const events = snapshot?.events;
+        if (!tel || !zones || !events
+            || !ArrayBuffer.isView(tel.ids) || !ArrayBuffer.isView(tel.age)
+            || !ArrayBuffer.isView(tel.size) || !ArrayBuffer.isView(tel.peak)
+            || !ArrayBuffer.isView(tel.birth) || !ArrayBuffer.isView(tel.fields)
+            || !ArrayBuffer.isView(tel.dirs) || !ArrayBuffer.isView(tel.extents)
+            || !ArrayBuffer.isView(zones.centroids) || !ArrayBuffer.isView(zones.extents)
+            || !ArrayBuffer.isView(zones.ids) || !ArrayBuffer.isView(events.tick)
+            || !ArrayBuffer.isView(events.type) || !ArrayBuffer.isView(events.nparents)
+            || !ArrayBuffer.isView(events.nchildren)) return false;
+        this._tel = tel;
+        this._agg = { ...snapshot.aggregate };
+        this._zones = zones;
+        this._events = [];
+        for (let i = 0; i < events.count; i++) {
+            this._events.push({ tick: events.tick[i], type: events.type[i], np: events.nparents[i], nc: events.nchildren[i] });
+        }
+        this._adoptedWorkerProvenance = record.provenance ? { ...record.provenance } : null;
+        return true;
+    }
+
+    /** Worker failure must not leave a fresh-looking old knot observation. */
+    invalidateWorkerRecord(reason = 'worker-knot-observation-unavailable', provenance = null) {
+        const sampleTick = provenance?.sampleTick ?? null;
+        this._tel = { ...emptyTelemetry(), sampleTick, status: reason };
+        this._zones = { count: 0, centroids: new Float32Array(0), extents: new Float32Array(0), ids: new Int32Array(0), latticeSize: 0 };
+        this._agg.alive = 0;
+        this._events = [];
+        this.invalidateContributions(reason);
+        this._adoptedWorkerProvenance = null;
+    }
+
+    /** Contributions may join a worker result only to field samples at its exact source/tick boundary. */
+    hasMatchingWorkerProvenance(provenance) {
+        const adopted = this._adoptedWorkerProvenance;
+        if (!adopted || !provenance) return false;
+        return adopted.source === provenance.source
+            && adopted.nativeInstanceId === provenance.nativeInstanceId
+            && adopted.sourceEpoch === provenance.sourceEpoch
+            && adopted.epoch === provenance.epoch
+            && adopted.sampleTick === provenance.sampleTick;
+    }
 
     // Assign each streamline to a knot (the nearest knot centroid to the line's
     // midpoint), returning that knot's persistent id per line, or -1 if there are
@@ -503,7 +579,7 @@ export class FieldLineKnotTracker {
 
     getEvents() {
         const n = this._events.length;
-        const tickA = new Int32Array(n), typeA = new Int32Array(n);
+        const tickA = new Float64Array(n), typeA = new Int32Array(n);
         const npA = new Int32Array(n), ncA = new Int32Array(n);
         for (let i = 0; i < n; i++) {
             tickA[i] = this._events[i].tick; typeA[i] = this._events[i].type;
@@ -739,8 +815,8 @@ export class FieldLineKnotTracker {
 }
 
 function emptyTelemetry() {
-    return { count: 0, ids: new Int32Array(0), age: new Int32Array(0), size: new Int32Array(0),
-             peak: new Int32Array(0), birth: new Int32Array(0), stride: 8,
+    return { count: 0, ids: new Int32Array(0), age: new Float64Array(0), size: new Int32Array(0),
+             peak: new Int32Array(0), birth: new Float64Array(0), stride: 8,
              fields: new Float32Array(0), dirs: new Float32Array(0), extents: new Float32Array(0),
              found: 0, dropped: 0 };
 }

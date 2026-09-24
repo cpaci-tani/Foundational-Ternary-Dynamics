@@ -7,7 +7,7 @@ import { once } from 'node:events';
 import '../js/bridge/flux-publication.classic.js';
 import { WasmBridgeProxy } from '../js/bridge/wasm-bridge-proxy.js';
 import { AnisotropyComponent, circularFluxProbeIndices, circularFluxDecay,
-    makeFluxMagnitudeSampler } from '../js/scales/scale0/ui/overlays/p1-observables/anisotropy.js';
+    circularFluxDecayFromZSlice, makeFluxMagnitudeSampler } from '../js/scales/scale0/ui/overlays/p1-observables/anisotropy.js';
 
 const publication = globalThis.FTD_FLUX_PUBLICATION;
 const dataFor = size => Float64Array.from({ length: size ** 3 }, (_, i) => 1 + i + 2 ** -40);
@@ -345,7 +345,7 @@ test('P1 uses one bounded read per cadence and does not rebuild retained SVG/des
     assert.equal(plots, 3); assert.equal(descriptions, 3);
 });
 
-test('P1 native compact/direct fallback and nonfinite/zero availability remain unchanged', () => {
+test('P1 direct fallback uses one measured plane and unsupported bridges never copy L cubed', () => {
     const instance = Object.create(AnisotropyComponent.prototype);
     const data = dataFor(7);
     assert.deepEqual(instance._computeDecayPoints(makeFluxMagnitudeSampler(data, 7), 3.5, 3.5, 3.5),
@@ -356,12 +356,20 @@ test('P1 native compact/direct fallback and nonfinite/zero availability remain u
         assert.equal(circularFluxDecay(samples), null);
     }
     assert.equal(circularFluxDecay(new Float64Array(127)), null);
-    let volumes = 0;
+    let slices = 0;
     const bridge = { latticeSize: 8, isNativeGPU: true,
-        getFluxVolume() { volumes++; return { data: new Float32Array(64).fill(2), axisCount: 4, stride: 2, latticeSize: 8 }; } };
+        getFluxSlice() { slices++; return new Float32Array(64).fill(2); },
+        getFluxVolume() { throw Error('interactive P1 must not copy a volume'); } };
     Object.assign(instance, { _lastBridge: null, _lastSourceKey: '', _lastSampleAt: -Infinity,
         refs: { plot: {}, desc: {} }, _renderAnisotropyDecay() {} });
     instance.update(bridge, 0, []); instance.update(bridge, 250, []); instance.update(bridge, 1000, []);
-    assert.equal(volumes, 2); assert.equal(instance._sampleStride, 2);
+    assert.equal(slices, 2); assert.equal(instance._sampleStride, 1);
     assert.ok(instance._decayPoints.every(point => point.aniso === 0 && point.mean === 2));
+    assert.deepEqual(circularFluxDecayFromZSlice(new Float32Array(64).fill(2), 8, 4, 4),
+        instance._decayPoints);
+
+    const unsupported = { latticeSize: 97, isNativeGPU: false,
+        getFluxVolume() { throw Error('unsupported owner must remain unavailable'); } };
+    instance.update(unsupported, 2000, []);
+    assert.equal(instance._decayPoints, null);
 });

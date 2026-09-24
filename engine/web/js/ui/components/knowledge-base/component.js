@@ -29,4 +29,5 @@ export class KnowledgeBaseComponent {
     init() { this._sidebar.init(); return this; }
     open() { this._sidebar.open(); }
     close() { this._sidebar.close(); }
+    destroy() { this._sidebar.destroy(); }
 }

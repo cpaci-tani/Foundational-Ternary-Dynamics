@@ -26,6 +26,14 @@ inline void validate_ws_command(const JsonValue& j) {
     auto integer = [&](const char* key, std::int64_t lo, std::int64_t hi) {
         allowed.insert(key); return j.integer(key, lo, hi);
     };
+    // Optional source fence for acknowledged external controls. Both fields are
+    // required together; legacy seed_commit retains its original epoch-only ABI.
+    if (j.has("expectedNativeInstanceId")) {
+        if (cmd != "tick" && cmd != "run" && cmd != "set_toggle" && cmd != "ping" && cmd != "seed_commit")
+            throw std::invalid_argument("source fence is unsupported for this command");
+        if (str("expectedNativeInstanceId").empty()) throw std::invalid_argument("missing native instance identity");
+        integer("expectedSourceEpoch", 0, kJsonSafeInteger);
+    }
     constexpr auto imin = std::numeric_limits<int>::min();
     constexpr auto imax = std::numeric_limits<int>::max();
     auto coords = [&] { for (auto key : {"x", "y", "z"}) integer(key, imin, imax); };
@@ -117,7 +125,7 @@ inline void validate_ws_command(const JsonValue& j) {
             }
         }
     } else if (cmd != "tick" && cmd != "get_particles" && cmd != "get_diagnostics"
-               && cmd != "get_dynamical_state_digest" && cmd != "get_energy_audit"
+               && cmd != "get_dynamical_state_digest" && cmd != "get_flux_sectors" && cmd != "get_energy_audit"
                && cmd != "get_gravity_metric" && cmd != "get_lagrangian"
                && cmd != "reset" && cmd != "info" && cmd != "ping") {
         throw std::invalid_argument("unknown command: " + cmd);

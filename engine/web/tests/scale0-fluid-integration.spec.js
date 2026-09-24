@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { switchMode } from './_helpers.js';
 
 test('ordinary lattice scenarios share their owner with volume overlays and passive field observations', async ({ page }) => {
     page.setDefaultTimeout(15000);
@@ -47,9 +48,9 @@ test('ordinary lattice scenarios share their owner with volume overlays and pass
     await page.waitForFunction(() => window.__ftdFluidPanel.observation?.scenarioId === 's0-field-shear-layer');
     await page.locator('#btn-reset').click();
     await page.waitForFunction(() => window.__ftdFluidPanel.observation?.scenarioId === 's0-field-shear-layer');
-    await page.locator('#engine-mode').selectOption('particles');
+    await switchMode(page, 'particles');
     expect(await page.evaluate(() => [...window.__ftdCtx.viewport._scalarVolumes.values()].every(v => !v.group.visible))).toBe(true);
-    await page.locator('#engine-mode').selectOption('lattice');
+    await switchMode(page, 'lattice');
     await page.waitForFunction(() => !!window.__ftdFluidPanel);
     expect(workerUrls.some(url => url.includes('hydro-worker'))).toBe(false);
     expect(errors).toEqual([]);

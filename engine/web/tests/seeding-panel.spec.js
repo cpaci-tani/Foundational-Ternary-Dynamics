@@ -1,5 +1,5 @@
 import {test, expect} from '@playwright/test';
-import {gotoAndReady} from './_helpers.js';
+import {gotoAndReady, switchMode} from './_helpers.js';
 import {readFile} from 'node:fs/promises';
 
 const read = page => page.evaluate(async () => {
@@ -305,10 +305,10 @@ test('invalid input, preparation failure, cancellation and late responses retain
     const lateGate = new Promise(r => {releaseLate = r;}), latePending = new Promise(r => {enteredLate = r;});
     await page.route('**/api/lattice/records/seed', async route => {enteredLate(); await lateGate; await route.abort().catch(() => {});});
     await page.click('#seed-apply'); await latePending;
-    await page.selectOption('#engine-mode', 'particles');
+    await switchMode(page, 'particles');
     releaseLate(); await page.unroute('**/api/lattice/records/seed');
     await expect(page.locator('#panel-seeding')).not.toBeVisible();
-    await page.selectOption('#engine-mode', 'lattice');
+    await switchMode(page, 'lattice');
     await page.evaluate(() => window.__ftdCtx.appShell.panelDock.activate('seeding'));
     await expect(page.locator('#seed-picker')).toBeVisible();
 });

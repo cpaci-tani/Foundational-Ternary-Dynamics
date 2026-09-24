@@ -92,3 +92,73 @@ test('paused worker publishes Lagrangian-only demand boundaries without advancin
         });
     }
 });
+
+test('L=97 worker publishes one exact Lagrangian observation per completed state', async ({ page }) => {
+    test.setTimeout(180000);
+    await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90000 });
+    await page.selectOption('#lattice-size', '97');
+    await selectScale0Scenario(page, 'flux-pulse');
+    await expect.poll(() => page.evaluate(async () => {
+        const { getScale0State, isScale0AuthoritativeGenerationReady } = await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        const owner = state.fluxMock;
+        return owner?.isWorker === true && owner.ready && owner.latticeSize === 97
+            && isScale0AuthoritativeGenerationReady(state)
+            && owner.lifecycleDebug.configurationToken === owner.lifecycleDebug.appliedConfigurationToken;
+    }), { timeout: 90000 }).toBe(true);
+    await page.evaluate(() => {
+        window.__ftdCtx.appShell.panelDock.setCollapsed(false);
+        window.__ftdCtx.appShell.panelDock.activate('lagrangian');
+        const play = document.getElementById('btn-play');
+        if (play?.getAttribute('data-paused') === 'true') play.click();
+    });
+    await expect.poll(() => page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const owner = getScale0State().fluxMock;
+        return owner?.getScale0TelemetryGroupMeta('lagrangian')?.status === 'available'
+            && owner.getLagrangian() !== null;
+    }), { timeout: 30000 }).toBe(true);
+
+    const rows = await page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const owner = getScale0State().fluxMock;
+        const rows = [];
+        let lastTick = -1;
+        const deadline = performance.now() + 30000;
+        while (rows.length < 10 && performance.now() < deadline) {
+            await new Promise(resolve => requestAnimationFrame(resolve));
+            const ownerTick = owner.currentTick();
+            if (ownerTick === lastTick) continue;
+            const meta = owner.getScale0TelemetryGroupMeta('lagrangian');
+            if (meta?.status === 'available' && meta.sampleTick === ownerTick) {
+                lastTick = ownerTick;
+                rows.push({ ownerTick, stateVersion: meta.stateVersion, sampleTick: meta.sampleTick });
+            }
+        }
+        return rows;
+    });
+    expect(rows.length, 'worker must publish exact Lagrangian values while the panel is visible').toBe(10);
+    for (let i = 1; i < rows.length; i++) {
+        expect(rows[i].ownerTick).toBeGreaterThan(rows[i - 1].ownerTick);
+        expect(rows[i].sampleTick).toBe(rows[i].ownerTick);
+        expect(rows[i].stateVersion).toBeGreaterThan(rows[i - 1].stateVersion);
+    }
+    await page.evaluate(() => window.__ftdCtx.pauseSimulation());
+    await expect.poll(() => page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        return getScale0State().fluxMock.runningStateSettled;
+    })).toBe(true);
+    const paused = await page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const owner = getScale0State().fluxMock;
+        const rows = [];
+        for (let i = 0; i < 4; i++) {
+            await new Promise(resolve => requestAnimationFrame(resolve));
+            const meta = owner.getScale0TelemetryGroupMeta('lagrangian');
+            rows.push({ ownerTick: owner.currentTick(), stateVersion: meta?.stateVersion,
+                sampleTick: meta?.sampleTick });
+        }
+        return rows;
+    });
+    for (const row of paused) expect(row).toEqual(paused[0]);
+});

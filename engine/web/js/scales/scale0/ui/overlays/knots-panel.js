@@ -15,198 +15,15 @@ import {
     setKnotZonesApplicability,
     setKnotZonesRequested,
 } from '../../state/store.js';
-import { getFieldLineKnotTracker, forEachKnotTracker, knotHue } from '../../runtime/field-line-knots.js';
+import { getFieldLineKnotTracker, forEachKnotTracker } from '../../runtime/field-line-knots.js';
 import { RingBuffer, telemetryHub } from '../../../../telemetry-hub.js';
-import { ChartHoverTooltip, formatChartValue } from '../../../../ui/charts/chart-hover-tooltip.js';
+import { ChartHoverTooltip } from '../../../../ui/charts/chart-hover-tooltip.js';
 import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
-
-// Small fixed-range [0,1] multi-trace line chart for a knot's contribution history.
-// A generic streaming sparkline is single-trace and auto-ranged, so drawing the
-// three fraction arrays directly is simpler and keeps the 0–100% axis honest.
-const CONTRIB_TRACES = [
-    { key: 'energyFrac', color: '#f6c453', label: 'energy' },
-    { key: 'fluxFrac', color: '#5ad2e0', label: 'flux' },
-    { key: 'chargeFrac', color: '#c98bf0', label: 'charge' },
-];
-
-// Reader-friendly number: 27517 → "27.5k", 2.43e6 → "2.4M", 218 → "218", 1.2 → "1.2".
-// Replaces raw counts + scientific notation in the panel.
-function fmtNum(v) {
-    if (typeof v !== 'number' || !Number.isFinite(v)) return '—';
-    const a = Math.abs(v);
-    if (a >= 1e9) return (v / 1e9).toFixed(a >= 1e10 ? 0 : 1) + 'B';
-    if (a >= 1e6) return (v / 1e6).toFixed(a >= 1e7 ? 0 : 1) + 'M';
-    if (a >= 1e3) return (v / 1e3).toFixed(a >= 1e4 ? 0 : 1) + 'k';
-    if (Number.isInteger(v)) return '' + v;   // 3 → "3", 218 → "218" (no stray ".0")
-    if (a >= 10) return v.toFixed(0);
-    if (a >= 1) return v.toFixed(1);
-    return a === 0 ? '0' : v.toFixed(2);
-}
-// "1 cell" / "2 cells" — singular reads cleaner for the single-voxel-knot case.
-function cells(n) { return `${n} cell${n === 1 ? '' : 's'}`; }
-function drawContribChart(canvas, hist, historyControl = null) {
-    if (!canvas) return;
-    const tickBuffer = {
-        count: hist?.n || 0,
-        getTick: (index) => hist?.ticks?.[index] ?? index,
-    };
-    const visibleN = historyControl?.visibleCount(tickBuffer) ?? tickBuffer.count;
-    const start = Math.max(0, tickBuffer.count - visibleN);
-    canvas._tip = (lx, _ly, w) => {
-        const m = visibleN; if (m < 1) return null;
-        const i = start + Math.max(0, Math.min(m - 1, Math.round((lx / w) * (m - 1))));
-        return { title: 'knot contribution', xLabel: 'tick', xValue: hist?.ticks?.[i] ?? i, rows: [
-            { color: '#f6c453', label: 'energy', value: `${Math.round((hist.energyFrac[i] || 0) * 100)}%` },
-            { color: '#5ad2e0', label: 'flux', value: `${Math.round((hist.fluxFrac[i] || 0) * 100)}%` },
-            { color: '#c98bf0', label: 'charge', value: `${Math.round((hist.chargeFrac[i] || 0) * 100)}%` },
-        ] };
-    };
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    if (!w || !h) return;
-    if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
-    ctx.clearRect(0, 0, w, h);
-    const n = visibleN;
-    // gridlines at 0/50/100%
-    ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
-    for (const f of [0, 0.5, 1]) { const y = h - f * (h - 2) - 1; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
-    if (n < 2) {   // brand-new knot — chart works, just waiting for a 2nd sample
-        ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '16px sans-serif'; ctx.textBaseline = 'middle';
-        ctx.fillText('collecting history…', 4, h / 2);
-        return;
-    }
-    for (const t of CONTRIB_TRACES) {
-        const arr = hist[t.key];
-        ctx.beginPath();
-        for (let i = 0; i < n; i++) {
-            const source = start + i;
-            const x = (i / (n - 1)) * w;
-            const y = h - Math.max(0, Math.min(1, arr[source])) * (h - 2) - 1;   // fixed 0..1 range
-            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = t.color; ctx.lineWidth = 1.3; ctx.stroke();
-    }
-}
-
-// Multi-trace energy line chart (auto-ranged from 0). `traces` = [{rb:RingBuffer,color,width,label}].
-function drawEnergyLines(canvas, traces, historyControl = null) {
-    if (!canvas) return;
-    const primary = traces[0]?.rb;
-    const visibleN = historyControl?.visibleCount(primary) ?? (primary?.count || 0);
-    const primaryStart = Math.max(0, (primary?.count || 0) - visibleN);
-    canvas._tip = (lx, _ly, w) => {
-        if (visibleN < 1) return null;
-        const local = Math.max(0, Math.min(visibleN - 1, Math.round((lx / w) * (visibleN - 1))));
-        const tick = primary?.getTick?.(primaryStart + local) ?? primaryStart + local;
-        return { title: 'EM energy', xLabel: 'tick', xValue: tick,
-            rows: traces.map(t => {
-                const start = Math.max(0, t.rb.count - visibleN);
-                const index = start + local;
-                return { color: t.color, label: t.label || '', value: formatChartValue(t.rb.count > index ? t.rb.get(index) : null) };
-            }) };
-    };
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    if (!w || !h) return;
-    if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
-    ctx.clearRect(0, 0, w, h);
-    const n = visibleN;
-    let maxV = 0;
-    for (const t of traces) {
-        const start = Math.max(0, t.rb.count - n);
-        for (let i = start; i < t.rb.count; i++) { const v = t.rb.get(i); if (v > maxV) maxV = v; }
-    }
-    ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, h - 1); ctx.lineTo(w, h - 1); ctx.stroke();
-    if (n < 2 || maxV <= 0) return;
-    for (const t of traces) {
-        const c = Math.min(t.rb.count, n);
-        const start = Math.max(0, t.rb.count - c);
-        if (c < 2) continue;
-        ctx.beginPath();
-        let drawing = false;
-        for (let i = 0; i < c; i++) {
-            const value = t.rb.get(start + i);
-            if (!Number.isFinite(value)) { drawing = false; continue; }
-            const x = (i / (c - 1)) * w;
-            const y = h - (value / maxV) * (h - 2) - 1;
-            if (!drawing) { ctx.moveTo(x, y); drawing = true; }
-            else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = t.color; ctx.lineWidth = t.width || 1.2; ctx.stroke();
-    }
-}
-
-// Per-knot EM-energy bars (the "quantization" — discrete knot quanta), colored by hue.
-function drawKnotBars(canvas, contrib) {
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    if (!w || !h) return;
-    if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
-    ctx.clearRect(0, 0, w, h);
-    const K = contrib?.count || 0;
-    if (!K) { canvas._tip = () => null; return; }
-    const fld = (k) => (contrib.fields && contrib.fields[k]) || 'e';
-    const tag = (k) => ({ e: 'E', b: 'B', flux: 'J' }[fld(k)] || fld(k).toUpperCase());
-    const order = [...Array(K).keys()].sort((a, b) => contrib.energy[b] - contrib.energy[a]).slice(0, 8);
-    const maxE = contrib.energy[order[0]] || 1;
-    const barH = Math.max(4, (h - 2) / order.length - 2);
-    canvas._tip = (_lx, ly) => {
-        const row = Math.floor(ly / (barH + 2));
-        if (row < 0 || row >= order.length) return null;
-        const k = order[row];
-        return { title: `${tag(k)}-knot #${contrib.ids[k]}`, xLabel: 'EM share', xValue: (contrib.energyFrac[k] || 0),
-            rows: [
-                { color: `hsl(${Math.round(knotHue(contrib.ids[k], fld(k)) * 360)},85%,55%)`, label: 'EM energy', value: formatChartValue(contrib.energy[k]) },
-                { color: '#9ca3af', label: 'share', value: `${Math.round((contrib.energyFrac[k] || 0) * 100)}%` },
-            ] };
-    };
-    let y = 1;
-    ctx.font = '16px monospace'; ctx.textBaseline = 'middle';
-    for (const k of order) {
-        const frac = maxE > 0 ? contrib.energy[k] / maxE : 0;
-        const bw = Math.max(1, frac * (w - 56));
-        ctx.fillStyle = `hsl(${Math.round(knotHue(contrib.ids[k], fld(k)) * 360)},85%,55%)`;
-        ctx.fillRect(0, y, bw, barH);
-        ctx.fillStyle = 'rgba(255,255,255,0.75)';
-        ctx.fillText(`${tag(k)}#${contrib.ids[k]} ${Math.round((contrib.energyFrac[k] || 0) * 100)}%`, bw + 3, y + barH / 2);
-        y += barH + 2;
-    }
-}
-
-// Merge E + B contributions into one {count, ids, energy, energyFrac, fields} for the bars.
-function mergeContrib(eC, bC, jC) {
-    const ne = eC?.count || 0, nb = bC?.count || 0, nj = jC?.count || 0, n = ne + nb + nj;
-    const ids = new Int32Array(n), energy = new Float64Array(n), energyFrac = new Float64Array(n);
-    const fields = new Array(n);
-    let j = 0;
-    for (let i = 0; i < ne; i++) { ids[j] = eC.ids[i]; energy[j] = eC.energy[i]; energyFrac[j] = eC.energyFrac[i]; fields[j] = 'e'; j++; }
-    for (let i = 0; i < nb; i++) { ids[j] = bC.ids[i]; energy[j] = bC.energy[i]; energyFrac[j] = bC.energyFrac[i]; fields[j] = 'b'; j++; }
-    for (let i = 0; i < nj; i++) { ids[j] = jC.ids[i]; energy[j] = jC.energy[i]; energyFrac[j] = jC.energyFrac[i]; fields[j] = 'flux'; j++; }
-    return { count: n, ids, energy, energyFrac, fields };
-}
-
-// Wire a canvas's stored `_tip` resolver to the shared ChartHoverTooltip (value at cursor).
-function bindCanvasTip(canvas, tooltip, panelRoot) {
-    if (!canvas || canvas._tipBound) return;
-    canvas._tipBound = true;
-    canvas.addEventListener('mousemove', (e) => {
-        const r = canvas.getBoundingClientRect();
-        const res = canvas._tip?.(e.clientX - r.left, e.clientY - r.top, r.width, r.height);
-        if (!res) { tooltip.hide(); return; }
-        const pr = panelRoot.getBoundingClientRect();
-        tooltip.render({ title: res.title, xLabel: res.xLabel || 'sample', xValue: res.xValue, rows: res.rows,
-            anchorLeft: e.clientX - pr.left, anchorTop: e.clientY - pr.top });
-    });
-    canvas.addEventListener('mouseleave', () => tooltip.hide());
-}
+import { ScenarioApplicabilityBinding } from '../../../../ui/utils/scenario-applicability-binding.js';
+import { bindCanvasTip, cells, drawContribChart, drawEnergyLines, drawKnotBars, fmtNum, mergeContrib } from './knots-chart-view.js';
 
 const PANEL_ID = 'knots-panel';
 const EMPTY_SCENARIO_ID = 'empty';
-const SCENARIO_SYNC_MAX_FRAMES = 120;
 
 // Event type integer order — matches the tracker's event enum:
 // 0=Birth 1=Death 2=Persist 3=Fission 4=Fusion 5=Ambiguous.
@@ -225,51 +42,6 @@ const EVENT_DESC = [
 // Field-line knots are detected + tracked entirely in JS by FieldLineKnotTracker
 // (a module singleton shared with the E-field overlay job, which feeds it the
 // rebuilt streamlines). The panel only READS the tracker — no engine/bridge call.
-function ensureCss() {
-    if (typeof document === 'undefined' || document.getElementById('knots-panel-css')) return;
-    const s = document.createElement('style');
-    s.id = 'knots-panel-css';
-    s.textContent = `
-    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:16px;color:var(--text-primary,#eee);padding:2px}
-    #${PANEL_ID} .kp-title{font-weight:600;margin:2px 0 6px;font-size:16px}
-    #${PANEL_ID} .kp-title small{color:var(--text-muted,#888);font-weight:400;font-size:16px}
-    #${PANEL_ID} .kp-head{font-family:var(--font-mono,monospace);font-size:16px;line-height:1.5;color:var(--text-secondary,#ccc);margin:2px 0 4px}
-    #${PANEL_ID} .kp-head #kp-track-dot{font-weight:700}
-    #${PANEL_ID} .kp-tally{color:var(--text-muted,#888);font-size:16px;margin-top:2px}
-    #${PANEL_ID} .kp-ctl{display:flex;align-items:center;cursor:pointer;margin:5px 0 1px;font-size:16px}
-    #${PANEL_ID} .kp-ctl input{margin-right:6px}
-    #${PANEL_ID} .kp-ctl b{color:var(--text-primary,#eee);font-weight:600}
-    #${PANEL_ID} .kp-list{font-family:var(--font-mono,monospace);font-size:16px;line-height:1.55;margin:6px 0 2px;max-height:260px;overflow-y:auto;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.08))}
-    #${PANEL_ID} .kp-row{padding:4px 2px;border-bottom:0.5px solid var(--border-light,rgba(255,255,255,0.05));cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    #${PANEL_ID} .kp-row:hover{background:var(--surface-hover,rgba(255,255,255,0.04))}
-    #${PANEL_ID} .kp-det{margin:3px 0 4px 14px;padding:5px 8px;border-left:2px solid var(--accent-cyan,#3fd0e0);background:var(--surface-raised,rgba(63,208,224,0.06));color:var(--text-secondary,#bbb);font-size:16px;line-height:1.6;white-space:normal}
-    #${PANEL_ID} .kp-empty{color:var(--text-muted,#888);font-style:italic;font-size:16px;padding:8px 2px;line-height:1.5}
-    #${PANEL_ID} .kp-feed-h{margin-top:8px;font-size:16px;letter-spacing:0.06em;color:var(--text-muted,#888);font-weight:600}
-    #${PANEL_ID} .kp-feed{font-family:var(--font-mono,monospace);font-size:16px;line-height:1.5;max-height:150px;overflow-y:auto;margin-top:3px;color:var(--text-secondary,#ccc)}
-    #${PANEL_ID} .kp-feed .kp-t{color:var(--text-muted,#888)}
-    #${PANEL_ID} .kp-note{margin-top:8px;padding-top:6px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.1));font-size:16px;color:var(--text-muted,#777);line-height:1.5}
-    #${PANEL_ID} .kp-note b{color:var(--text-secondary,#999)}
-    #${PANEL_ID} .kp-contrib-sum{margin-top:3px;font-size:16px;color:var(--accent-amber,#f6c453)}
-    #${PANEL_ID} .kp-contrib-sum b{color:var(--text-primary,#eee);font-weight:600}
-    #${PANEL_ID} .kp-cn{color:var(--accent-amber,#f6c453);font-weight:600}
-    #${PANEL_ID} .kp-geo{color:var(--text-muted,#888)}
-    #${PANEL_ID} .kp-legend{display:block;margin-top:2px;font-size:16px;color:var(--text-muted,#999)}
-    #${PANEL_ID} .kp-chart{display:block;width:100%;height:50px;margin:2px 0 4px}
-    #${PANEL_ID} .kp-em{margin:6px 0 2px;padding:6px 7px;border:0.5px solid var(--border-light,rgba(255,255,255,0.08));border-radius:4px;background:var(--surface-raised,rgba(255,255,255,0.02))}
-    #${PANEL_ID} .kp-em-h{font-size:16px;letter-spacing:0.06em;color:var(--text-muted,#888);font-weight:600}
-    #${PANEL_ID} .kp-em-tot{font-weight:400;letter-spacing:0;color:var(--accent-amber,#f6c453);margin-left:4px}
-    #${PANEL_ID} .kp-em-h2{font-size:16px;letter-spacing:0.04em;color:var(--text-muted,#888);margin-top:4px}
-    #${PANEL_ID} .kp-em-legend{font-size:16px;color:var(--text-muted,#999);margin:1px 0}
-    #${PANEL_ID} .kp-em-chart{display:block;width:100%;height:58px}
-    #${PANEL_ID} .kp-em-bars{display:block;width:100%;height:80px;margin-top:2px}
-    #${PANEL_ID} canvas{cursor:crosshair}
-    #${PANEL_ID} .kp-field-h{margin:7px 0 2px;font-size:16px;font-weight:600;letter-spacing:0.03em}
-    #${PANEL_ID} .kp-dim{color:var(--text-muted,#888)}
-    #${PANEL_ID} .kp-det b{color:var(--text-secondary,#ccc)}
-    `;
-    document.head.appendChild(s);
-}
-
 function buildPanel() {
     const root = document.createElement('div');
     root.id = PANEL_ID;
@@ -293,13 +65,13 @@ function buildPanel() {
         <input type="checkbox" id="kp-toggle-color"> <b>Per-knot colors</b>
       </label>
       <label class="kp-ctl" title="How readily a field-line clump counts as a knot. Higher = more (fainter) clumps detected; lower = only the densest.">
-        <b style="min-width:62px;display:inline-block">Sensitivity</b>
-        <input type="range" id="kp-sensitivity" min="0" max="100" value="50" style="flex:1;margin-left:6px">
-        <span id="kp-sens-val" style="min-width:30px;text-align:right;color:var(--text-muted,#888)">50%</span>
+        <b class="kp-sensitivity-label">Sensitivity</b>
+        <input class="kp-sensitivity-range" type="range" id="kp-sensitivity" min="0" max="100" value="50">
+        <span class="kp-sensitivity-value" id="kp-sens-val">50%</span>
       </label>
       <div class="kp-em" id="kp-em">
         <div class="kp-em-h" title="Engine diagnostics U_E + U_B: U_E=½|wave_vel|² and U_B=(C_SPEED²/2)|curl J|². This sum is not the total engine Hamiltonian.">EM DIAGNOSTIC ENERGY <span class="kp-em-tot" id="kp-em-totals"></span></div>
-        <div class="kp-em-legend" title="total = diagnostic E+B sum; magnetic includes C_SPEED²; wave equals the electric diagnostic and is not an additional partition. Hover the chart for live values."><span style="color:#f6c453">▬</span> total <span style="color:#5ad2e0">▬</span> electric <span style="color:#f08bb0">▬</span> magnetic <span style="color:#9be08b">▬</span> wave</div>
+        <div class="kp-em-legend" title="total = diagnostic E+B sum; magnetic includes C_SPEED²; wave equals the electric diagnostic and is not an additional partition. Hover the chart for live values."><span class="kp-key-energy">▬</span> total <span class="kp-key-flux">▬</span> electric <span class="kp-key-magnetic">▬</span> magnetic <span class="kp-key-wave">▬</span> wave</div>
         <canvas class="kp-em-chart" id="kp-em-chart" data-ui-tooltip-skip>Hover for values</canvas>
         <div class="kp-em-h2" title="How the EM energy is split across the individual knots — each bar is one knot's share. Hover a bar for its value.">estimated energy in each clump region</div>
         <canvas class="kp-em-bars" id="kp-em-bars" data-ui-tooltip-skip>Hover for per-knot values</canvas>
@@ -311,7 +83,7 @@ function buildPanel() {
         <b>Electric</b>, <b>magnetic</b>, and <b>flux</b> knots are the three streamline families
         of the same substrate — tracking rebuilds them even with overlays off.
         Turn on <b>Radiative E</b>, <b>B Field</b>, or <b>Flux Lines</b> to <i>see</i> the lines.
-        <b style="color:var(--accent-amber,#f6c453)">energy / flux / charge</b> = each knot's share of the
+        <b class="kp-key-energy">energy / flux / charge</b> = each knot's share of the
         scenario's actual field over its region — sampled estimates of reference fields.
         The live dashboard reports a <b>volume-weighted stride-sampled estimate</b>
         of flux |J|, energy ½(E²+B²) in the tracker convention (B normalization may differ from the native audit), and charge |∇·J|; it is marked ≈ and is not an exact full-volume integral.
@@ -334,7 +106,6 @@ function buildPanel() {
 
 export function mountKnotsPanel(host) {
     if (!host) return null;
-    ensureCss();
     document.getElementById(PANEL_ID)?.remove();
     const panel = buildPanel();
     host.appendChild(panel);
@@ -358,9 +129,7 @@ export function mountKnotsPanel(host) {
     let liveSub = null;
     let measurementActive = false;
     let updateCount = 0;
-    let scenarioSelect = null;
-    let scenarioSyncRaf = 0;
-    let scenarioSyncToken = 0;
+    let scenarioBinding = null;
 
     // Shared hover tooltip for all charts (value-at-cursor). The static charts are
     // bound once here; the per-knot history chart (rebuilt each paint) binds in update().
@@ -902,9 +671,6 @@ export function mountKnotsPanel(host) {
     }
 
     function handleScenarioIntent(scenarioId) {
-        const token = ++scenarioSyncToken;
-        if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
-        scenarioSyncRaf = 0;
         if (listRenderRaf) cancelAnimationFrame(listRenderRaf);
         listRenderRaf = 0;
         pendingListRender = null;
@@ -934,37 +700,22 @@ export function mountKnotsPanel(host) {
         inapplicableMessage.hidden = true;
         setControlsDisabled(true);
 
-        let remaining = SCENARIO_SYNC_MAX_FRAMES;
-        const reconcile = () => {
-            scenarioSyncRaf = 0;
-            if (disposed || token !== scenarioSyncToken) return;
-            if (getScale0State().currentScenarioId === scenarioId
-                && isScale0AuthoritativeGenerationReady(getScale0State())) {
-                setEmptyApplicability(false);
-                return;
-            }
-            remaining--;
-            if (remaining > 0) scenarioSyncRaf = requestAnimationFrame(reconcile);
-        };
-        reconcile();
-    }
-
-    function onScenarioChange(event) {
-        handleScenarioIntent(String(event.currentTarget?.value || ''));
+        scenarioBinding.reconcile({
+            scenarioId,
+            isReady: () => getScale0State().currentScenarioId === scenarioId
+                && isScale0AuthoritativeGenerationReady(getScale0State()),
+            onReady: () => setEmptyApplicability(false),
+        });
     }
 
     function rebindScenarioApplicability() {
-        const nextSelect = document.getElementById('scenario-select');
-        if (nextSelect !== scenarioSelect) {
-            scenarioSelect?.removeEventListener('change', onScenarioChange);
-            scenarioSelect = nextSelect;
-            scenarioSelect?.addEventListener('change', onScenarioChange);
-        }
-        handleScenarioIntent(String(
-            scenarioSelect?.value || getScale0State().currentScenarioId || '',
-        ));
+        scenarioBinding?.bind();
     }
 
+    scenarioBinding = new ScenarioApplicabilityBinding({
+        getCurrentScenarioId: () => getScale0State().currentScenarioId,
+        onIntent: handleScenarioIntent,
+    });
     rebindScenarioApplicability();
     let boundary = null;
     const unsubscribeQualification = subscribeScale0Qualification(q => {
@@ -973,7 +724,7 @@ export function mountKnotsPanel(host) {
             : `ready:${q.anchor?.loadGeneration}`;
         if (next === boundary) return;
         boundary = next;
-        handleScenarioIntent(q.scenarioId);
+        scenarioBinding.intent(q.scenarioId);
     });
 
     // Match the sibling singleton panels (e.g. genesis-burst-panel): null the
@@ -1005,11 +756,8 @@ export function mountKnotsPanel(host) {
         setKnotZoneApplicability(
             getScale0State().currentScenarioId !== EMPTY_SCENARIO_ID,
         );
-        if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
-        scenarioSyncRaf = 0;
-        scenarioSyncToken++;
-        scenarioSelect?.removeEventListener('change', onScenarioChange);
-        scenarioSelect = null;
+        scenarioBinding?.dispose();
+        scenarioBinding = null;
             window.removeEventListener(PANEL_VISIBILITY_CHANGE_EVENT, onPanelVisibilityChange);
             historyControl.destroy();
         forEachKnotTracker((t) => t.setContribEnabled(false));

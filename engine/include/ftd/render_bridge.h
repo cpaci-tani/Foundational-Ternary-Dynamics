@@ -481,6 +481,7 @@ public:
     // field contract in-place. Returns false only when a backend cannot serve
     // the contract.
     bool capture_dynamical_state_digest(DynamicalStateDigest& out);
+    FluxSectors capture_flux_sectors();
 
     // Rigorous energy breakdown + Gauss constraint audit
     EnergyAudit energy_audit() const;

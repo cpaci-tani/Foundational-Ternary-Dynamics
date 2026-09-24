@@ -175,6 +175,7 @@ class Scale4LifecycleController extends BaseLifecycleController {
                     return;
                 }
 
+                if (ctx.presentationSuspended) return;
                 if (ctx.running) {
                     this._planetAcc += ctx.ticksPerFrame || 1;
                     const f = Math.floor(this._planetAcc);
@@ -330,6 +331,23 @@ class Scale4LifecycleController extends BaseLifecycleController {
         this.renderer.setRenderHillSpheres(this._viewState.hillSpheres);
         this.renderer.setRenderRocheLimits(this._viewState.rocheLimits);
         this.renderer.setRenderCollisionShells(this._viewState.collisionShells);
+        document.dispatchEvent(new Event('ftd:view-controls-changed'));
+    }
+
+    setAxesVisible(visible) {
+        this._viewState.axes = !!visible;
+        this.renderer?.setRenderAxes(this._viewState.axes);
+        const input = document.getElementById('planetary-opt-axes');
+        if (input) input.checked = this._viewState.axes;
+        document.dispatchEvent(new Event('ftd:view-controls-changed'));
+    }
+
+    setGridVisible(visible) {
+        this._viewState.ecliptic = !!visible;
+        this.renderer?.setEclipticVisible(this._viewState.ecliptic);
+        const input = document.getElementById('planetary-opt-ecliptic');
+        if (input) input.checked = this._viewState.ecliptic;
+        document.dispatchEvent(new Event('ftd:view-controls-changed'));
     }
 
     _setSystemCamera(viewport) {
@@ -548,6 +566,9 @@ class Scale4LifecycleController extends BaseLifecycleController {
                 this.bindEvent(el, 'change', (e) => {
                     this._viewState[key] = e.target.checked;
                     this.renderer?.[method]?.(e.target.checked);
+                    if (key === 'axes' || key === 'ecliptic') {
+                        document.dispatchEvent(new Event('ftd:view-controls-changed'));
+                    }
                 });
             }
         }
@@ -773,6 +794,27 @@ export function loadScenario(ctx, name = 'planetary-solar') {
 
 export function step() {
     _lifecycleController.step();
+}
+
+/** Route shared view controls to the active Scale-4 renderer. */
+export function setAxesVisible(visible) {
+    _lifecycleController.setAxesVisible(visible);
+}
+
+/** The shared grid control maps to Scale 4's ecliptic reference grid. */
+export function setGridVisible(visible) {
+    _lifecycleController.setGridVisible(visible);
+}
+
+export function getViewControlCapabilities() {
+    return { axes: true, grid: true, boundaryOrientation: false, globalClock: false };
+}
+
+export function getViewControlState() {
+    return {
+        axes: !!_lifecycleController._viewState.axes,
+        grid: !!_lifecycleController._viewState.ecliptic,
+    };
 }
 
 /** Read-only lifecycle evidence used by the Scale 4 regression audit. */

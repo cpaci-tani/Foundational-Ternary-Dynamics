@@ -1,0 +1,5 @@
+# Reproducible text-bearing PDF extraction. BSD-3-Clause; Python >=3.9.
+# https://pypi.org/project/pypdf/6.18.1/
+pypdf==6.18.1 \
+    --hash=sha256:ee93a2665670ecf57ee81d197a4ca548f3dc15f9cefc56e59b8140866aaa3de5 \
+    --hash=sha256:2441fc839053745638d9b9ddb38ed66beed8d611f47a3036c9838fc4e3074dea

@@ -38,6 +38,7 @@ import { beginTimeReadout, updateTimeReadout } from './time-readout.js';
 import { telemetryHub } from '../../../../telemetry-hub.js';
 import { C_SPEED } from '../../../../constants.js';
 import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
+import { projectHistoryIndices } from '../../../../ui/charts/history-index.js';
 
 const PANEL_ID = 'time-panel';
 const HZ = 2;
@@ -359,7 +360,7 @@ function buildPanel() {
         c: 'Sampled extrema of the latency proxy, with right-endpoint quadrature over observed lab-time intervals. Probe locations may change; omitted field history and quadrature error are not bounded. This is not a physical twin/GPS measurement.',
         d: 'Kinematic time dilation. The √(1−v²) [T] and FTD γ(v) [D] curves vs this session’s baked FTD-0252 measured points [M] (offline campaign). The velocity is [IMPOSED] (rigid translation is [BOUNDARY-blocked]). Inset: historical finite-size residual; no continuum recovery certificate.',
         e: 'The imposed de Broglie internal clock (FTD-0271). FTD-0402 normalizes raw speed by C_SPEED and advances phase with the full selected budget B=β²+L². This card is implementation telemetry, not evidence of physical covariance.',
-        f: 'Field-wide τ/dτ-dt/φ aggregates (2026-09-03), reduced over sampled manifested voxels rather than the single centre voxel Card E reads. Requested stride 1 may be raised by the backend budget; counts and effective strides describe the sampled support. WASM-only (get_tau_sampled/get_lapse_sampled/get_phase_sampled, ftd_wasm.cpp); requires a WASM rebuild before these are live. Also publishes the ptime.* telemetry-grid channels.',
+        f: 'Field-wide τ/dτ-dt/φ aggregates (2026-09-03), reduced by the canonical telemetry collector over sampled manifested voxels rather than the single centre voxel Card E reads. Counts and effective strides describe the sampled support. WASM-only (get_tau_sampled/get_lapse_sampled/get_phase_sampled, ftd_wasm.cpp); the Time panel and ptime.* telemetry-grid channels consume the same source observation.',
     };
     root.innerHTML = `
         <header class="time-header">
@@ -403,19 +404,20 @@ export function mountTimePanel(host, getBridge) {
     const el = (id) => panel.querySelector(`#${PANEL_ID}-${id}`);
     const cardA = el('card-a'), cardB = el('card-b'), cardC = el('card-c'), cardD = el('card-d'), cardE = el('card-e');
     const cardF = el('card-f');
-    // One-click enable affordance: flips the two production checkboxes
-    // (#t-latency-field / #t-de-broglie, ui/controls/physics-toggles.js) through
-    // the REAL 'change' event path (ui/controls/wire.js), so this goes through
-    // the same setToggle/scientific-mutation plumbing a manual click would —
-    // no direct bridge.setToggle call from the panel layer.
+    // One-click enable affordance: latency_field has a production checkbox and
+    // requires the gravity term. de_broglie_clock is scenario-owned and
+    // deliberately has no checkbox. Drive the real prerequisite first, then
+    // its dependent, so the engine never observes an invalid intermediate
+    // toggle profile.
     cardF.addEventListener('click', (e) => {
         if (!e.target.closest(`#${PANEL_ID}-enable-ptime`)) return;
-        for (const id of ['t-latency-field', 't-de-broglie']) {
-            const cb = document.getElementById(id);
-            if (cb && !cb.checked) {
-                cb.checked = true;
-                cb.dispatchEvent(new Event('change', { bubbles: true }));
-            }
+        const gravity = document.getElementById('t-gravity');
+        const latency = document.getElementById('t-latency-field');
+        if (!gravity || !latency) return;
+        for (const checkbox of [gravity, latency]) {
+            if (checkbox.checked) continue;
+            checkbox.checked = true;
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
         }
     });
     const historyControl = new TickHistoryControl(panel, {
@@ -431,11 +433,20 @@ export function mountTimePanel(host, getBridge) {
     let vImposed = 0.30;        // [IMPOSED] slider state
     // twin-clock accumulators
     let twin = { tauDeep: 0, tauFar: 0, history: [], historyTicks: [], lDeep: 0, lFar: 0, active: false };
+    let twinHistoryGeneration = 0;
+    const twinHistoryBuffer = {
+        get count() { return twin.history.length; },
+        get total() { return twin.history.length; },
+        get generation() { return twinHistoryGeneration; },
+        get: (index) => twin.history[index],
+        getTick: (index) => twin.historyTicks[index],
+    };
     let lastTick = -1;
     let lastPhysicalTime = null;
 
     function resetTwin() {
         twin = { tauDeep: 0, tauFar: 0, history: [], historyTicks: [], lDeep: 0, lFar: 0, active: false };
+        twinHistoryGeneration++;
         lastTick = -1;
         lastPhysicalTime = null;
     }
@@ -457,6 +468,14 @@ export function mountTimePanel(host, getBridge) {
                     first--;
                 }
             }
+        }
+        if (historyControl.isAll && count >= 2) {
+            const projection = projectHistoryIndices([twinHistoryBuffer], count, 232);
+            if (projection) return {
+                ...twin,
+                history: projection.map(index => twin.history[index]),
+                historyTicks: projection.map(index => twin.historyTicks[index]),
+            };
         }
         // Keep the complete run; allocate only the requested display window.
         return {
@@ -500,78 +519,20 @@ export function mountTimePanel(host, getBridge) {
         return radialSummary(s.positions, s.values, center, RADIAL_BINS, maxRadius);
     }
 
-    // Field-wide proper time / lapse / de Broglie phase aggregates (2026-09-03,
-    // Card F). Distinct from Card E's single centre-voxel reading: this reduces
-    // the WHOLE sampled τ/dτ-dt/φ overlay fields (get_tau_sampled/get_lapse_sampled/
-    // get_phase_sampled, ftd_wasm.cpp) to summary statistics — mean/min/max for τ,
-    // mean for lapse, and a circular mean/variance for the wrapped phase (a plain
-    // arithmetic mean of an angle is meaningless across the 2π wrap). WASM-only;
-    // an absent/unbound sampler yields count=0, which this treats as "no field"
-    // rather than an error (graceful degradation, matching every other overlay).
-    function sampleProperTimeMetrics(caps) {
-        // Sampler KIND is 'tau' (bridge-contract SCALE0_SAMPLER_METHODS);
-        // 'properTime' is the overlay-slot name that field-sample-cache.js maps
-        // to it. Passing the slot name here returned the EMPTY fallback and
-        // published NaN for the τ mean (integration fix 2026-09-04).
-        const tau = caps.getScale0FieldSamples?.({ kind: 'tau', stride: 1 })
-            || { values: new Float32Array(0), count: 0 };
-        const lapse = caps.getScale0FieldSamples?.({ kind: 'lapse', stride: 1 })
-            || { values: new Float32Array(0), count: 0 };
-        const phase = caps.getScale0FieldSamples?.({ kind: 'dbPhase', stride: 1 })
-            || { values: new Float32Array(0), count: 0 };
-        const hasField = tau.count > 0 || lapse.count > 0 || phase.count > 0;
-        let properTimeMean = Number.NaN, properTimeMin = Number.NaN, properTimeMax = Number.NaN;
-        if (tau.count > 0) {
-            let sum = 0, min = Infinity, max = -Infinity;
-            for (let i = 0; i < tau.count; i++) {
-                const v = tau.values[i];
-                sum += v; if (v < min) min = v; if (v > max) max = v;
-            }
-            properTimeMean = sum / tau.count; properTimeMin = min; properTimeMax = max;
-        }
-        let lapseMean = Number.NaN;
-        if (lapse.count > 0) {
-            let sum = 0;
-            for (let i = 0; i < lapse.count; i++) sum += lapse.values[i];
-            lapseMean = sum / lapse.count;
-        }
-        // Circular statistics (Mardia & Jupp): mean angle = atan2(mean sin, mean
-        // cos); circular variance = 1 − R, R = |mean unit vector| ∈ [0,1]. R=1
-        // (var=0) is a fully synchronized clock phase across the field; R→0
-        // (var→1) has no preferred first circular moment; it need not be uniform.
-        let dbPhaseMean = Number.NaN, dbPhaseCircVar = Number.NaN;
-        if (phase.count > 0) {
-            let sc = 0, ss = 0;
-            for (let i = 0; i < phase.count; i++) { sc += Math.cos(phase.values[i]); ss += Math.sin(phase.values[i]); }
-            const n = phase.count;
-            const meanCos = sc / n, meanSin = ss / n;
-            const R = Math.sqrt(meanCos * meanCos + meanSin * meanSin);
-            const TWO_PI = 2 * Math.PI;
-            // Float32 sampler angles carry ~1e-7 rounding; below this
-            // display-resolution floor a cancelling first moment has no angle.
-            if (R > 1e-6) dbPhaseMean = (Math.atan2(meanSin, meanCos) + TWO_PI) % TWO_PI;
-            dbPhaseCircVar = Math.max(0, Math.min(1, 1 - R));
-        }
-        return {
-            hasField, tauCount: tau.count, lapseCount: lapse.count, phaseCount: phase.count,
-            tauStride: tau.effectiveStride ?? null, lapseStride: lapse.effectiveStride ?? null,
-            phaseStride: phase.effectiveStride ?? null,
-            properTimeMean, properTimeMin, properTimeMax, lapseMean, dbPhaseMean, dbPhaseCircVar,
-        };
-    }
-
     // Card F — field-wide τ/lapse/φ status + telemetry publication + a one-click
     // "enable" affordance for the two toggles these overlays depend on.
     function renderCardF(container, ptime, toggles) {
         const readout = beginTimeReadout(container);
         const renderRow = bindTimeRow(readout);
-        const { latencyField, deBroglieClock } = toggles;
-        const needsEnable = !latencyField && !deBroglieClock;
-        let html = `<div class="time-provenance" title="get_tau_sampled/get_lapse_sampled/get_phase_sampled (ftd_wasm.cpp) accumulate only at manifested voxels, and only while at least one of these two engine toggles is ON.">Requires <code>latency_field</code> and/or <code>de_broglie_clock</code> ON. τ needs either; φ additionally needs de_broglie_clock specifically (dφ=ω₀·dτ).</div>`;
+        const { gravity, latencyField, deBroglieClock } = toggles;
+        const latencyReady = gravity && latencyField;
+        const needsEnable = !latencyReady && !deBroglieClock;
+        let html = `<div class="time-provenance" title="get_tau_sampled/get_lapse_sampled/get_phase_sampled (ftd_wasm.cpp) accumulate only at manifested voxels. latency_field requires gravity; a scenario-owned de_broglie_clock is the alternate clock source.">τ needs <code>gravity + latency_field</code> or a scenario that owns <code>de_broglie_clock</code>; φ additionally requires that clocked scenario (dφ=ω₀·dτ).</div>`;
         if (needsEnable) {
-            html += `<button type="button" class="time-enable-ptime-btn" id="${PANEL_ID}-enable-ptime" style="margin:4px 0 8px;padding:4px 10px;font-size:16px;background:var(--accent,#7dd3fc);color:#04111a;border:none;border-radius:4px;cursor:pointer;">Enable latency_field + de_broglie_clock</button>`;
+            html += `<button type="button" class="time-enable-ptime-btn" id="${PANEL_ID}-enable-ptime" style="margin:4px 0 8px;padding:4px 10px;font-size:16px;background:var(--accent,#7dd3fc);color:#04111a;border:none;border-radius:4px;cursor:pointer;">Enable gravity + latency_field</button>`;
         }
-        html += renderRow('latency_field', latencyField ? 'ON' : 'OFF', 'M', latencyField ? 'var(--positive-text)' : 'var(--text-muted)', 'Engine toggle gating accumulate_proper_time (transmutation_phases.cpp).');
+        html += renderRow('gravity', gravity ? 'ON' : 'OFF', 'M', gravity ? 'var(--positive-text)' : 'var(--text-muted)', 'Required engine prerequisite for latency_field.');
+        html += renderRow('latency_field', latencyField ? (gravity ? 'ON' : 'ON · waiting for gravity') : 'OFF', 'M', latencyReady ? 'var(--positive-text)' : 'var(--text-muted)', 'Engine toggle gating accumulate_proper_time (transmutation_phases.cpp); requires gravity.');
         html += renderRow('de_broglie_clock', deBroglieClock ? 'ON' : 'OFF', 'M', deBroglieClock ? 'var(--positive-text)' : 'var(--text-muted)', 'Engine toggle additionally advancing the phase φ.');
         if (!ptime.hasField) {
             html += `<div class="time-empty">No τ/lapse/φ field yet — enable the toggles above, load a scenario with manifested particles, and press play.</div>`;
@@ -611,7 +572,9 @@ export function mountTimePanel(host, getBridge) {
         }
         const sampleStride = Math.max(BASE_STRIDE,
             Math.ceil((Number(caps.latticeSize) || 33) / TARGET_AXIS_SAMPLES));
-        getBridge?.()?.replaceSamplerWants?.('time-panel', [`latency@${sampleStride}`, 'tau@1', 'lapse@1', 'dbPhase@1']);
+        getBridge?.()?.replaceSamplerWants?.('time-panel', [
+            `latency@${sampleStride}`,
+        ]);
 
         const diagMeta = telemetryHub.getScale0TelemetryMeta?.('diagnostics') ?? null;
         // This instrument consumes only qualified diagnostics. Fetching the
@@ -639,7 +602,7 @@ export function mountTimePanel(host, getBridge) {
             renderCardF(cardF, { hasField: false, tauCount: 0, lapseCount: 0, phaseCount: 0,
                 properTimeMean: Number.NaN, properTimeMin: Number.NaN, properTimeMax: Number.NaN,
                 lapseMean: Number.NaN, dbPhaseMean: Number.NaN, dbPhaseCircVar: Number.NaN },
-                { latencyField: readEngineToggle(b, 'latency_field'), deBroglieClock: readEngineToggle(b, 'de_broglie_clock') });
+                { gravity: readEngineToggle(b, 'gravity'), latencyField: readEngineToggle(b, 'latency_field'), deBroglieClock: readEngineToggle(b, 'de_broglie_clock') });
             return;
         }
 
@@ -707,17 +670,23 @@ export function mountTimePanel(host, getBridge) {
             active: dbActive, omega0, phase, speed, latency, clockRate: clockRateNow,
         });
 
-        // Card F — field-wide τ/lapse/φ aggregates + telemetry publication
-        // (2026-09-03). Independent of Card E's single-voxel reading; runs
-        // whenever the panel is live regardless of de_broglie_clock state, so
-        // τ/lapse (gated on latency_field OR de_broglie_clock) still surface
-        // when only latency_field is on.
-        const ptime = sampleProperTimeMetrics(caps);
+        // Card F consumes the canonical proper-time telemetry observation used
+        // by the Grid. Acquisition and tau/lapse/phase sampler demand belong to
+        // telemetry/demand.js, so opening this panel cannot create a second read
+        // or relabel a held sample with the current diagnostics clock.
+        const ptimeMeta = telemetryHub.getScale0TelemetryMeta?.('properTime') ?? null;
+        const ptimePublished = telemetryHub.s0?.properTime ?? null;
+        const ptime = ptimeMeta && ptimeMeta.stale !== true
+            && Number.isFinite(ptimeMeta.tick) && ptimePublished?.hasField === true
+            ? ptimePublished
+            : { hasField: false, tauCount: 0, lapseCount: 0, phaseCount: 0,
+                properTimeMean: Number.NaN, properTimeMin: Number.NaN, properTimeMax: Number.NaN,
+                lapseMean: Number.NaN, dbPhaseMean: Number.NaN, dbPhaseCircVar: Number.NaN };
         renderCardF(cardF, ptime, {
+            gravity: readEngineToggle(b, 'gravity'),
             latencyField: readEngineToggle(b, 'latency_field'),
             deBroglieClock: readEngineToggle(b, 'de_broglie_clock'),
         });
-        telemetryHub.publishScale0ProperTimeMetrics(ptime, tick);
     }
 
     // Defer the rAF update loop + stylesheet to first show. A light 2 Hz arm poll

@@ -32,6 +32,7 @@ class RAFCoordinator {
         this._subs = new Map();             // id → { hz, cb, lastFireAt, nextDueAt }
         this._rafId = null;
         this._lastTickMs = 0;
+        this._suspensions = new Set();
         this._hidden = (typeof document !== 'undefined') && document.hidden;
         if (typeof document !== 'undefined') {
             document.addEventListener('visibilitychange', () => {
@@ -83,7 +84,7 @@ class RAFCoordinator {
     }
 
     _ensureRunning() {
-        if (this._rafId != null) return;
+        if (this._rafId != null || this._suspensions.size || !this._subs.size) return;
         this._lastTickMs = performance.now();
         const loop = () => {
             this._rafId = requestAnimationFrame(loop);
@@ -100,6 +101,7 @@ class RAFCoordinator {
     }
 
     _tick() {
+        if (this._suspensions.size) return;
         const now = performance.now();
         this._lastTickMs = now;
         for (const sub of this._subs.values()) {
@@ -136,6 +138,24 @@ class RAFCoordinator {
     size() {
         return this._subs.size;
     }
+
+    /** Retain registrations while another workspace owns presentation. */
+    suspend() {
+        const token = {};
+        this._suspensions.add(token);
+        this._stop();
+        return () => {
+            if (!this._suspensions.delete(token) || this._suspensions.size) return;
+            const now = performance.now();
+            for (const sub of this._subs.values()) {
+                sub.lastFireAt = now;
+                sub.nextDueAt = now + 1000 / sub.hz;
+            }
+            this._ensureRunning();
+        };
+    }
+
+    get suspended() { return this._suspensions.size > 0; }
 
     /**
      * Drop every subscriber and stop the rAF loop. Useful for HMR /

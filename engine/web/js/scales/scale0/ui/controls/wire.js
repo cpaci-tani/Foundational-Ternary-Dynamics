@@ -43,6 +43,8 @@ import {
     formatFluxThreshold,
     sliderPositionToFluxThreshold,
 } from '../../../../viewport/flux-threshold.js';
+import { wireFieldActionCard, wireReadOnlyParameterCard } from './substrate-card-binder.js';
+import { wireFluxVolumeCard } from './flux-volume-binder.js';
 
 let _wired = false;
 
@@ -89,7 +91,9 @@ function createLatestInputFrame(ctx, {
 } = {}) {
     const pendingInputs = new Map();
     let inputFrame = null;
-    return (key, slider, display, format, apply, metadata = null) => {
+    let disposed = false;
+    const schedule = (key, slider, display, format, apply, metadata = null) => {
+        if (disposed) return;
         pendingInputs.set(key, {
             generation: generationAware ? (ctx._loadGeneration || 0) : null,
             slider,
@@ -117,6 +121,13 @@ function createLatestInputFrame(ctx, {
             if (committed.length) afterFlush?.(committed);
         });
     };
+    schedule.dispose = () => {
+        disposed = true;
+        pendingInputs.clear();
+        if (inputFrame !== null) cancelAnimationFrame(inputFrame);
+        inputFrame = null;
+    };
+    return schedule;
 }
 
 function wirePhysicsToggles(ctx, api) {
@@ -480,156 +491,6 @@ function wireInjection(ctx, api) {
             h => h.createEntangledPair(x, y, z, kb, 0, 0),
         )) api.setLatticeNeedsUpload();
     });
-}
-
-function wireParameterSliders(ctx) {
-    const sliders = [
-        { id: 'combo-kb',    valId: 'combo-kb-val',    param: 'kb',       fmt: 3 },
-        { id: 'combo-gn',    valId: 'combo-gn-val',    param: 'gn',       fmt: 3 },
-        { id: 'combo-damp',  valId: 'combo-damp-val',  param: 'damping',  fmt: 4 },
-    ];
-    for (const s of sliders) {
-        const slider = getEl(s.id);
-        const display = getEl(s.valId);
-        if (!slider || !display) continue;
-        // These are compile-time engine constants on WASM/C++ and
-        // acknowledged profile values on native. Present truthful readouts;
-        // no live Scale-0 backend exposes a writable setter for this card.
-        slider.step = 'any';
-        slider.disabled = true;
-        slider.setAttribute('aria-readonly', 'true');
-        slider.setAttribute('aria-disabled', 'true');
-        slider.title = `${s.param} is a read-only engine constant.`;
-        slider.classList.add('ctrl-slider-disabled');
-        slider.closest('.pe-ctrl-row')?.classList.add('ctrl-native-readonly');
-    }
-}
-
-function wireFieldActions(ctx, api) {
-    getEl('btn-clear-field')?.addEventListener('click', () => {
-        const accepted = scientificHarness(
-            ctx,
-            SCALE0_MUTATION_REASONS.CLEAR_FIELD,
-            SCALE0_MUTATION_SOURCES.SUBSTRATE_CONTROLS,
-            h => {
-            if (typeof h.clearField === 'function') {
-                h.clearField();
-            } else {
-                h.reset();
-            }
-        });
-        if (!accepted) return;
-        ctx.clearCharts?.();
-        api.setLatticeNeedsUpload();
-    });
-
-    getEl('btn-random-flux')?.addEventListener('click', () => {
-        if (scientificHarness(
-            ctx,
-            SCALE0_MUTATION_REASONS.RANDOM_FLUX,
-            SCALE0_MUTATION_SOURCES.SUBSTRATE_CONTROLS,
-            h => h.seedRandomFlux?.(),
-        )) api.setLatticeNeedsUpload();
-    });
-}
-
-function wireFluxVolume(ctx, api) {
-    // Range inputs can outpace the display refresh rate on high-polling mice.
-    // Collapse every card-wide burst to one latest-value transaction per frame,
-    // and collapse point-size/threshold upload invalidation to one dirty write.
-    // A scenario load increments _loadGeneration; jobs from an older generation
-    // are discarded because the loader has already captured/restored the DOM.
-    const scheduleInput = createLatestInputFrame(ctx, {
-        afterFlush: jobs => {
-            if (jobs.some(job => job.metadata?.needsUpload)) api.setLatticeNeedsUpload();
-        },
-    });
-
-    const shapeSelect = getEl('flux-shape-select');
-    if (shapeSelect) {
-        shapeSelect.addEventListener('change', () => {
-            const shape = parseInt(shapeSelect.value, 10);
-            if (!Number.isInteger(shape) || shape < 0 || shape > 7) return;
-            ctx.viewport.setFluxShape(shape);
-            ctx.viewport.setFluxSliceShape?.(shape);
-        });
-    }
-
-    const opacitySlider = getEl('flux-opacity');
-    const opacityVal = getEl('flux-opacity-val');
-    if (opacitySlider && opacityVal) {
-        opacitySlider.addEventListener('input', () => {
-            scheduleInput('opacity', opacitySlider, opacityVal, v => v.toFixed(2), (v) => {
-                if (ctx._scale0ForcedVisualParameterPreferences
-                    && 'fluxOpacity' in ctx._scale0ForcedVisualParameterPreferences) {
-                    ctx._scale0ForcedVisualParameterPreferences.fluxOpacity = v;
-                }
-                ctx.viewport.setFluxOpacity(v);
-                ctx.viewport.setFluxSliceOpacity?.(v);
-            });
-        });
-    }
-
-    const scaleSlider = getEl('flux-point-scale');
-    const scaleVal = getEl('flux-point-scale-val');
-    if (scaleSlider && scaleVal) {
-        scaleSlider.addEventListener('input', () => {
-            scheduleInput('point-scale', scaleSlider, scaleVal, v => v.toFixed(1), (v) => {
-                if (ctx._scale0ForcedVisualParameterPreferences
-                    && 'fluxPointScale' in ctx._scale0ForcedVisualParameterPreferences) {
-                    ctx._scale0ForcedVisualParameterPreferences.fluxPointScale = v;
-                }
-                ctx.viewport.setFluxPointScale(v);
-                ctx.viewport.setFluxSlicePointScale?.(v);
-            }, { needsUpload: true });
-        });
-    }
-
-    const threshSlider = getEl('flux-threshold');
-    const threshVal = getEl('flux-threshold-val');
-    if (threshSlider && threshVal) {
-        threshSlider.addEventListener('input', () => {
-            scheduleInput('threshold', threshSlider, threshVal,
-                raw => formatFluxThreshold(sliderPositionToFluxThreshold(raw)), (raw) => {
-                    const v = sliderPositionToFluxThreshold(raw);
-                    threshSlider.setAttribute('aria-valuetext', formatFluxThreshold(v));
-                    if (ctx._scale0ForcedVisualParameterPreferences
-                        && 'fluxThreshold' in ctx._scale0ForcedVisualParameterPreferences) {
-                        ctx._scale0ForcedVisualParameterPreferences.fluxThreshold = v;
-                    }
-                    ctx.viewport.setFluxThreshold(v);
-                    ctx.viewport.setFluxSliceThreshold?.(v);
-                }, { needsUpload: true });
-        });
-    }
-
-    const scenarioScaleSlider = getEl('flux-scenario-scale');
-    const scenarioScaleVal = getEl('flux-scenario-scale-val');
-    if (scenarioScaleSlider && scenarioScaleVal) {
-        scenarioScaleSlider.addEventListener('input', () => {
-            scheduleInput('scenario-scale', scenarioScaleSlider, scenarioScaleVal,
-                v => v.toFixed(1), v => ctx.viewport.setScenarioScale(v));
-        });
-    }
-
-    const latticeSpacingSlider = getEl('flux-lattice-spacing');
-    const latticeSpacingVal = getEl('flux-lattice-spacing-val');
-    if (latticeSpacingSlider && latticeSpacingVal) {
-        latticeSpacingSlider.addEventListener('input', () => {
-            scheduleInput('lattice-spacing', latticeSpacingSlider, latticeSpacingVal,
-                v => v.toFixed(2), v => ctx.viewport.setFluxLatticeSpacing?.(v));
-        });
-    }
-
-    const wireframeBrightnessSlider = getEl('wireframe-brightness');
-    const wireframeBrightnessVal = getEl('wireframe-brightness-val');
-    if (wireframeBrightnessSlider && wireframeBrightnessVal) {
-        wireframeBrightnessSlider.addEventListener('input', () => {
-            scheduleInput('wireframe-brightness', wireframeBrightnessSlider,
-                wireframeBrightnessVal, v => v.toFixed(2),
-                v => ctx.viewport.setWireframeBrightness?.(v));
-        });
-    }
 }
 
 function wireSelection(ctx) {
@@ -1001,9 +862,30 @@ export function wireScale0Controls(ctx, api) {
     _wired = true;
     wirePhysicsToggles(ctx, api);
     wireInjection(ctx, api);
-    wireParameterSliders(ctx);
-    wireFieldActions(ctx, api);
-    wireFluxVolume(ctx, api);
+    const disposeReadOnlyParameters = wireReadOnlyParameterCard(getEl);
+    const disposeFieldActions = wireFieldActionCard({
+        getEl,
+        ctx,
+        api,
+        scientificHarness,
+        reasons: SCALE0_MUTATION_REASONS,
+        sources: SCALE0_MUTATION_SOURCES,
+    });
+    const disposeFluxVolume = wireFluxVolumeCard(ctx, api, {
+        getEl,
+        createLatestInputFrame,
+        formatFluxThreshold,
+        sliderPositionToFluxThreshold,
+        setDisplayText,
+    });
+    let controlsDisposed = false;
+    ctx.disposeScale0Controls = () => {
+        if (controlsDisposed) return;
+        controlsDisposed = true;
+        disposeFluxVolume();
+        disposeFieldActions();
+        disposeReadOnlyParameters();
+    };
     wireFlowLines(ctx);
     wireParticleDisplay(ctx);
     wireSelection(ctx);

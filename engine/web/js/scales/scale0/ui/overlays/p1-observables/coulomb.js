@@ -11,14 +11,24 @@ import { cardStyle, titleStyle, heroStyle, tagBadge, formatExp } from '../_card-
 const PROBE_SAMPLES = 80;
 const FOUR_PI = 4.0 * Math.PI;
 const NATIVE_PROBE_INTERVAL_MS = 1000;
+const LOCAL_PROBE_INTERVAL_MS = 250;
 
-function nativeProbeStride(bridge) {
-    if (!bridge?.isNativeGPU) return 1;
-    const L = Math.max(1, Math.trunc(Number(bridge.latticeSize) || 1));
-    // Bound the interactive probe to roughly a 48³ source grid. The full
-    // stride-1 path remains available through PhysicsHarness for an explicit
-    // high-resolution investigation.
-    return Math.max(2, Math.ceil(L / 48));
+export function interactiveProbeStride(bridge) {
+    const L = Math.max(1, Math.trunc(Number(
+        bridge?.getLatticeSize?.() ?? bridge?.latticeSize,
+    ) || 1));
+    // Bound every interactive fallback, including direct browser WASM, to
+    // roughly a 48³ source grid. Full-resolution sampling remains available
+    // through PhysicsHarness for an explicit investigation.
+    return Math.max(1, Math.ceil(L / 48));
+}
+
+function interactiveProbeIntervalMs(bridge) {
+    const L = Math.max(1, Math.trunc(Number(
+        bridge?.getLatticeSize?.() ?? bridge?.latticeSize,
+    ) || 1));
+    return bridge?.isNativeGPU || L > 48
+        ? NATIVE_PROBE_INTERVAL_MS : LOCAL_PROBE_INTERVAL_MS;
 }
 
 const TEMPLATE = `
@@ -44,8 +54,8 @@ export class CoulombComponent extends BaseComponent {
         const particleList = particles || bridge.getScale0ParticleList?.() || [];
         const pair = findOppositeChargePairFromList(particleList);
         const probeKey = `${scenarioId}:${pair?.pPos?.id ?? 'none'}:${pair?.pNeg?.id ?? 'none'}`;
-        const due = bridge !== this._lastBridge || !bridge?.isNativeGPU || probeKey !== this._lastProbeKey
-            || now - this._lastProbeAt >= NATIVE_PROBE_INTERVAL_MS;
+        const due = bridge !== this._lastBridge || probeKey !== this._lastProbeKey
+            || now - this._lastProbeAt >= interactiveProbeIntervalMs(bridge);
         if (due) {
             this._lastProbe = this._probeCoulombEngineE(bridge, particleList);
             this._lastProbeAt = now;
@@ -53,6 +63,9 @@ export class CoulombComponent extends BaseComponent {
             this._lastBridge = bridge;
         }
         const engineProbe = this._lastProbe;
+        if (this._hasRendered && this._renderedProbe === engineProbe) return;
+        this._hasRendered = true;
+        this._renderedProbe = engineProbe;
 
         let metaLine, heroLine, footerHTML;
         if (engineProbe) {
@@ -136,7 +149,7 @@ export class CoulombComponent extends BaseComponent {
         }
         if (!engineSamples) {
             const harness = getPhysicsHarness(bridge);
-            const probeStride = nativeProbeStride(bridge);
+            const probeStride = interactiveProbeStride(bridge);
             engineSamples = harness ? harness.sampleEFieldAlongRay(
                 { x: pPos.x, y: pPos.y, z: pPos.z },
                 { x: pNeg.x, y: pNeg.y, z: pNeg.z },

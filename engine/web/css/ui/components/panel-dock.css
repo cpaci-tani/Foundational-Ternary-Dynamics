@@ -238,35 +238,10 @@ html[data-density="compact"] #panel-area {
    queries cannot choose its internal card count. Use the dock's actual width:
    structural card/plot groups stack at <720px and the dock remains the single
    vertical scroll owner. Compact label/value rows deliberately keep their own
-   internal layouts, including Flux Slices' three-plane rows. The same family
-   list is mirrored by FloatingWindow below. */
+   internal layouts, including Flux Slices' three-plane rows. Structural grids
+   expose one semantic marker instead of duplicating an ownership list here. */
 @container docked-sidepanel (max-width: 719px) {
-    .panel :is(
-        .panel-grid-2,
-        .panel-grid-3,
-        .panel-grid-4,
-        .panel-resource-grid-2,
-        .panel-resource-grid-3,
-        .charts-row,
-        .charts-grid,
-        .diag-scale0-root,
-        .diag-scale1-root,
-        .diag-s0-grid,
-        .telemetry-grid-container,
-        .lag-layout,
-        .lag-charts-grid,
-        .grav-slice-tiles,
-        .p1-gravity-grid,
-        .particle-log-summary,
-        .particle-log-category-toggles,
-        .particle-log-view-toggles,
-        .pe-physics-columns,
-        .pe-physics-profile-actions,
-        .pc-grid-2,
-        .oo-fc-grid,
-        .oo-obs-grid,
-        .meta-stat-grid
-    ) {
+    .panel [data-panel-grid] {
         grid-template-columns: minmax(0, 1fr) !important;
     }
 }
@@ -276,15 +251,7 @@ html[data-density="compact"] #panel-area {
    #panel-area's mount-specific vertical scrollport. */
 #panel-area .panel,
 #panel-area .panel > *,
-#panel-area .panel :is(
-    .panel-grid,
-    .panel-resource-grid,
-    .charts-row,
-    .charts-grid,
-    .telemetry-grid-container,
-    .lag-layout,
-    .lag-charts-grid
-) > * {
+#panel-area .panel [data-panel-grid] > * {
     box-sizing: border-box;
     min-width: 0;
     max-width: 100%;
@@ -318,8 +285,8 @@ html[data-density="compact"] #panel-area {
 }
 
 .mount-toggle .mount-toggle-btn {
-    width: 28px;
-    height: 28px;
+    width: var(--ctrl-height-min);
+    height: var(--ctrl-height-min);
     display: inline-flex;
     align-items: center;
     justify-content: center;

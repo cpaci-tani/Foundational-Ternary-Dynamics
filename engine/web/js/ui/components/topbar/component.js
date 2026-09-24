@@ -1,4 +1,4 @@
-import { getTopbarInlineTemplate, getTopbarActionButtons, getAssistantSidebarTemplate } from './template.js';
+import { getTopbarInlineTemplate, getTopbarActionButtons } from './template.js';
 import { createValidityIndicator } from '../validity-status.js';
 
 function htmlToFragment(markup) {
@@ -43,7 +43,6 @@ export class TopbarComponent {
         this.validity ??= createValidityIndicator(this.toolbar.querySelector('[data-topbar-slot="actions"]'),
             { id: 'scale0-validity-status' });
         this.toolbar.dataset.topbar = 'enhanced';
-        this._ensureAssistantSidebar();
         this._bindInteractions();
         this._initFluidButton();
         return this;
@@ -125,56 +124,13 @@ export class TopbarComponent {
         }
     }
 
-    _ensureAssistantSidebar() {
-        let sidebar = this.app.querySelector('#assistant-sidebar');
-        if (!sidebar) {
-            this.app.insertAdjacentHTML('beforeend', getAssistantSidebarTemplate());
-            sidebar = this.app.querySelector('#assistant-sidebar');
-        }
-        this.assistantSidebar = sidebar;
-        this.assistantBackdrop = this.app.querySelector('#assistant-sidebar-backdrop');
-    }
-
     _bindInteractions() {
         this.toolbarMenuButton = this.toolbar.querySelector('#btn-toolbar-menu');
-        this.assistantButton = this.toolbar.querySelector('#btn-ftd-assistant');
-        const assistantClose = this.app.querySelector('#btn-assistant-close');
-        const assistantLaunch = this.app.querySelector('#btn-assistant-launch');
-        const assistantDraft = this.app.querySelector('#assistant-draft');
-
         this.toolbarMenuButton?.addEventListener('click', () => {
             const open = this.toolbar.dataset.compactMenu === 'open';
             this.toolbar.dataset.compactMenu = open ? 'closed' : 'open';
             this.toolbarMenuButton.setAttribute('aria-expanded', open ? 'false' : 'true');
         });
 
-        this.assistantButton?.addEventListener('click', () => this.toggleAssistant());
-        assistantClose?.addEventListener('click', () => this.closeAssistant());
-        this.assistantBackdrop?.addEventListener('click', () => this.closeAssistant());
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') this.closeAssistant();
-        });
-
-        this.app.querySelectorAll('[data-assistant-prompt]').forEach((button) => {
-            button.addEventListener('click', () => {
-                if (!assistantDraft) return;
-                assistantDraft.value = button.dataset.assistantPrompt || '';
-                assistantDraft.focus();
-            });
-        });
-
-        assistantLaunch?.addEventListener('click', (event) => event.preventDefault());
-    }
-
-    toggleAssistant(force) {
-        const shouldOpen = typeof force === 'boolean' ? force : !this.app.classList.contains('assistant-open');
-        this.app.classList.toggle('assistant-open', shouldOpen);
-        this.assistantSidebar?.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
-        if (this.assistantBackdrop) this.assistantBackdrop.hidden = !shouldOpen;
-        this.assistantButton?.classList.toggle('active', shouldOpen);
-    }
-
-    closeAssistant() {
-        this.toggleAssistant(false);
     }
 }

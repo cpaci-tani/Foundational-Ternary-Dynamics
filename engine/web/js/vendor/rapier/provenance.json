@@ -1,0 +1,13 @@
+{
+  "package": "@dimforge/rapier3d-compat",
+  "version": "0.20.0",
+  "source": "https://registry.npmjs.org/@dimforge/rapier3d-compat/-/rapier3d-compat-0.20.0.tgz",
+  "license": "Apache-2.0",
+  "distributionDirectory": "runtime",
+  "note": "Upstream dist directory relocated to runtime to preserve vendored files under project ignore rules. Runtime module embeds WebAssembly; no CDN request required.",
+  "files": {
+    "LICENSE": "4c05555705e3efde601fb1252ae48f1d63992af8a8fb8947745b7fa834e8f519",
+    "runtime/rapier_wasm3d_bg.wasm": "4d621b86d803ce9922ac44c1829902f1b60fd02d3c8b364e05374938af15ead4",
+    "runtime/rapier.mjs": "09a000bee2ad827608780cf8821258cadc243aaeb8881ab3e769de73f945eee0"
+  }
+}

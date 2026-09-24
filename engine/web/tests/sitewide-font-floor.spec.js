@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gotoAndReady, switchMode } from './_helpers.js';
+import { collectRenderedTypography } from './visual-assertions.js';
 
 const WEB_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE_EXTENSIONS = new Set(['.css', '.html', '.js', '.svg']);
@@ -12,7 +13,7 @@ const FONT_FLOOR_PX = 16;
 function sourceFiles(root) {
     const files = [];
     for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
-        if (entry.isDirectory() && ['node_modules', 'test-results'].includes(entry.name)) continue;
+        if (entry.isDirectory() && ['node_modules', 'test-results', 'tests', 'wasm', 'vendor', 'lib'].includes(entry.name)) continue;
         const fullPath = path.join(root, entry.name);
         if (entry.isDirectory()) files.push(...sourceFiles(fullPath));
         else if (SOURCE_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) files.push(fullPath);
@@ -65,41 +66,9 @@ function explicitFontViolations() {
 }
 
 async function computedFontViolations(page, label) {
-    return page.evaluate(({ floor, surface }) => {
-        const violations = [];
-        const describe = (element) => {
-            const id = element.id ? `#${element.id}` : '';
-            const classes = [...element.classList].slice(0, 3).map((name) => `.${name}`).join('');
-            return `${element.tagName.toLowerCase()}${id}${classes}`;
-        };
-        const record = (element, pseudo = null) => {
-            const style = getComputedStyle(element, pseudo);
-            const fontSize = Number.parseFloat(style.fontSize);
-            if (Number.isFinite(fontSize) && fontSize + 0.01 < floor) {
-                violations.push(`${surface}: ${describe(element)}${pseudo ?? ''} = ${fontSize}px`);
-            }
-        };
-
-        record(document.documentElement);
-        record(document.body);
-        for (const element of document.body.querySelectorAll('*')) {
-            // KaTeX's vlist-s is a geometry-only strut. Its zero-width marker
-            // is not rendered text and its 1px font metric is part of layout.
-            if (element.matches('.katex .vlist-s')) continue;
-            const hasDirectText = [...element.childNodes]
-                .some((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim());
-            const isTextControl = element.matches('button, input, select, textarea, option');
-            const isStandaloneText = element.matches('canvas, svg text');
-            if (hasDirectText || isTextControl || isStandaloneText) record(element);
-            for (const pseudo of ['::before', '::after']) {
-                const content = getComputedStyle(element, pseudo).content;
-                if (content && content !== 'none' && content !== 'normal' && content !== '""') {
-                    record(element, pseudo);
-                }
-            }
-        }
-        return violations;
-    }, { floor: FONT_FLOOR_PX, surface: label });
+    const rows = await page.evaluate(collectRenderedTypography);
+    return rows.filter(row => Number.isFinite(row.fontSize) && row.fontSize + 0.01 < FONT_FLOOR_PX)
+        .map(row => `${label}: ${row.selector} = ${row.fontSize}px`);
 }
 
 test('all source-defined font sizes respect the 16px floor', () => {
@@ -120,7 +89,7 @@ test('dashboard elements stay at or above 16px in Compact mode on every public s
     });
 
     const violations = [];
-    for (const mode of ['lattice', 'particles', 'atoms', 'molecules', 'planetary', 'meta']) {
+    for (const mode of ['lattice', 'particles', 'atoms', 'molecules', 'planetary', 'cosmic']) {
         await switchMode(page, mode);
         await page.waitForTimeout(150);
         violations.push(...await computedFontViolations(page, `dashboard/${mode}`));

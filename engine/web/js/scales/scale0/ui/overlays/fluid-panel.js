@@ -26,7 +26,7 @@ function text(node, value) {
 function ensureCss() {
     if (document.getElementById('fluid-panel-css')) return;
     const link = document.createElement('link');
-    link.id = 'fluid-panel-css'; link.rel = 'stylesheet'; link.href = 'css/ui/components/fluid-panel.css';
+    link.id = 'fluid-panel-css'; link.rel = 'stylesheet'; link.href = 'css/ui/components/fluid-panel.css?v=2';
     document.head.appendChild(link);
 }
 function card(quantity) {

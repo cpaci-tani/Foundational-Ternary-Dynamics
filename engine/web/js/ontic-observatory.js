@@ -224,7 +224,7 @@ export function renderFcCard(obs, container) {
 
     container.innerHTML = `
         <div class="card-title">(f, C<sub>0</sub>) Ordered Pair <span class="oo-card-title-sub">\u2014 Proposition II</span></div>
-        <div class="oo-fc-grid">
+        <div class="oo-fc-grid" data-panel-grid>
             <div>
                 <div class="oo-fc-label">f = Update Rule</div>
                 <div class="oo-fc-value accent">${TICK_PHASES.length}-Phase Tick</div>
@@ -260,7 +260,7 @@ export function renderObserverCard(obs, container) {
         <div class="oo-obs-hint">
             <strong>First Perturbation P<sub>0</sub></strong> (Remark / heuristic): C<sub>0</sub> \u2212 V
         </div>
-        <div class="oo-obs-grid">
+        <div class="oo-obs-grid" data-panel-grid>
             <span class="oo-obs-grid-label">Manifested</span>
             <span class="oo-obs-grid-val">${p0.nonVoidCount}</span>
             <span class="oo-obs-grid-label">${p0.activityLabel}</span>

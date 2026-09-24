@@ -27,6 +27,8 @@ import { cardStyle, titleStyle, tagBadge, formatExp, formatFixed } from '../_car
 import { LatticeSynth } from '../../../../../audio/lattice-synth.js';
 import { Sparkline } from '../../../../../ui/charts/sparkline.js';
 import { TickHistoryControl } from '../../../../../ui/charts/history-window.js';
+
+const WAVE_LAB_SAMPLER_OWNER = 'wave-lab-panel';
 import { RingBuffer } from '../../../../../telemetry-hub.js';
 import { getScale0Scenario } from '../../../scenario-registry.js';
 import { getPhysicsHarness } from '../../../../../physics/index.js';
@@ -274,7 +276,7 @@ function singleWaveBody(m, lane) {
 }
 
 export class WaveInfoComponent extends BaseComponent {
-    constructor() {
+    constructor({ historyHost = null } = {}) {
         super(TEMPLATE);
         this.bridgeRef = null;
         this.scenarioId = '';
@@ -291,7 +293,7 @@ export class WaveInfoComponent extends BaseComponent {
             sampleW: new RingBuffer(150),
         };
         this.lastHistoryTick = null;
-        this.historyControl = new TickHistoryControl(this.refs.root || this.element, {
+        this.historyControl = new TickHistoryControl(historyHost || this.refs.root || this.element, {
             id: 'wave-lab-panel',
             defaultTicks: 150,
         });
@@ -306,6 +308,7 @@ export class WaveInfoComponent extends BaseComponent {
     update(bridge, scenarioId) {
         const scenario = getScale0Scenario(scenarioId);
         if (scenarioId !== this.scenarioId || bridge !== this.bridgeRef) {
+            this.releaseSamplerDemand();
             this.audioToken++;
             this.synth.stop();
             this._cancelScheduledReseed();
@@ -313,6 +316,7 @@ export class WaveInfoComponent extends BaseComponent {
             this.lastHistoryTick = null;
         }
         if (!scenario?.tags?.includes('wave-lab')) {
+            this.releaseSamplerDemand();
             this.bridgeRef = null;
             this.scenarioId = '';
             this.controlKey = '';
@@ -344,7 +348,9 @@ export class WaveInfoComponent extends BaseComponent {
             </div>
         `);
 
-        const m = getSpectrumComparatorMetrics(bridge, scenarioId);
+        const m = getSpectrumComparatorMetrics(bridge, scenarioId, {
+            samplerOwner: WAVE_LAB_SAMPLER_OWNER,
+        });
         if (!m || !m.active) {
             this.synth.update(null);
             this._updateTrendlines(null, null);
@@ -624,11 +630,16 @@ export class WaveInfoComponent extends BaseComponent {
     onUnmount() {
         this.audioToken++;
         this._cancelScheduledReseed();
+        this.releaseSamplerDemand();
         this.bridgeRef = null;
         this.scenarioId = '';
         this.synth.stop();
         this._updateTrendlines(null, null);
         this.historyControl?.destroy();
         this.historyControl = null;
+    }
+
+    releaseSamplerDemand() {
+        this.bridgeRef?.replaceSamplerWants?.(WAVE_LAB_SAMPLER_OWNER, []);
     }
 }

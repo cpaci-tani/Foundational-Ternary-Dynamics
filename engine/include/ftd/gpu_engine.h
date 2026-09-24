@@ -56,6 +56,7 @@ public:
     // Synchronous on-demand device reduction. Transfers one fixed 32-byte
     // accumulator and never materializes the AoS host voxel mirror.
     DynamicalStateDigest dynamical_state_digest() const;
+    FluxSectors flux_sectors() const;
     void lagrangian_diagnostics(LagrangianDiag& out);
     void inspect_voxel(int index, VoxelInspection& out);
     void inspect_force(int index, ForceDiag& out);

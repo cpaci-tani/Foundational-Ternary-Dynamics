@@ -596,6 +596,15 @@ export function getActivePhysicsOwner(ctx) {
     return getActiveScale0Bridge(ctx, state);
 }
 
+/** Finish existing passive streamline work, retaining its tracker and results. */
+export async function settleBackgroundAnalysis(timeoutMs = 15000) {
+    const deadline = performance.now() + timeoutMs;
+    while (state.overlaySched?.streamlineWorkerClient?.pending.size) {
+        if (performance.now() > deadline) throw new Error('Lattice field analysis did not settle; switch cancelled');
+        await new Promise(resolve => setTimeout(resolve, 16));
+    }
+}
+
 export function setPlaybackRunning(ctx, running) {
     return setScale0PlaybackRunning(ctx, running, state);
 }

@@ -174,9 +174,14 @@ test('suppresses stale values and stats, then displays a fresh measured zero', a
             }],
         }, hub, { resetScope: 0 });
         document.body.appendChild(table.el);
+        const stats = () => ({
+            min: table.cells.get('flux:min').textContent,
+            max: table.cells.get('flux:max').textContent,
+            avg: table.cells.get('flux:avg').textContent,
+        });
         table.update();
         const liveText = table.cells.get('flux').textContent;
-        const liveStats = table.stats.get('flux').count;
+        const liveStats = stats();
         const historyBefore = hub.flux.total;
 
         hub.ingestScale0Snapshot({
@@ -184,14 +189,14 @@ test('suppresses stale values and stats, then displays a fresh measured zero', a
         }, 'native');
         table.update();
         const staleText = table.cells.get('flux').textContent;
-        const staleStats = table.stats.get('flux').count;
+        const staleStats = stats();
         const staleClass = table.cells.get('flux').closest('tr')
             .classList.contains('diag-row-telemetry-stale');
 
         publish(2, 2, 11, 0);
         table.update();
         const zeroText = table.cells.get('flux').textContent;
-        const zeroStats = table.stats.get('flux').count;
+        const zeroStats = stats();
         const historyAfter = hub.flux.total;
         table.destroy();
         return {
@@ -202,17 +207,18 @@ test('suppresses stale values and stats, then displays a fresh measured zero', a
     });
 
     expect(result).toEqual({
-        liveText: '5', liveStats: 1, historyBefore: 1,
-        staleText: '—', staleStats: 1, staleClass: true,
-        zeroText: '0', zeroStats: 2, historyAfter: 2,
+        liveText: '5', liveStats: { min: '5', max: '5', avg: '5' }, historyBefore: 1,
+        staleText: '—', staleStats: { min: '5', max: '5', avg: '5' }, staleClass: true,
+        zeroText: '0', zeroStats: { min: '0', max: '5', avg: '2.5' }, historyAfter: 2,
     });
 });
 
 test('Diagnostics sparklines keep redrawing while shared history grows beyond its initial capacity', async ({ page }) => {
     const result = await page.evaluate(async () => {
-        const [{ MultiRingBuffer }, { DiagnosticsTable }] = await Promise.all([
+        const [{ MultiRingBuffer }, { DiagnosticsTable }, { getHistoryStats }] = await Promise.all([
             import('/js/telemetry-hub.js'),
             import('/js/ui/panels/diagnostics-panel/table.js'),
+            import('/js/ui/charts/history-index.js'),
         ]);
         const ring = new MultiRingBuffer(500, ['value']);
         const hub = {
@@ -255,7 +261,7 @@ test('Diagnostics sparklines keep redrawing while shared history grows beyond it
         hub.sample.value = 526;
         table.update();
         const lastY = entry.spark.ys[Math.min(ring.count, entry.spark.visibleSamples) - 1];
-        const statsCount = table.stats.get('value').count;
+        const statsCount = getHistoryStats(ring.views.value).count;
         const stampAfterPatch = entry.stamp;
         table.destroy();
         return {
@@ -337,6 +343,7 @@ test('deduplicates reused worker-group provenance and clears a reset Telemetry G
         component.update();
         const before = {
             value: entry.valueEl.textContent,
+            unit: entry.card.querySelector('.telemetry-card-unit').textContent,
             samples: entry.lastN,
         };
         telemetryHub.resetScale(0);
@@ -356,9 +363,9 @@ test('deduplicates reused worker-group provenance and clears a reset Telemetry G
         };
     });
 
-    expect(result.auditHistoryRows).toBe(1);
-    expect(result.auditMeta.tick).toBe(40);
-    expect(result.before).toEqual({ value: '5.0000 J', samples: 1 });
+        expect(result.auditHistoryRows).toBe(1);
+        expect(result.auditMeta.tick).toBe(40);
+    expect(result.before).toEqual({ value: '5.0000', unit: '|J|', samples: 1 });
     expect(result.after).toEqual({ value: '—', samples: 0, state: 'waiting' });
 });
 

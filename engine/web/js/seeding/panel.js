@@ -8,8 +8,9 @@ import {
     MAX_RECIPE_ENVELOPE_BYTES,
 } from './recipe.js';
 import { loadFiniteCatalog, findFiniteSchema, findFiniteBaseSchema, findComponentTemplates, collectionRowBounds } from './catalog.js';
-import { prepareRecordRecipe, waitForSeedLoad, isEditedRecordRecipe } from './runtime.js';
+import { prepareRecordRecipe, isEditedRecordRecipe } from './runtime.js';
 import { describeNativeRecipe, prepareNativeRecipe } from './native-runtime.js';
+import { applySeed } from './service.js';
 import { node, button, section } from './component-editor.js';
 import { propertyEditor } from './property-editor.js';
 import { assertPropertyDescriptor } from './property-schema.js';
@@ -497,38 +498,17 @@ class SeedingPanel {
         this.abort = new AbortController(); const signal = this.abort.signal;
         this.setBusy(true); this.report('Preparing lattice seed…');
         try {
-            // Always prepare a fresh detached owner, even for an unmodified native
-            // preset: it stages a paused seed at tick 0 without priming through the
-            // live bridge, symmetric with the finite-record path (which already
-            // always prepares — the compiler itself picks the checkpoint-vs-local
-            // route for an unedited-vs-edited recipe, not this branch).
-            const nativeCustom = scenario.backend !== 'finite-records' && isCustomNativeRecipe(recipe);
-            owner = cached || (scenario.backend === 'finite-records'
-                ? await prepareRecordRecipe(recipe, this.scenarios, signal)
-                : await prepareNativeRecipe(this.ctx, recipe, signal));
-            if (this.disposed || revision !== this.revision || generation !== this.ctx._loadGeneration || signal.aborted) throw new Error('Seed superseded by another scenario or draft');
-            this.ctx.pauseSimulation?.(); this.installing = true; this.cancel.hidden = true;
-            if (owner.isNativeSeedPreview) {
-                owner = await owner.commit(signal);
-                adopted = owner === this.ctx.bridge;
-                if (this.disposed || revision !== this.revision || generation !== this.ctx._loadGeneration || signal.aborted)
-                    throw new Error('Seed acknowledgement superseded by another scenario');
-            }
-            // seedRecipe is always the current recipe (never omitted) so the applied
-            // preparation is always recorded, whether or not it turns out custom.
-            const params = scenario.backend === 'finite-records'
-                ? {preparedRecordOwner: owner, seedRecipe: cloneRecipe(recipe), latticeSize: recipe.size}
-                : {preparedNativeOwner: owner, seedRecipe: cloneRecipe(recipe), customSeed: nativeCustom, latticeSize: recipe.size};
-            this.actions.load(recipe.scenarioId, params);
-            adopted = getActiveScale0Bridge(this.ctx) === owner;
-            this.installing = false;
-            const installedGeneration = this.ctx._loadGeneration;
-            await waitForSeedLoad(this.ctx, installedGeneration, signal);
-            if (signal.aborted || this.disposed || revision !== this.revision || installedGeneration !== this.ctx._loadGeneration)
-                throw new Error('Seed acknowledgement superseded by another scenario');
-            const custom = scenario.backend === 'finite-records' ? !!owner?.scenario?.seedRecipe : nativeCustom;
-            this.ctx._appliedSeedRecipe = cloneRecipe(recipe);
-            this.ctx._appliedSeedRecipeCustom = custom;
+            const installed = await applySeed(this.ctx, {
+                recipe, scenarios: this.scenarios, owner: cached, signal,
+                loadScenario: (id, params) => this.actions.load(id, params),
+                assertCurrent: () => {
+                    if (this.disposed || revision !== this.revision || generation !== this.ctx._loadGeneration)
+                        throw new Error('Seed superseded by another scenario or draft');
+                },
+                onInstalling: value => { this.installing = value; if (value) this.cancel.hidden = true; },
+            });
+            ({ owner } = installed); adopted = true;
+            const { custom, installedGeneration } = installed;
             this.receipt = preparationReceipt(owner,recipe);
             this.report(`Applied ${custom ? 'custom preparation' : 'registered preset'} · tick ${getActiveScale0Bridge(this.ctx)?.currentTick?.() ?? 0}.`);
             await this.showSummary();

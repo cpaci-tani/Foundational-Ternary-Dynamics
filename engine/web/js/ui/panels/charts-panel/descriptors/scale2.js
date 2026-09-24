@@ -11,7 +11,7 @@ export const charts = [
     {
         id: 'ae-energy',
         title: 'Atomic Energy',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: 'E (sim)',
         defaultActive: true,
         series: [
@@ -55,7 +55,7 @@ export const charts = [
     {
         id: 'ae-temperature',
         title: 'Temperature',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: 'T (sim)',
         defaultActive: true,
         series: [
@@ -65,7 +65,7 @@ export const charts = [
     {
         id: 'ae-structure',
         title: 'Atoms & Bonds',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: 'ct',
         defaultActive: true,
         series: [
@@ -76,7 +76,7 @@ export const charts = [
     {
         id: 'ae-momentum',
         title: 'Momentum',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: '|p| (sim)',
         defaultActive: false,
         series: [
@@ -86,7 +86,7 @@ export const charts = [
     {
         id: 'ae-drift',
         title: 'Conservative Drift',
-        xLabel: 'sample',
+        xLabel: 'tick',
         yLabel: '%',
         defaultActive: false,
         series: [

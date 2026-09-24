@@ -163,6 +163,46 @@ test('native ingredient overrides accept dotted 160-character keys and full-uint
     assert.equal(validateRecipe(r, scenarios), anchor);
 });
 
+test('constructor seedSpeed remains a decimal physical setting instead of an RNG stream identity', () => {
+    const catalog=JSON.parse(readFileSync(new URL('../js/seeding/generated/native-seeds.json',import.meta.url)));
+    const descriptors=Object.entries(catalog.presets).flatMap(([id,schema])=>schema.properties
+        .filter(property=>property.key==='packet.seedSpeed').map(property=>({id,property})));
+    assert.ok(descriptors.length>0,'The regression must exercise actual generated constructor descriptors');
+    for(const {id,property} of descriptors) {
+        const scenario=scenarios.find(row=>row.id===id.split('@')[0]);
+        const recipe=createRecipe(scenario,Number(id.split('@')[1]));
+        assert.equal(property.type,'real');assert.equal(Number.isInteger(property.value),false);
+        recipe.overrides[property.key]=property.value;
+        assert.equal(validateRecipe(recipe,scenarios),scenario);
+        assert.equal(parseRecipe(JSON.stringify(recipe),scenarios).overrides[property.key],property.value);
+        const base=createNativeBaseRecipe(scenario,scenarios);
+        base.components.find(row=>row.scenarioId===scenario.id).overrides[property.key]=property.value;
+        assert.equal(validateRecipe(base,scenarios),scenario);
+    }
+});
+
+test('all actual constructor RNG keys and finite component seeds retain exact uint32 validation', () => {
+    const catalog=JSON.parse(readFileSync(new URL('../js/seeding/generated/native-seeds.json',import.meta.url)));
+    const rngKeys=[...new Set(Object.values(catalog.presets).flatMap(schema=>schema.properties)
+        .filter(property=>property.type==='integer' && property.min===0 && property.max===4294967295)
+        .map(property=>property.key))].sort();
+    assert.deepEqual(rngKeys,['protocol.bathSeed','random.seed']);
+    const invalid=[-1,4294967296,1.5,NaN,Infinity,true,'123',[123]];
+    const anchor=SCALE0_SCENARIOS[0];
+    for(const key of [...rngKeys,'ingredient.2.random.seed','ingredient.3.protocol.bathSeed','seed']) {
+        const recipe=createRecipe(anchor,33);recipe.overrides[key]=4294967295;
+        assert.equal(validateRecipe(recipe,scenarios),anchor);
+        for(const value of invalid){recipe.overrides[key]=value;assert.throws(()=>validateRecipe(recipe,scenarios),/seed must be an integer/);}
+        const base=createNativeBaseRecipe(anchor,scenarios);base.components[0].overrides[key]=4294967295;
+        assert.equal(validateRecipe(base,scenarios),anchor);
+        for(const value of invalid){base.components[0].overrides[key]=value;assert.throws(()=>validateRecipe(base,scenarios),/seed must be an integer/);}
+    }
+    const finite=createBaseRecipe(record,findFiniteBaseSchema(finiteCatalog,3));
+    const component=finite.components.find(row=>row.kind==='field_random');
+    component.parameters.seed=4294967295;assert.equal(validateRecipe(finite,scenarios),record);
+    for(const value of invalid){component.parameters.seed=value;assert.throws(()=>validateRecipe(finite,scenarios),/seed must be an integer/);}
+});
+
 test('the export envelope round-trips through parseRecipeEnvelope and rejects a mismatched domain', () => {
     const schema = findFiniteSchema(finiteCatalog, 'record-relation', 3);
     const description = schema;

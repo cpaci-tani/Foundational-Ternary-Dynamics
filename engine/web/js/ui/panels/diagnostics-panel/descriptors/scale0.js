@@ -75,7 +75,7 @@ export const sections = [
         // simultaneous observation.
         telemetryGroups: ['diagnostics', 'audit'],
         rows: [
-            { id: 'energy',       label: 'Dynamic Energy',    unit: 'E*', source: 's0.audit.dynamicEnergy', trend: 'energy' },
+            { id: 'energy',       label: 'Dynamic Energy',    unit: 'E*', source: 's0.diag.dynamicEnergy', trend: 'energy' },
             { id: 'accounted',    label: 'Accounted Energy',  unit: 'E*', source: 's0.audit.totalEnergy' },
             { id: 'rest-energy',  label: 'Particle Rest E',   unit: 'E*', source: 's0.audit.particleRestEnergy' },
             { id: 'energy-drift', label: 'Energy Drift',      unit: '%',  source: 's0.audit.energyDrift', trend: 'aud.energyDrift' },

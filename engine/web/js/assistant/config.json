@@ -1,0 +1,5 @@
+{
+  "apiBase": "",
+  "knowledgeManifest": "./data/assistant/knowledge/manifest.json",
+  "modelBase": "./data/assistant/models/"
+}

@@ -30,6 +30,8 @@ import {
 } from '../../../../telemetry/scale0-read.js';
 import { telemetryHub } from '../../../../telemetry-hub.js';
 import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
+import { projectHistoryIndices } from '../../../../ui/charts/history-index.js';
+import { setTextIfChanged } from '../../../../ui/utils/dom-text.js';
 
 const PANEL_ID = 'thermo-panel';
 const HZ = 4;
@@ -37,45 +39,13 @@ const T_UP = 0.05;        // measured first-order condensation point (lattice un
 const C2 = C_SPEED * C_SPEED;
 const SPARK_MAX = 80;
 
-function ensureCss() {
-    if (typeof document === 'undefined' || document.getElementById('thermo-panel-css')) return;
-    const s = document.createElement('style');
-    s.id = 'thermo-panel-css';
-    s.textContent = `
-    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:16px;color:var(--text-primary,#eee);padding:2px}
-    #${PANEL_ID} .tp-title{font-weight:600;letter-spacing:0.2px;margin:2px 0 8px}
-    #${PANEL_ID} .tp-title small{color:var(--text-muted,#888);font-weight:400}
-    #${PANEL_ID} .tp-ctl{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-    #${PANEL_ID} .tp-ctl input[type=range]{flex:1}
-    #${PANEL_ID} .tp-ctl .tp-tval{width:46px;text-align:right;font-variant-numeric:tabular-nums}
-    #${PANEL_ID} .tp-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--text-muted,#888);margin-bottom:7px}
-    #${PANEL_ID} .tp-tup{color:var(--accent,#e8b04b)}
-    #${PANEL_ID} .tp-presets{display:flex;gap:6px;margin-bottom:9px}
-    #${PANEL_ID} .tp-presets button{flex:1;padding:5px;border-radius:6px;cursor:pointer;border:0.5px solid var(--border-light,rgba(255,255,255,0.18));background:var(--surface-2,rgba(255,255,255,0.06));color:inherit;font-size:16px}
-    #${PANEL_ID} .tp-phase{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-    #${PANEL_ID} .tp-phase .tp-plabel{font-weight:600;min-width:80px}
-    #${PANEL_ID} .tp-bar{flex:1;height:11px;border-radius:6px;background:#0c0c11;overflow:hidden;border:0.5px solid var(--border-light,rgba(255,255,255,0.12))}
-    #${PANEL_ID} .tp-bar>div{height:100%;width:0%;background:var(--accent,#e8b04b)}
-    #${PANEL_ID} .tp-mpct{width:38px;text-align:right;font-variant-numeric:tabular-nums}
-    #${PANEL_ID} .tp-rows{margin:2px 0 8px}
-    #${PANEL_ID} .tp-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:0.5px solid var(--border-light,rgba(255,255,255,0.05))}
-    #${PANEL_ID} .tp-row span:last-child{font-variant-numeric:tabular-nums;color:var(--text-secondary,#ccc)}
-    #${PANEL_ID} .tp-heatwrap{margin:4px 0}
-    #${PANEL_ID} .tp-heatlabel{font-size:16px;color:var(--text-muted,#888);margin-bottom:3px;display:flex;justify-content:space-between}
-    #${PANEL_ID} canvas.tp-heat{width:100%;display:block;border-radius:6px;background:#0c0c11;image-rendering:pixelated;aspect-ratio:1/1}
-    #${PANEL_ID} .tp-spark{width:100%;height:34px;display:block;margin-top:4px}
-    #${PANEL_ID} .tp-foot{margin-top:9px;padding-top:8px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.12));font-size:16px;color:var(--text-muted,#888);line-height:1.45}
-    #${PANEL_ID} .tp-foot b{color:var(--text-secondary,#aaa)}`;
-    document.head.appendChild(s);
-}
-
 function buildPanel() {
     const root = document.createElement('div');
     root.id = PANEL_ID;
     root.innerHTML = `
         <div class="tp-title">Thermodynamics <small>· FTD-0274</small></div>
         <div class="tp-ctl">
-            <span style="opacity:0.8">T</span>
+            <span class="tp-temperature-symbol">T</span>
             <input id="${PANEL_ID}-slider" type="range" min="0" max="0.20" step="0.0025" value="0.03">
             <span id="${PANEL_ID}-tval" class="tp-tval">0.030</span>
         </div>
@@ -90,12 +60,20 @@ function buildPanel() {
             <div class="tp-bar"><div id="${PANEL_ID}-bar"></div></div>
             <span id="${PANEL_ID}-mpct" class="tp-mpct">0%</span>
         </div>
-        <div class="tp-rows" id="${PANEL_ID}-rows"></div>
+        <div class="tp-rows" id="${PANEL_ID}-rows">
+            <div class="tp-row"><span title="Langevin bath temperature langevin_T (lattice units; c²=1/3).">T (bath)</span><span id="${PANEL_ID}-row-bath">—</span></div>
+            <div class="tp-row"><span title="Kinetic temperature ⟨½|wave_vel|²⟩/(3/2) (equipartition, k_B≡1).">T_kin</span><span id="${PANEL_ID}-row-kinetic">—</span></div>
+            <div class="tp-row"><span title="Manifestation fraction N/L³ — the condensate order parameter.">m (condensate)</span><span id="${PANEL_ID}-row-condensate">—</span></div>
+            <div class="tp-row"><span title="Manifested voxels (the condensate &quot;particles&quot;) out of L³.">N voxels</span><span id="${PANEL_ID}-row-voxels">—</span></div>
+            <div class="tp-row"><span title="Flux field energy.">E field ½Σ|J|²</span><span id="${PANEL_ID}-row-field">—</span></div>
+            <div class="tp-row"><span title="Wave (kinetic) energy — sources T_kin.">E wave ½Σ|ẇ|²</span><span id="${PANEL_ID}-row-wave">—</span></div>
+            <div class="tp-row"><span title="Current dynamic energy: field + wave + particle KE. Observer/vacuum baseline energy is excluded.">E total</span><span id="${PANEL_ID}-row-total">—</span></div>
+        </div>
         <div class="tp-heatwrap">
             <div class="tp-heatlabel"><span>flux |J| heat map (z-slice)</span><span id="${PANEL_ID}-hmax"></span></div>
             <canvas id="${PANEL_ID}-heat" class="tp-heat" width="64" height="64"></canvas>
         </div>
-        <svg id="${PANEL_ID}-spark" class="tp-spark" viewBox="0 0 240 34" preserveAspectRatio="none"></svg>
+        <svg id="${PANEL_ID}-spark" class="tp-spark" viewBox="0 0 240 34" preserveAspectRatio="none"><path id="${PANEL_ID}-spark-path" fill="none" stroke="var(--accent,#e8b04b)" stroke-width="1.4"/></svg>
         <div class="tp-foot"><b>[REFERENCE ENGINE]</b> T is an imposed Langevin bath
         parameter; T_kin uses an equipartition convention. Manifestation fraction
         is an occupancy diagnostic, not recovered matter. The historical onset
@@ -103,11 +81,6 @@ function buildPanel() {
         establish the absence of a maximum temperature or guarantee stability
         under arbitrary heating.</div>`;
     return root;
-}
-
-function rowHTML(label, value, tip = '') {
-    const t = tip ? ` title="${tip}"` : '';
-    return `<div class="tp-row"><span${t}>${label}</span><span>${value}</span></div>`;
 }
 
 function sparkPath(values, w = 240, h = 34) {
@@ -142,7 +115,6 @@ function telemetryStamp(meta) {
 
 export function mountThermoPanel(host, getBridge) {
     if (!host) return null;
-    ensureCss();
     document.getElementById(PANEL_ID)?.remove();
     const panel = buildPanel();
     host.appendChild(panel);
@@ -150,8 +122,25 @@ export function mountThermoPanel(host, getBridge) {
 
     const slider = el('slider'), tvalEl = el('tval');
     const phaseEl = el('phase'), barEl = el('bar'), mpctEl = el('mpct');
-    const rowsEl = el('rows'), heat = el('heat'), hmaxEl = el('hmax'), sparkEl = el('spark');
+    const heat = el('heat'), hmaxEl = el('hmax'), sparkPathEl = el('spark-path');
+    const rowEls = {
+        bath: el('row-bath'),
+        kinetic: el('row-kinetic'),
+        condensate: el('row-condensate'),
+        voxels: el('row-voxels'),
+        field: el('row-field'),
+        wave: el('row-wave'),
+        total: el('row-total'),
+    };
     const mHist = [];
+    let historyGeneration = 0;
+    const historyBuffer = {
+        get count() { return mHist.length; },
+        get total() { return mHist.length; },
+        get generation() { return historyGeneration; },
+        get: index => mHist[index]?.value,
+        getTick: index => mHist[index]?.tick,
+    };
     const historyControl = new TickHistoryControl(panel, {
         id: 'thermo-panel',
         defaultTicks: SPARK_MAX,
@@ -166,11 +155,18 @@ export function mountThermoPanel(host, getBridge) {
     let pendingTemp = null;
 
     function renderHistory() {
-        const visible = historyControl.slice(mHist, entry => entry.tick);
+        let visible;
+        if (historyControl.isAll) {
+            const indices = projectHistoryIndices([historyBuffer], mHist.length, 240);
+            visible = indices ? indices.map(index => mHist[index]) : mHist.slice();
+        } else {
+            visible = historyControl.slice(mHist, entry => entry.tick);
+        }
         const d = sparkPath(visible.map(entry => entry.value));
-        sparkEl.innerHTML = d
-            ? `<path d="${d}" fill="none" stroke="var(--accent,#e8b04b)" stroke-width="1.4"/>`
-            : '';
+        if (sparkPathEl.getAttribute('d') !== d) sparkPathEl.setAttribute('d', d);
+        if (sparkPathEl.style.display === (d ? 'none' : '')) {
+            sparkPathEl.style.display = d ? '' : 'none';
+        }
     }
 
     function commitTemp(T, ctx, owner, loadGeneration) {
@@ -249,6 +245,7 @@ export function mountThermoPanel(host, getBridge) {
             lastHistoryStamp = null;
             lastRenderStamp = null;
             mHist.length = 0;
+            historyGeneration++;
         }
         if (!isPanelLive(host)) return;
 
@@ -304,21 +301,22 @@ export function mountThermoPanel(host, getBridge) {
             if (m > 0.9) { label = 'CONDENSED'; color = 'var(--accent,#e8b04b)'; }
             else if (m > 0.05) { label = 'IGNITING'; color = '#e87a4b'; }
         }
-        phaseEl.textContent = label; phaseEl.style.color = color;
-        barEl.style.width = Number.isFinite(m) ? `${(m * 100).toFixed(1)}%` : '0%';
-        mpctEl.textContent = Number.isFinite(m) ? `${(m * 100).toFixed(0)}%` : '—';
+        setTextIfChanged(phaseEl, label);
+        if (phaseEl.style.color !== color) phaseEl.style.color = color;
+        const barWidth = Number.isFinite(m) ? `${(m * 100).toFixed(1)}%` : '0%';
+        if (barEl.style.width !== barWidth) barEl.style.width = barWidth;
+        setTextIfChanged(mpctEl, Number.isFinite(m) ? `${(m * 100).toFixed(0)}%` : '—');
 
         // telemetry rows
-        rowsEl.innerHTML =
-            rowHTML('T (bath)', Number.isFinite(Tset)
-                ? `${Tset.toFixed(3)}  (${(Tset / C2).toFixed(2)} c²)` : '—', 'Langevin bath temperature langevin_T (lattice units; c²=1/3).') +
-            rowHTML('T_kin', fmt(tKin, 4), 'Kinetic temperature ⟨½|wave_vel|²⟩/(3/2) (equipartition, k_B≡1).') +
-            rowHTML('m (condensate)', fmt(m, 4), 'Manifestation fraction N/L³ — the condensate order parameter.') +
-            rowHTML('N voxels', Number.isFinite(N) && Number.isFinite(Nvox)
-                ? `${N} / ${Nvox}` : `— / ${Number.isFinite(Nvox) ? Nvox : '—'}`, 'Manifested voxels (the condensate "particles") out of L³.') +
-            rowHTML('E field ½Σ|J|²', fmt(fieldE, 3), 'Flux field energy.') +
-            rowHTML('E wave ½Σ|ẇ|²', fmt(waveE, 3), 'Wave (kinetic) energy — sources T_kin.') +
-            rowHTML('E total', fmt(totalE, 3), 'Current dynamic energy: field + wave + particle KE. Observer/vacuum baseline energy is excluded.');
+        setTextIfChanged(rowEls.bath, Number.isFinite(Tset)
+            ? `${Tset.toFixed(3)}  (${(Tset / C2).toFixed(2)} c²)` : '—');
+        setTextIfChanged(rowEls.kinetic, fmt(tKin, 4));
+        setTextIfChanged(rowEls.condensate, fmt(m, 4));
+        setTextIfChanged(rowEls.voxels, Number.isFinite(N) && Number.isFinite(Nvox)
+            ? `${N} / ${Nvox}` : `— / ${Number.isFinite(Nvox) ? Nvox : '—'}`);
+        setTextIfChanged(rowEls.field, fmt(fieldE, 3));
+        setTextIfChanged(rowEls.wave, fmt(waveE, 3));
+        setTextIfChanged(rowEls.total, fmt(totalE, 3));
 
         // flux |J| heat map (z mid-slice)
         let paintedSlice = false;
@@ -336,13 +334,13 @@ export function mountThermoPanel(host, getBridge) {
                     ramp: rampEmEnergy,
                     norm: 1 / Math.max(measuredMax, 1e-9),
                 });
-                hmaxEl.textContent = `|J|max ${measuredMax.toFixed(2)}`;
+                setTextIfChanged(hmaxEl, `|J|max ${measuredMax.toFixed(2)}`);
                 paintedSlice = true;
             }
         } catch (e) { /* slice unavailable on this bridge */ }
         if (!paintedSlice) {
             heat.getContext('2d')?.clearRect(0, 0, heat.width, heat.height);
-            hmaxEl.textContent = '—';
+            setTextIfChanged(hmaxEl, '—');
         }
 
         // m sparkline

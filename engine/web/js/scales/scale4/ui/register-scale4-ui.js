@@ -1,11 +1,10 @@
 import { createScale4ScenarioToolbarGroup } from './toolbar/component.js?v=4';
+import { registerScaleToolbarFactories } from '../../../ui/utils/scale-toolbar.js';
 
 export function registerScale4ToolbarUI(toolbarRegistry) {
-    toolbarRegistry.registerFactory({
+    registerScaleToolbarFactories(toolbarRegistry, 4, [{
         id: 'scale4-scenario',
-        slot: 'secondary',
-        scales: ['4'],
         order: 70,
         factory: () => createScale4ScenarioToolbarGroup(),
-    });
+    }]);
 }

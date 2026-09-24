@@ -248,62 +248,81 @@ test.describe('Conservation panel and WASM diagnostics', () => {
     });
 
     test('WASM vacuum diagnostics expose moving physical energy', async () => {
-        await selectScale0Scenario(page, 's0-vacuum-electron', { settleMs: 0 });
-        await expect.poll(async () => page.evaluate(async () => {
-            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
-            const state = getScale0State();
-            const owner = state.useFluxMock && state.fluxMock
-                ? state.fluxMock : window.__ftdCtx?.bridge;
-            return state.currentScenarioId === 's0-vacuum-electron'
-                && owner?.ready === true;
-        }), {
-            timeout: 60_000,
-            message: 's0-vacuum-electron owner did not become authoritative/ready',
-        }).toBe(true);
+        // This synchronous capability check deliberately exercises direct WASM.
+        // Use its documented startup switch rather than silently skipping the
+        // assertion when the public default chooses its asynchronous worker.
+        const directPage = await context.newPage();
+        try {
+            await directPage.addInitScript(() => { window.__ftdWasmWorker = false; });
+            await gotoAndReady(directPage, { path: '/?engine=wasm' });
+            await selectScale0Scenario(directPage, 's0-vacuum-electron', { settleMs: 0 });
+            await expect.poll(async () => directPage.evaluate(async () => {
+                const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+                const state = getScale0State();
+                const owner = state.useFluxMock && state.fluxMock
+                    ? state.fluxMock : window.__ftdCtx?.bridge;
+                return state.currentScenarioId === 's0-vacuum-electron'
+                    && owner?.ready === true;
+            }), {
+                timeout: 60_000,
+                message: 's0-vacuum-electron owner did not become authoritative/ready',
+            }).toBe(true);
 
-        const snap = await page.evaluate(async () => {
-            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
-            const st = getScale0State();
-            const bridge = (st.useFluxMock && st.fluxMock) ? st.fluxMock : window.__ftdCtx.bridge;
-            const caps = bridge.capabilities.scale0;
+            const snap = await directPage.evaluate(async () => {
+                const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+                const st = getScale0State();
+                const bridge = (st.useFluxMock && st.fluxMock) ? st.fluxMock : window.__ftdCtx.bridge;
+                const caps = bridge.capabilities.scale0;
 
-            const d0 = caps.getScale0Diagnostics();
-            const a0 = caps.getScale0EnergyAudit();
-            for (let i = 0; i < 20; i++) caps.tickScale0();
-            const d20 = caps.getScale0Diagnostics();
-            const a20 = caps.getScale0EnergyAudit();
+                const d0 = caps.getScale0Diagnostics();
+                const a0 = caps.getScale0EnergyAudit();
+                for (let i = 0; i < 20; i++) caps.tickScale0();
+                const d20 = caps.getScale0Diagnostics();
+                const a20 = caps.getScale0EnergyAudit();
 
-            return {
-                owner: !st.useFluxMock && bridge?.isWasm === true ? 'wasm' : 'other',
-                backendName: bridge?.constructor?.name ?? null,
-                e0: d0?.totalEnergy,
-                e20: d20?.totalEnergy,
-                audit0: a0?.totalEnergy,
-                audit20: a20?.totalEnergy,
-                cellVolume: a20?.cellVolume,
-                fieldEnergy: a20?.fieldEnergy,
-                fieldEnergyDensitySum: a20?.fieldEnergyDensitySum,
-                waveEnergy: a20?.waveEnergy,
-                waveEnergyDensitySum: a20?.waveEnergyDensitySum,
-                baseline0: d0?.vacuumBaselineEnergy ?? null,
-                baseline20: d20?.vacuumBaselineEnergy ?? null,
-                hasAudit: !!a0 && !!a20,
-            };
-        });
+                return {
+                    owner: !st.useFluxMock && bridge?.isWasm === true ? 'wasm' : 'other',
+                    backendName: bridge?.constructor?.name ?? null,
+                    // The ledger and audit share Dynamic Energy. Audit Total
+                    // additionally includes the particle rest contribution.
+                    e0: d0?.dynamicEnergy,
+                    e20: d20?.dynamicEnergy,
+                    audit0: a0?.dynamicEnergy,
+                    audit20: a20?.dynamicEnergy,
+                    accounted0: a0?.totalEnergy,
+                    accounted20: a20?.totalEnergy,
+                    rest0: a0?.particleRestEnergy,
+                    rest20: a20?.particleRestEnergy,
+                    cellVolume: a20?.cellVolume,
+                    fieldEnergy: a20?.fieldEnergy,
+                    fieldEnergyDensitySum: a20?.fieldEnergyDensitySum,
+                    waveEnergy: a20?.waveEnergy,
+                    waveEnergyDensitySum: a20?.waveEnergyDensitySum,
+                    baseline0: d0?.vacuumBaselineEnergy ?? null,
+                    baseline20: d20?.vacuumBaselineEnergy ?? null,
+                    hasAudit: !!a0 && !!a20,
+                };
+            });
 
-        test.skip(snap.owner !== 'wasm',
-            `s0-vacuum-electron owner is ${snap.backendName}, not main-thread WASM`);
-        expect(snap.hasAudit, 'energy audit object present').toBe(true);
-        expect(Math.abs(snap.e0 - snap.audit0)).toBeLessThan(1e-9);
-        expect(Math.abs(snap.e20 - snap.audit20)).toBeLessThan(1e-9);
-        expect(snap.cellVolume).toBe(1);
-        expect(Number.isFinite(snap.fieldEnergyDensitySum)).toBe(true);
-        expect(Number.isFinite(snap.waveEnergyDensitySum)).toBe(true);
-        expect(Math.abs(snap.fieldEnergy - snap.fieldEnergyDensitySum)).toBeLessThan(1e-12);
-        expect(Math.abs(snap.waveEnergy - snap.waveEnergyDensitySum)).toBeLessThan(1e-12);
-        expect(snap.e0).not.toBe(snap.e20);
-        expect(snap.baseline0).toBeGreaterThan(1000);
-        expect(snap.baseline20).toBe(snap.baseline0);
+            expect(snap.owner, `expected direct WASM, received ${snap.backendName}`).toBe('wasm');
+            expect(snap.hasAudit, 'energy audit object present').toBe(true);
+            expect([snap.e0, snap.e20, snap.audit0, snap.audit20, snap.rest0, snap.rest20]
+                .every(Number.isFinite)).toBe(true);
+            expect(Math.abs(snap.e0 - snap.audit0)).toBeLessThan(1e-9);
+            expect(Math.abs(snap.e20 - snap.audit20)).toBeLessThan(1e-9);
+            expect(Math.abs(snap.accounted0 - snap.audit0 - snap.rest0)).toBeLessThan(1e-9);
+            expect(Math.abs(snap.accounted20 - snap.audit20 - snap.rest20)).toBeLessThan(1e-9);
+            expect(snap.cellVolume).toBe(1);
+            expect(Number.isFinite(snap.fieldEnergyDensitySum)).toBe(true);
+            expect(Number.isFinite(snap.waveEnergyDensitySum)).toBe(true);
+            expect(Math.abs(snap.fieldEnergy - snap.fieldEnergyDensitySum)).toBeLessThan(1e-12);
+            expect(Math.abs(snap.waveEnergy - snap.waveEnergyDensitySum)).toBeLessThan(1e-12);
+            expect(snap.e0).not.toBe(snap.e20);
+            expect(snap.baseline0).toBeGreaterThan(1000);
+            expect(snap.baseline20).toBe(snap.baseline0);
+        } finally {
+            await directPage.close();
+        }
     });
 
     test('remount and fullscreen teardown conserve one panel and one rAF subscriber', async () => {

@@ -139,7 +139,7 @@ export function buildMetaInfoPanel(container, metaUnit) {
                 <button class="meta-btn" data-action="mirrors"><span class="swatch bg-mirrors"></span>Mirror Planes</button>
             </div>
 
-            <div class="meta-stat-grid mt">
+            <div class="meta-stat-grid mt" data-panel-grid>
                 <div class="meta-stat" title="Order of the octahedral point group O_h (48 operations) — the stabilizer of the center site.">
                     <div class="meta-stat-val color-center">48</div><div class="meta-stat-label">|O<sub>h</sub>|</div></div>
                 <div class="meta-stat" title="Order of the full symmetry group of the 3³ periodic torus, (Z/3Z)³ ⋊ O_h = 27 × 48 = 1296 = 6⁴ = |Aut(Eᵢ)|²·N_c⁴. [THEOREM] — DERIV_EXISTENTIAL_UNIT.md §8 (Theorem 8.1).">
@@ -156,7 +156,7 @@ export function buildMetaInfoPanel(container, metaUnit) {
             <span class="arrow">&#9654;</span>
         </div>
         <div class="meta-card-body">
-            <div class="meta-stat-grid">
+            <div class="meta-stat-grid" data-panel-grid>
                 <div class="meta-stat"><div class="meta-stat-val color-oct">3</div><div class="meta-stat-label">N<sub>c</sub> (colors)</div></div>
                 <div class="meta-stat"><div class="meta-stat-val color-cuboct">4</div><div class="meta-stat-label">N<sub>base</sub> (|Aut|)</div></div>
                 <div class="meta-stat"><div class="meta-stat-val color-cube">7</div><div class="meta-stat-label">b<sub>3</sub> (Betti)</div></div>
@@ -343,12 +343,12 @@ export function buildSiteInspectPanel(container, siteInfo) {
             <div class="meta-inspect-shell-dot" style="background:${c};"></div>
             <div class="meta-inspect-shell-name" style="color:${c};">${siteInfo.shell.charAt(0).toUpperCase() + siteInfo.shell.slice(1)}</div>
         </div>
-        <div class="meta-stat-grid cols-3">
+        <div class="meta-stat-grid cols-3" data-panel-grid>
             <div class="meta-stat"><div class="meta-stat-val sm">(${siteInfo.position.map(v => v.toFixed(0)).join(',')})</div><div class="meta-stat-label">position</div></div>
             <div class="meta-stat"><div class="meta-stat-val sm">${siteInfo.distance}</div><div class="meta-stat-label">distance</div></div>
             <div class="meta-stat"><div class="meta-stat-val sm">${siteInfo.sublattice}</div><div class="meta-stat-label">sublattice</div></div>
         </div>
-        <div class="meta-stat-grid mt">
+        <div class="meta-stat-grid mt" data-panel-grid>
             <div class="meta-stat"><div class="meta-stat-val xs">${siteInfo.stabilizer}</div><div class="meta-stat-label">stabilizer (|Stab|=${siteInfo.stabOrder || '?'})</div></div>
             <div class="meta-stat"><div class="meta-stat-val xs">${siteInfo.irrep}</div><div class="meta-stat-label">irrep sector</div></div>
         </div>

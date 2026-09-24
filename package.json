@@ -9,10 +9,18 @@
     "lint": "eslint \"engine/web/js/**/*.js\"",
     "lint:css": "stylelint \"engine/web/css/**/*.css\"",
     "typecheck": "tsc --noEmit",
-    "depcruise": "depcruise engine/web/js --config .dependency-cruiser.json"
+    "typecheck:observer": "tsc -p tsconfig.observer.json",
+    "test:observer": "node --test engine/web/tests/observer-*.node.test.mjs",
+    "test:observer:browser": "npm --prefix engine/web/tests test -- observer-workspace.spec.js observer-renderer.spec.js observer-lifecycle.spec.js observer-authoring.spec.js observer-zoom.spec.js observer-immersion.spec.js observer-complex-fractals.spec.js observer-phenomena.spec.js observer-interaction.spec.js observer-force-gun.spec.js observer-suspension.spec.js observer-plane-gravity.spec.js observer-mirrored-authoring.spec.js simulation-menu.spec.js --workers=1",
+    "depcruise": "depcruise engine/web/js --config .dependency-cruiser.json",
+    "typecheck:assistant": "tsc -p tsconfig.assistant.json",
+    "test:assistant": "node --test engine/web/tests/assistant-*.node.test.mjs",
+    "test:assistant:browser": "npm --prefix engine/web/tests test -- -c playwright.assistant.config.js assistant-console.spec.js assistant-lattice.spec.js assistant-search.spec.js assistant-scenario.spec.js --workers=1",
+    "test:assistant:hardware": "node scripts/assistant/run_hardware.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
+    "@types/three": "0.169.0",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@typescript-eslint/parser": "^7.7.0",
     "dependency-cruiser": "^16.2.4",

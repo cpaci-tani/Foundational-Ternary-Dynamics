@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from '../js/vendor/three/build/three.module.js';
 import { DUAL_DELTA } from '../js/constants.js';
+import { reduceProperTimeSamples } from '../js/scales/scale0/analysis/proper-time-metrics.js';
 function load(path, expression, extra={}) {
  const url=new URL('../js/'+path,import.meta.url);
  const src=readFileSync(url,'utf8').replace(/^import[\s\S]*?from\s+['"][^'"]+['"];\s*/gm,'').replace(/export\s+/g,'').replace(/import\.meta\.url/g,JSON.stringify(url.href));
@@ -94,7 +95,7 @@ test('chirality rejects malformed and mixed nonfinite publications before GPU up
 
 test('phase alone uses the current sampled split across direction, order and owner changes',()=>{
  const computePhaseFrame=load('scales/scale0/runtime/overlay-frames.js','computePhaseFrame');
- const phase=load('scales/scale0/runtime/field-overlays.js',
+ const phase=load('scales/scale0/runtime/overlay-derived-data.js',
   "SCALAR_JOBS.find(([flag])=>flag==='showPhase')[1]",{computePhaseFrame,DUAL_DELTA});
  const state={fieldFlags:{showPhase:true,showDualSubstrate:false}};
  const expected=Math.atan2(1-DUAL_DELTA,1+DUAL_DELTA);
@@ -221,26 +222,27 @@ function nestedFunction(file,name,nextMarker,context={}) {
  return vm.runInNewContext(source.slice(start,end)+'\n'+name,context);
 }
 test('canceling clock phases have no mean direction and expose sampled support',()=>{
- const sample=nestedFunction('time-panel.js','sampleProperTimeMetrics','    // Card F —');
- const result=sample({getScale0FieldSamples:({kind})=>kind==='dbPhase'
-  ? {values:new Float32Array([0,Math.PI]),count:2,effectiveStride:2}
-  : {values:[],count:0,effectiveStride:2}});
+ const empty={values:new Float32Array(0),count:0,effectiveStride:2};
+ const result=reduceProperTimeSamples({tau:empty,lapse:empty,
+  phase:{values:new Float32Array([0,Math.PI]),count:2,effectiveStride:2}});
  assert.ok(Number.isNaN(result.dbPhaseMean));assert.ok(result.dbPhaseCircVar>.999999);
  assert.equal(result.phaseCount,2);assert.equal(result.phaseStride,2);
 });
 test('scenario intent clears retained spectrum plot and numeric cards while pending',()=>{
  const bodies=Array.from({length:4},()=>({innerHTML:'previous measurement 123'}));
- const context={scenarioSyncToken:0,scenarioSyncRaf:0,EMPTY_SCENARIO_ID:'empty',
+ const context={EMPTY_SCENARIO_ID:'empty',
   stopCoordinator(){},releaseSamplerWants(){},analysis:{cancel(){context.cancelCalls++;}},cancelCalls:0,
   deepTimer:0,deepPending:true,deepRequestToken:1,latestAnalysisResult:{},mode:'deep',lastSpec:{},
   modeBadge:{},liveBtn:{},deepBtn:{},panel:{dataset:{}},
-  specBody:bodies[0],topoBody:bodies[1],metBody:bodies[2],enBody:bodies[3],
-  SCENARIO_SYNC_MAX_FRAMES:1,disposed:false,inapplicable:false,getScale0State:()=>({currentScenarioId:'new'}),
+  specBody:bodies[0],topoBody:bodies[1],metBody:bodies[2],enBody:bodies[3], disposed:false,inapplicable:false,
+  scenarioBinding:{reconcile(options){context.reconcileOptions=options;}},
+  getScale0State:()=>({currentScenarioId:'new'}),
   isScale0AuthoritativeGenerationReady:()=>false};
  context.cancelDeepMeasurement=nestedFunction('spectrum-panel.js','cancelDeepMeasurement','    function stopCoordinator',context);
- nestedFunction('spectrum-panel.js','handleScenarioIntent','    function onScenarioChange',context)('new');
+ nestedFunction('spectrum-panel.js','handleScenarioIntent','    function rebindScenarioApplicability',context)('new');
  for(const body of bodies){assert.match(body.innerHTML,/measurement unavailable/);assert.doesNotMatch(body.innerHTML,/123/);}
  assert.equal(context.lastSpec,null);assert.equal(context.panel.dataset.applicability,'pending-scenario');
  assert.equal(context.deepPending,false);assert.equal(context.latestAnalysisResult,null);
  assert.equal(context.cancelCalls,1);
+ assert.equal(context.reconcileOptions.scenarioId,'new');
 });

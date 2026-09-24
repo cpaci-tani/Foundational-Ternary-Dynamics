@@ -25,9 +25,9 @@
     letter-spacing: 0.08em; color: var(--text-secondary);
     padding: var(--sp-xs) 0; border-bottom: 1px solid var(--border);
 }
-.pe-table-wrap { max-height: 200px; overflow-y: auto; }
+.pe-table-wrap { max-height: 200px; overflow: auto; }
 .pe-table {
-    width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--fs-sm);
+    width: 100%; min-width: max-content; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--fs-sm);
 }
 .pe-table th {
     position: sticky; top: 0; background: var(--bg-surface);
@@ -39,6 +39,14 @@
 .pe-table td {
     padding: var(--sp-xs) var(--sp-sm); text-align: right; color: var(--text-primary);
     border-bottom: 1px solid var(--border);
+}
+.pe-cons-value { min-width: 0; overflow-wrap: anywhere; }
+
+.panel.panel-mount-left .pe-conservation-row,
+.panel.panel-mount-right .pe-conservation-row,
+.floating-window-body .pe-conservation-row {
+    grid-template-columns: 40px minmax(0, 1fr) 16px 56px;
+    gap: 4px;
 }
 .pe-table tr:hover { background: var(--state-hover-bg); }
 .pe-ts-label { font-size: var(--fs-xs); color: var(--text-muted); margin-top: var(--sp-sm); margin-bottom: var(--sp-xs); }

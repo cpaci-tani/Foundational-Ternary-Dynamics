@@ -8,12 +8,12 @@
  * surface at the exact native tick that caused them.
  */
 import { test, expect } from '@playwright/test';
-import { attachConsoleWatcher, gotoAndReady, realErrors } from './_helpers.js';
+import { attachConsoleWatcher, gotoAndReady, realErrors, switchMode } from './_helpers.js';
 
 async function openScale1(page) {
     const target = process.env.FTD_LIVE_URL || '/?engine=wasm';
     await gotoAndReady(page, { path: target, timeout: 90_000 });
-    await page.selectOption('#engine-mode', 'particles');
+    await switchMode(page, 'particles');
     await expect.poll(
         () => page.locator('#pe-scenario-select option').count(),
         { timeout: 30_000 }

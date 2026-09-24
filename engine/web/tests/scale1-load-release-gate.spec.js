@@ -6,7 +6,7 @@
  *   FTD_HARDWARE_WEBGL=1 FTD_SCALE1_LOAD_GATE=1 npx playwright test scale1-load-release-gate.spec.js --workers=1
  */
 import { test, expect } from '@playwright/test';
-import { attachConsoleWatcher, gotoAndReady, realErrors } from './_helpers.js';
+import { attachConsoleWatcher, gotoAndReady, realErrors, switchMode } from './_helpers.js';
 
 test.use({ trace: 'off' });
 
@@ -28,7 +28,7 @@ test.describe('Scale 1 sustained-load release gate', () => {
             testInfo.setTimeout(120_000);
             const consoleErrors = attachConsoleWatcher(page);
             await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
-            await page.selectOption('#engine-mode', 'particles');
+            await switchMode(page, 'particles');
             await page.selectOption('#pe-scenario-select', 's1-empty-zoo');
 
             const webglRenderer = await page.evaluate(() => {

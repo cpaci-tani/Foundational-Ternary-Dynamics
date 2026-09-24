@@ -10,7 +10,7 @@
  * browser errors.
  */
 import { test, expect } from '@playwright/test';
-import { attachConsoleWatcher, gotoAndReady, realErrors } from './_helpers.js';
+import { attachConsoleWatcher, gotoAndReady, realErrors, switchMode } from './_helpers.js';
 
 const NON_ADVANCING_BEHAVIORS = new Set([
     'read_only_replay',
@@ -34,7 +34,7 @@ test.describe('Scale 1 admitted scenario health', () => {
         testInfo.setTimeout(240_000);
         const consoleErrors = attachConsoleWatcher(page);
         await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
-        await page.selectOption('#engine-mode', 'particles');
+        await switchMode(page, 'particles');
 
         await expect.poll(() => page.evaluate(() => {
             const registry = window.__ftdCtx?.bridge?.peGetPhysicsRegistry?.();

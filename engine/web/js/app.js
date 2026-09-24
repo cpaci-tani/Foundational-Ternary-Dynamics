@@ -6,6 +6,15 @@
  * and wires up UI controls to the simulation bridge.
  */
 
+import { wireToolbar } from './app-wire/toolbar.js';
+import { wireParticleControls } from './app-wire/particle-controls.js';
+import { wireAtomControls } from './app-wire/atom-controls.js';
+import { wireViewportControls, syncViewControls } from './app-wire/viewport-controls.js';
+import { wireSettings } from './app-wire/settings.js';
+import { createPlaybackActions } from './app-wire/playback-actions.js';
+import { LifetimeScope } from './ui/utils/lifetime-scope.js';
+import { ObserverWorkspaceHost } from './observer/workspace-host.js';
+import { suspendDashboardWork } from './core/dashboard-suspension.js';
 import { appRegistry } from './core/registry.js';
 import { Viewport } from './viewport.js?v=26';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
@@ -22,7 +31,6 @@ import * as Scale0Controller from './scales/scale0/controller.js?v=44';
 import * as Scale1Controller from './scales/scale1/controller.js?v=31';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
-import { AE_PHYSICS_SPECS } from './scales/scale2/scenario-registry.js';
 // ── Phase 1-3: Ontic Observatory, Physics Fidelity, Aggregation Bridge
 import * as Scale4Controller from './scales/scale4/controller.js?v=12';
 import * as Scale5Controller from './scales/scale5/controller.js';
@@ -47,7 +55,7 @@ import {
     initParticleLogPanel,
     initScenePanel,
     initTelemetryGridPanel,
-} from './ui/panels/index.js?v=2';
+} from './ui/panels/index.js?v=3';
 import { isPanelLive } from './ui/panels/panel-visibility.js?v=2';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
 import { initWaveLabPanel } from './scales/scale0/ui/overlays/wave-lab-panel.js?v=2';
@@ -62,30 +70,24 @@ import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-pane
 import { initKnotsPanel } from './scales/scale0/ui/overlays/knots-panel.js';
 import { initTransactionPanel } from './scales/scale0/ui/overlays/transaction-panel.js';
 import { initScaleContextPanel } from './scales/scale0/ui/overlays/scale-context-panel.js?v=3';
-import { initSettingsModal } from './ui/components/settings-modal/component.js?v=2';
 // Wire / boot helpers extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
 import { showToast, loadProgress as _loadProgress } from './app-wire/status.js';
 import { bootBridge, applyEngineStatusChip } from './app-wire/bridge-boot.js?v=10';
 import { createBridge } from './bridge-init.js?v=10';
 import { sliderValueToSpeed, speedLabel } from './ui/components/play-bar/speed-scale.js';
-import {
-    captureScale1Checkpoint,
-    importScale1Checkpoint,
-    markScale1ReplayStart,
-    restoreSavedScale1Checkpoint,
-    serializeScale1Checkpoint,
-    verifyScale1Replay,
-} from './scales/scale1/checkpoint-replay.js?v=1';
 
 debugLog('[FTD] App version 20260318a loaded (cache-busted)');
 
 // ── Application State ────────────────────────────────────────────────
 let _initialized = false;
+const appBindings = new LifetimeScope();
+let appFrame = null;
 let bridge = null;
 // DEBUG: expose bridge globally for console inspection
 Object.defineProperty(window, '_ftdBridge', { get() { return bridge; }, configurable: true });
 let viewport = null;
+let observerHost = null;
 let appShell = null;
 let scale0Validity = null;
 let inspector = null;
@@ -208,6 +210,7 @@ function _makeCtx() {
         set running(v) { running = v; },
         get ticksPerFrame() { return ticksPerFrame; },
         get engineMode() { return engineMode; },
+        get presentationSuspended() { return !!observerHost?.suspended; },
         get activeTab() { return activeTab; },
         // Is a telemetry consumer actually rendered? A collapsed floating
         // panel has no visible consumer and must not keep GPU reductions alive.
@@ -472,7 +475,7 @@ function _fillFieldParticleBuf(pData) {
 // Leaf modules (scenario-loader, scale0 toolbar) reach the toast system via
 // this window hook — they must not import app.js (CONTRACTS §3 Rule 1).
 window.showToast = showToast;
-window.addEventListener('ftd:engine-error', event => {
+appBindings.on(window, 'ftd:engine-error', event => {
     const detail = event.detail || {};
     const message = detail.error || 'The native engine rejected a command.';
     scale0Validity?.runtimeFailure(message);
@@ -494,7 +497,7 @@ window.addEventListener('ftd:engine-error', event => {
         restartRequired: !!detail.restartRequired,
     });
 });
-window.addEventListener('ftd:engine-progress', event => {
+appBindings.on(window, 'ftd:engine-progress', event => {
     const detail = event.detail || {};
     window.chrome?.webview?.postMessage?.({
         type: 'engine-progress',
@@ -562,17 +565,17 @@ async function fallBackToWasm(reason) {
         _fallingBackToWasm = false;
     }
 }
-window.addEventListener('ftd:gpu-server-stopped', () => { fallBackToWasm('stopped-by-user'); });
+appBindings.on(window, 'ftd:gpu-server-stopped', () => { fallBackToWasm('stopped-by-user'); });
 
 // ── Initialization ───────────────────────────────────────────────────
 // Safety timeout: dismiss loading overlay after 8000ms even if init() hangs
 // (e.g. WASM compilation stalls, WebGL context fails). This prevents the user
 // from being stuck on a blank screen.
-setTimeout(() => {
+appBindings.timeout(() => {
     const lo = document.getElementById('loading-overlay');
     if (lo && !lo.classList.contains('hidden')) {
         lo.classList.add('hidden');
-        setTimeout(() => lo.classList.add('removed'), 350);
+        appBindings.timeout(() => lo.classList.add('removed'), 350);
         debugLog('[loading] Safety timeout dismissed overlay');
     }
 }, 8000);
@@ -584,12 +587,18 @@ async function init() {
     appShell = new AppShell({
         app: document.getElementById('app'),
         onViewportResize: () => viewport?.resize?.(),
+        onDestroy: () => {
+            pauseSimulation();
+            if (appFrame !== null) cancelAnimationFrame(appFrame);
+            appFrame = null;
+            appBindings.dispose();
+        },
     }).init();
 
     scale0Validity = createScale0ValidityMonitor(appShell.topbar?.validity);
     // App lifetime subscription: pagehide can enter BFCache, whose restored page
     // still needs load/reset notifications. A full navigation discards this page.
-    subscribeScale0Qualification(snapshot => scale0Validity.setQualification(snapshot));
+    appBindings.defer(subscribeScale0Qualification(snapshot => scale0Validity.setQualification(snapshot)));
 
     _loadProgress(5, 'Caching DOM...');
     _cacheDOM();
@@ -614,6 +623,38 @@ async function init() {
     viewport = new Viewport(viewportContainer);
     viewport.setLatticeSize(latticeSize);
     appRegistry.register('viewport', viewport);
+    observerHost = new ObserverWorkspaceHost({
+        app: document.getElementById('app'),
+        button: document.getElementById('btn-observer-workspace'),
+        viewport,
+        getMode: () => engineMode,
+        getRunning: () => running,
+        getReturnFocus: () => document.getElementById('simulation-menu-trigger'),
+        suspendDashboard: () => suspendDashboardWork([
+            Scale0Controller.getActivePhysicsOwner(_makeCtx()), bridge,
+        ], { settleAnalysis: () => Scale0Controller.settleBackgroundAnalysis() }),
+        setRunning: value => {
+            if (!value) pauseSimulation();
+            else {
+                running = true;
+                if (engineMode === 'lattice') Scale0Controller.setPlaybackRunning(_makeCtx(), true);
+                updatePlayButton();
+            }
+        },
+        readLattice: () => {
+            const owner = engineMode === 'lattice' ? Scale0Controller.getActivePhysicsOwner(_makeCtx()) : null;
+            return { owner, mode: engineMode, scenario: Scale0Controller.getCurrentScenarioId() };
+        },
+    });
+    appBindings.defer(() => observerHost?.dispose());
+    appRegistry.register('observerHost', observerHost);
+    // The assistant loads independently; inference never becomes a frame-loop dependency.
+    void import('./assistant/bootstrap.js').then(({ createAssistant }) => createAssistant({
+        getCtx: _makeCtx, isLattice: () => engineMode === 'lattice', loadLatticeScenario: Scale0Controller.loadScenario,
+        host: observerHost, registry: appRegistry, app: document.getElementById('app'),
+    })).then(assistant => appBindings.defer(() => assistant.dispose()))
+        .catch(error => console.warn('JEV console unavailable:', error.message));
+
 
     _loadProgress(50, 'Creating panels...');
     // Initialize panel component wrappers (Phase 4)
@@ -700,18 +741,21 @@ async function init() {
     // Mount it before wireToolbar so those button IDs exist in the DOM
     // when the toolbar wirer attaches its listeners.
     Scale0Controller.mountScale0PlaybackUI();
-    wireToolbar();
+    appBindings.defer(wireToolbar(_makeCtx(), playbackActions));
     wireTabs();
     // Scale controllers own their own UI wiring (controls panel cards, event
-    // handlers). wireControls() below only handles Scale 1/2/3 legacy wiring
-    // that hasn't yet migrated.
+    // handlers). The application binders own shared transport, viewport, and
+    // particle/atom controls through live context getters.
     Scale0Controller.bindUI(_makeCtx());
+    // The cards persist across scale switches; release them only with the app.
+    appBindings.defer(() => _makeCtx().disposeScale0Controls?.());
     Scale1Controller.bindScale1ControlsUI();
     Scale2Controller.bindScale2ControlsUI();
     Scale3Controller.bindScale3ControlsUI();
-    wireControls();
-    wireViewportToggles();
-    wireKeyboard();
+    appBindings.defer(wireParticleControls(_makeCtx(), { loadPEScenario }));
+    appBindings.defer(wireAtomControls(_makeCtx(), { loadAEScenario }));
+    appBindings.defer(wireViewportControls(_makeCtx()));
+    appBindings.defer(wireKeyboard());
 
     // Cold-boot lifecycle mount (pagehide → exitScale0, overlay panel
     // idempotent init, prime-tick button). switchEngineMode already mounts
@@ -743,20 +787,20 @@ async function init() {
             updateToggleButton(isHidden);
             
             // Force WebGL renderer resize and camera update
-            setTimeout(() => {
+            appBindings.timeout(() => {
                 window.dispatchEvent(new Event('resize'));
             }, 50);
         };
 
-        btnToggleUI.addEventListener('click', toggleUI);
+        appBindings.on(btnToggleUI, 'click', toggleUI);
 
         const btnShowUI = document.getElementById('btn-show-ui');
         if (btnShowUI) {
-            btnShowUI.addEventListener('click', toggleUI);
+            appBindings.on(btnShowUI, 'click', toggleUI);
         }
 
         // Bind keyboard shortcut (Ctrl+U)
-        document.addEventListener('keydown', (e) => {
+        appBindings.on(document, 'keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') {
                 e.preventDefault();
                 toggleUI();
@@ -774,7 +818,7 @@ async function init() {
     bgManager = new BackgroundManager(viewport.scene);
     const bgSelect = document.getElementById('bg-select');
     bgManager.set(bgSelect.value, viewport.renderer);
-    bgSelect.addEventListener('change', () => bgManager.set(bgSelect.value, viewport.renderer));
+    appBindings.on(bgSelect, 'change', () => bgManager.set(bgSelect.value, viewport.renderer));
 
     _loadProgress(95, 'Loading scenario...');
 
@@ -786,16 +830,16 @@ async function init() {
     // Done — dismiss loading overlay
     _loadProgress(100, 'Ready');
     if (appShell) appShell.setReady();
-    setTimeout(() => {
+    appBindings.timeout(() => {
         const lo = document.getElementById('loading-overlay');
         if (lo) {
             lo.classList.add('hidden');
-            setTimeout(() => lo.classList.add('removed'), 350);
+            appBindings.timeout(() => lo.classList.add('removed'), 350);
         }
     }, 400); // brief pause at 100% so user sees completion
 
     // Start frame loop
-    requestAnimationFrame(animate);
+    appFrame = requestAnimationFrame(animate);
 }
 
 // ── Frame Loop ───────────────────────────────────────────────────────
@@ -807,7 +851,13 @@ async function init() {
 // Scale4Controller.loadScenario. All other modes (including 'cosmic'
 // after Phase B.1) drive physics + render from this rAF loop.
 function animate(now) {
-    requestAnimationFrame(animate);
+    if (appBindings.disposed) return;
+    appFrame = requestAnimationFrame(animate);
+
+    if (observerHost?.suspended) {
+        observerHost.frame(now);
+        return;
+    }
 
     if (engineMode === 'cosmic') {
         Scale5Controller.animateCosmic(_makeCtx());
@@ -883,7 +933,10 @@ const _panelUpdateIntervalMs = Object.freeze({
     // captured in the 2026-08-28 audit video. Floated and non-Scale-0 grids
     // remain bounded by the component's matching ~30 Hz render cap.
     'telemetry-grid': 33,
-    lagrangian: 250,
+    // Lagrangian plots are already source-stamp gated. A floated panel must
+    // receive completed observations on the next display frame, just like its
+    // docked worker-backed counterpart; 250 ms limited every plot to 4 Hz.
+    lagrangian: 0,
     'interaction-hierarchy': 100,
     'particle-log': 100,
 });
@@ -1002,201 +1055,7 @@ function animateAE(now) {
 // populateConstants moved to ui/app-ontic.js (Wave 2 ticket 7).
 
 // ── Toolbar Wiring ───────────────────────────────────────────────────
-function wireToolbar() {
-    // Play/Pause
-    document.getElementById('btn-play').addEventListener('click', togglePlay);
 
-    // Step
-    document.getElementById('btn-step').addEventListener('click', () => {
-        pauseSimulation();
-        if (engineMode === 'atoms' || engineMode === 'molecules') {
-            bridge.aeTick();
-        } else if (engineMode === 'particles') {
-            bridge.peTick();
-        } else if (engineMode === 'cosmic') {
-            Scale5Controller.step(_makeCtx());
-        } else if (engineMode === 'planetary') {
-            // Step the planetary bridge one tick via Scale4Controller
-            Scale4Controller.step();
-        } else if (engineMode === 'meta') {
-            // No-op: MetaUnit has no tick-based physics to step.
-        } else {
-            Scale0Controller.step(_makeCtx());
-        }
-    });
-
-    // Reset
-    document.getElementById('btn-reset').addEventListener('click', () => {
-        pauseSimulation();
-        if (engineMode === 'cosmic') {
-            Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
-        } else if (engineMode === 'planetary') {
-            Scale4Controller.loadScenario(_makeCtx(), document.getElementById('planetary-scenario-select')?.value || 'planetary-solar');
-        } else if (engineMode === 'molecules') {
-            loadMoleculeScenario(document.getElementById('mol-scenario-select').value);
-        } else if (engineMode === 'atoms') {
-            loadAEScenario(document.getElementById('ae-scenario-select').value);
-        } else if (engineMode === 'particles') {
-            loadPEScenario(document.getElementById('pe-scenario-select').value);
-        } else if (engineMode === 'meta') {
-            Scale6Controller.loadScenario(_makeCtx());
-        } else {
-            Scale0Controller.reset(_makeCtx());
-        }
-    });
-
-    const slider = document.getElementById('ticks-per-frame');
-    applyTicksPerFrameFromSlider(slider.value);
-    let speedInputRaf = null;
-    slider.addEventListener('input', () => {
-        if (speedInputRaf !== null) return;
-        speedInputRaf = requestAnimationFrame(() => {
-            speedInputRaf = null;
-            applyTicksPerFrameFromSlider(slider.value);
-        });
-    });
-
-    // Engine mode selector (Scale 0 / Scale 1)
-    document.getElementById('engine-mode').addEventListener('change', (e) => {
-        pauseSimulation();
-        switchEngineMode(e.target.value);
-    });
-
-    // PE scenario selector
-    document.getElementById('pe-scenario-select').addEventListener('change', (e) => {
-        running = false;
-        updatePlayButton();
-        loadPEScenario(e.target.value);
-    });
-    // AE scenario selector
-    document.getElementById('ae-scenario-select').addEventListener('change', (e) => {
-        running = false;
-        updatePlayButton();
-        loadAEScenario(e.target.value);
-    });
-
-    // Scale 3 molecule scenario selector
-    const molSelect = document.getElementById('mol-scenario-select');
-    if (molSelect) {
-        molSelect.addEventListener('change', (e) => {
-            running = false;
-            updatePlayButton();
-            loadMoleculeScenario(e.target.value);
-        });
-    }
-
-    // Planetary scenario selector
-    const planetarySelect = document.getElementById('planetary-scenario-select');
-    if (planetarySelect) {
-        planetarySelect.addEventListener('change', (e) => {
-            running = false;
-            updatePlayButton();
-            // Pass live ctx (with getters) so the rafCoordinator loop callback reads live running/engineMode (audit P0-5 fix, 2026-05-27).
-            Scale4Controller.loadScenario(_makeCtx(), e.target.value);
-        });
-    }
-
-    // Cosmic scenario selector
-    const cosmicSelect = document.getElementById('cosmic-scenario-select');
-    if (cosmicSelect) {
-        cosmicSelect.addEventListener('change', (e) => {
-            running = false;
-            updatePlayButton();
-            Scale5Controller.loadCosmicScenario(_makeCtx(), e.target.value);
-        });
-    }
-    // Cosmic camera selector
-    const cosmicCamera = document.getElementById('cosmic-camera-select');
-    if (cosmicCamera) {
-        cosmicCamera.addEventListener('change', (e) => {
-            Scale5Controller.setCameraPreset(e.target.value);
-        });
-    }
-
-    // Scale 2 empirical orbital-cloud decoration.
-    const cloudToggle = document.getElementById('ae-show-clouds');
-    if (cloudToggle) {
-        cloudToggle.addEventListener('change', (e) => {
-            Scale2Controller.setAEVisualToggle('showOrbitalClouds', e.target.checked);
-        });
-    }
-    // ── Enhanced atom/molecule visual controls ──
-
-    // Nucleus shells (strong force glow)
-    const shellToggle = document.getElementById('ae-show-shells');
-    if (shellToggle) {
-        shellToggle.addEventListener('change', (e) => {
-            Scale2Controller.setAEVisualToggle('showNucleusShells', e.target.checked);
-            viewport.toggleNucleusShells(e.target.checked);
-        });
-    }
-
-    const labelToggle = document.getElementById('ae-show-labels');
-    if (labelToggle) {
-        labelToggle.addEventListener('change', (e) => {
-            Scale2Controller.setAEVisualToggle('showElementLabels', e.target.checked);
-            viewport.toggleElementLabels(e.target.checked);
-        });
-    }
-
-    // Shell boundary spheres
-    const shellBoundsToggle = document.getElementById('ae-show-shell-bounds');
-    if (shellBoundsToggle) {
-        shellBoundsToggle.addEventListener('change', (e) => {
-            Scale2Controller.setAEVisualToggle('showShellBounds', e.target.checked);
-            viewport.toggleOrbitalShells(e.target.checked);
-        });
-    }
-
-    // Orbital lobes
-    const lobeToggle = document.getElementById('ae-show-lobes');
-    if (lobeToggle) {
-        lobeToggle.addEventListener('change', (e) => {
-            Scale2Controller.setAEVisualToggle('showOrbitalLobes', e.target.checked);
-            viewport.toggleOrbitalLobes(e.target.checked);
-        });
-    }
-
-    // Bond style selector
-    const bondStyleSelect = document.getElementById('bond-style-select');
-    if (bondStyleSelect) {
-        bondStyleSelect.addEventListener('change', (e) => {
-            Scale2Controller.setAEVisualToggle('bondStyle', e.target.value);
-            viewport.toggleBondCylinders(e.target.value === 'cylinders');
-            viewport.toggleBondLines(e.target.value === 'lines');
-        });
-    }
-
-    // Force arrow toggles
-    const forceToggles = [
-        ['ae-force-ionic', '_showAEForceIonic', 'toggleAEForceIonic'],
-        ['ae-force-vdw', '_showAEForceVdw', 'toggleAEForceVdw'],
-        ['ae-force-bond', '_showAEForceBond', 'toggleAEForceBond'],
-        ['ae-force-hbond', '_showAEForceHBond', 'toggleAEForceHBond'],
-        ['ae-force-angle', '_showAEForceAngle', 'toggleAEForceAngle'],
-        ['ae-force-dipole', '_showAEForceDipole', 'toggleAEForceDipole'],
-        ['ae-force-net', '_showAEForceNet', 'toggleAEForceNet'],
-    ];
-    for (const [id, flag, method] of forceToggles) {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.addEventListener('click', () => {
-                const isActive = btn.classList.toggle('active');
-                btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-                switch (flag) {
-                    case '_showAEForceIonic': Scale2Controller.setAEVisualToggle('showAEForceIonic', isActive); break;
-                    case '_showAEForceVdw': Scale2Controller.setAEVisualToggle('showAEForceVdw', isActive); break;
-                    case '_showAEForceBond': Scale2Controller.setAEVisualToggle('showAEForceBond', isActive); break;
-                    case '_showAEForceHBond': Scale2Controller.setAEVisualToggle('showAEForceHBond', isActive); break;
-                    case '_showAEForceAngle': Scale2Controller.setAEVisualToggle('showAEForceAngle', isActive); break;
-                    case '_showAEForceDipole': Scale2Controller.setAEVisualToggle('showAEForceDipole', isActive); break;
-                    case '_showAEForceNet': Scale2Controller.setAEVisualToggle('showAEForceNet', isActive); break;
-                }
-                viewport[method](isActive);
-            });
-        }
-    }
-}
 
 // ── Tab System ───────────────────────────────────────────────────────
 // Wires sidebar tab buttons to show/hide corresponding panels.
@@ -1233,452 +1092,10 @@ function wireTabs() {
 // volume, field actions) are wired by Scale0Controller.bindUI via
 // js/scales/scale0/ui/controls/wire.js. This function now handles only
 // Scale 1 (PE) and Scale 2/3 (AE) controls.
-function wireControls() {
-    // PE controls — every row carries the exact native registry toggle key.
-    // This avoids a second hand-maintained setter map in the browser.
-    for (const el of document.querySelectorAll('[data-pe-toggle]')) {
-        el.addEventListener('change', () => {
-            const accepted = bridge.peSetToggle?.(el.dataset.peToggle, el.checked);
-            if (accepted === false) {
-                el.checked = !!bridge.peGetToggle?.(el.dataset.peToggle);
-            }
-            Scale1Controller.markPhysicsProfileModified();
-        });
-    }
 
-    for (const button of document.querySelectorAll('[data-pe-profile]')) {
-        button.addEventListener('click', () => {
-            Scale1Controller.applyPhysicsProfile(bridge, button.dataset.peProfile);
-        });
-    }
-
-    // PE sliders
-    const dtSlider = document.getElementById('pe-dt-slider');
-    const dtValue = document.getElementById('pe-dt-value');
-    if (dtSlider) {
-        dtSlider.addEventListener('input', () => {
-            const dt = parseFloat(dtSlider.value);
-            dtValue.textContent = dt.toFixed(1);
-            bridge.peSetDt(dt);
-            Scale1Controller.markObservationDirty();
-        });
-    }
-
-    const softSlider = document.getElementById('pe-soft-slider');
-    const softValue = document.getElementById('pe-soft-value');
-    if (softSlider) {
-        softSlider.addEventListener('input', () => {
-            const s = parseFloat(softSlider.value);
-            softValue.textContent = s.toFixed(2);
-            bridge.peSetSoftening(s);
-            Scale1Controller.markObservationDirty();
-            telemetryHub.setScale1Runtime({ softening: s });
-        });
-    }
-
-    // Trajectory history is presentation-only and tick-aligned. The generic
-    // data key keeps all visual history controls on one controller contract.
-    for (const input of document.querySelectorAll('[data-pe-trail-setting]')) {
-        input.addEventListener('input', () => {
-            Scale1Controller.setTrailSettings({
-                [input.dataset.peTrailSetting]: parseFloat(input.value),
-            });
-        });
-    }
-    for (const button of document.querySelectorAll('[data-pe-trail-mode]')) {
-        button.addEventListener('click', () => {
-            Scale1Controller.setTrailSettings({ renderMode: button.dataset.peTrailMode });
-        });
-    }
-    document.getElementById('btn-pe-trail-reset')?.addEventListener('click', () => {
-        Scale1Controller.resetTrailSettings();
-    });
-
-    document.getElementById('btn-pe-clear').addEventListener('click', () => {
-        running = false;
-        updatePlayButton();
-        loadPEScenario(document.getElementById('pe-scenario-select').value);
-    });
-
-    const checkpointStatus = document.getElementById('pe-checkpoint-status');
-    const setCheckpointStatus = (message, failed = false) => {
-        if (checkpointStatus) {
-            checkpointStatus.textContent = message;
-            checkpointStatus.dataset.status = failed ? 'error' : 'ready';
-        }
-    };
-    const afterCheckpointMutation = () => {
-        Scale1Controller.markObservationDirty();
-        telemetryHub.resetScale1?.();
-    };
-    document.getElementById('btn-pe-checkpoint-save')?.addEventListener('click', () => {
-        try {
-            const result = captureScale1Checkpoint(bridge);
-            setCheckpointStatus(`Captured tick ${result.tick} · ${result.digest}`);
-        } catch (error) {
-            setCheckpointStatus(error.message, true);
-        }
-    });
-    document.getElementById('btn-pe-checkpoint-restore')?.addEventListener('click', () => {
-        try {
-            running = false;
-            updatePlayButton();
-            const result = restoreSavedScale1Checkpoint(bridge);
-            afterCheckpointMutation();
-            setCheckpointStatus(`Restored tick ${result.tick} · ${result.digest}`);
-        } catch (error) {
-            setCheckpointStatus(error.message, true);
-        }
-    });
-    document.getElementById('btn-pe-checkpoint-export')?.addEventListener('click', () => {
-        try {
-            const captured = captureScale1Checkpoint(bridge);
-            const blob = new Blob([serializeScale1Checkpoint()], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const anchor = document.createElement('a');
-            anchor.href = url;
-            anchor.download = `ftd-scale1-tick-${captured.tick}.json`;
-            anchor.click();
-            setTimeout(() => URL.revokeObjectURL(url), 0);
-            setCheckpointStatus(`Exported tick ${captured.tick} · ${captured.digest}`);
-        } catch (error) {
-            setCheckpointStatus(error.message, true);
-        }
-    });
-    const checkpointFile = document.getElementById('pe-checkpoint-file');
-    document.getElementById('btn-pe-checkpoint-import')?.addEventListener('click', () => {
-        checkpointFile?.click();
-    });
-    checkpointFile?.addEventListener('change', async () => {
-        const file = checkpointFile.files?.[0];
-        if (!file) return;
-        try {
-            running = false;
-            updatePlayButton();
-            const result = importScale1Checkpoint(await file.text(), bridge);
-            afterCheckpointMutation();
-            setCheckpointStatus(`Imported tick ${result.tick} · ${result.digest}`);
-        } catch (error) {
-            setCheckpointStatus(error.message, true);
-        } finally {
-            checkpointFile.value = '';
-        }
-    });
-    document.getElementById('btn-pe-replay-mark')?.addEventListener('click', () => {
-        try {
-            const result = markScale1ReplayStart(bridge);
-            setCheckpointStatus(`Replay start marked at tick ${result.tick} · ${result.digest}`);
-        } catch (error) {
-            setCheckpointStatus(error.message, true);
-        }
-    });
-    document.getElementById('btn-pe-replay-verify')?.addEventListener('click', async () => {
-        try {
-            running = false;
-            updatePlayButton();
-            setCheckpointStatus('Replaying the marked segment…');
-            const result = await verifyScale1Replay(bridge);
-            afterCheckpointMutation();
-            setCheckpointStatus(result.match
-                ? `Replay matched ${result.ticks} ticks · ${result.actualDigest}`
-                : `Replay mismatch · expected ${result.expectedDigest}, got ${result.actualDigest}`,
-            !result.match);
-        } catch (error) {
-            setCheckpointStatus(error.message, true);
-        }
-    });
-    const updateFieldBatteryStatus = () => {
-        const snapshot = bridge.peGetFinitePortBatterySnapshot?.();
-        const status = document.getElementById('pe-field-battery-status');
-        if (status && snapshot) {
-            status.textContent = `Layer ${snapshot.acceptedLayers}/${snapshot.capacity} · `
-                + `E ${Number(snapshot.totalBookedEnergy).toPrecision(6)}`;
-        }
-        Scale1Controller.markObservationDirty();
-    };
-    document.getElementById('btn-pe-field-battery-step')?.addEventListener('click', () => {
-        if (!bridge.peStepFinitePortBattery?.()) {
-            showToast('Finite ready-port capacity is exhausted.', 'info');
-        }
-        updateFieldBatteryStatus();
-    });
-    document.getElementById('btn-pe-field-battery-reverse')?.addEventListener('click', () => {
-        if (!bridge.peReverseFinitePortBattery?.()) {
-            showToast('No accepted field layer is available to reverse.', 'info');
-        }
-        updateFieldBatteryStatus();
-    });
-
-    // AE controls — force & dynamics toggles
-    for (const spec of AE_PHYSICS_SPECS) {
-        const el = document.getElementById(spec.elementId);
-        if (!el) continue;
-        el.addEventListener('change', () => bridge[spec.setter]?.(el.checked));
-    }
-
-    // AE sliders
-    const aeDtSlider = document.getElementById('ae-dt-slider');
-    const aeDtValue = document.getElementById('ae-dt-value');
-    if (aeDtSlider) {
-        aeDtSlider.addEventListener('input', () => {
-            const dt = parseFloat(aeDtSlider.value);
-            aeDtValue.textContent = dt.toFixed(3);
-            bridge.aeSetDt(dt);
-        });
-    }
-
-    const aeSoftSlider = document.getElementById('ae-soft-slider');
-    const aeSoftValue = document.getElementById('ae-soft-value');
-    if (aeSoftSlider) {
-        aeSoftSlider.addEventListener('input', () => {
-            const s = parseFloat(aeSoftSlider.value);
-            aeSoftValue.textContent = s.toFixed(2);
-            bridge.aeSetSoftening(s);
-        });
-    }
-
-    const aeThermostatSlider = document.getElementById('ae-thermostat-slider');
-    const aeThermostatValue = document.getElementById('ae-thermostat-value');
-    if (aeThermostatSlider) {
-        aeThermostatSlider.addEventListener('input', () => {
-            const target = parseFloat(aeThermostatSlider.value);
-            if (aeThermostatValue) aeThermostatValue.textContent = target.toFixed(2);
-            bridge.aeSetThermostatTemp(target);
-        });
-    }
-
-    // Dynamic Scale-2 nuclear laboratory. These controls mutate the live
-    // environment; they never reload or branch on the selected scenario.
-    const nuclearPatch = (patch) => bridge.aeSetNuclearEnvironment?.(patch);
-    const bindNuclearRange = (id, valueId, key, format) => {
-        const input = document.getElementById(id);
-        const value = document.getElementById(valueId);
-        input?.addEventListener('input', () => {
-            const numeric = Number(input.value);
-            if (value) value.textContent = format(numeric);
-            nuclearPatch({ [key]: numeric });
-        });
-    };
-    bindNuclearRange('ae-nuclear-reactivity', 'ae-nuclear-reactivity-value', 'reactivityScale', v => v.toFixed(1));
-    bindNuclearRange('ae-nuclear-collision-radius', 'ae-nuclear-collision-radius-value', 'collisionRadiusScale', v => `${v.toFixed(2)}×`);
-    bindNuclearRange('ae-nuclear-transport-radius', 'ae-nuclear-transport-radius-value', 'transportRadius', v => `${v.toFixed(0)} lu`);
-    bindNuclearRange('ae-nuclear-moderator', 'ae-nuclear-moderator-value', 'moderatorStrength', v => v.toFixed(2));
-    bindNuclearRange('ae-nuclear-absorber', 'ae-nuclear-absorber-value', 'absorberStrength', v => v.toFixed(2));
-    bindNuclearRange('ae-nuclear-source-rate', 'ae-nuclear-source-rate-value', 'sourceRate', v => `${v.toFixed(2)}/tick`);
-    document.getElementById('ae-nuclear-boundary')?.addEventListener('change', event =>
-        nuclearPatch({ boundaryMode: event.currentTarget.value }));
-    document.getElementById('ae-nuclear-source-energy')?.addEventListener('change', event =>
-        nuclearPatch({ sourceEnergyMeV: Number(event.currentTarget.value) }));
-    document.getElementById('ae-nuclear-source-enabled')?.addEventListener('change', event =>
-        nuclearPatch({ sourceEnabled: event.currentTarget.checked }));
-    document.getElementById('ae-nuclear-channel')?.addEventListener('change', event => {
-        const channel = event.currentTarget.value;
-        if (!channel) {
-            bridge.aeConfigureNuclearReaction?.('');
-            return;
-        }
-        bridge.aeConfigureNuclearReaction?.({
-            channel,
-            mode: 'sandbox',
-            eventLimit: 100000,
-            seed: 0x5eed235,
-        });
-        const valueOf = id => Number(document.getElementById(id)?.value);
-        nuclearPatch({
-            reactivityScale: valueOf('ae-nuclear-reactivity'),
-            collisionRadiusScale: valueOf('ae-nuclear-collision-radius'),
-            transportRadius: valueOf('ae-nuclear-transport-radius'),
-            boundaryMode: document.getElementById('ae-nuclear-boundary')?.value,
-            moderatorStrength: valueOf('ae-nuclear-moderator'),
-            absorberStrength: valueOf('ae-nuclear-absorber'),
-            sourceRate: valueOf('ae-nuclear-source-rate'),
-            sourceEnergyMeV: valueOf('ae-nuclear-source-energy'),
-            sourceEnabled: !!document.getElementById('ae-nuclear-source-enabled')?.checked,
-        });
-    });
-    for (const [id, kind] of [
-        ['btn-ae-inject-neutron', 'neutron'],
-        ['btn-ae-inject-dt', 'dt-pair'],
-        ['btn-ae-inject-u235', 'u235'],
-    ]) {
-        document.getElementById(id)?.addEventListener('click', () => {
-            if (bridge.aeInjectNuclearParticle?.(kind) === false) {
-                showToast('Select a nuclear channel before injecting reactants.', 'info');
-            }
-        });
-    }
-
-    document.getElementById('btn-ae-clear').addEventListener('click', () => {
-        running = false;
-        updatePlayButton();
-        loadAEScenario(document.getElementById('ae-scenario-select').value);
-    });
-}
 
 // ── Viewport Toggle Wiring ───────────────────────────────────────────
-function wireViewportToggles() {
-    const setToggleState = (button, on) => {
-        button.classList.toggle('active', on);
-        button.setAttribute('aria-pressed', on ? 'true' : 'false');
-    };
 
-    // Universal toggles (visible on all scales)
-    const axesBtn = document.getElementById('toggle-axes');
-    if (axesBtn) {
-        axesBtn.addEventListener('click', () => {
-            const on = !axesBtn.classList.contains('active');
-            setToggleState(axesBtn, on);
-            viewport.toggleAxes(on);
-        });
-    }
-    // Grid button also controls the wireframe (lattice boundary box) at Scale 0
-    const gridBtn = document.getElementById('toggle-grid');
-    if (gridBtn) {
-        gridBtn.addEventListener('click', () => {
-            const on = !gridBtn.classList.contains('active');
-            setToggleState(gridBtn, on);
-            viewport.toggleGrid(on);
-            viewport.toggleWireframe(on);
-        });
-    }
-
-    const orientationBtn = document.getElementById('toggle-boundary-orientation');
-    if (orientationBtn) {
-        orientationBtn.addEventListener('click', () => {
-            const on = !orientationBtn.classList.contains('active');
-            setToggleState(orientationBtn, on);
-            viewport.toggleBoundaryOrientation(on);
-        });
-    }
-
-    const clockBtn = document.getElementById('toggle-global-clock');
-    if (clockBtn) {
-        clockBtn.addEventListener('click', () => {
-            const on = !clockBtn.classList.contains('active');
-            setToggleState(clockBtn, on);
-            viewport.toggleGlobalClock(on);
-        });
-    }
-
-    // Camera preset buttons — Scale-0-specific camera viewpoints. Each
-    // button snaps the orbit camera to a named direction; "Fit" zooms to
-    // frame the active flux volume. Buttons hidden on non-lattice scales
-    // via the .scale0-only class on their container.
-    for (const btn of document.querySelectorAll('[data-cam-preset]')) {
-        const preset = btn.getAttribute('data-cam-preset');
-        btn.addEventListener('click', () => {
-            if (!viewport) return;
-            if (preset === 'fit') {
-                viewport.zoomToFit?.();
-            } else {
-                viewport.setCameraPreset?.(preset);
-            }
-            // Transient visual pulse so the user sees the preset was applied,
-            // without leaving any button stuck in an active state (these
-            // are momentary actions, not persistent toggles).
-            btn.classList.add('status-preset-flash');
-            setTimeout(() => btn.classList.remove('status-preset-flash'), 260);
-        });
-    }
-
-
-    // PE mode visual overlay toggles (delegated to Scale1Controller)
-    const velBtn = document.getElementById('toggle-velocities');
-    if (velBtn) velBtn.addEventListener('click', () => {
-        velBtn.classList.toggle('active');
-        const on = velBtn.classList.contains('active');
-        velBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-        Scale1Controller.setVelocities(on);
-        viewport.toggleVelocityVectors(on);
-    });
-
-    const trailBtn = document.getElementById('toggle-trails');
-    if (trailBtn) trailBtn.addEventListener('click', () => {
-        trailBtn.classList.toggle('active');
-        const trailOn = trailBtn.classList.contains('active');
-        trailBtn.setAttribute('aria-pressed', trailOn ? 'true' : 'false');
-        Scale1Controller.setTrails(trailOn);
-        viewport.toggleTrails(trailOn);
-    });
-
-    // PE field overlay toggles (delegated to Scale1Controller)
-    const peFieldToggles = [
-        ['toggle-pe-efield', (on) => { Scale1Controller.setPEEField(on); viewport.togglePEStreamlines(on); }],
-        ['toggle-pe-potential', (on) => {
-            Scale1Controller.setPEPotential(on);
-            const active = Scale1Controller.isPEFieldSurfaceActive();
-            viewport.toggleFieldHeatmap(active); viewport.toggleFieldVectors(active);
-        }],
-        ['toggle-pe-field-battery', (on) => {
-            Scale1Controller.setPEFieldBattery(on);
-            const active = Scale1Controller.isPEFieldSurfaceActive();
-            viewport.toggleFieldHeatmap(active); viewport.toggleFieldVectors(active);
-        }],
-        ['toggle-pe-gravity-field', (on) => { Scale1Controller.setPEGravField(on); viewport.toggleGravityVectors(on); }],
-        ['toggle-pe-force-coulomb', (on) => { Scale1Controller.setPEForceCoulomb(on); viewport.togglePEForceCoulomb(on); }],
-        ['toggle-pe-force-gravity', (on) => { Scale1Controller.setPEForceGravity(on); viewport.togglePEForceGravity(on); }],
-        ['toggle-pe-force-lorentz', (on) => { Scale1Controller.setPEForceLorentz(on); viewport.togglePEForceLorentz(on); }],
-        ['toggle-pe-force-exchange', (on) => { Scale1Controller.setPEForceExchange(on); viewport.togglePEForceExchange(on); }],
-        ['toggle-pe-force-strong', (on) => { Scale1Controller.setPEForceStrong(on); viewport.togglePEForceStrong(on); }],
-        ['toggle-pe-force-radiation', (on) => { Scale1Controller.setPEForceRadiation(on); viewport.togglePEForceRadiation(on); }],
-        ['toggle-pe-force-magnetic-dipole', (on) => { Scale1Controller.setPEForceMagneticDipole(on); viewport.togglePEForceMagneticDipole(on); }],
-        ['toggle-pe-force-spin-orbit', (on) => { Scale1Controller.setPEForceSpinOrbit(on); viewport.togglePEForceSpinOrbit(on); }],
-        ['toggle-pe-force-net', (on) => { Scale1Controller.setPEForceNet(on); viewport.togglePEForceNet(on); }],
-        ['toggle-pe-system', (on) => { Scale1Controller.setPESystem(on); viewport.togglePESystem(on); }],
-        ['toggle-pe-admissibility', (on) => { Scale1Controller.setAdmissibilityRing(on); viewport.toggleAdmissibilityRings(on); }],
-        ['toggle-pe-provenance', (on) => { Scale1Controller.setProvenanceLabel(on); viewport.toggleProvenanceLabels(on); }],
-    ];
-    for (const [id, handler] of peFieldToggles) {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.addEventListener('click', () => {
-                btn.classList.toggle('active');
-                const on = btn.classList.contains('active');
-                btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-                handler(on);
-            });
-        }
-    }
-
-    // AE field overlay toggle
-    const aeFieldBtn = document.getElementById('toggle-ae-field');
-    if (aeFieldBtn) {
-        aeFieldBtn.addEventListener('click', () => {
-            aeFieldBtn.classList.toggle('active');
-            const aeFieldOn = aeFieldBtn.classList.contains('active');
-            aeFieldBtn.setAttribute('aria-pressed', aeFieldOn ? 'true' : 'false');
-            Scale2Controller.setAEVisualToggle('showAEField', aeFieldOn);
-            viewport.toggleFieldHeatmap(aeFieldOn);
-            viewport.toggleFieldVectors(aeFieldOn);
-        });
-    }
-
-    // AE kinetic/electrostatic structure overlays (Scale 2 deep pass):
-    // velocity vectors, dipole arrows, dashed H-bond lines. Flags drive
-    // per-frame updates in Scale2Controller.animateAE; the viewport toggle
-    // controls layer visibility immediately.
-    const aeStructureToggles = [
-        ['toggle-ae-velocities', 'showAEVelocities', (on) => viewport.toggleVelocityVectors(on)],
-        ['toggle-ae-dipoles', 'showAEDipoles', (on) => viewport.toggleAEDipoles(on)],
-        ['toggle-ae-hbonds', 'showAEHBondLines', (on) => viewport.toggleHBondLines(on)],
-        ['toggle-ae-nuclear-events', 'showAENuclearEvents', (on) => viewport.toggleNuclearEvents?.(on)],
-        ['toggle-ae-radiation', 'showAERadiation', (on) => viewport.toggleNuclearRadiation?.(on)],
-        ['toggle-ae-heat', 'showAEHeat', (on) => viewport.toggleNuclearHeat?.(on)],
-        ['toggle-ae-nuclear-boundary', 'showAENuclearBoundary', (on) => viewport.toggleNuclearBoundary?.(on)],
-    ];
-    for (const [btnId, flagKey, vpToggle] of aeStructureToggles) {
-        const btn = document.getElementById(btnId);
-        if (btn) {
-            btn.addEventListener('click', () => {
-                const isOn = btn.classList.toggle('active');
-                btn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
-                Scale2Controller.setAEVisualToggle(flagKey, isOn);
-                vpToggle(isOn);
-            });
-        }
-    }
-
-}
 
 
 
@@ -1688,321 +1105,20 @@ function wireViewportToggles() {
 // thin wrapper provides the live-state getters + mode-specific step/reload
 // callbacks the extracted module needs.
 function wireKeyboard() {
-    wireKeyboardExternal({
+    return wireKeyboardExternal({
         getEngineMode: () => engineMode,
         getBridge: () => bridge,
         pauseSimulation,
         togglePlay,
-        stepScenario: () => {
-            if (engineMode === 'atoms' || engineMode === 'molecules') {
-                bridge.aeTick();
-            } else if (engineMode === 'particles') {
-                bridge.peTick();
-            } else if (engineMode === 'cosmic') {
-                Scale5Controller.step(_makeCtx());
-            } else if (engineMode === 'planetary') {
-                Scale4Controller.step();
-            } else if (engineMode === 'meta') {
-                // MetaUnit has no tick-based physics to step.
-            } else {
-                Scale0Controller.step(_makeCtx());
-            }
-        },
-        reloadScenario: () => {
-            if (engineMode === 'molecules') {
-                loadMoleculeScenario(document.getElementById('mol-scenario-select').value);
-            } else if (engineMode === 'atoms') {
-                loadAEScenario(document.getElementById('ae-scenario-select').value);
-            } else if (engineMode === 'particles') {
-                loadPEScenario(document.getElementById('pe-scenario-select').value);
-            } else if (engineMode === 'cosmic') {
-                Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
-            } else if (engineMode === 'planetary') {
-                Scale4Controller.loadScenario(_makeCtx(), document.getElementById('planetary-scenario-select')?.value || 'planetary-solar');
-            } else if (engineMode === 'meta') {
-                Scale6Controller.loadScenario(_makeCtx());
-            } else {
-                Scale0Controller.reset(_makeCtx());
-            }
-        },
+        stepScenario: playbackActions.step,
+        reloadScenario: playbackActions.reset,
         Scale0Controller,
     });
 }
 
-// ── Settings Modal ──────────────────────────────────────────────────
-{
-    initSettingsModal();
-    const root = document.documentElement;
-    const modal = document.getElementById('settings-modal');
-    const btnOpen = document.getElementById('btn-settings');
-    const btnClose = document.getElementById('settings-close');
-    const slider = document.getElementById('settings-ui-scale');
-    const valDisplay = document.getElementById('settings-scale-val');
-    const glassToggle = document.getElementById('settings-glass-enabled');
-    const glassThicknessSlider = document.getElementById('settings-glass-thickness');
-    const glassThicknessValue = document.getElementById('settings-glass-thickness-val');
-    const glassControls = document.getElementById('settings-glass-controls');
-    const btnReset = document.getElementById('settings-reset');
-    const settingsButtons = Array.from(document.querySelectorAll('[data-setting][data-value]'));
-
-    const DEFAULT_SETTINGS = Object.freeze({
-        scale: 1.0,
-        theme: 'default',
-        glass: 'off',
-        glassThickness: 16,
-        density: 'comfortable',
-        panelWidth: 'standard',
-        tooltips: 'on',
-        statusBar: 'shown',
-    });
-
-    const STORAGE_KEYS = Object.freeze({
-        scale: 'ftd-ui-scale',
-        theme: 'ftd-theme',
-        glass: 'ftd-glassmorphism',
-        glassThickness: 'ftd-glass-thickness',
-        density: 'ftd-density',
-        panelWidth: 'ftd-panel-width',
-        tooltips: 'ftd-tooltips',
-        statusBar: 'ftd-status-bar',
-    });
-
-    function setChoiceGroup(settingName, value) {
-        settingsButtons.forEach((button) => {
-            button.classList.toggle(
-                'active',
-                button.dataset.setting === settingName && button.dataset.value === value,
-            );
-        });
-    }
-
-    function persist(key, value) {
-        try { localStorage.setItem(key, String(value)); } catch (e) { }
-    }
-
-    const GLASS_THICKNESS_MIN = 4;
-    const GLASS_THICKNESS_MAX = 32;
-    let glassThicknessFrame = 0;
-    let pendingGlassThickness = null;
-
-    function normalizeGlassThickness(value) {
-        const parsed = Number(value);
-        if (!Number.isFinite(parsed)) return DEFAULT_SETTINGS.glassThickness;
-        return Math.min(GLASS_THICKNESS_MAX, Math.max(GLASS_THICKNESS_MIN, Math.round(parsed)));
-    }
-
-    function updateGlassThicknessDisplay(thickness) {
-        if (glassThicknessSlider) glassThicknessSlider.value = String(thickness);
-        if (glassThicknessValue) glassThicknessValue.textContent = `${thickness} px`;
-    }
-
-    function applyGlassThickness(value) {
-        if (glassThicknessFrame) cancelAnimationFrame(glassThicknessFrame);
-        glassThicknessFrame = 0;
-        pendingGlassThickness = null;
-        const thickness = normalizeGlassThickness(value);
-        root.style.setProperty('--glass-thickness', `${thickness}px`);
-        root.style.setProperty('--glass-blur-low', `${thickness / 2}px`);
-        root.style.setProperty('--glass-blur-mid', `${thickness}px`);
-        root.style.setProperty('--glass-blur-high', `${thickness * 1.5}px`);
-        updateGlassThicknessDisplay(thickness);
-        persist(STORAGE_KEYS.glassThickness, thickness);
-    }
-
-    function queueGlassThickness(value) {
-        pendingGlassThickness = normalizeGlassThickness(value);
-        updateGlassThicknessDisplay(pendingGlassThickness);
-        if (glassThicknessFrame) return;
-        glassThicknessFrame = requestAnimationFrame(() => {
-            const thickness = pendingGlassThickness;
-            glassThicknessFrame = 0;
-            pendingGlassThickness = null;
-            applyGlassThickness(thickness);
-        });
-    }
-
-    function applyGlassMode(value) {
-        const mode = value === 'on' ? 'on' : 'off';
-        const enabled = mode === 'on';
-        root.dataset.glass = mode;
-        if (glassToggle) {
-            glassToggle.checked = enabled;
-            glassToggle.setAttribute('aria-checked', enabled ? 'true' : 'false');
-        }
-        if (glassThicknessSlider) glassThicknessSlider.disabled = !enabled;
-        if (glassControls) {
-            glassControls.classList.toggle('is-disabled', !enabled);
-            glassControls.setAttribute('aria-disabled', enabled ? 'false' : 'true');
-        }
-        persist(STORAGE_KEYS.glass, mode);
-    }
-
-    // ── Scale ──
-    function applyScale(s) {
-        // Write the USER knob (--ui-scale-base). The effective --ui-scale is
-        // derived in tokens.css (= base) and may be multiplied per-breakpoint
-        // in responsive.css (mobile = base × 1.2) without losing this setting.
-        root.style.setProperty('--ui-scale-base', s);
-        if (slider) slider.value = s;
-        if (valDisplay) valDisplay.textContent = Math.round(s * 100) + '%';
-        document.querySelectorAll('.settings-preset').forEach(b => {
-            b.classList.toggle('active', Math.abs(parseFloat(b.dataset.scale) - s) < 0.01);
-        });
-        if (root.dataset.statusBar === 'hidden') {
-            root.style.setProperty('--status-bar-offset', '0px');
-        } else {
-            root.style.setProperty('--status-bar-offset', 'calc(28px * var(--ui-scale))');
-        }
-        persist(STORAGE_KEYS.scale, s);
-        if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 100);
-    }
-
-    // ── Theme ──
-    let themeReleaseRaf = 0;
-    function applyTheme(name) {
-        root.dataset.themeChanging = 'true';
-        if (themeReleaseRaf) cancelAnimationFrame(themeReleaseRaf);
-        if (name === 'default') {
-            root.removeAttribute('data-theme');
-        } else {
-            root.setAttribute('data-theme', name);
-        }
-        document.querySelectorAll('.theme-swatch').forEach(sw => {
-            const on = sw.dataset.theme === name;
-            sw.classList.toggle('active', on);
-            sw.setAttribute('aria-checked', on ? 'true' : 'false');
-            sw.tabIndex = on ? 0 : -1;
-        });
-        persist(STORAGE_KEYS.theme, name);
-        themeReleaseRaf = requestAnimationFrame(() => {
-            themeReleaseRaf = requestAnimationFrame(() => {
-                delete root.dataset.themeChanging;
-                themeReleaseRaf = 0;
-            });
-        });
-    }
-
-
-
-    function applyDensity(mode) {
-        root.dataset.density = mode;
-        setChoiceGroup('density', mode);
-        persist(STORAGE_KEYS.density, mode);
-    }
-
-    function applyPanelWidth(mode) {
-        root.dataset.panelWidth = mode;
-        setChoiceGroup('panel-width', mode);
-        if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 80);
-        persist(STORAGE_KEYS.panelWidth, mode);
-    }
-
-    function applyTooltipMode(mode) {
-        root.dataset.tooltips = mode;
-        if (mode === 'off') document.getElementById('ui-tooltip')?.setAttribute('hidden', '');
-        setChoiceGroup('tooltips', mode);
-        persist(STORAGE_KEYS.tooltips, mode);
-    }
-
-    function applyStatusBar(mode) {
-        root.dataset.statusBar = mode;
-        root.style.setProperty(
-            '--status-bar-offset',
-            mode === 'hidden' ? '0px' : 'calc(28px * var(--ui-scale))',
-        );
-        if (viewport && viewport.resize) setTimeout(() => viewport.resize(), 80);
-        setChoiceGroup('status-bar', mode);
-        persist(STORAGE_KEYS.statusBar, mode);
-    }
-
-    // ── Load saved settings ──
-    try {
-        const savedScale = localStorage.getItem(STORAGE_KEYS.scale);
-        applyScale(savedScale ? parseFloat(savedScale) : DEFAULT_SETTINGS.scale);
-        applyTheme(localStorage.getItem(STORAGE_KEYS.theme) || DEFAULT_SETTINGS.theme);
-        const savedGlassThickness = localStorage.getItem(STORAGE_KEYS.glassThickness);
-        applyGlassThickness(savedGlassThickness ?? DEFAULT_SETTINGS.glassThickness);
-        applyGlassMode(localStorage.getItem(STORAGE_KEYS.glass) || DEFAULT_SETTINGS.glass);
-        applyDensity(localStorage.getItem(STORAGE_KEYS.density) || DEFAULT_SETTINGS.density);
-        applyPanelWidth(localStorage.getItem(STORAGE_KEYS.panelWidth) || DEFAULT_SETTINGS.panelWidth);
-        applyTooltipMode(localStorage.getItem(STORAGE_KEYS.tooltips) || DEFAULT_SETTINGS.tooltips);
-        applyStatusBar(localStorage.getItem(STORAGE_KEYS.statusBar) || DEFAULT_SETTINGS.statusBar);
-    } catch (e) { }
-
-    // ── Modal open/close ──
-    if (btnOpen && modal) btnOpen.addEventListener('click', () => { modal.classList.add('visible'); });
-    if (btnClose && modal) btnClose.addEventListener('click', () => { modal.classList.remove('visible'); });
-    if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('visible'); });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal?.classList.contains('visible')) modal.classList.remove('visible');
-    });
-
-    // ── Scale controls ──
-    if (slider) slider.addEventListener('input', () => applyScale(parseFloat(slider.value)));
-    document.querySelectorAll('.settings-preset').forEach(btn => {
-        btn.addEventListener('click', () => applyScale(parseFloat(btn.dataset.scale)));
-    });
-
-    // ── Theme controls ──
-    document.querySelectorAll('.theme-swatch').forEach(sw => {
-        sw.addEventListener('click', () => applyTheme(sw.dataset.theme));
-        sw.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                applyTheme(sw.dataset.theme);
-                return;
-            }
-            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft'
-                && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
-            e.preventDefault();
-            const all = [...document.querySelectorAll('.theme-swatch')];
-            const i = all.indexOf(sw);
-            if (i < 0) return;
-            const dir = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : -1;
-            const next = all[(i + dir + all.length) % all.length];
-            applyTheme(next.dataset.theme);
-            next.focus();
-        });
-    });
-
-    // ── Glass controls ──
-    if (glassToggle) {
-        glassToggle.addEventListener('change', () => applyGlassMode(glassToggle.checked ? 'on' : 'off'));
-    }
-    if (glassThicknessSlider) {
-        glassThicknessSlider.addEventListener('input', () => queueGlassThickness(glassThicknessSlider.value));
-        // Pointer release / keyboard commit flushes synchronously so an
-        // immediate reload cannot strand the final value in a queued frame.
-        glassThicknessSlider.addEventListener('change', () => applyGlassThickness(glassThicknessSlider.value));
-    }
-
-    // ── Other preference controls ──
-    settingsButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const setting = button.dataset.setting;
-            const value = button.dataset.value;
-            if (!setting || !value) return;
-            if (setting === 'density') applyDensity(value);
-            else if (setting === 'panel-width') applyPanelWidth(value);
-            else if (setting === 'tooltips') applyTooltipMode(value);
-            else if (setting === 'status-bar') applyStatusBar(value);
-        });
-    });
-
-    // ── Reset all ──
-    if (btnReset) {
-        btnReset.addEventListener('click', () => {
-            applyScale(DEFAULT_SETTINGS.scale);
-            applyTheme(DEFAULT_SETTINGS.theme);
-            applyGlassThickness(DEFAULT_SETTINGS.glassThickness);
-            applyGlassMode(DEFAULT_SETTINGS.glass);
-            applyDensity(DEFAULT_SETTINGS.density);
-            applyPanelWidth(DEFAULT_SETTINGS.panelWidth);
-            applyTooltipMode(DEFAULT_SETTINGS.tooltips);
-            applyStatusBar(DEFAULT_SETTINGS.statusBar);
-        });
-    }
-}
+// Settings read the current viewport when used, including after bridge/mode changes.
+const disposeSettings = wireSettings({ getViewport: () => viewport });
+appBindings.defer(disposeSettings);
 
 // ── Engine Mode Switching ────────────────────────────────────────────
 // SOLE entry point for scale transitions. Sequence:
@@ -2023,7 +1139,13 @@ const CONTROLLERS = {
     meta: Scale6Controller
 };
 
-function switchEngineMode(mode) {
+let modeSwitchGeneration = 0;
+async function switchEngineMode(mode) {
+    const generation = ++modeSwitchGeneration;
+    if (observerHost?.suspended || observerHost?.pending || observerHost?.exiting) {
+        await observerHost.exit();
+        if (generation !== modeSwitchGeneration) return;
+    }
     // 1. Uniform Lifecycle: Teardown previous controller
     const prevController = CONTROLLERS[engineMode];
     if (prevController && typeof prevController.destroy === 'function') {
@@ -2103,6 +1225,7 @@ function switchEngineMode(mode) {
     }
 
     Scale0Controller.setLatticeNeedsUpload();
+    syncViewControls(_makeCtx());
     frameCount = 0;
 }
 
@@ -2151,6 +1274,11 @@ function togglePlay() {
 }
 
 function updatePlayButton() {
+    const step = document.getElementById('btn-step');
+    if (step) {
+        step.disabled = engineMode === 'meta';
+        step.title = step.disabled ? 'This geometry view has no tick-based simulation to step.' : 'Step one tick (S)';
+    }
     const btn = document.getElementById('btn-play');
     if (!btn) return;
     const paused = running ? 'false' : 'true';
@@ -2173,6 +1301,11 @@ function clearCharts() {
 // refreshPhysicsPanel / getOnticDiagnostics /
 // getRawDiagnostics / renderOnticChainSummary. See
 // Bridge modularization provenance is cataloged in docs/INDEX.md.
+
+const playbackActions = createPlaybackActions(_makeCtx(), {
+    lattice: Scale0Controller, planetary: Scale4Controller,
+    cosmic: Scale5Controller, meta: Scale6Controller,
+}, { switchEngineMode, loadPEScenario, loadAEScenario, loadMoleculeScenario });
 
 // ── Launch ───────────────────────────────────────────────────────────
 init().catch(err => {

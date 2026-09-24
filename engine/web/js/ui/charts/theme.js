@@ -50,6 +50,7 @@ export function getChartTheme() {
  * @param {{ label?: string, scale?: string, side?: number }} [opts]
  */
 export function makeAxis(theme, opts = {}) {
+    const vertical = opts.side === 1 || opts.side === 3;
     return {
         stroke: theme.axis,
         grid:   { stroke: theme.grid, width: 0.5 },
@@ -60,5 +61,20 @@ export function makeAxis(theme, opts = {}) {
         label: opts.label,
         scale: opts.scale,
         side:  opts.side,
+        // uPlot's fixed 50px gutter let large signed values (e.g. -200,000)
+        // overlap the vertical axis title in narrow side panels. Measure the
+        // actual tick labels, with a bounded gutter that leaves plot space.
+        ...(vertical ? { size: (plot, values) => {
+            if (!values?.length || !plot.ctx) return 50;
+            const ctx = plot.ctx;
+            ctx.save();
+            ctx.font = theme.fontMono;
+            let width = 0;
+            for (const value of values) {
+                if (value != null) width = Math.max(width, ctx.measureText(String(value)).width);
+            }
+            ctx.restore();
+            return Math.min(112, Math.max(50, Math.ceil(width) + 12));
+        } } : {}),
     };
 }

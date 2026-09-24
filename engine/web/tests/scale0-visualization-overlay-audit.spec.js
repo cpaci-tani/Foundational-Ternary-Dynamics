@@ -542,9 +542,11 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
 
     test('streamline work is single-frame-budgeted and sampler ownership never oscillates mid-sweep', async ({ page }) => {
         const consoleErrors = attachConsoleWatcher(page);
-        const source = await page.evaluate(async () => (
-            await (await fetch('/js/scales/scale0/runtime/field-overlays.js')).text()
-        ));
+        const { budget, streamlineCost } = await page.evaluate(async () => {
+            const scheduler = await import('/js/scales/scale0/runtime/field-overlays.js');
+            const jobs = await import('/js/scales/scale0/runtime/overlay-jobs.js');
+            return { budget: scheduler.OVERLAY_FRAME_BUDGET, streamlineCost: jobs.COST_STREAMLINE };
+        });
         const profiles = await page.evaluate(async () => {
             const { computeStreamlineParams } = await import(
                 '/js/scales/scale0/runtime/streamline-integrator.js'
@@ -554,8 +556,6 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
                 inThread: computeStreamlineParams(33, { inThreadWasm: true }),
             };
         });
-        const budget = Number(source.match(/const OVERLAY_FRAME_BUDGET = (\d+);/)?.[1]);
-        const streamlineCost = Number(source.match(/const COST_STREAMLINE = (\d+);/)?.[1]);
 
         await page.evaluate(() => {
             const worker = window.__ftdCtx.fluxMock?._worker;

@@ -1,39 +1,8 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-import { gotoAndReady, switchMode, attachConsoleWatcher, realErrors } from './_helpers.js';
+import { gotoAndReady, switchMode, runScaleScenario, openDockPanel as openPanel, attachConsoleWatcher, realErrors } from './_helpers.js';
 
-async function openPanel(page, panel) {
-    await page.evaluate((panelId) => {
-        const tab = document.querySelector(`#tab-bar .tab[data-panel="${panelId}"]`);
-        if (!tab) throw new Error(`missing tab: ${panelId}`);
-        tab.click();
-    }, panel);
-    await page.waitForTimeout(500);
-}
-
-async function selectPEScenario(page, id) {
-    await page.evaluate((scenarioId) => {
-        const sel = document.getElementById('pe-scenario-select');
-        if (!sel) throw new Error('pe-scenario-select not found');
-        sel.value = scenarioId;
-        sel.dispatchEvent(new Event('change', { bubbles: true }));
-    }, id);
-}
-
-async function runScale1(page, scenario = 's1-coulomb-orbit') {
-    await gotoAndReady(page);
-    await switchMode(page, 'particles');
-    await selectPEScenario(page, scenario);
-    await expect.poll(
-        () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
-        { timeout: 10_000, message: `${scenario} did not seed particles` },
-    ).toBeGreaterThan(1);
-    await page.evaluate(() => {
-        const btn = document.getElementById('btn-play');
-        if (btn && btn.getAttribute('data-paused') === 'true') btn.click();
-    });
-    await page.waitForTimeout(1200);
-}
+const runScale1 = (page, scenario = 's1-coulomb-orbit') => runScaleScenario(page, { mode: 'particles', scenario });
 
 test.describe('Scale 1 side panels', () => {
     test.beforeEach(async ({ page }) => {
@@ -99,7 +68,7 @@ test.describe('Scale 1 side panels', () => {
         const errors = attachConsoleWatcher(page);
         await gotoAndReady(page);
         await switchMode(page, 'particles');
-        await selectPEScenario(page, 's1-quantum-exchange-eligible');
+        await page.selectOption('#pe-scenario-select', 's1-quantum-exchange-eligible');
         await openPanel(page, 'controls');
 
         const initial = await page.evaluate(() => {
@@ -368,7 +337,7 @@ test.describe('Scale 1 side panels', () => {
         // Switching scenarios must reset telemetryHub Scale-1 state so drift
         // is measured against the NEW scenario's initial energy. (The hub
         // additionally re-latches on any particle-count/toggle change.)
-        await selectPEScenario(page, 's1-cluster-pair');
+        await page.selectOption('#pe-scenario-select', 's1-cluster-pair');
         await expect.poll(
             () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
             { timeout: 10_000, message: 's1-cluster-pair did not seed particles' },
@@ -565,7 +534,7 @@ test.describe('Scale 1 side panels', () => {
         // Native selected contact removals are ingested once and are not
         // duplicated as unexplained snapshot-diff despawns.
         await page.locator('[data-log-category="lifecycle"]').check();
-        await selectPEScenario(page, 's1-contact-selection');
+        await page.selectOption('#pe-scenario-select', 's1-contact-selection');
         await openPanel(page, 'particle-log');
         await page.evaluate(() => {
             const btn = document.getElementById('btn-play');

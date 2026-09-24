@@ -92,6 +92,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._nextRequestId = 1;
         this._wireRequests = new Map();
         this._nativeBinaryVersion = 2;
+        this.fluxSectorVersion = 0;
         this._nativeInstanceId = null;
         this._lastWireRejection = null;
         this._binaryResolve = null;  // for particle data (binary frames)
@@ -307,6 +308,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                 const socket = new WebSocket(this._url);
                 this._ws = socket;
                 this._nativeBinaryVersion = 2;
+                this.fluxSectorVersion = 0;
                 this._nativeInstanceId = null;
                 this._connectionRecoveryPending = true;
                 socket.binaryType = 'arraybuffer';
@@ -350,6 +352,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                         this.latticeSize = info.latticeSize || this.latticeSize;
                         this.isNativeGPU = info.gpu || false;
                         this.seedRecipeVersion = Number(info.seedRecipeVersion || 0);
+                        this.scale0ControlVersion = Number(info.scale0ControlVersion || 0);
+                        this.fluxSectorVersion = Number(info.fluxSectorVersion || 0);
                         this._observeTelemetrySourceEpoch(info?.telemetrySourceEpoch);
                         debugLog(`[ws-bridge] Engine: L=${this.latticeSize}, GPU=${this.isNativeGPU}`);
                         if (this._queuedScenarioProfile) this._scheduleScenarioDispatch(0);
@@ -634,6 +638,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     }
 
     _sendAndForget(obj) {
+        if (this._backgroundSuspended && obj.cmd !== 'ping') return false;
         if (!this._connected || !this._ws) return false;
         let requestId = null;
         try {
@@ -705,13 +710,13 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                 : ['coulombX', 'coulombY', 'coulombZ'].every(key => hasOwn(data, key));
         }
         const expected = { tick_complete: 'tick', run_complete: 'run', flux_slice: 'get_flux_slice',
-            flux_volume: 'get_flux_volume' }[data.type];
+            flux_volume: 'get_flux_volume', flux_sectors: 'get_flux_sectors' }[data.type];
         if (expected) return command === expected
             && (data.type !== 'flux_slice' || (data.axis === pending.command.axis && data.index === pending.command.index));
         if (data.type === 'field_sample') return ['get_field_sample', 'get_field_slices'].includes(command)
             && data.token === pending.command.token && data.kind === pending.command.kind;
         return !['tick', 'run', 'get_particles', 'get_flux_volume', 'get_flux_slice',
-            'get_field_sample', 'get_field_slices'].includes(command);
+            'get_field_sample', 'get_field_slices', 'get_flux_sectors'].includes(command);
     }
 
     _dropVisualRequest(pending) {
@@ -894,6 +899,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
      * cache-only: they cannot enqueue a WebSocket command or CUDA reduction.
      */
     setTelemetryDemand(patch = {}) {
+        if (this._backgroundSuspended) return false;
         const next = this._normalizeTelemetryDemand(patch);
         const changed = !this._telemetryDemandEqual(next, this._telemetryDemand);
         this._telemetryDemand = next;
@@ -928,9 +934,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         return response?.type === 'operation_deferred';
     }
 
-    async _sendOperationWithRetry(command, timeoutMs, operation) {
+    async _sendOperationWithRetry(command, timeoutMs, operation, signal) {
         const deadline = telemetryNow() + timeoutMs;
         for (;;) {
+            if (signal?.aborted) throw new Error('Native operation cancelled before dispatch');
             const remaining = Math.max(1, Math.ceil(deadline - telemetryNow()));
             const response = await this._sendJSON(command, remaining);
             if (!this._isOperationDeferred(response)) return response;
@@ -1351,6 +1358,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     }
 
     _pumpTelemetry(atTickBoundary = false) {
+        if (this._backgroundSuspended) return false;
         if (!this._connected || this._hasPendingScenarioWork()) return false;
         if (!this._telemetryAppliedDemand && !this._telemetryDemandInFlight) {
             this._scheduleTelemetryDemandDispatch();
@@ -1587,6 +1595,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     }
 
     _scheduleDeferredVisualRetry(retryAfterMs = 16) {
+        if (this._backgroundSuspended) return;
         if (!this._connected || this._hasPendingScenarioWork()) return;
         const delay = Math.max(4, Math.min(1000, Math.trunc(Number(retryAfterMs) || 16)));
         const now = telemetryNow();
@@ -2184,7 +2193,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                 if (data.nativeInstanceId && this._nativeInstanceId
                     && data.nativeInstanceId !== this._nativeInstanceId) return this._rejectWire('foreign-instance', data._requestId);
                 const visualCommand = ['get_particles', 'get_flux_volume', 'get_flux_slice',
-                    'get_field_sample', 'get_field_slices', 'inspect_voxel', 'get_force_at']
+                    'get_field_sample', 'get_field_slices', 'inspect_voxel', 'get_force_at', 'get_flux_sectors']
                     .includes(correlated.command?.cmd);
                 if (visualCommand && (data.error || data.type === 'visual_deferred')
                     && (correlated.generation !== this._scenarioDataGeneration
@@ -2195,7 +2204,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                 }
                 const point = ['inspect_voxel', 'get_force_at'].includes(correlated.command?.cmd)
                     && !data.error && !['operation_progress', 'visual_deferred'].includes(data.type);
-                const visual = point || ['flux_slice', 'flux_volume', 'field_sample'].includes(data.type);
+                const visual = point || ['flux_slice', 'flux_volume', 'field_sample', 'flux_sectors'].includes(data.type);
                 if (visual && this._nativeBinaryVersion === 3 && !jsonProvenance) {
                     return this._rejectWire('missing-json-provenance', data._requestId);
                 }
@@ -2209,7 +2218,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                     this._finishWireRequest(correlated, { error: 'Retired simulation acknowledgement', type: 'stale_response' });
                     return this._rejectWire('retired-generation', data._requestId);
                 }
-                if (point) this._attachSampleProvenance(data, jsonProvenance);
+                if (point || data.type === 'flux_sectors') this._attachSampleProvenance(data, jsonProvenance);
                 if (data.type !== 'operation_progress') this._finishWireRequest(correlated, data);
             } else if (this._nativeBinaryVersion === 3
                 && !data.error
@@ -2508,6 +2517,36 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         }
     }
 
+    /** Exact source-fenced controls. Older native servers cannot advertise these. */
+    async executeScale0Control(command, { signal, expectedSourceEpoch = this._expectedTelemetrySourceEpoch,
+        expectedNativeInstanceId = this._nativeInstanceId } = {}) {
+        if (signal?.aborted) throw new Error('Lattice control cancelled');
+        if (this.scale0ControlVersion !== 1 || !this._connected || this._backgroundSuspended
+            || this._hasPendingScenarioWork() || expectedNativeInstanceId !== this._nativeInstanceId
+            || String(expectedSourceEpoch) !== String(this._expectedTelemetrySourceEpoch))
+            throw new Error('Native lattice control unavailable or superseded');
+        const fence = { expectedSourceEpoch, expectedNativeInstanceId };
+        let request;
+        if (command.type === 'barrier') request = { cmd: 'ping', ...fence };
+        else if (command.type === 'step' && Number.isSafeInteger(command.count) && command.count === 1)
+            request = { cmd: 'tick', ...fence };
+        else if (command.type === 'setToggle' && typeof command.name === 'string' && typeof command.value === 'boolean')
+            request = { cmd: 'set_toggle', name: command.name, value: command.value, ...fence };
+        else throw new Error('Unsupported native lattice control');
+        let reply;
+        try { reply = await this._sendJSON(request, LONG_OPERATION_TIMEOUT_MS); }
+        catch (error) { throw Object.assign(error instanceof Error ? error : new Error(String(error)), { status: 'unknown' }); }
+        const response = this._requireSuccessfulResponse(reply, 'lattice control');
+        if (expectedNativeInstanceId !== this._nativeInstanceId
+            || String(expectedSourceEpoch) !== String(this._expectedTelemetrySourceEpoch))
+            throw Object.assign(new Error('Native owner changed before acknowledgement'), { status: 'superseded' });
+        if (command.type === 'setToggle') {
+            this._toggles[command.name] = command.value;
+            this._markVisualDataDirty();
+        }
+        return { ...response, ok: true, sourceEpoch: expectedSourceEpoch, nativeInstanceId: expectedNativeInstanceId };
+    }
+
     tick() {
         if (!this._connected) return;
         if (this._hasPendingScenarioWork()) {
@@ -2539,6 +2578,44 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
 
     cancelQueuedTicks() {
         this._queuedSimulationTicks = 0;
+    }
+
+    /** Stop native sampling and drain submitted work without replacing the owner. */
+    async suspendBackgroundWork() {
+        if (this._backgroundSuspended) return () => {};
+        const previousDemand = this._cloneTelemetryDemand();
+        this._backgroundSuspended = true;
+        this.cancelQueuedTicks();
+        if (this._visualDeferredRetryTimer) clearTimeout(this._visualDeferredRetryTimer);
+        this._visualDeferredRetryTimer = null;
+        if (this._telemetryDemandExpiryTimer) clearTimeout(this._telemetryDemandExpiryTimer);
+        this._telemetryDemandExpiryTimer = null;
+        this._telemetryDemand = { ...previousDemand,
+            diagnostics: false, audit: false, lagrangian: false, gravity: false };
+        this._scheduleTelemetryDemandDispatch();
+        const resume = () => {
+            if (!this._backgroundSuspended) return;
+            this._backgroundSuspended = false;
+            this.setTelemetryDemand(previousDemand);
+            if (this._visualDeferredPending) this._scheduleDeferredVisualRetry();
+        };
+        try {
+            const deadline = telemetryNow() + 15000;
+            while (this._simulationInFlight || this._telemetryInFlight || this._telemetryDemandInFlight
+                || this._telemetryDemandDispatchScheduled || this._particleRequestInFlight
+                || this._volumeRequestInFlight || this._sliceRequestsInFlight.size
+                || this._fieldSampleRequestsByToken.size || this._pointQueryRequestsInFlight
+                || this._forceAtRequestsInFlight.size) {
+                if (telemetryNow() > deadline) throw new Error('Native lattice did not settle; switch cancelled');
+                await new Promise(resolve => setTimeout(resolve, 16));
+            }
+            if (this._connected && this._hasTelemetryDemand(this._telemetryAppliedDemand)) {
+                throw new Error('Native telemetry suspension was not acknowledged');
+            }
+        } catch (error) { resume(); throw error; }
+        // Connection heartbeats deliberately remain: they retain this native
+        // instance against server idle shutdown and do not advance/sample it.
+        return resume;
     }
 
     run(n) {
@@ -2640,6 +2717,16 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             DIAGNOSTIC_COMMAND_TIMEOUT_MS,
         );
         if (response?.error) throw new Error(response.error);
+        return response;
+    }
+
+    /** Complete parity reduction on the existing native owner; no sampler cap. */
+    async getFluxSectors() {
+        if (this.fluxSectorVersion !== 1 || this._nativeBinaryVersion !== 3)
+            throw new Error('Native full-domain flux-sector reduction is unavailable.');
+        const response = await this._sendJSON({ cmd: 'get_flux_sectors' }, DIAGNOSTIC_COMMAND_TIMEOUT_MS);
+        if (response?.error) throw new Error(response.error);
+        if (response?.type !== 'flux_sectors') throw new Error('Unexpected native flux-sector response.');
         return response;
     }
 
@@ -2771,7 +2858,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                 if (response.nativeInstanceId !== this._nativeInstanceId) throw new Error('Native server changed after preview');
                 const result = this._requireSuccessfulResponse(await this._sendOperationWithRetry({
                     cmd: 'seed_commit', ...command, expectedSourceEpoch: response.sourceEpoch,
-                }, LONG_OPERATION_TIMEOUT_MS, 'seed_commit'), 'seed commit');
+                    ...(this.scale0ControlVersion === 1 ? { expectedNativeInstanceId: response.nativeInstanceId } : {}),
+                }, LONG_OPERATION_TIMEOUT_MS, 'seed_commit', commitSignal), 'seed commit');
                 committed = true;
                 this._acceptScenarioResponse(result, {name: recipe.scenarioId, toggles: {},
                     fluxBoundaryMode: result.fluxBoundaryMode, fluxPeriodicAxis: result.fluxPeriodicAxis});
@@ -3031,6 +3119,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     }
 
     _drainFieldSampleRequests() {
+        if (this._backgroundSuspended) return;
         if (!this._connected || this._hasPendingScenarioWork()) return;
         while (this._fieldSampleRequestsByToken.size < MAX_FIELD_SAMPLE_REQUESTS_IN_FLIGHT
             && this._fieldSampleDemandByKey.size > 0) {

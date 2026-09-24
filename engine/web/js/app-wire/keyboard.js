@@ -3,16 +3,16 @@
  *
  * Extracted from `app.js::wireKeyboard()` as refactoring-analyst ticket
  * RF-9 (partial). Companion extracts: `status.js`, `bridge-boot.js`.
- * Remaining wire* functions (wireToolbar, wireControls, wireViewportToggles)
- * stay in app.js until a larger state-plumbing pass.
+ * Toolbar, preferences, particle/atom, and viewport bindings have independent
+ * lifecycle owners beside this module. Playback actions are shared with buttons.
  *
  * Shortcut contract (matches pre-refactor behavior 1:1):
  *   Space            → play/pause
  *   S                → single-step
  *   R                → reload scenario
- *   1–8 (Scale 0)    → field-visualization toggles (delegated to Scale0Controller)
+ *   1–9 (Scale 0)    → field-visualization toggles (delegated to Scale0Controller)
  *
- * Typing inside <input> or <select> is ignored so the shortcuts don't
+ * Typing inside any editable control is ignored so the shortcuts don't
  * interfere with text entry or scenario dropdowns.
  *
  * @param {{
@@ -25,6 +25,8 @@
  *   Scale0Controller: object,
  * }} deps
  */
+import { isShortcutBlockedTarget } from '../ui/shortcuts.js';
+
 export function wireKeyboard(deps) {
     const {
         getEngineMode,
@@ -35,9 +37,9 @@ export function wireKeyboard(deps) {
         Scale0Controller,
     } = deps;
 
-    document.addEventListener('keydown', (e) => {
-        // Ignore if typing in an input or select
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+    const onKeyDown = (e) => {
+        // Preserve editor/browser chords and never route keys from text entry.
+        if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || isShortcutBlockedTarget(e.target)) return;
 
         switch (e.key.toLowerCase()) {
             case ' ':
@@ -54,9 +56,11 @@ export function wireKeyboard(deps) {
                 break;
         }
 
-        // Field-visualization shortcuts (1-8) — Scale 0 only
+        // Field-visualization shortcuts (1-9) — Scale 0 only
         if (getEngineMode() === 'lattice') {
             if (Scale0Controller.handleShortcutKey(e.key)) e.preventDefault();
         }
-    });
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
 }

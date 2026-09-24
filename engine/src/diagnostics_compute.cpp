@@ -6,6 +6,7 @@
 #include "ftd/diagnostics_compute.h"
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/parallel.h"
 #include "ftd/volumetric_measure.h"
 #include <cmath>
 
@@ -41,14 +42,41 @@ Diagnostics compute_diagnostics(const RenderBridge& rb) {
   const auto& active = ternary.ordered_active_indices();
   const int N = static_cast<int>(lattice.total_sites());
 
-  for (int i = 0; i < N; ++i) {
-    const auto &v = voxels[i];
-    d.total_flux += v.density();
-    d.total_energy += std::abs(v.born_infeld_core());
-    double bw = v.bandwidth_used();
-    if (bw > d.max_bandwidth) d.max_bandwidth = bw;
-    double budget = v.causal_budget();
-    if (budget > d.max_causal_budget) d.max_causal_budget = budget;
+  constexpr int CHUNK_SIZE = 2048;
+  struct Chunk {
+    double total_flux = 0.0;
+    double total_energy = 0.0;
+    double max_bandwidth = 0.0;
+    double max_causal_budget = 0.0;
+    double flux_mag2 = 0.0;
+    double entropy = 0.0;
+  };
+  const int chunk_count = (N + CHUNK_SIZE - 1) / CHUNK_SIZE;
+  std::vector<Chunk> chunks(static_cast<std::size_t>(chunk_count));
+  parallel_for(0, chunk_count, [&](int chunk_lo, int chunk_hi) {
+    for (int chunk = chunk_lo; chunk < chunk_hi; ++chunk) {
+      Chunk& local = chunks[static_cast<std::size_t>(chunk)];
+      const int begin = chunk * CHUNK_SIZE;
+      const int end = std::min(N, begin + CHUNK_SIZE);
+      for (int i = begin; i < end; ++i) {
+        const auto& v = voxels[i];
+        local.total_flux += v.density();
+        local.total_energy += std::abs(v.born_infeld_core());
+        local.max_bandwidth = std::max(local.max_bandwidth, v.bandwidth_used());
+        local.max_causal_budget =
+            std::max(local.max_causal_budget, v.causal_budget());
+        local.flux_mag2 += v.flux.mag2();
+      }
+    }
+  });
+  double total_mag2 = 0.0;
+  for (const Chunk& local : chunks) {
+    d.total_flux += local.total_flux;
+    d.total_energy += local.total_energy;
+    d.max_bandwidth = std::max(d.max_bandwidth, local.max_bandwidth);
+    d.max_causal_budget =
+        std::max(d.max_causal_budget, local.max_causal_budget);
+    total_mag2 += local.flux_mag2;
   }
   d.manifested_count = ternary.manifested_count();
   d.positive_count = ternary.positive_count();
@@ -60,7 +88,23 @@ Diagnostics compute_diagnostics(const RenderBridge& rb) {
     if (v.color >= 0 && v.color <= 3) d.color_count[v.color]++;
   }
 
-  d.total_entropy = compute_entropy_cpu(rb);
+  // Preserve the canonical -sum(p*log(p)) formula. Only the independent site
+  // evaluation is parallel; fixed chunk identities and ordered merging make
+  // the result invariant under serial, pthread, and OpenMP execution.
+  if (total_mag2 >= EPSILON_FLUX_SQ) {
+    parallel_for(0, chunk_count, [&](int chunk_lo, int chunk_hi) {
+      for (int chunk = chunk_lo; chunk < chunk_hi; ++chunk) {
+        Chunk& local = chunks[static_cast<std::size_t>(chunk)];
+        const int begin = chunk * CHUNK_SIZE;
+        const int end = std::min(N, begin + CHUNK_SIZE);
+        for (int i = begin; i < end; ++i) {
+          const double p = voxels[i].flux.mag2() / total_mag2;
+          if (p > EPSILON_FLUX_SQ) local.entropy -= p * std::log(p);
+        }
+      }
+    });
+    for (const Chunk& local : chunks) d.total_entropy += local.entropy;
+  }
   d.causal_projection_events = rb.causal_projection_events_this_tick();
 
   Vec3 r_cm;

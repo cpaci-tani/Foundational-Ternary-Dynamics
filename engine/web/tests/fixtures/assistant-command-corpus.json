@@ -1,0 +1,1250 @@
+[
+  {
+    "id": "original-01",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Pause, advance 100 ticks, and explain what changed.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.pause",
+          "argsSubset": {}
+        },
+        {
+          "type": "lattice.step",
+          "argsSubset": {
+            "count": 100
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "original-02",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Make the selected cube twice as heavy.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "massFactor": 2
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "original-03",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Set gravity toward the central plane.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.world",
+          "argsSubset": {
+            "gravityMode": "plane"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "original-04",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Why is the force tether overloaded?",
+    "expected": {
+      "kind": "answer",
+      "actions": []
+    }
+  },
+  {
+    "id": "original-05",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": false,
+    "text": "Show the approaching and receding clocks experiment.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.preset",
+          "argsSubset": {
+            "preset": "clocks"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "original-06",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Explain this observation using the project documentation.",
+    "expected": {
+      "kind": "answer",
+      "actions": []
+    }
+  },
+  {
+    "id": "clear-lattice-pause",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Pause the lattice simulation.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.pause",
+          "argsSubset": {}
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-resume",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Resume the lattice simulation.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.resume",
+          "argsSubset": {}
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-step-one",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Advance the lattice by exactly one tick.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.step",
+          "argsSubset": {
+            "count": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-step-thirty-seven",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Advance exactly 37 lattice ticks.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.step",
+          "argsSubset": {
+            "count": 37
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-step-upper-bound",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Advance exactly 4096 lattice ticks.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.step",
+          "argsSubset": {
+            "count": 4096
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-reset",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Reset the current lattice preparation.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.reset",
+          "argsSubset": {}
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-scenario-empty",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Load the Empty Lattice null-control scenario with id empty.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.scenario",
+          "argsSubset": {
+            "scenarioId": "empty"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-scenario-pulse",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Load the Transverse Packet finite-box boundary scenario with id flux-pulse.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.scenario",
+          "argsSubset": {
+            "scenarioId": "flux-pulse"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-scenario-dipole",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Load the Antisymmetric Gaussian Wave Pair scenario with id flux-dipole.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.scenario",
+          "argsSubset": {
+            "scenarioId": "flux-dipole"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-catalog-wave",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Search the scenario catalog for \"wave\" and return at most 5 matches.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.catalog",
+          "argsSubset": {
+            "query": "wave",
+            "limit": 5
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-damping-off",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Turn off the lattice damping toggle.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.setToggle",
+          "argsSubset": {
+            "name": "damping",
+            "value": false
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-wave-on",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Enable the lattice wave_propagation toggle.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.setToggle",
+          "argsSubset": {
+            "name": "wave_propagation",
+            "value": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-lattice-gravity-off",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Turn off the lattice gravity toggle.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.setToggle",
+          "argsSubset": {
+            "name": "gravity",
+            "value": false
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-pause",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": false,
+    "text": "Pause the Observer simulation.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.pause",
+          "argsSubset": {}
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-resume",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Resume this Playground simulation.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.resume",
+          "argsSubset": {}
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-step-twelve",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": false,
+    "text": "While the Observer is paused, advance it by exactly 12 ticks.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.step",
+          "argsSubset": {
+            "count": 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-step-upper-bound",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Advance this paused Playground by exactly 120 ticks and leave it paused.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.step",
+          "argsSubset": {
+            "count": 120
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-half-mass",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Halve the mass of the selected cube.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "massFactor": 0.5
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-absolute-mass",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Set the selected cube mass to 3 in the displayed simulation units.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "mass": 3
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-rgb-red",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Set the selected cube color to RGB [1, 0, 0].",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "color": [
+              1,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-rename",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Rename the selected cube to \"Calibration cube\".",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "name": "Calibration cube"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-dimensions",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Set the selected cube rest dimensions to [2, 3, 4] in simulation units.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "size": [
+              2,
+              3,
+              4
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-position",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Set the selected cube position to [1, 2, -4] in its authoring frame.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "position": [
+              1,
+              2,
+              -4
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-velocity",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Set the selected cube velocity to [0.3, 0, 0] in this c = 1 reference world.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "velocity": [
+              0.3,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-restitution",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Set the selected cube restitution to 0.25.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "restitution": 0.25
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-body-gravity-off",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Disable gravity for the selected cube only.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "gravity": false
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-body-collisions-off",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Disable collisions for the selected cube only.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "collisions": false
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-create-box",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Create a box named \"Test box\" at [0, 2, -5], with dimensions [1, 1, 1] and mass 2 in simulation units.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.create",
+          "argsSubset": {
+            "shape": "box",
+            "name": "Test box",
+            "position": [
+              0,
+              2,
+              -5
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "mass": 2
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-create-sphere",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Create a sphere named \"Test sphere\" at [0, 3, -6] with dimensions [1, 1, 1] and mass 1 in simulation units.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.create",
+          "argsSubset": {
+            "shape": "sphere",
+            "name": "Test sphere",
+            "position": [
+              0,
+              3,
+              -6
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "mass": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-delete",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Delete the selected cube.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.delete",
+          "argsSubset": {}
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-clear-selection",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Clear my object selection.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.select",
+          "argsSubset": {
+            "id": null
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-impulse",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Apply an impulse [0, 2, 0] to the selected cube in the displayed simulation units.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.impulse",
+          "argsSubset": {
+            "impulse": [
+              0,
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-gravity-strength",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Set the world gravity strength to 4 in simulation units.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.world",
+          "argsSubset": {
+            "gravityStrength": 4
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-world-collisions-off",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Disable object-to-object collisions throughout the Playground.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.world",
+          "argsSubset": {
+            "objectCollisions": false
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-plane-collision-off",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Disable collisions with the central plane.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.world",
+          "argsSubset": {
+            "planeCollision": false
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-gun-delicate",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Set force-gun sensitivity to Delicate.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.forceGun",
+          "argsSubset": {
+            "sensitivity": "delicate"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-gun-multiplier",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Set the force-gun multiplier to 2.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.forceGun",
+          "argsSubset": {
+            "multiplier": 2
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-environment-stars",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": false,
+    "text": "Set the decorative environment to Star field.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.environment",
+          "argsSubset": {
+            "preset": "stars"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-axes-on",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": false,
+    "text": "Show the World axes layer.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.overlay",
+          "argsSubset": {
+            "layer": "axes",
+            "enabled": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-fov",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": false,
+    "text": "Set the camera field of view to 90 degrees.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.camera",
+          "argsSubset": {
+            "mode": "view",
+            "fov": 90
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clear-observer-twin-journey",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": false,
+    "text": "Load the An out-and-back journey experiment.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.preset",
+          "argsSubset": {
+            "preset": "twin-journey"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "clarify-unselected-mass",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Make it twice as heavy.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-unselected-delete",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Delete that object.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-unspecified-mass",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Make the selected cube heavier.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-unspecified-location",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Move the selected cube over there.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-unspecified-impulse",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Give the selected cube an impulse of 2.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-unspecified-gravity",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Increase the world gravity.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-sr-impulse",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Apply impulse [0, 2, 0] to the selected cube without changing the SR Reference profile.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-sr-rigid-rotation",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Set the selected cube angular velocity to [0, 1, 0] without leaving SR Reference.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-sr-extended-acceleration",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Give the selected cube proper acceleration [1, 0, 0] while keeping its cube shape and the SR Reference profile.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-superluminal",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": true,
+    "text": "Set the selected cube velocity to [1.2, 0, 0] in this c = 1 world.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-negative-mass",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Set the selected cube mass to -1.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-negative-world-gravity",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Set the world gravity strength to -3.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-zero-dimension",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Set the selected cube dimensions to [1, 0, 1].",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-missing-si-mapping",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Give the selected cube a physical mass of 10 kilograms without supplying any simulation-to-SI unit mapping.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-unsupported-shape",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Create a new dinosaur mesh with articulated bones.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-negative-ticks",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Advance the lattice by exactly -10 ticks.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-fractional-ticks",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Advance the lattice by exactly 1.5 ticks.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-too-many-lattice-ticks",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Advance exactly 5000 lattice ticks in one action; do not split this request into several actions.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-too-many-observer-ticks",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": false,
+    "text": "Advance the paused Observer by exactly 121 ticks in one action; do not split the request.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-replace-phi-law",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Replace the microscopic Phi law with a faster-than-light update rule.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-invent-force-law",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Rewrite the fundamental force law so every interaction obeys an inverse-cube law.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-execute-javascript",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Execute arbitrary JavaScript in the page instead of using the supported simulator commands.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-public-upload",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": false,
+    "text": "Upload the current world to an external public server.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "clarify-missing-preview",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Apply the seed preview from another session, even though there is no current preview identifier.",
+    "expected": {
+      "kind": "clarify",
+      "actions": []
+    }
+  },
+  {
+    "id": "multi-lattice-pause-step-resume",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Pause the lattice, advance exactly 25 ticks, then resume playback.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.pause",
+          "argsSubset": {}
+        },
+        {
+          "type": "lattice.step",
+          "argsSubset": {
+            "count": 25
+          }
+        },
+        {
+          "type": "lattice.resume",
+          "argsSubset": {}
+        }
+      ]
+    }
+  },
+  {
+    "id": "multi-lattice-null-control-step",
+    "workspace": "lattice",
+    "selected": false,
+    "text": "Load the Empty Lattice null-control scenario with id empty, then advance exactly 10 ticks.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "lattice.scenario",
+          "argsSubset": {
+            "scenarioId": "empty"
+          }
+        },
+        {
+          "type": "lattice.step",
+          "argsSubset": {
+            "count": 10
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "multi-observer-pause-mass-resume",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Pause the Playground, set the selected cube mass to 3 in simulation units, then resume playback.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.pause",
+          "argsSubset": {}
+        },
+        {
+          "type": "observer.update",
+          "argsSubset": {
+            "mass": 3
+          }
+        },
+        {
+          "type": "observer.resume",
+          "argsSubset": {}
+        }
+      ]
+    }
+  },
+  {
+    "id": "multi-observer-stars-axes",
+    "workspace": "observer",
+    "profile": "sr",
+    "selected": false,
+    "text": "Set the environment to Star field, then show the World axes layer.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.environment",
+          "argsSubset": {
+            "preset": "stars"
+          }
+        },
+        {
+          "type": "observer.overlay",
+          "argsSubset": {
+            "layer": "axes",
+            "enabled": true
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "multi-observer-gravity-impulse-resume",
+    "workspace": "observer",
+    "profile": "playground",
+    "selected": true,
+    "text": "Set the world gravity strength to zero, apply impulse [0, 2, 0] to the selected cube in simulation units, then resume playback.",
+    "expected": {
+      "kind": "actions",
+      "actions": [
+        {
+          "type": "observer.world",
+          "argsSubset": {
+            "gravityStrength": 0
+          }
+        },
+        {
+          "type": "observer.impulse",
+          "argsSubset": {
+            "impulse": [
+              0,
+              2,
+              0
+            ]
+          }
+        },
+        {
+          "type": "observer.resume",
+          "argsSubset": {}
+        }
+      ]
+    }
+  }
+]

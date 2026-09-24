@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
  * Covers:
  *   - every diagnostics descriptor source/compute/trend resolves against the hub
  *   - every charts descriptor buffer exists on telemetryHub
- *   - every Lagrangian term / action-row / constant-row resolves
+ *   - every Lagrangian term / action-row resolves
  *   - chip-picker state persists across reload
  *   - all three panels (diagnostics, charts, lagrangian) mount without errors
  */
@@ -87,19 +87,16 @@ test('charts descriptor buffers all exist on telemetryHub', async ({ page }) => 
     expect(report.missing, `Missing chart buffers: ${report.missing.join(', ')}`).toEqual([]);
 });
 
-test('lagrangian descriptor — terms, action rows, constants all resolve', async ({ page }) => {
+test('lagrangian descriptor — terms and action rows all resolve', async ({ page }) => {
     await page.goto('/');
     await page.waitForFunction(() => typeof window.uPlot === 'function');
     await page.waitForTimeout(1000);
 
     const report = await page.evaluate(async () => {
-        const [{ terms, actionRows, constantRows }, { telemetryHub }, consts] = await Promise.all([
+        const [{ terms, actionRows }, { telemetryHub }] = await Promise.all([
             import('/js/ui/panels/lagrangian-panel/descriptors/scale0.js'),
             import('/js/telemetry-hub.js'),
-            import('/js/constants.js'),
         ]);
-        const hubView = Object.create(telemetryHub);
-        hubView.consts = consts;
 
         function resolve(obj, path) {
             const parts = path.split('.');
@@ -119,12 +116,6 @@ test('lagrangian descriptor — terms, action rows, constants all resolve', asyn
             }
         }
 
-        const unresolvedConsts = [];
-        for (const row of constantRows) {
-            const v = resolve(hubView, row.source);
-            if (v === undefined) unresolvedConsts.push(`${row.id}: ${row.source}`);
-        }
-
         const missingActionTrends = [];
         for (const row of actionRows) {
             if (row.trend) {
@@ -138,9 +129,7 @@ test('lagrangian descriptor — terms, action rows, constants all resolve', asyn
         return {
             termCount: terms.length,
             actionCount: actionRows.length,
-            constCount: constantRows.length,
             missingTermBuffers,
-            unresolvedConsts,
             missingActionTrends,
         };
     });
@@ -148,8 +137,6 @@ test('lagrangian descriptor — terms, action rows, constants all resolve', asyn
     expect(report.termCount).toBeGreaterThan(0);
     expect(report.missingTermBuffers,
         `Missing term buffers: ${report.missingTermBuffers.join(', ')}`).toEqual([]);
-    expect(report.unresolvedConsts,
-        `Unresolved constants: ${report.unresolvedConsts.join(', ')}`).toEqual([]);
     expect(report.missingActionTrends,
         `Missing action-row trends: ${report.missingActionTrends.join(', ')}`).toEqual([]);
 });
@@ -167,7 +154,7 @@ test('all three panels mount without error and render expected structure', async
         await page.waitForTimeout(400);
     }
 
-    // Diagnostics: 5 sections, every row populated (no em-dashes).
+    // Six sections; zero regional E+B has no defined normalized balance.
     await openTab('diagnostics');
     const diagReport = await page.evaluate(() => {
         const sections = document.querySelectorAll('.diag-scale0-root .diag-section');
@@ -175,12 +162,14 @@ test('all three panels mount without error and render expected structure', async
         return {
             sectionCount: sections.length,
             rowCount: vals.length,
-            dashes: vals.filter((v) => v === '\u2014').length,
+            unavailable: [...document.querySelectorAll('.diag-scale0-root [data-row]')]
+                .filter(row => row.querySelector('.diag-value')?.textContent === '\u2014')
+                .map(row => row.dataset.row),
         };
     });
-    expect(diagReport.sectionCount).toBe(5);
+    expect(diagReport.sectionCount).toBe(6);
     expect(diagReport.rowCount).toBeGreaterThan(20);
-    expect(diagReport.dashes).toBe(0);
+    expect(diagReport.unavailable).toEqual(['cell-balance']);
 
     // Charts: chip strip + at least one default-active chart card + uPlot.
     await openTab('charts');
@@ -201,7 +190,7 @@ test('all three panels mount without error and render expected structure', async
     expect(chartsReport.cardCount).toBe(chartsReport.activeChips);
     expect(chartsReport.uplotCount).toBeGreaterThan(0);
 
-    // Lagrangian: one small-multiple chart per visible term + term row + 2 tables.
+    // Lagrangian: lazy small multiples, term controls and the action table.
     await openTab('lagrangian');
     const lagReport = await page.evaluate(() => ({
         charts:  document.querySelectorAll('.lag-charts-grid .uplot').length,
@@ -210,12 +199,13 @@ test('all three panels mount without error and render expected structure', async
         terms:   document.querySelectorAll('.lag-term-toggle').length,
         tables:  document.querySelectorAll('.lag-data-col .diag-section').length,
     }));
-    // One uPlot chart per visible (checked) term — stacked, not a single overlay.
+    // Every enabled term has a card; plots mount as cards become visible.
     expect(lagReport.charts).toBeGreaterThan(0);
-    expect(lagReport.charts).toBe(lagReport.checked);
-    expect(lagReport.cards).toBe(lagReport.charts);
+    expect(lagReport.charts).toBeLessThanOrEqual(lagReport.checked);
+    expect(lagReport.cards).toBe(lagReport.checked);
     expect(lagReport.terms).toBeGreaterThan(0);
-    expect(lagReport.tables).toBe(2);
+    expect(lagReport.tables).toBe(1);
+    await expect(page.locator('#panel-lagrangian')).not.toContainText('Ontic Constants');
 
     // Filter out known pre-existing noise that doesn't relate to the redesign.
     const relevantErrors = errors.filter((e) =>

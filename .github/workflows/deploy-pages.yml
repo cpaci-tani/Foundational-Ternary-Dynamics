@@ -8,6 +8,10 @@ on:
       - 'engine/CMakeLists.txt'
       - 'engine/cmake/**'
       - 'engine/web/**'
+      - 'scripts/assistant/**'
+      - 'engine/ai-proxy/**'
+      - 'docs/**'
+      - 'dissemination/**'
   workflow_dispatch:
 
 permissions:
@@ -52,10 +56,35 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install pinned documentation extractor
+        run: python -m pip install --require-hashes -r scripts/assistant/requirements.txt
+
+      - name: Cache pinned browser models
+        uses: actions/cache@v4
+        with:
+          path: engine/.cache/local-ai/models
+          key: assistant-models-${{ hashFiles('engine/web/js/assistant/model-manifest.json') }}
+
+      - name: Validate assistant transport
+        run: node --test engine/ai-proxy/test/*.test.mjs
+
+      - name: Stage public-only documentation and pinned browser models
+        env:
+          FTD_PUBLIC_AI_BASE: ${{ vars.FTD_PUBLIC_AI_BASE }}
+        run: python scripts/assistant/stage_site.py --revision "$GITHUB_SHA" --output "${{ runner.temp }}/ftd-pages" --api-base "$FTD_PUBLIC_AI_BASE"
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: engine/web
+          path: ${{ runner.temp }}/ftd-pages
 
       - name: Deploy to GitHub Pages
         id: deployment

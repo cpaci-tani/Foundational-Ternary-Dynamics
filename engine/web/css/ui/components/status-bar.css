@@ -223,12 +223,21 @@ html[data-density="compact"] #status-bar {
     border-color: var(--accent);
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1200px) {
     #status-bar .status-scene-controls {
         display: none;
     }
 
     #status-bar .status-scene-controls + .status-item:has(#status-fps) {
         margin-left: auto !important;
+    }
+}
+
+/* Backend/compute provenance is repeated in the diagnostics surfaces. Hide the
+   two trailing chips when the footer cannot fit them without clipping. */
+@media (max-width: 1023px) {
+    #status-bar .status-item:has(#status-engine),
+    #status-bar .status-item:has(#status-compute) {
+        display: none;
     }
 }

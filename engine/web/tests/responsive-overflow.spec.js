@@ -39,6 +39,8 @@ import { gotoAndReady, switchMode } from './_helpers.js';
 
 // width × height matrix: small phone → wide desktop, plus both tablet orientations.
 const VIEWPORTS = [
+    { label: 'phone-320', w: 320, h: 568 },
+    { label: 'short-landscape', w: 667, h: 375 },
     { label: 'small-phone',       w: 360,  h: 780 },
     { label: 'iphone',            w: 390,  h: 844 },
     { label: 'large-phone',       w: 414,  h: 896 },
@@ -80,13 +82,13 @@ async function auditOverflow(page) {
             const r = el.getBoundingClientRect();
             return r.left < vw - 1 && r.right > 1 && r.bottom > 1 && r.top < vh - 1;
         };
-        // An element is allowed to extend past the edge if an ancestor scrolls/clips
-        // it horizontally (intentional, e.g. the scrollable compact toolbar).
+        // Only a genuinely scrollable ancestor can make an offscreen child reachable.
+        // Hidden/clip ancestors suppress scrollWidth without exposing the control.
         const inScrollContainer = (el) => {
             let n = el.parentElement;
             while (n && n !== document.body) {
                 const ox = getComputedStyle(n).overflowX;
-                if (ox === 'auto' || ox === 'scroll' || ox === 'hidden') return true;
+                if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth + 1) return true;
                 n = n.parentElement;
             }
             return false;

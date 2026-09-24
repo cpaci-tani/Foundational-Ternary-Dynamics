@@ -4,7 +4,7 @@ import { charts as scale0Charts } from './descriptors/scale0.js';
 import { charts as scale1Charts } from './descriptors/scale1.js';
 import { charts as scale2Charts } from './descriptors/scale2.js';
 import { charts as scale3Charts } from './descriptors/scale3.js';
-import { charts as scale4Charts } from './descriptors/scale4.js?v=2';
+import { charts as scale4Charts } from './descriptors/scale4.js';
 import { charts as scale5Charts } from './descriptors/scale5.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';

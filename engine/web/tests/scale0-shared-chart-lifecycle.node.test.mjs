@@ -51,7 +51,7 @@ function fullscreenFixture() {
 test('pending fade removal and active replacement both release on panel cleanup', () => {
     const timers = new Map(); let serial = 0;
     const Panel = load('ui/panels/charts-panel/component.js', 'ChartsPanelComponent', {
-        scale0Charts: [], scale1Charts: [], scale2Charts: [], scale3Charts: [], scale4Charts: [],
+        scale0Charts: [], scale1Charts: [], scale2Charts: [], scale3Charts: [], scale4Charts: [], scale5Charts: [],
         setTimeout(fn) { const id = ++serial; timers.set(id, fn); return id; },
         clearTimeout(id) { timers.delete(id); },
     });
@@ -68,7 +68,7 @@ test('pending fade removal and active replacement both release on panel cleanup'
 test('normal fade completion releases once and drops teardown ownership', () => {
     let callback;
     const Panel = load('ui/panels/charts-panel/component.js', 'ChartsPanelComponent', {
-        scale0Charts: [], scale1Charts: [], scale2Charts: [], scale3Charts: [], scale4Charts: [],
+        scale0Charts: [], scale1Charts: [], scale2Charts: [], scale3Charts: [], scale4Charts: [], scale5Charts: [],
         setTimeout(fn) { callback = fn; return 1; }, clearTimeout() {},
     });
     const panel = new Panel({ dataset: {} }); panel.active = new Set();
@@ -115,7 +115,8 @@ function buffer(values, ticks) {
     };
 }
 function chartFixture() {
-    const Chart = load('ui/charts/uplot-chart.js', 'UPlotChart');
+    const projectHistoryIndices = load('ui/charts/history-index.js', 'projectHistoryIndices');
+    const Chart = load('ui/charts/uplot-chart.js', 'UPlotChart', { projectHistoryIndices });
     const chart = Object.create(Chart.prototype);
     Object.assign(chart, {
         hub: { a: buffer([1, 2, 3], [10, 20, 30]), b: buffer([4, 5, 6], [10, 20, 30]) },

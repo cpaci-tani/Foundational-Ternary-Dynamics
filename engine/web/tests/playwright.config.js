@@ -16,6 +16,8 @@ const hardwareWebgl = process.env.FTD_HARDWARE_WEBGL === '1';
 export default defineConfig({
   testDir: '.',
   testMatch: /.*\.spec\.js/,
+  // This writes publication artifacts; it is not a visual regression oracle.
+  testIgnore: ['**/take_gallery_screenshots.spec.js'],
   fullyParallel: false,  // the engine is stateful per page; serial is simpler
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

@@ -116,6 +116,7 @@ export const SCALE0_MUTATION_REASONS = Object.freeze({
 });
 
 export const SCALE0_MUTATION_SOURCES = Object.freeze({
+    ASSISTANT: 'assistant',
     SEEDING: 'panel.seeding',
     SUBSTRATE_CONTROLS: 'controls.substrate',
     PHYSICS_TOGGLES: 'controls.physics-toggles',

@@ -54,6 +54,9 @@ async function renderedContrastFailures(page) {
             if (rect.width < 1 || rect.height < 1
                 || style.display === 'none' || style.visibility === 'hidden'
                 || Number(style.opacity) < 0.55
+                || !element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
+                || rect.right <= 0 || rect.bottom <= 0 || rect.left >= innerWidth || rect.top >= innerHeight
+                || element.closest('[aria-hidden="true"], [inert]')
                 || element.matches(':disabled, [aria-disabled="true"], .katex .vlist-s')
                 || element.closest('.toggle-row-disabled, [aria-disabled="true"]')
                 || (!directText && !textControl)) return [];
@@ -86,12 +89,16 @@ test('semantic foregrounds meet WCAG AA on every opaque theme surface', async ({
     await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
     await gotoAndReady(page);
 
-    for (const theme of ['default', 'abyss', 'light', 'nord', 'parchment']) {
+    const allFailures = [];
+    const original = await page.evaluate(() => ({theme:document.documentElement.getAttribute('data-theme'),glass:document.documentElement.getAttribute('data-glass')}));
+    try {
+    for (const theme of ['default', 'abyss', 'light', 'nord', 'parchment', 'automatic-light']) {
+        await page.emulateMedia({ colorScheme: theme === 'automatic-light' ? 'light' : 'dark' });
         const results = await page.evaluate((themeName) => {
             const root = document.documentElement;
             root.dataset.glass = 'off';
             root.dataset.themeChanging = 'true';
-            if (themeName === 'default') root.removeAttribute('data-theme');
+            if (themeName === 'default' || themeName === 'automatic-light') root.removeAttribute('data-theme');
             else root.dataset.theme = themeName;
 
             const parse = (value) => {
@@ -156,10 +163,19 @@ test('semantic foregrounds meet WCAG AA on every opaque theme surface', async ({
             .filter((result) => result.ratio + 0.005 < AA_RATIO)
             .map((result) => `${theme}/${result.label}: ${result.ratio.toFixed(2)} `
                 + `(${result.foreground} on ${result.background})`);
-        expect(failures).toEqual([]);
+        allFailures.push(...failures);
 
         await page.waitForTimeout(20);
         const renderedFailures = await renderedContrastFailures(page);
-        expect(renderedFailures, `${theme} rendered text contrast`).toEqual([]);
+        allFailures.push(...renderedFailures.map(failure => `${theme}/${failure}`));
     }
+    } finally {
+        await page.evaluate(({theme,glass}) => {
+            const root=document.documentElement;
+            if (theme === null) root.removeAttribute('data-theme'); else root.dataset.theme=theme;
+            if (glass === null) root.removeAttribute('data-glass'); else root.dataset.glass=glass;
+            delete root.dataset.themeChanging;
+        }, original);
+    }
+    expect(allFailures, 'all theme token and rendered contrast failures').toEqual([]);
 });

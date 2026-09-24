@@ -418,16 +418,37 @@ function getFourierBasis(N) {
     return currentFourierBasis;
 }
 
-export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAVE_SCENARIO_ID) {
-    if (typeof bridge?.getFluxVectorSampled !== 'function' || typeof bridge?.getEFieldSampled !== 'function') {
-        return { active: false, reason: 'no field buffers' };
-    }
-    const N = bridge.latticeSize || 33;
+export function getSpectrumComparatorMetrics(
+    bridge,
+    scenarioId = RF_LATTICE_WAVE_SCENARIO_ID,
+    { samplerOwner = null } = {},
+) {
+    const N = bridge?.latticeSize || 33;
     const sampleStride = selectMetricStride(N);
     const lanes = spectrumComparatorLaneParams(N, (N - 1) / 2, scenarioId);
     if (lanes.length === 0) {
         return { active: false, reason: 'not a wave-family scenario' };
     }
+    let readSample = null;
+    if (samplerOwner) {
+        const caps = bridge?.capabilities?.scale0;
+        readSample = caps?.getScale0FieldSamples
+            ? (kind, stride) => caps.getScale0FieldSamples({ kind, stride })
+            : (typeof bridge?.getSamplerOr === 'function'
+                ? (kind, stride) => bridge.getSamplerOr(kind, stride)
+                : null);
+        bridge.replaceSamplerWants?.(samplerOwner, [
+            `fluxVector@${sampleStride}`,
+            `e@${sampleStride}`,
+        ]);
+    } else if (typeof bridge?.getFluxVectorSampled === 'function'
+        && typeof bridge?.getEFieldSampled === 'function') {
+        // Backward-compatible explicit-analysis path. Interactive panels pass
+        // samplerOwner and therefore never create these proxy direct owners.
+        readSample = (kind, stride) => kind === 'fluxVector'
+            ? bridge.getFluxVectorSampled(stride) : bridge.getEFieldSampled(stride);
+    }
+    if (!readSample) return { active: false, reason: 'no field buffers' };
     const laneRows = lanes.map((lane) => {
         const band = Math.max(1, Math.ceil(lane.sigma * 2.4));
         return {
@@ -475,17 +496,22 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
 
     // J = flux (live sample); W = wave_vel = -E (established convention, see
     // diagnostics_compute.cpp) since there is no direct wave_vel sampler.
-    const fluxSample = bridge.getFluxVectorSampled(sampleStride);
+    const fluxSample = readSample('fluxVector', sampleStride);
     const fluxComplete = hasCompletedVectorSample(bridge, fluxSample, 'fluxVector', sampleStride)
         && reduceVectorSample(fluxSample, laneRows, N, { stride: sampleStride });
     // Consume J before invoking E: a later WASM call may invalidate its view.
     // Always request both fields, even while J is pending, so async demand
     // registration cannot starve the other sampler.
-    const electricSample = bridge.getEFieldSampled(sampleStride);
+    const electricSample = readSample('e', sampleStride);
     const electricComplete = hasCompletedVectorSample(bridge, electricSample, 'e', sampleStride)
         && reduceVectorSample(electricSample, laneRows, N, { wave: true, stride: sampleStride });
-    if (!fluxComplete || !electricComplete) {
-        return { active: false, reason: 'waiting for field buffers' };
+    const fluxVersion = bridge.getSamplerSnapshotVersion?.('fluxVector', sampleStride) ?? null;
+    const electricVersion = bridge.getSamplerSnapshotVersion?.('e', sampleStride) ?? null;
+    const coherentWorkerFrame = fluxVersion === null || electricVersion === null
+        || Object.is(fluxVersion, electricVersion);
+    if (!fluxComplete || !electricComplete || !coherentWorkerFrame) {
+        return { active: false, reason: coherentWorkerFrame
+            ? 'waiting for field buffers' : 'waiting for coherent field frame' };
     }
 
     const fourierBasis = getFourierBasis(N);

@@ -51,6 +51,7 @@ def local_server(tmp_path, monkeypatch):
         finally:
             connection.close()
 
+    request.connection = lambda: http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=2)
     yield engine, web, request
     server.shutdown()
     server.server_close()
@@ -65,6 +66,30 @@ def test_local_status_requires_all_three_runtime_artifacts(local_server):
     assert json.loads(body) == {"available": True, "url": "/strict/web/hydro/"}
     (engine / serve.STRICT_HYDRO_ARTIFACTS[2]).unlink()
     assert json.loads(request("/api/strict-hydro/status")[2]) == {"available": False, "url": None}
+
+
+def test_module_requests_reuse_connection_and_rejected_post_closes_it(local_server):
+    connection = local_server[2].connection()
+    try:
+        connection.request("GET", "/")
+        first = connection.getresponse()
+        assert first.status == 200 and first.read() == b"dashboard"
+        original_socket = connection.sock
+        assert original_socket is not None and not first.will_close
+        connection.request("GET", "/strict/web/hydro/hydro-lab.js")
+        second = connection.getresponse()
+        assert second.status == 200 and second.read()
+        assert connection.sock is original_socket and not second.will_close
+        # This fixture has no finite-record WASM artifacts. The request is
+        # rejected before its body is read, so the connection must be retired.
+        connection.request("POST", "/api/lattice/records/seed", body=b"unread body")
+        rejected = connection.getresponse()
+        assert rejected.status == 503
+        assert rejected.getheader("Connection") == "close"
+        rejected.read()
+        assert rejected.will_close and connection.sock is None
+    finally:
+        connection.close()
 
 
 @pytest.mark.parametrize("path", ("/", "/strict/web/hydro/", "/strict/web/hydro/hydro-lab.js",

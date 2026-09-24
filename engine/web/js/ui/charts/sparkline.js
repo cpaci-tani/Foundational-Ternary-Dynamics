@@ -8,6 +8,7 @@
  */
 
 import { resolveChartColor } from './theme.js';
+import { projectHistoryIndices } from './history-index.js';
 
 export class Sparkline {
     constructor(container, opts) {
@@ -21,8 +22,10 @@ export class Sparkline {
         this._resizeFrame = 0;
         this._lastWidth = Math.max(1, Math.round(container.clientWidth || 80));
         this._historyDirty = false;
+        this._emptyPublished = true;
+        this._stamp = {};
 
-        const size = Math.min(this.buffer?.size || 80, this.visibleSamples);
+        const size = Math.min(this.buffer?.size || 80, this.visibleSamples, 512);
         this.xs = new Float64Array(size);
         this.ys = new Float64Array(size);
         this._unsubscribeHistory = this.historyControl?.subscribe?.(() => {
@@ -60,6 +63,8 @@ export class Sparkline {
             if (width <= 0 || width === this._lastWidth) return;
             this._lastWidth = width;
             this.uplot.setSize({ width, height: this.height });
+            this._historyDirty = true;
+            this.update();
         });
     }
 
@@ -73,23 +78,38 @@ export class Sparkline {
 
     update() {
         if (this._destroyed || !this.buffer) return;
-        const n = this.historyControl
+        const count = this.historyControl
             ? this.historyControl.visibleCount(this.buffer)
             : Math.min(this.buffer.count, this.visibleSamples);
-        if (n < 2) {
-            this.uplot.setData([new Float64Array(0), new Float64Array(0)], true);
+        const stamp = this._stamp;
+        const total = this.buffer.total ?? this.buffer.count;
+        const last = this.buffer.last?.();
+        const tick = this.buffer.getTick?.(this.buffer.count - 1);
+        const generation = this.buffer.generation;
+        if (!this._historyDirty && stamp.buffer === this.buffer && stamp.total === total
+            && stamp.count === count && stamp.generation === generation
+            && Object.is(stamp.last, last) && Object.is(stamp.tick, tick)) return;
+        Object.assign(stamp, { buffer: this.buffer, total, count, generation, last, tick });
+        this._historyDirty = false;
+        if (count < 2) {
+            if (!this._emptyPublished) this.uplot.setData([[], []], true);
+            this._emptyPublished = true;
             return;
         }
+        const indices = projectHistoryIndices([this.buffer], count, this._lastWidth);
+        const n = indices?.length ?? count;
         this._ensureCapacity(n);
         const xs = this.xs.subarray(0, n);
         const ys = this.ys.subarray(0, n);
-        const start = this.buffer.count - n;
+        const start = this.buffer.count - count;
         for (let i = 0; i < n; i++) {
-            const tick = this.buffer.getTick?.(start + i);
-            xs[i] = Number.isFinite(tick) ? tick : start + i;
-            ys[i] = this.buffer.get(start + i);
+            const index = indices ? indices[i] : start + i;
+            const tick = this.buffer.getTick?.(index);
+            xs[i] = Number.isFinite(tick) ? tick : index;
+            ys[i] = this.buffer.get(index);
         }
         this.uplot.setData([xs, ys], true);
+        this._emptyPublished = false;
     }
 
     destroy() {

@@ -125,5 +125,11 @@ export function createOverlay(svgEl, scene) {
     arrows = [];
   }
 
-  return { setArrows, tick, clear };
+  function dispose() {
+    clear();
+    markers.clear();
+    defs.remove();
+  }
+
+  return { setArrows, tick, clear, dispose };
 }

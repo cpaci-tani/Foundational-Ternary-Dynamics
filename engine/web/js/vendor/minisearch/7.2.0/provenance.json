@@ -1,0 +1,9 @@
+{
+  "package": "minisearch",
+  "version": "7.2.0",
+  "license": "MIT",
+  "tarball": "https://registry.npmjs.org/minisearch/-/minisearch-7.2.0.tgz",
+  "integrity": "sha512-dqT2XBYUOZOiC5t2HRnwADjhNS2cecp9u+TJRiJ1Qp/f5qjkeT5APcGPjHw+bz89Ms8Jp+cG4AlE+QZ/QnDglg==",
+  "sha256": "0393b3ba253b809d5e55707c7b0875ef9b518a296a006c6739b28876e154edb3",
+  "bytes": 78014
+}

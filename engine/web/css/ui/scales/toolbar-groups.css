@@ -64,7 +64,7 @@
     padding: 4px 8px;
     border: 1px solid color-mix(in srgb, var(--clock-rate-color, var(--accent, #60a5fa)) 58%, transparent);
     border-radius: 999px;
-    color: color-mix(in srgb, var(--clock-rate-color, var(--text-muted)) 78%, white);
+    color: var(--text-primary);
     background: color-mix(in srgb, var(--clock-rate-color, #60a5fa) 8%, transparent);
     font-variant-numeric: tabular-nums;
     font-size: var(--fs-xs);

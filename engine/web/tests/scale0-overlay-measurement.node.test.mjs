@@ -47,7 +47,8 @@ test('zero anisotropy denominator is unavailable and a missing frame clears the 
     Object.assign(instance, {_lastBridge: null, _lastSourceKey: '', _lastSampleAt: -Infinity,
         refs: {plot: {}, desc: {}}, _renderAnisotropyDecay: () => {}});
     let available = true;
-    const bridge = {latticeSize: 3, isNativeGPU: true, getFluxVolume: () => available ? sampler.data : null};
+    const plane = new Float32Array(9).fill(1);
+    const bridge = {latticeSize: 3, isNativeGPU: true, getFluxSlice: () => available ? plane : null};
     instance.update(bridge,0,[]);
     assert.ok(instance._decayPoints);
     available = false;

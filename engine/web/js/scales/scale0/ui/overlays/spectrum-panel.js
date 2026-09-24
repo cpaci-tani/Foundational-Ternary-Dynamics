@@ -22,6 +22,7 @@ import { isCurrentScale0TelemetryMeta } from '../../../../telemetry/scale0-read.
 import { telemetryHub } from '../../../../telemetry-hub.js';
 import { getScale0State, isScale0AuthoritativeGenerationReady, subscribeScale0Qualification, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { isPanelLive, PANEL_VISIBILITY_CHANGE_EVENT } from '../../../../ui/panels/panel-visibility.js';
+import { ScenarioApplicabilityBinding } from '../../../../ui/utils/scenario-applicability-binding.js';
 
 const PANEL_ID = 'spectrum-panel';
 const HZ = 2;                 // exploratory data — slower cadence
@@ -29,7 +30,6 @@ const M_LIVE = 32;            // default live FFT grid (undersampled)
 const M_LIVE_LARGE = 8;       // large-lattice live grid; Deep Measure remains 64³
 const M_DEEP = 64;            // Deep Measure FFT grid (higher grid)
 const EMPTY_SCENARIO_ID = 'empty';
-const SCENARIO_SYNC_MAX_FRAMES = 120;
 
 const METRIC_KINDS = [
     { kind: 'vorticity',   name: 'Vorticity',   sym: 'ω',  desc: 'ω = |∇×J| — local rotation / swirl of the flux field; high where the field circulates.' },
@@ -288,9 +288,7 @@ export function mountSpectrumPanel(host, getBridge) {
     let deepRequestToken = 0;
     let samplerWantSignature = '';
     let samplerBridge = null;
-    let scenarioSelect = null;
-    let scenarioSyncRaf = 0;
-    let scenarioSyncToken = 0;
+    let scenarioBinding = null;
     let analysisOwner = null;
     let analysisGeneration = null;
     let latestAnalysisResult = null;
@@ -353,7 +351,8 @@ export function mountSpectrumPanel(host, getBridge) {
             ownerIds.set(owner, ++nextOwnerId);
         }
         return { owner, generation: getScale0State().qualificationAnchor?.loadGeneration,
-            ownerId: ownerIds.get(owner), scenarioId: getScale0State().currentScenarioId, scenarioToken: scenarioSyncToken };
+            ownerId: ownerIds.get(owner), scenarioId: getScale0State().currentScenarioId,
+            scenarioToken: scenarioBinding?.revision || 0 };
     }
 
     function canPublish(context) {
@@ -364,7 +363,7 @@ export function mountSpectrumPanel(host, getBridge) {
             && getBridge?.() === context.owner
             && state.qualificationAnchor?.loadGeneration === context.generation
             && state.currentScenarioId === context.scenarioId
-            && scenarioSyncToken === context.scenarioToken;
+            && (scenarioBinding?.revision || 0) === context.scenarioToken;
     }
 
     function wireContext(context) {
@@ -518,9 +517,6 @@ export function mountSpectrumPanel(host, getBridge) {
 
     function handleScenarioIntent(scenarioId) {
         if (disposed) return;
-        const token = ++scenarioSyncToken;
-        if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
-        scenarioSyncRaf = 0;
 
         // Suspend on intent, before an older nonempty worker generation can
         // publish a stale field into the null-control panel.
@@ -545,36 +541,17 @@ export function mountSpectrumPanel(host, getBridge) {
             body.innerHTML = '<div class="spec-hist-empty">Awaiting the current scenario generation; measurement unavailable.</div>';
         }
 
-        let remaining = SCENARIO_SYNC_MAX_FRAMES;
-        const reconcile = () => {
-            scenarioSyncRaf = 0;
-            if (disposed || token !== scenarioSyncToken) return;
-            if (getScale0State().currentScenarioId === scenarioId
-                && isScale0AuthoritativeGenerationReady(getScale0State())) {
-                setEmptyApplicability(false);
-                return;
-            }
-            remaining--;
-            if (remaining > 0) scenarioSyncRaf = requestAnimationFrame(reconcile);
-        };
-        reconcile();
-    }
-
-    function onScenarioChange(event) {
-        handleScenarioIntent(String(event.currentTarget?.value || ''));
+        scenarioBinding.reconcile({
+            scenarioId,
+            isReady: () => getScale0State().currentScenarioId === scenarioId
+                && isScale0AuthoritativeGenerationReady(getScale0State()),
+            onReady: () => setEmptyApplicability(false),
+        });
     }
 
     function rebindScenarioApplicability() {
         if (disposed) return;
-        const nextSelect = document.getElementById('scenario-select');
-        if (nextSelect !== scenarioSelect) {
-            scenarioSelect?.removeEventListener('change', onScenarioChange);
-            scenarioSelect = nextSelect;
-            scenarioSelect?.addEventListener('change', onScenarioChange);
-        }
-        handleScenarioIntent(String(
-            scenarioSelect?.value || getScale0State().currentScenarioId || '',
-        ));
+        scenarioBinding?.bind();
     }
 
     deepBtn.addEventListener('click', () => {
@@ -640,6 +617,10 @@ export function mountSpectrumPanel(host, getBridge) {
         update();
     });
 
+    scenarioBinding = new ScenarioApplicabilityBinding({
+        getCurrentScenarioId: () => getScale0State().currentScenarioId,
+        onIntent: handleScenarioIntent,
+    });
     rebindScenarioApplicability();
     let boundary = null;
     const unsubscribeQualification = subscribeScale0Qualification(q => {
@@ -648,7 +629,7 @@ export function mountSpectrumPanel(host, getBridge) {
             : `ready:${q.anchor?.loadGeneration}`;
         if (next === boundary) return;
         boundary = next;
-        handleScenarioIntent(q.scenarioId);
+        scenarioBinding.intent(q.scenarioId);
     });
     if (!inapplicable) {
         update();
@@ -657,6 +638,7 @@ export function mountSpectrumPanel(host, getBridge) {
 
     const api = {
         update,
+        suspendBackgroundWork: () => cancelDeepMeasurement('paused'),
         element: panel,
         get lastSpec() { return lastSpec; },
         deepMeasure: () => deepBtn.click(),
@@ -674,11 +656,8 @@ export function mountSpectrumPanel(host, getBridge) {
             analysis.dispose();
             stopCoordinator();
             cancelDeepMeasurement();
-            if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
-            scenarioSyncRaf = 0;
-            scenarioSyncToken++;
-            scenarioSelect?.removeEventListener('change', onScenarioChange);
-            scenarioSelect = null;
+            scenarioBinding?.dispose();
+            scenarioBinding = null;
             if (typeof window !== 'undefined' && window.__ftdSpectrumPanel === api) window.__ftdSpectrumPanel = null;
             panel.remove();
         },

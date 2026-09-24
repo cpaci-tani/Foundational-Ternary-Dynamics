@@ -19,33 +19,15 @@ import {
     isTransactionTrackingSupported,
 } from '../../runtime/transaction-tracker.js';
 
-import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
+import {
+    isPanelLive,
+    PANEL_VISIBILITY_CHANGE_EVENT,
+} from '../../../../ui/panels/panel-visibility.js';
+import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
+import { LifetimeScope } from '../../../../ui/utils/lifetime-scope.js';
 
 const PANEL_ID = 'transaction-panel';
-const POLL_MS = 400;
-
-function ensureCss() {
-    if (typeof document === 'undefined' || document.getElementById('transaction-panel-css')) return;
-    const s = document.createElement('style');
-    s.id = 'transaction-panel-css';
-    s.textContent = `
-    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:16px;color:var(--text-primary,#eee);padding:2px}
-    #${PANEL_ID} .tp-title{font-weight:600;margin:2px 0 6px;font-size:16px}
-    #${PANEL_ID} .tp-title small{color:var(--text-muted,#888);font-weight:400;font-size:16px}
-    #${PANEL_ID} .tp-ctl{display:flex;align-items:center;gap:6px;cursor:pointer;margin:5px 0 6px;font-size:16px}
-    #${PANEL_ID} .tp-ctl input{margin-right:2px}
-    #${PANEL_ID} .tp-ctl b{color:var(--text-primary,#eee);font-weight:600}
-    #${PANEL_ID} .tp-unavailable{color:var(--text-muted,#888);font-style:italic;font-size:16px;padding:8px 2px;line-height:1.5;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.08))}
-    #${PANEL_ID} .tp-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-family:var(--font-mono,monospace);font-size:16px;line-height:1.5;margin:6px 0}
-    #${PANEL_ID} .tp-grid .tp-k{color:var(--text-muted,#888)}
-    #${PANEL_ID} .tp-grid .tp-v{color:var(--text-primary,#eee);text-align:right}
-    #${PANEL_ID} .tp-section-h{margin-top:8px;font-size:16px;letter-spacing:0.04em;color:var(--text-muted,#888);font-weight:600;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.08));padding-top:6px}
-    #${PANEL_ID} .tp-note{margin-top:8px;padding-top:6px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.1));font-size:16px;color:var(--text-muted,#777);line-height:1.5}
-    #${PANEL_ID} .tp-note b{color:var(--text-secondary,#999)}
-    #${PANEL_ID} button{padding:4px 8px;border-radius:6px;cursor:pointer;font-size:16px}
-    `;
-    document.head.appendChild(s);
-}
+const UPDATE_HZ = 2.5;
 
 function buildPanel() {
     const root = document.createElement('div');
@@ -94,7 +76,6 @@ function fmt(v) { return (v === null || v === undefined) ? '—' : v; }
 
 export function mountTransactionPanel(host) {
     if (!host) return null;
-    ensureCss();
     document.getElementById(PANEL_ID)?.remove();
     if (typeof window !== 'undefined' && window.__ftdTransactionPanel) {
         try { window.__ftdTransactionPanel.dispose(); } catch (e) { /* noop */ }
@@ -115,6 +96,8 @@ export function mountTransactionPanel(host) {
 
     let disposed = false;
     let syncingCheckbox = false;
+    let lastRenderSignature = '';
+    const lifetime = new LifetimeScope();
 
     function activeCtxAndBridge() {
         const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
@@ -122,17 +105,23 @@ export function mountTransactionPanel(host) {
         return { ctx, bridge };
     }
 
-    toggle.addEventListener('change', () => {
+    lifetime.on(toggle, 'change', () => {
         if (syncingCheckbox) return;
         const { bridge } = activeCtxAndBridge();
         if (bridge && typeof bridge.enableHistoryJournal === 'function') {
             bridge.enableHistoryJournal(toggle.checked);
+            lastRenderSignature = '';
+            render();
         }
     });
 
-    resetBtn.addEventListener('click', () => {
+    lifetime.on(resetBtn, 'click', () => {
         const { ctx } = activeCtxAndBridge();
-        if (ctx) getOrCreateTransactionTracker(ctx).reset();
+        if (ctx) {
+            getOrCreateTransactionTracker(ctx).reset();
+            lastRenderSignature = '';
+            render();
+        }
     });
 
     function render() {
@@ -149,9 +138,13 @@ export function mountTransactionPanel(host) {
             const scenarioNote = state?.currentScenarioId
                 ? ` (scenario "${state.currentScenarioId}")`
                 : '';
-            unavailableEl.textContent = bridge?.isWorker
+            const message = bridge?.isWorker
                 ? `Not available: the worker-backed WASM bridge does not yet forward the history journal across the worker boundary${scenarioNote}.`
                 : `Not available: this bridge has no native history journal (mock-owned scenario${scenarioNote}, or the WASM build predates this feature). The transaction tracker is WASM-only.`;
+            const signature = `unsupported:${state?.currentScenarioId ?? ''}:${bridge?.isWorker ? 1 : 0}:${message}`;
+            if (signature === lastRenderSignature) return;
+            lastRenderSignature = signature;
+            unavailableEl.textContent = message;
             syncingCheckbox = true;
             toggle.checked = false;
             syncingCheckbox = false;
@@ -165,6 +158,19 @@ export function mountTransactionPanel(host) {
         const tracker = ctx ? getOrCreateTransactionTracker(ctx) : null;
         const snap = tracker ? tracker.snapshotTelemetry() : null;
         if (!snap) return;
+
+        const signature = JSON.stringify([
+            bridge?.configurationToken ?? null,
+            toggle.checked,
+            KIND_ORDER.map((kind) => snap.eventCounts[kind] ?? 0),
+            snap.liveRecordCount,
+            snap.totalRecordCount,
+            snap.lifetime,
+            snap.transactionLatency,
+            snap.cycle,
+        ]);
+        if (signature === lastRenderSignature) return;
+        lastRenderSignature = signature;
 
         renderGrid(kindGrid, KIND_ORDER.map((k) => [k, snap.eventCounts[k] ?? 0]));
         liveCountEl.textContent = String(snap.liveRecordCount);
@@ -190,14 +196,16 @@ export function mountTransactionPanel(host) {
     }
 
     render();
-    const poll = setInterval(render, POLL_MS);
+    const sub = rafCoordinator.subscribe(PANEL_ID, { hz: UPDATE_HZ, cb: render });
+    lifetime.defer(() => sub.unsubscribe());
+    lifetime.on(window, PANEL_VISIBILITY_CHANGE_EVENT, render);
 
     const api = {
         element: panel,
         render,
         dispose: () => {
             disposed = true;
-            clearInterval(poll);
+            lifetime.dispose();
             if (typeof window !== 'undefined' && window.__ftdTransactionPanel === api) window.__ftdTransactionPanel = null;
             panel.remove();
         },

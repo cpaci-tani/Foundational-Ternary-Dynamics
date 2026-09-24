@@ -8,8 +8,8 @@
  * and takes high-resolution screenshots of the 3D WebGL simulation canvas.
  */
 
-import { test } from '@playwright/test';
-import { gotoAndReady } from './_helpers.js';
+import { test, expect } from '@playwright/test';
+import { gotoAndReady, selectScale0Scenario } from './_helpers.js';
 
 test.describe('FTD Simulation Gallery Generator', () => {
     test('Capture beautiful front-orientated, zoomed-out simulation screenshots', async ({ page }, testInfo) => {
@@ -85,22 +85,9 @@ test.describe('FTD Simulation Gallery Generator', () => {
             console.log(`\n========================================`);
             console.log(`Loading scenario: ${sc.id}`);
             
-            // 1. Load scenario via the select element
-            await page.evaluate((scenarioId) => {
-                const select = document.getElementById('scenario-select');
-                if (select) {
-                    select.value = scenarioId;
-                    select.dispatchEvent(new Event('change', { bubbles: true }));
-                } else {
-                    // Fallback to direct registry load if select is not found
-                    window._ftdBridge.reset(64);
-                    window._ftdBridge.setupScenario(scenarioId);
-                }
-                // Always pause to prevent background tick racing
-                if (window.__ftdCtx) {
-                    window.__ftdCtx.running = false;
-                }
-            }, sc.id);
+            // Install any research-only option, then verify the real load owner.
+            await selectScale0Scenario(page, sc.id);
+            await page.evaluate(() => window.__ftdCtx.pauseSimulation());
 
             // Wait for scenario load to propagate and render initial state
             await page.waitForTimeout(400);
@@ -120,20 +107,17 @@ test.describe('FTD Simulation Gallery Generator', () => {
 
             await page.waitForTimeout(400); // let Three.js repaint
             const screenshotPathT0 = testInfo.outputPath(`${sc.name}_t0.png`);
+            await expect(page.locator('#viewport canvas')).toBeVisible();
+            expect(await page.locator('#viewport canvas').evaluate(canvas => canvas.width > 0 && canvas.height > 0)).toBe(true);
             console.log(`Taking screenshot of tick 0 at: ${screenshotPathT0}`);
             await page.locator('#viewport').screenshot({ path: screenshotPathT0 });
 
             // 2. Step to target tick count
             console.log(`Stepping ${sc.ticks} ticks...`);
-            await page.evaluate((ticks) => {
-                const b = window._ftdBridge;
+            await page.evaluate(async (ticks) => {
+                const controller = await import('/js/scales/scale0/controller.js?v=44');
                 for (let i = 0; i < ticks; i++) {
-                    b.tick();
-                }
-                // Force sync and updates
-                if (window.__ftdCtx && window.__ftdCtx.state) {
-                    window.__ftdCtx.state.latticeNeedsUpload = true;
-                    window.__ftdCtx.state.fieldNeedsUpdate = true;
+                    await controller.step(window.__ftdCtx);
                 }
             }, sc.ticks);
 

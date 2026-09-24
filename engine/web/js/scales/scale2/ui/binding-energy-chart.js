@@ -1,6 +1,6 @@
 // Nuclear binding-energy-per-nucleon curve — the classic B/A vs mass-number
 // plot, peaking at Fe-56. Static (Z=1..118 is a pure function of the SEMF,
-// not a live simulation quantity), so it is drawn once and never redrawn.
+// not a live simulation quantity), so only presentation-size changes redraw it.
 //
 // Raw-Canvas-2D, following the plotting pattern established in
 // scales/scale0/ui/overlays/genesis-burst-panel.js (axis mapping via
@@ -10,13 +10,16 @@
 // and would be the wrong tool here).
 
 import { allElementEnergies } from '../../../atomic-energy.js';
+import { createCanvasSurface, resizeCanvasSurface } from '../../../ui/utils/canvas-surface.js';
 
 const FE56_Z = 26;
 
-export function drawBindingEnergyCurve(canvas) {
+export function drawBindingEnergyCurve(canvas, surface = null) {
     if (!canvas) return;
-    const ctx2d = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
+    const measured = surface || resizeCanvasSurface(canvas);
+    const ctx2d = measured?.ctx;
+    if (!ctx2d) return;
+    const W = measured.width, H = measured.height;
     const padL = 34, padR = 8, padT = 10, padB = 20;
     const x0 = padL, x1 = W - padR, y0 = H - padB, y1 = padT;
 
@@ -73,4 +76,9 @@ export function drawBindingEnergyCurve(canvas) {
         ctx2d.fillStyle = 'rgba(150,150,150,0.9)';
         ctx2d.fillText('Fe-56', px(fe56.A) + 4, py(fe56.BA) - 4);
     }
+}
+
+export function mountBindingEnergyCurve(canvas) {
+    if (!canvas) return null;
+    return createCanvasSurface(canvas, (surface) => drawBindingEnergyCurve(canvas, surface));
 }

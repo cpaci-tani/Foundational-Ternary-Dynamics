@@ -479,6 +479,8 @@ export class Viewport {
 
     setWireframeBrightness(val) { this._sceneCore?.setWireframeBrightness(val); }
 
+    getViewControlState() { return this._sceneCore?.getViewControlState() ?? {}; }
+
     toggleAxes(on) { this._sceneCore?.toggleAxes(on); }
 
     toggleBoundaryOrientation(on) { this._sceneCore?.toggleBoundaryOrientation(on); }
@@ -1139,7 +1141,14 @@ export class Viewport {
 
     setBloomParams(params) { this._sceneCore?.setBloomParams(params); }
 
+    /** Suspend presentation while retaining scene, camera and simulation owner. */
+    setPresentationSuspended(suspended) {
+        this.presentationSuspended = !!suspended;
+        this._fluxRenderer?.setPresentationSuspended(suspended);
+    }
+
     render() {
+        if (this.presentationSuspended) return;
         // Dynamically adjust camera.far to prevent culling at extreme zoom out
         const dist = this.camera.position.distanceTo(this.controls.target);
         const desiredFar = Math.max(this._baseFar || 2000, dist * 5);

@@ -1,12 +1,7 @@
 import { enhanceScenarioPicker } from './scenario-picker.js';
 import { populateScale0ScenarioSelect } from '../../scenario-registry.js';
 import { getScale0ScenarioToolbarTemplate, getScale0LatticeSizeToolbarTemplate } from './template.js?v=2';
-
-function htmlToElement(markup) {
-    const template = document.createElement('template');
-    template.innerHTML = markup.trim();
-    return template.content.firstElementChild;
-}
+import { htmlToElement } from '../../../../ui/utils/scale-toolbar.js';
 
 export function createScale0ScenarioToolbarGroup() {
     const element = htmlToElement(getScale0ScenarioToolbarTemplate());

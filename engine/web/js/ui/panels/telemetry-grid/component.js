@@ -5,12 +5,49 @@ import { resolveChartColor } from '../../charts/theme.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
 import { TickHistoryControl } from '../../charts/history-window.js';
+import { projectHistoryIndices } from '../../charts/history-index.js';
+import { setTextIfChanged } from '../../utils/dom-text.js';
 
 const PANEL_MIN_INTERVAL_MS = 33;   // ~30 Hz ceiling; Scale 0 redraws only when its ~20-24 Hz source advances
 const GRID_VISIBLE_SAMPLES = 120;   // display window; source ring buffers still retain their full history
 const MAX_SPARK = GRID_VISIBLE_SAMPLES;
 const COUNT_FORMAT = new Intl.NumberFormat();
 const DASH = '\u2014';
+
+const PROPER_TIME_REASON_TEXT = Object.freeze({
+    'proper-time-sampler-pending': 'Waiting for proper-time samples.',
+    'proper-time-sampler-unavailable': 'This engine cannot provide proper-time samples.',
+    'proper-time-disabled': 'Clock disabled. Open Time to configure it.',
+    'no-manifested-voxel-support': 'No manifested clock samples in this sampled region.',
+    'proper-time-provenance-mismatch': 'Sampler rows do not share one source and tick.',
+    'source-owner-changed': 'Source changed; waiting for current samples.',
+});
+
+/** User-facing explanation for an unavailable canonical proper-time group. */
+export function properTimeAvailabilityText(meta, hasCurrentSample = false) {
+    if (!meta || meta.status === 'pending') return PROPER_TIME_REASON_TEXT['proper-time-sampler-pending'];
+    if (meta.status === 'available' && meta.stale !== true) {
+        return hasCurrentSample ? '' : 'No current sample for this proper-time measure.';
+    }
+    const primary = PROPER_TIME_REASON_TEXT[meta.unavailableReason];
+    const detail = meta.unavailableDetail && meta.unavailableDetail !== meta.unavailableReason
+        ? PROPER_TIME_REASON_TEXT[meta.unavailableDetail] : '';
+    if (primary && detail) return `${primary} ${detail}`;
+    return primary
+        || (meta.stale ? 'Retained history; waiting for a current proper-time sample.'
+            : 'Proper-time measurement is unavailable for this observation.');
+}
+
+/** Pure freshness decision shared by retained numeric text and tests. */
+export function telemetryValueState(activeScale, chan, meta, latestValue) {
+    if (activeScale !== '0' || !chan?.telemetryGroup) {
+        return Number.isFinite(latestValue) ? 'current' : 'unavailable';
+    }
+    if (!meta) return 'waiting';
+    if (meta.stale || meta.status === 'stale') return 'stale';
+    if (meta.status === 'unavailable' || !Number.isFinite(meta.tick)) return 'unavailable';
+    return Number.isFinite(latestValue) ? 'current' : 'unavailable';
+}
 
 // ── Telemetry Channel Definitions per Active Scale ──────────────────────────
 const CHANNELS = {
@@ -115,7 +152,7 @@ export class TelemetryGridPanelComponent {
         if (!this.el) return this;
         this.el.innerHTML = `
             <div class="telemetry-grid-panel">
-                <div class="telemetry-grid-container"></div>
+                <div class="telemetry-grid-container" data-panel-grid></div>
             </div>
         `;
         this.container = this.el.querySelector('.telemetry-grid-container');
@@ -189,9 +226,15 @@ export class TelemetryGridPanelComponent {
             card.innerHTML = `
                 <div class="telemetry-card-head">
                     <span class="telemetry-card-title">${chan.title}</span>
-                    <span class="telemetry-card-value">--</span>
+                    <span class="telemetry-card-reading">
+                        <span class="telemetry-card-value">${DASH}</span>
+                        <span class="telemetry-card-unit">${chan.unit || DASH}</span>
+                    </span>
                 </div>
-                <div class="telemetry-card-plot" id="tele-plot-${chan.key}"></div>
+                <div class="telemetry-card-plot" id="tele-plot-${chan.key}">
+                    ${chan.telemetryGroup === 'properTime'
+                        ? '<div class="telemetry-card-status" role="status" hidden></div>' : ''}
+                </div>
             `;
 
             this.container.appendChild(card);
@@ -205,6 +248,7 @@ export class TelemetryGridPanelComponent {
                 card,
                 plotContainer: card.querySelector('.telemetry-card-plot'),
                 valueEl: card.querySelector('.telemetry-card-value'),
+                statusEl: card.querySelector('.telemetry-card-status'),
                 bufferPath: chan.buffer.split('.'),
                 xs: new Float64Array(MAX_SPARK),
                 ys: new Float64Array(MAX_SPARK),
@@ -222,6 +266,7 @@ export class TelemetryGridPanelComponent {
                 // advances avoids redrawing a chart with identical samples.
                 lastBuffer: null,
                 lastTotal: -1,
+                lastGeneration: -1,
                 lastValue: Number.NaN,
                 lastDisplayValue: Number.NaN,
                 lastWidth: 0,
@@ -404,10 +449,7 @@ export class TelemetryGridPanelComponent {
             ? telemetryHub.getScale0TelemetryMeta?.(entry.chan.telemetryGroup)
             : null;
         const latestValue = buf?.count > 0 ? buf.last() : Number.NaN;
-        const state = this.activeScale === '0' && entry.chan.telemetryGroup
-            ? (!meta || !Number.isFinite(meta.tick) ? 'waiting' : (meta.stale ? 'stale'
-                : (Number.isFinite(latestValue) ? 'current' : 'unavailable')))
-            : (Number.isFinite(latestValue) ? 'current' : 'unavailable');
+        const state = telemetryValueState(this.activeScale, entry.chan, meta, latestValue);
         if (entry.card.dataset.telemetryState !== state) {
             entry.card.dataset.telemetryState = state;
             entry.card.title = state === 'stale'
@@ -417,10 +459,19 @@ export class TelemetryGridPanelComponent {
         }
         const displayValue = state === 'current'
             ? this.formatValue(latestValue, entry.chan.unit) : DASH;
+        if (entry.statusEl) {
+            const reason = properTimeAvailabilityText(meta, state === 'current');
+            setTextIfChanged(entry.statusEl, reason);
+            entry.statusEl.hidden = !reason;
+        }
         if (Object.is(entry.lastDisplayValue, latestValue)
             && entry.valueEl?.textContent === displayValue) return;
         entry.lastDisplayValue = latestValue;
-        if (entry.valueEl) entry.valueEl.textContent = displayValue;
+        if (entry.valueEl) {
+            setTextIfChanged(entry.valueEl, displayValue);
+            entry.valueEl.title = state === 'current'
+                ? `${displayValue}${entry.chan.unit ? ` ${entry.chan.unit}` : ''}` : '';
+        }
     }
 
     // Pull the latest window from this channel's ring buffer into its sparkline.
@@ -447,17 +498,22 @@ export class TelemetryGridPanelComponent {
 
         const total = buf.total ?? buf.count;
         const latestValue = buf.last();
+        const generation = buf.generation;
         if (entry.lastBuffer === buf && entry.lastTotal === total
+            && entry.lastGeneration === generation
             && Object.is(entry.lastValue, latestValue)) return;
 
-        const n = this.historyControl.visibleCount(buf);
+        const count = this.historyControl.visibleCount(buf);
+        const indices = projectHistoryIndices([buf], count, entry.lastWidth || 320);
+        const n = indices?.length ?? count;
         this._ensureEntryCapacity(entry, n);
         const { u, xs, ys } = entry;
-        const start = Math.max(0, buf.count - n);
+        const start = Math.max(0, buf.count - count);
         for (let i = 0; i < n; i++) {
-            const tick = buf.getTick?.(start + i);
-            xs[i] = Number.isFinite(tick) ? tick : start + i;
-            ys[i] = buf.get(start + i);
+            const index = indices ? indices[i] : start + i;
+            const tick = buf.getTick?.(index);
+            xs[i] = Number.isFinite(tick) ? tick : index;
+            ys[i] = buf.get(index);
         }
         if (entry.lastN !== n || !entry.plotData) {
             entry.plotData = [xs.subarray(0, n), ys.subarray(0, n)];
@@ -465,6 +521,7 @@ export class TelemetryGridPanelComponent {
         entry.lastN = n;
         entry.lastBuffer = buf;
         entry.lastTotal = total;
+        entry.lastGeneration = generation;
         entry.lastValue = latestValue;
         entry.lastDisplayValue = latestValue;
 
@@ -496,7 +553,7 @@ export class TelemetryGridPanelComponent {
         }
         entry.tooltip.render({
             title: chan.title,
-            xLabel: 'sample',
+            xLabel: 'tick',
             xValue: entry.xs[idx],
             rows: [{
                 label: chan.title,
@@ -514,15 +571,15 @@ export class TelemetryGridPanelComponent {
             return COUNT_FORMAT.format(Math.round(val));
         }
         if (Math.abs(val) > 1e6) {
-            return `${(val / 1e6).toFixed(3)}M ${unit}`;
+            return `${(val / 1e6).toFixed(3)}M`;
         }
         if (Math.abs(val) > 1e3 && unit !== '%' && unit !== 'ratio') {
-            return `${(val / 1e3).toFixed(3)}k ${unit}`;
+            return `${(val / 1e3).toFixed(3)}k`;
         }
         if (Math.abs(val) < 1e-4 && val !== 0) {
             return val.toExponential(4);
         }
-        return `${val.toFixed(4)} ${unit}`;
+        return val.toFixed(4);
     }
 
     _scheduleReflow() {
@@ -541,6 +598,8 @@ export class TelemetryGridPanelComponent {
             if (width > 0 && width !== entry.lastWidth) {
                 entry.lastWidth = width;
                 entry.u.setSize({ width, height: 70 });
+                entry.lastTotal = -1;
+                this._drawEntry(entry);
             }
         });
     }

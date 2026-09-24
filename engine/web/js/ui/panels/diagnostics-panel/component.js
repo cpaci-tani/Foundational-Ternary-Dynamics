@@ -4,12 +4,12 @@
  * descriptor summary for per-particle/orbital drill-down.
  */
 
-import { DiagnosticsTable } from './table.js?v=2';
+import { DiagnosticsTable } from './table.js';
 import { sections as scale0Sections } from './descriptors/scale0.js';
-import { sections as scale1Sections } from './descriptors/scale1.js?v=9';
+import { sections as scale1Sections } from './descriptors/scale1.js';
 import { sections as scale2Sections } from './descriptors/scale2.js';
 import { sections as scale3Sections } from './descriptors/scale3.js';
-import { sections as scale4Sections } from './descriptors/scale4.js?v=2';
+import { sections as scale4Sections } from './descriptors/scale4.js';
 import { sections as scale5Sections } from './descriptors/scale5.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
@@ -28,10 +28,15 @@ export class DiagnosticsPanelComponent {
         this.historyControl = new TickHistoryControl(this.el, {
             id: 'diagnostics-panel',
             defaultTicks: 120,
+            onChange: () => {
+                for (const table of this.tables) table.invalidateHistoryWindow();
+                this.update();
+            },
         });
         if (!this.el.dataset.panelRedesignMounted) {
             const scale0Root = document.createElement('div');
             scale0Root.className = 'scale0-only diag-scale0-root';
+            scale0Root.dataset.panelGrid = '';
             for (const section of scale0Sections) {
                 const table = new DiagnosticsTable(section, telemetryHub, {
                     resetScope: 0,
@@ -41,10 +46,12 @@ export class DiagnosticsPanelComponent {
                 this.tables.push(table);
                 this.tablesByScale['0'].push(table);
             }
-            this.el.insertBefore(scale0Root, this.el.firstChild);
+            // Keep the shared history selector ahead of every scale's charts.
+            this.el.insertBefore(scale0Root, this.historyControl.el.nextSibling);
 
             const scale1Root = document.createElement('div');
             scale1Root.className = 'scale1-only diag-scale1-root';
+            scale1Root.dataset.panelGrid = '';
             for (const section of scale1Sections) {
                 const table = new DiagnosticsTable(section, telemetryHub, {
                     resetScope: 1,

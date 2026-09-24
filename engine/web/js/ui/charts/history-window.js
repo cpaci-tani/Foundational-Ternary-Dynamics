@@ -156,9 +156,13 @@ export class TickHistoryControl {
         if (this.isAll || count < 2) return count;
         const lastTick = bufferTick(buffer, count - 1);
         const minimumTick = lastTick - this.state.ticks;
-        let first = count - 1;
-        while (first > 0 && bufferTick(buffer, first - 1) >= minimumTick) first--;
-        return count - first;
+        let lo = 0, hi = count - 1;
+        while (lo < hi) {
+            const mid = Math.floor((lo + hi) / 2);
+            if (bufferTick(buffer, mid) < minimumTick) lo = mid + 1;
+            else hi = mid;
+        }
+        return count - lo;
     }
 
     /** Trailing slice of an array using an explicit tick accessor. */

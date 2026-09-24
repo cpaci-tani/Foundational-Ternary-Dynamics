@@ -10,8 +10,10 @@ import { createUI } from './atlas-ui.js';
 import { LAYERS, GROUPS } from './atlas-content.js';
 import { STAGES, STAGE_COUNT } from './atlas-chain.js';
 import * as data from './atlas-data.js';
+import { LifetimeScope } from '../ui/utils/lifetime-scope.js';
 
 const canvas = document.getElementById('atlas-canvas');
+const lifetime = new LifetimeScope();
 const scene = createScene(canvas);
 const lattice = createLattice(scene.THREE);
 scene.scene.add(lattice);
@@ -85,6 +87,7 @@ function separate(from, to) {
 
 // ── api (the test handle) ─────────────────────────────────────────────────
 let ui = null;   // assigned after createUI; setStage uses it lazily.
+let disposed = false;
 
 const api = {
   stageCount: STAGE_COUNT,
@@ -147,7 +150,15 @@ const api = {
   mode() { return ui?.getMode?.() ?? 'guided'; },
   setMode(s) { ui?.setMode?.(s); },
 
-  dispose() { api._running = false; },
+  dispose() {
+    if (disposed) return;
+    disposed = true;
+    api._running = false;
+    ui?.dispose?.();
+    overlay.dispose?.();
+    lifetime.dispose();
+    scene.dispose?.();
+  },
   _running: true,
 };
 window.__ftdAtlas = api;
@@ -168,11 +179,11 @@ ui = createUI(
   },
 );
 
-document.getElementById('reset-view')?.addEventListener('click', () => {
+lifetime.on(document.getElementById('reset-view'), 'click', () => {
   ui?.pause?.();
   tweenCameraTo(STAGES[api._stage].camera);
 });
-window.addEventListener('resize', () => scene.onResize());
+lifetime.on(window, 'resize', () => scene.onResize());
 
 function tickLayers() {
   if (reduceMotion) return;
@@ -188,19 +199,19 @@ function frame() {
   tickLayers();
   scene.render();
   overlay.tick();
-  requestAnimationFrame(frame);
+  lifetime.frame(frame);
 }
 
 // First frame, set the opening stage, then flip ready (so tests wait for an
 // actual render with the guided chain already on stage 0).
-requestAnimationFrame(() => {
+lifetime.frame(() => {
   api.setStage(0);
   stepTween(performance.now());
   tickLayers();
   scene.render();
   overlay.tick();
   api.ready = true;
-  requestAnimationFrame(frame);
+  lifetime.frame(frame);
 });
 
 console.info('[atlas] boot');

@@ -8,6 +8,22 @@ import { isPanelLive, notifyPanelVisibilityChange } from '../../panels/panel-vis
 let _activeWindows = [];
 let _maxZIndex = 1000;
 
+function readViewportBounds() {
+    const viewport = window.visualViewport;
+    return {
+        left: viewport?.offsetLeft ?? 0,
+        top: viewport?.offsetTop ?? 0,
+        width: viewport?.width ?? window.innerWidth,
+        height: viewport?.height ?? window.innerHeight,
+    };
+}
+
+function readFloatingInset() {
+    const value = Number.parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--floating-window-inset'));
+    return Number.isFinite(value) ? Math.max(0, value) : 12;
+}
+
 export class FloatingWindow {
     constructor(panelId, opts = {}) {
         this.panelId = panelId;
@@ -27,6 +43,7 @@ export class FloatingWindow {
         this._onPointerDown = this._onPointerDown.bind(this);
         this._onPointerMove = this._onPointerMove.bind(this);
         this._onPointerUp = this._onPointerUp.bind(this);
+        this._onViewportChange = this._onViewportChange.bind(this);
         this._destroyed = false;
         this._ro = null;
     }
@@ -87,6 +104,10 @@ export class FloatingWindow {
         // Append to application root
         const app = document.getElementById('app') || document.body;
         app.appendChild(this.el);
+        this._clampToViewport();
+        window.addEventListener('resize', this._onViewportChange);
+        window.visualViewport?.addEventListener('resize', this._onViewportChange);
+        window.visualViewport?.addEventListener('scroll', this._onViewportChange);
 
         _activeWindows.push(this);
         notifyPanelVisibilityChange({
@@ -146,6 +167,9 @@ export class FloatingWindow {
             this._ro.disconnect();
             this._ro = null;
         }
+        window.removeEventListener('resize', this._onViewportChange);
+        window.visualViewport?.removeEventListener('resize', this._onViewportChange);
+        window.visualViewport?.removeEventListener('scroll', this._onViewportChange);
         if (this.el) {
             this.el.remove();
         }
@@ -197,13 +221,7 @@ export class FloatingWindow {
         let x = e.clientX - this._drag.offsetX;
         let y = e.clientY - this._drag.offsetY;
 
-        // Bound checking to keep header visible on screen
-        const padding = 20;
-        x = Math.max(padding - this.el.offsetWidth, Math.min(window.innerWidth - padding, x));
-        y = Math.max(0, Math.min(window.innerHeight - 38, y));
-
-        this.el.style.left = `${x}px`;
-        this.el.style.top = `${y}px`;
+        this._setClampedPosition(x, y);
     }
 
     _onPointerUp() {
@@ -219,6 +237,37 @@ export class FloatingWindow {
         window.removeEventListener('pointercancel', this._onPointerUp);
         window.removeEventListener('blur', this._onPointerUp);
         if (wasActive && resize) this.triggerChartResize();
+    }
+
+    _onViewportChange() {
+        this._clampToViewport();
+        this.triggerChartResize();
+    }
+
+    _clampToViewport() {
+        if (this._destroyed || !this.el) return;
+        const left = Number.parseFloat(this.el.style.left) || 0;
+        const top = Number.parseFloat(this.el.style.top) || 0;
+        this._setClampedPosition(left, top);
+    }
+
+    _setClampedPosition(x, y) {
+        if (!this.el) return;
+        const { left, top, width, height } = readViewportBounds();
+        const inset = readFloatingInset();
+        // `100dvh` can lag a Playwright/mobile visual-viewport resize by a
+        // frame. The geometry owner sets the same bound inline so the window
+        // never waits on a stylesheet recalculation before it is clamped.
+        this.el.style.maxWidth = `${Math.max(0, Math.floor(width - inset * 2))}px`;
+        this.el.style.maxHeight = `${Math.max(0, Math.floor(height - inset * 2))}px`;
+        const windowWidth = this.el.offsetWidth;
+        const windowHeight = this.el.offsetHeight;
+        const minX = left + inset;
+        const minY = top + inset;
+        const maxX = Math.max(minX, left + width - inset - windowWidth);
+        const maxY = Math.max(minY, top + height - inset - windowHeight);
+        this.el.style.left = `${Math.round(Math.min(maxX, Math.max(minX, x)))}px`;
+        this.el.style.top = `${Math.round(Math.min(maxY, Math.max(minY, y)))}px`;
     }
 }
 
@@ -255,7 +304,7 @@ export class FloatingWindowManager {
     }
 
     dockAll() {
-        for (const [_id, win] of this.windows) {
+        for (const win of [...this.windows.values()]) {
             win.dock();
         }
     }

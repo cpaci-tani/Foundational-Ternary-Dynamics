@@ -301,6 +301,8 @@
     box-shadow: none;
 }
 .flux-slice-panel.dock-mode .flux-slice-header {
+    flex-wrap: wrap;
+    gap: 6px;
     margin-bottom: 8px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--border-light, rgba(255, 255, 255, 0.08));
@@ -324,7 +326,8 @@
 }
 .flux-slice-panel.dock-mode .flux-slice-mirror-chip {
     font-size: var(--fs-xs);
-    padding: 3px 6px;
+    padding: 3px 2px;
+    white-space: nowrap;
 }
 .flux-slice-panel.dock-mode .flux-slice-row-tiles {
     gap: 6px;
@@ -336,6 +339,30 @@
 .flux-slice-panel.dock-mode .flux-slice-caption {
     font-size: var(--fs-sm);
     line-height: 1.2;
+}
+.flux-slice-panel.dock-mode .flux-slice-readout {
+    display: block;
+    width: 100%;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+    text-align: center;
+}
+
+.flux-slice-expand {
+    flex: 0 0 var(--tap-min);
+    width: var(--tap-min);
+    min-width: var(--tap-min);
+    min-height: var(--tap-min);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    border-radius: var(--radius-sm);
 }
 
 .flux-slice-grid {
@@ -492,7 +519,7 @@
     margin-bottom: 5px;
     color: var(--accent, #7dd3fc);
     font-family: var(--font-mono, monospace);
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.04em;
 }
 
@@ -506,7 +533,7 @@
     border-top: 1px solid color-mix(in srgb, var(--accent, #7dd3fc) 18%, transparent);
     color: var(--text-primary);
     font-family: var(--font-mono, monospace);
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
 }
 
 /* ── Scale 0 Field Overlay Swatches ────────────────────── */
@@ -517,7 +544,7 @@
 .field-swatch-divj         { background: linear-gradient(90deg, #e53935, #1e88e5); }
 .field-swatch-flux-lines   { background: linear-gradient(90deg, #1565c0, #ffee58, #e53935); }
 .field-swatch-native-transport { background: repeating-linear-gradient(90deg, #1565c0 0 3px, #ffee58 3px 6px, #e53935 6px 9px); }
-.native-transport-legend { font-size: 11px; line-height: 1.35; color: var(--text-muted, #9aa4b2); padding: 2px 6px 6px; max-width: 260px; }
+.native-transport-legend { font-size: var(--fs-xs); line-height: 1.35; color: var(--text-muted, #9aa4b2); padding: 2px 6px 6px; max-width: 260px; }
 .native-transport-threshold { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding-top: 4px; }
 .field-swatch-em           { background: #00e5ff; }
 .field-swatch-gravity      { background: #ffab00; }
@@ -528,6 +555,29 @@
 .field-swatch-dm-halo      { background: #7c3aed; }
 .field-swatch-damping      { background: #ef4444; }
 .field-swatch-genesis      { background: #22c55e; }
+
+/* Progressive scenario picker. Kept in the Scale 0 toolbar owner so its
+   type, stacking, and touch targets participate in the shared contracts. */
+.scenario-picker { position: relative; max-width: 360px; min-width: 0; flex: 0 1 360px; }
+.scenario-picker-native { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.scenario-picker > summary { min-height: var(--ctrl-height-min); padding: 6px 10px; overflow: hidden; border: 1px solid var(--border-light); border-radius: 6px; cursor: pointer; text-overflow: ellipsis; white-space: nowrap; }
+.scenario-picker-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: var(--z-local-overlay); display: flex; box-sizing: border-box; width: min(480px, calc(100vw - 32px)); max-height: min(480px, calc(100dvh - 160px)); flex-direction: column; overflow: hidden; border: 1px solid var(--border-light); border-radius: 10px; background: var(--bg-deep); color: var(--text-primary); box-shadow: var(--card-shadow); font-size: var(--fs-base, 16px); line-height: 1.45; white-space: normal; }
+.scenario-picker-menu > label { display: block; flex: none; padding: 12px; border-bottom: 1px solid var(--border-light); color: var(--text-secondary); font-size: var(--fs-base, 16px); letter-spacing: normal; text-transform: none; }
+.scenario-picker-menu input { box-sizing: border-box; width: 100%; min-height: var(--ctrl-height-min); margin: 6px 0 0; background: var(--bg-input); color: var(--text-primary); }
+.scenario-picker-menu input::placeholder { color: var(--text-muted); }
+.scenario-picker-groups { min-height: 0; padding: 4px 6px 8px; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.scenario-picker-group > summary { min-height: var(--ctrl-height-min); padding: 9px 8px; border-radius: 5px; color: var(--text-primary); font-weight: 600; cursor: pointer; white-space: normal; overflow-wrap: anywhere; }
+.scenario-picker-group > button { display: block; box-sizing: border-box; width: 100%; min-height: var(--ctrl-height-min); padding: 8px 12px 8px 24px; border: 0; border-radius: 5px; background: transparent; color: var(--text-secondary); font: inherit; text-align: left; cursor: pointer; white-space: normal; overflow-wrap: anywhere; }
+.scenario-picker-group > summary:hover,
+.scenario-picker-group > button:hover,
+.scenario-picker-group > button[aria-pressed="true"] { background: var(--bg-input); color: var(--text-primary); }
+.scenario-picker-group > summary:focus-visible,
+.scenario-picker-group > button:focus-visible { outline: 2px solid var(--text-primary); outline-offset: -2px; }
+.scenario-picker-empty { margin: 0; padding: 12px; color: var(--text-muted); }
+
+@media (max-width: 640px) {
+    .scenario-picker-menu { position: fixed; top: auto; right: 16px; left: 16px; width: auto; max-height: 55dvh; margin-top: 6px; }
+}
 .field-swatch-confinement  { background: #ec407a; }
 .field-swatch-color-charge { background: linear-gradient(90deg, #ef4444 0%, #22c55e 50%, #3b82f6 100%); }
 

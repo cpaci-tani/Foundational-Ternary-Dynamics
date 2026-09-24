@@ -38,7 +38,7 @@ import {
     isotopeEnergy,
     formatEnergy as formatEnergyAE
 } from '../../atomic-energy.js';
-import { drawBindingEnergyCurve } from './ui/binding-energy-chart.js';
+import { mountBindingEnergyCurve } from './ui/binding-energy-chart.js';
 import { formatEnergy, formatTemperature } from '../../units.js';
 import { M_E_PHYS } from '../../constants.js';
 import { generateGridXZ, sampleAEField } from '../../fields.js';
@@ -131,7 +131,7 @@ let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' }
  * Update atomic energy display cards (nuclear binding, B/A, electron
  * binding, FTD mass) for single-element or multi-element views.
  */
-let _baChartDrawn = false;
+let _baChartSurface = null;
 
 const ISOTOPE_SUPERSCRIPT = Object.freeze({
     0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
@@ -149,13 +149,12 @@ function isotopeLabel(Z, N) {
 function updateAtomicEnergyDisplay(dom, atomData) {
     if (!dom.aeDiagMass || !atomData || atomData.count === 0) return;
 
-    // The B/A-vs-mass-number curve is a pure function of Z=1..118 (SEMF),
-    // not a live simulation quantity — draw it exactly once, not per-frame.
-    if (!_baChartDrawn) {
+    // The B/A-vs-mass-number curve is a pure function of Z=1..118 (SEMF).
+    // A CanvasSurface redraws only when its CSS presentation size changes.
+    if (!_baChartSurface) {
         const chartCanvas = document.getElementById('ae-diag-ba-chart');
         if (chartCanvas) {
-            drawBindingEnergyCurve(chartCanvas);
-            _baChartDrawn = true;
+            _baChartSurface = mountBindingEnergyCurve(chartCanvas);
         }
     }
 
@@ -1009,6 +1008,8 @@ class Scale2LifecycleController extends BaseLifecycleController {
 
     destroy(ctx) {
         // Reclaim tracked resources first, then run the existing reset.
+        _baChartSurface?.dispose();
+        _baChartSurface = null;
         super.destroy(ctx);
         resetScale2(ctx);
     }

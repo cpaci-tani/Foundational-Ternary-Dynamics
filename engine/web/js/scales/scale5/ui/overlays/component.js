@@ -98,6 +98,7 @@ export function bindScale5OverlayControls(rootEl) {
     comovingGridInput?.addEventListener('change', () => {
         _pendingComovingGrid = comovingGridInput.checked;
         _activeRenderer?.setComovingGrid?.(_pendingComovingGrid);
+        document.dispatchEvent(new Event('ftd:view-controls-changed'));
     });
 
     // Pass D: five dead renderer toggles (plan step 0.7).
@@ -170,4 +171,18 @@ export function syncScale5Overlays(renderer) {
     _activeRenderer?.setAccretionMarkers?.(_pendingAccretionMarkers);
     _activeRenderer?.setTrails?.(_pendingTrails);
     _activeRenderer?.setBodySizeScale?.(_pendingBodySizeScale);
+    document.dispatchEvent(new Event('ftd:view-controls-changed'));
+}
+
+/** Route the shared grid control through the same persistent overlay state. */
+export function setScale5ComovingGrid(visible) {
+    _pendingComovingGrid = !!visible;
+    const input = document.getElementById('cosmic-overlay-comoving-grid');
+    if (input) input.checked = _pendingComovingGrid;
+    _activeRenderer?.setComovingGrid?.(_pendingComovingGrid);
+    document.dispatchEvent(new Event('ftd:view-controls-changed'));
+}
+
+export function getScale5ComovingGrid() {
+    return _pendingComovingGrid;
 }

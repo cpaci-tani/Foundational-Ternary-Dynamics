@@ -593,6 +593,8 @@ test('UI tooltip system annotates controls and telemetry with custom help', asyn
 });
 
 test('Tooltip palette follows theme switches', async ({ page }) => {
+    // Default now follows OS light correctly; explicitly compare dark to light.
+    await page.emulateMedia({ colorScheme: 'dark' });
     await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 20_000 }).toBe(true);
@@ -694,7 +696,7 @@ test('Knowledge base opens as a single responsive library with shared content', 
     }));
 
     expect(scenarioState.resultCount).toBeGreaterThan(0);
-    expect(scenarioState.readerTitle).toContain('A Burst of New Matter');
+    expect(scenarioState.readerTitle).toContain('State Creation from a Polarized Gaussian');
     expect(scenarioState.readerText).toContain('not a Born-law measurement');
     expect(scenarioState.readerText).toContain('P proportional to |J| squared');
 

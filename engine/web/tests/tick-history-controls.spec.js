@@ -85,9 +85,22 @@ test('temporal side panels expose consistent history controls', async ({ page })
             'p1-observables': 'p1-observables-panel',
             inspector: 'inspector-panel',
         };
+        const sections = {
+            'wave-lab': '#wave-lab-panel',
+            gravity: '.gravity-applicable-content',
+            time: '#time-panel',
+            thermo: '#thermo-panel',
+            knots: '#knots-panel',
+            'p1-observables': '#p1-observables-panel',
+            inspector: '.panel-resource-shell',
+        };
         return Object.fromEntries(Object.entries(expected).map(([panelId, controlId]) => {
-            const control = document.querySelector(`#panel-${panelId} [data-history-control="${controlId}"]`);
+            const panel = document.querySelector(`#panel-${panelId}`);
+            const control = panel?.querySelector(`[data-history-control="${controlId}"]`);
+            const section = sections[panelId] ? panel?.querySelector(sections[panelId]) : panel;
             return [panelId, control ? {
+                topOfSection: section?.firstElementChild === control
+                    || section?.firstElementChild?.contains(control),
                 last: control.querySelector('[data-history-mode="window"]')?.getAttribute('aria-pressed'),
                 all: control.querySelector('[data-history-mode="all"]')?.getAttribute('aria-pressed'),
                 ticks: control.querySelector('input')?.value,
@@ -97,6 +110,7 @@ test('temporal side panels expose consistent history controls', async ({ page })
 
     for (const [panelId, control] of Object.entries(panelControls)) {
         expect(control, `${panelId} history control`).not.toBeNull();
+        expect(control.topOfSection, `${panelId} history selector precedes section content`).toBe(true);
         expect(control.last, `${panelId} defaults to a rolling window`).toBe('true');
         expect(control.all, `${panelId} all mode starts inactive`).toBe('false');
         expect(Number(control.ticks), `${panelId} has a positive tick span`).toBeGreaterThan(0);

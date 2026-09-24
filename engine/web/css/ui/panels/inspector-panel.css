@@ -20,8 +20,11 @@
 }
 
 .inspector-grid dd {
+    min-width: 0;
+    margin: 0;
     font-family: var(--font-mono);
     color: var(--text-primary);
+    overflow-wrap: anywhere;
 }
 
 /* ============================================================

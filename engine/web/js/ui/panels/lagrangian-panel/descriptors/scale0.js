@@ -2,7 +2,7 @@
  * Scale 0 Lagrangian panel descriptor.
  * `terms` drives the per-term small-multiple charts + term-checkbox row (each
  * term renders as its own mini line-chart, stacked in the grid — not overlaid).
- * `actionRows` and `constantRows` drive the two sidecar tables.
+ * `actionRows` drives the action and constraints table.
  */
 
 export const terms = [
@@ -24,15 +24,4 @@ export const actionRows = [
     { id: 'flux-mag',   label: 'Total |J|',             unit: '|J|',  source: 's0.diag.totalFlux',         trend: 'flux' },
     { id: 'wave-ke',    label: 'Wave KE',               unit: 'E*',   source: 's0.audit.waveEnergy',       trend: 'aud.waveEnergy' },
     { id: 'manifested', label: 'Manifested',            unit: 'ct',   source: 's0.diag.manifested',        trend: 'manifested' },
-];
-
-export const constantRows = [
-    { id: 'gstar',     label: 'G*',      unit: '',     source: 'consts.G_STAR' },
-    { id: 'alpha-inv', label: '1/α',     unit: '',     source: 'consts.X_PLUS' },
-    { id: 'alpha',     label: 'α',       unit: '',     source: 'consts.ALPHA' },
-    { id: 'kb',        label: 'K_B',     unit: 'MeV',  source: 'consts.K_B' },
-    { id: 'gn',        label: 'G_N',     unit: '',     source: 'consts.G_N' },
-    { id: 'gc',        label: 'g_c',     unit: '',     source: 'consts.G_C' },
-    { id: 'nc',        label: 'N_c',     unit: 'ct',   source: 'consts.N_C' },
-    { id: 'neff',      label: 'N_eff',   unit: 'ct',   source: 'consts.N_EFF' },
 ];

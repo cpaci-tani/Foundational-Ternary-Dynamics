@@ -14,7 +14,7 @@
 import { createScale0Capabilities } from './capabilities/scale0.js';
 import { particleDataToList, validateScale0BoundarySelector } from './bridge-contract.js';
 import { createSamplerWantSet } from './sampler-want-set.js';
-import './flux-publication.classic.js';
+import './flux-publication.classic.js?v=2';
 
 const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, DATA_VERSION: 6, LEN: 8 };
 const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), spin: new Float32Array(0), colorCharge: new Float32Array(0), locked: new Uint8Array(0), count: 0 });
@@ -174,15 +174,20 @@ export class WasmBridgeProxy {
         this._requestedFluxPeriodicAxis = null;
         this._engineFluxPeriodicAxis = null;
         this._wantAudit = false;        // telemetry demand mask (mirrors worker)
-        this._wantLag = true;
+        this._wantLag = false;
         this._wantGravity = false;
+        this._wantProperTime = false;
         this._ready = false;
         this._running = null;
         this._runCommandSeq = 0;       // monotonically identifies run-state commands
         this._runAckSeq = 0;           // last command processed by the worker event loop
         this._runningAck = null;       // worker-observed state for _runAckSeq
+        this._backgroundSuspended = false;
+        this._backgroundSuspendSeq = 0;
+        this._backgroundSuspendPending = new Map();
         this._readyAt = 0;              // performance.now() when 'ready' arrived
         this._lastFrameAt = 0;          // performance.now() of the last 'frame'
+        this._telemetryTiming = null;   // opt-in worker measurement, not scientific telemetry
         this._frameWatchdog = null;     // setTimeout handle for the dead-worker watchdog
         this._ctrl = null;
         this._fluxView = null;
@@ -200,6 +205,9 @@ export class WasmBridgeProxy {
         this._lastKnot = null;
         this._lastKnotEvents = null;
         this._lastKnotAgg = null;
+        this._lastGravityObservation = null;
+        this._gravityViewsSource = null;
+        this._gravityViews = null;
         this._inspectionCache = new Map();
         this._inspectionPending = new Map();
         this._nextInspectionRequestId = 0;
@@ -250,7 +258,7 @@ export class WasmBridgeProxy {
         this._digestReq = 0;
 
         // CLASSIC worker (Emscripten module via importScripts). No { type: 'module' }.
-        this._worker = new Worker(new URL('./wasm-bridge.worker.js?v=9', import.meta.url));
+        this._worker = new Worker(new URL('./wasm-bridge.worker.js?v=15', import.meta.url));
         this._worker.onmessage = (e) => this._onMessage(e.data);
         // A worker-level error (e.g. importScripts NetworkError loading the
         // -pthread MT glue) surfaces here. If it happens before the worker has
@@ -270,7 +278,7 @@ export class WasmBridgeProxy {
 
     /** True while the hosted module/worker is healthy enough to rebuild its RenderBridge. */
     canReconfigure() {
-        return !!this._worker && !this._terminated && !this._disposing && !this._initFailed;
+        return !!this._worker && !this._terminated && !this._disposing && !this._initFailed && !this._backgroundSuspended;
     }
 
     _callbacksForCurrentConfiguration() {
@@ -341,6 +349,9 @@ export class WasmBridgeProxy {
         this._lastKnot = null;
         this._lastKnotEvents = null;
         this._lastKnotAgg = null;
+        this._lastGravityObservation = null;
+        this._gravityViewsSource = null;
+        this._gravityViews = null;
         this._clearInspectionCaches();
         this._lastForceAt = null;
         this._lastDynamicalStateDigest = null;
@@ -557,6 +568,9 @@ export class WasmBridgeProxy {
         if (m.parts) this._lastParts = m.parts;
         this._acceptTelemetryGroupFrame('audit', m.audit, m.auditMeta, receivedAt);
         this._acceptTelemetryGroupFrame('lagrangian', m.lag, m.lagMeta, receivedAt);
+        if (m.telemetryTiming && typeof m.telemetryTiming === 'object') {
+            this._telemetryTiming = m.telemetryTiming;
+        }
         if (m.engineToggles) {
             this._engineToggles = m.engineToggles;
             if (this._appliedConfigurationToken === this._pendingConfigurationToken) {
@@ -586,6 +600,7 @@ export class WasmBridgeProxy {
             const version = Number(m.dataVersion);
             for (const key of Object.keys(m.samplers)) this._samplerCacheVersion[key] = version;
         }
+        this._acceptGravityObservation(m.gravityObservation, m);
         if (typeof window !== 'undefined' && window.__ftdCtx
             && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
             window.__ftdCtx.onBridgePostFrame(hadSamplers);
@@ -593,6 +608,15 @@ export class WasmBridgeProxy {
     }
 
     _onMessage(m) {
+        if (m?.type === 'backgroundSuspended') {
+            const pending = this._backgroundSuspendPending.get(m.seq);
+            if (pending) {
+                clearTimeout(pending.timer);
+                this._backgroundSuspendPending.delete(m.seq);
+                pending.resolve();
+            }
+            return;
+        }
         if (m?.type === 'disposed' && this._disposing && !this._terminated) {
             this._finalizeWorkerTermination('acknowledged');
             return;
@@ -601,6 +625,17 @@ export class WasmBridgeProxy {
         // can replace the hosted bridge while old 'ready'/'frame' messages are
         // queued. The disposing guard still admits the one `disposed` ack above.
         if (this._terminated || this._disposing || this._initFailed || !m) return;
+        if (m.type === 'controlComplete') {
+            const pending = this._controlPending?.get(m.requestId);
+            if (!pending) return;
+            this._controlPending.delete(m.requestId); clearTimeout(pending.timer);
+            if (m.configurationToken !== pending.token || pending.token !== this._pendingConfigurationToken) {
+                pending.reject(Object.assign(new Error('Lattice control owner was superseded'), { status: 'superseded' }));
+            } else if (!m.ok) {
+                pending.reject(Object.assign(new Error(m.error || 'Lattice control rejected'), { status: m.status || 'rejected' }));
+            } else pending.resolve(m);
+            return;
+        }
         if (SCENARIO_SCOPED_MESSAGE_TYPES.has(m.type)
             && Number(m.configurationToken) !== this._pendingConfigurationToken) return;
         if (m.type === 'ready') {
@@ -754,6 +789,7 @@ export class WasmBridgeProxy {
     }
 
     _cmd(method, ...args) {
+        if (this._backgroundSuspended) return;
         this._clearInspectionCaches();
         if (!this._ready || this._terminated || this._disposing) {
             // Buffer the command; will be replayed as batchCommand after 'ready'.
@@ -767,6 +803,32 @@ export class WasmBridgeProxy {
         this._worker.postMessage({
             type: 'command', method, args,
             configurationToken: this._pendingConfigurationToken,
+        });
+    }
+
+    /** Bounded, acknowledged controls on the resident owner. Never queued across a load. */
+    executeScale0Control(command, { signal, expectedSourceEpoch = this.configurationToken } = {}) {
+        if (signal?.aborted) return Promise.reject(new Error('Lattice control cancelled'));
+        if (!this._ready || this._terminated || this._disposing || this._backgroundSuspended
+            || expectedSourceEpoch !== this._pendingConfigurationToken
+            || this._appliedConfigurationToken !== this._pendingConfigurationToken) {
+            return Promise.reject(new Error('Lattice owner is unavailable or superseded'));
+        }
+        if (!['barrier', 'step', 'setToggle'].includes(command?.type)
+            || (command.type === 'step' && (!Number.isSafeInteger(command.count) || command.count < 1 || command.count > 64))
+            || (command.type === 'setToggle' && (!SCALE0_ENGINE_TOGGLE_NAMES.includes(command.name) || typeof command.value !== 'boolean'))) {
+            return Promise.reject(new Error('Unsupported lattice control'));
+        }
+        this._controlPending ??= new Map();
+        const requestId = this._controlSequence = (this._controlSequence || 0) + 1;
+        return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => {
+                this._controlPending.delete(requestId);
+                reject(Object.assign(new Error('Lattice control acknowledgement timed out; outcome unknown'), { status: 'unknown' }));
+            }, 30000);
+            this._controlPending.set(requestId, { resolve, reject, timer, token: expectedSourceEpoch });
+            this._worker.postMessage({ type: 'acknowledgedControl', requestId,
+                configurationToken: expectedSourceEpoch, command: { ...command } });
         });
     }
 
@@ -786,6 +848,24 @@ export class WasmBridgeProxy {
             configurationToken: this._pendingConfigurationToken,
             appliedConfigurationToken: this._appliedConfigurationToken,
         });
+    }
+    /** Opt-in worker cost instrumentation for telemetry profiling. */
+    setTelemetryTiming(enabled = false) {
+        if (this._backgroundSuspended) return;
+        this._telemetryTiming = null;
+        if (this._worker && !this._terminated && !this._disposing) {
+            this._worker.postMessage({
+                type: 'setTelemetryTiming', enabled: enabled === true,
+                configurationToken: this._pendingConfigurationToken,
+            });
+        }
+    }
+    getTelemetryTiming() {
+        const value = this._telemetryTiming;
+        return value ? {
+            lagrangian: value.lagrangian ? { ...value.lagrangian } : null,
+            tick: value.tick ? { ...value.tick } : null,
+        } : null;
     }
     get runningStateSettled() {
         return this._runAckSeq === this._runCommandSeq && this._runningAck === this._running;
@@ -820,7 +900,7 @@ export class WasmBridgeProxy {
         const caps = createScale0Capabilities(this);
         caps.tickScale0 = () => {};                                   // worker self-ticks
         caps.setupScenario = (name) => this.setupScenario(name);
-        caps.setToggle = (k, v) => { this._toggles[k] = v; this._cmd('setToggle', k, v); };
+        caps.setToggle = (k, v) => this.setToggle(k, v);
         caps.getScale0Diagnostics = () => this._lastDiag ?? null;
         caps.getScale0ParticleFrame = () => this._lastParts ?? EMPTY_PARTS();
         caps.getScale0EnergyAudit = () => this._lastAudit ?? null;
@@ -960,7 +1040,13 @@ export class WasmBridgeProxy {
             bufferGeneration: generation,
             configurationToken: token,
             latticeSize: N,
-            sampleTick: null,
+            // The worker captures this clock immediately before the synchronous
+            // getFluxVolume call and pins it with the same SAB slot as data.
+            // A missing producer clock remains unavailable; CTRL.TICK is later
+            // and cannot safely supply provenance here.
+            sampleTick: snapshot.sampleTick,
+            source: 'wasm-worker',
+            sourceEpoch: token,
             representation: 'reference-flux-magnitude',
         }) });
         return snapshot.data;
@@ -1019,7 +1105,9 @@ export class WasmBridgeProxy {
             bufferGeneration: generation,
             configurationToken: token,
             latticeSize: N,
-            sampleTick: null,
+            sampleTick: snapshot.sampleTick,
+            source: 'wasm-worker',
+            sourceEpoch: token,
             representation: 'reference-flux-magnitude',
             support: Object.freeze({ slabs: Object.freeze(supports), layout: 'plane-major:a*N+b' }),
             normalization: 'full-volume-max-square',
@@ -1065,16 +1153,19 @@ export class WasmBridgeProxy {
     }
     _wantSampler(kind, stride, emptyFn) {
         const key = `${kind}@${stride}`;
-        this.replaceSamplerWants(`direct:${key}`, [key]);
+        if (!this._backgroundSuspended) this.replaceSamplerWants(`direct:${key}`, [key]);
         return this._readSampler(kind, stride, emptyFn);
     }
     replaceSamplerWants(owner, keys) {
-        const boundedInstrument = owner === 'gravity-panel' || owner === 'time-panel';
+        if (this._backgroundSuspended) return;
+        const boundedInstrument = owner === 'gravity-panel' || owner === 'time-panel'
+            || owner === 'proper-time-telemetry';
         this._samplerWants.replace(owner, keys, {
             cadenceClass: boundedInstrument ? 'bounded-instrument' : 'realtime',
         });
     }
     unwantSampler(kind, stride) {
+        if (this._backgroundSuspended) return;
         const key = `${kind}@${stride}`;
         this.replaceSamplerWants(`direct:${key}`, []);
         delete this._samplerCache[key];
@@ -1100,6 +1191,9 @@ export class WasmBridgeProxy {
     getTauSampled(stride = 2)           { return this._wantSampler('tau',          stride, EMPTY_VAL); }
     getPhaseSampled(stride = 2)         { return this._wantSampler('dbPhase',      stride, EMPTY_VAL); }
     getLapseSampled(stride = 2)         { return this._wantSampler('lapse',        stride, EMPTY_VAL); }
+    getProperTimeSamplerSnapshot(kind, stride = 2) {
+        return this._readSampler(kind, stride, EMPTY_VAL);
+    }
     getEMForceField(stride = 2)         { return this._readSampler('em',           stride, EMPTY_VEC); }
     getGravityForceField(stride = 2)    { return this._readSampler('gravity',      stride, EMPTY_VEC); }
     getStrongForceField(stride = 2)     { return this._readSampler('strong',       stride, EMPTY_VEC); }
@@ -1123,6 +1217,81 @@ export class WasmBridgeProxy {
             ? Number(this._samplerCacheVersion[key])
             : null;
     }
+    _acceptGravityObservation(observation, frame) {
+        if (!observation || typeof observation !== 'object') return;
+        const sampleTick = observation.sampleTick;
+        const dataVersion = observation.dataVersion;
+        const sourceEpoch = observation.sourceEpoch;
+        if (observation.source !== 'wasm-worker'
+            || !Number.isSafeInteger(sampleTick) || sampleTick < 0
+            || !Number.isSafeInteger(dataVersion) || dataVersion < 0
+            || !Number.isSafeInteger(sourceEpoch)
+            || sourceEpoch !== this._pendingConfigurationToken
+            || observation.configurationToken !== sourceEpoch
+            || !Number.isSafeInteger(observation.loadGeneration) || observation.loadGeneration < 1
+            || observation.N !== this.latticeSize
+            || dataVersion !== frame.dataVersion
+            || sampleTick !== frame.tick
+            || !Array.isArray(observation.slabs) || observation.slabs.length !== 3
+            || !Array.isArray(observation.samples) || !observation.samples.length
+            || !observation.gravityMetricAgg || !(observation.maxRho >= 1e-30)) return;
+        const mid = observation.N >> 1;
+        for (let axis = 0; axis < 3; axis++) {
+            const slab = observation.slabs[axis];
+            const startPlane = Math.max(0, mid - 1);
+            const planeCount = Math.min(observation.N - 1, mid + 1) - startPlane + 1;
+            if (!slab || slab.N !== observation.N || slab.axis !== axis || slab.index !== mid
+                || slab.startPlane !== startPlane || slab.planeCount !== planeCount
+                || !(slab.data instanceof Float64Array)
+                || slab.data.length !== planeCount * observation.N * observation.N) return;
+        }
+        for (const sample of observation.samples) {
+            if (!Number.isSafeInteger(sample?.stride) || sample.stride < 1
+                || !sample.latency || !sample.kretschmann || !sample.gravity) return;
+        }
+        this._lastGravityObservation = observation;
+    }
+    /**
+     * One immutable worker-turn Gravity bundle. Unlike the current flux SAB,
+     * this couples all three slabs, L/K/F samples and the metric aggregate to
+     * one exact tick. A newer flux publication must not replace it.
+     */
+    getGravityObservation(stride = 2) {
+        const observation = this._lastGravityObservation;
+        if (!this._ready || this._terminated || this._disposing
+            || this._appliedConfigurationToken !== this._pendingConfigurationToken
+            || !observation || observation.sourceEpoch !== this._pendingConfigurationToken
+            || observation.N !== this.latticeSize) return null;
+        const supportStride = Number.isSafeInteger(stride) && stride > 0 ? stride : 2;
+        // Stable view identity makes unchanged display frames O(1) in the
+        // panel; validation/reduction and rasterization run only on new data.
+        if (this._gravityViewsSource !== observation) {
+            this._gravityViewsSource = observation;
+            this._gravityViews = new Map();
+        }
+        if (this._gravityViews.has(supportStride)) return this._gravityViews.get(supportStride);
+        const samples = observation.samples.find(sample => sample.stride === supportStride);
+        if (!samples) return null;
+        const view = Object.freeze({
+            N: observation.N,
+            stride: supportStride,
+            sampleTick: observation.sampleTick,
+            source: observation.source,
+            sourceEpoch: observation.sourceEpoch,
+            configurationToken: observation.configurationToken,
+            loadGeneration: observation.loadGeneration,
+            dataVersion: observation.dataVersion,
+            maxRho: observation.maxRho,
+            slabs: observation.slabs,
+            latency: samples.latency,
+            kretschmann: samples.kretschmann,
+            gravity: samples.gravity,
+            gravityMetricAgg: observation.gravityMetricAgg,
+            engineToggles: observation.engineToggles,
+        });
+        this._gravityViews.set(supportStride, view);
+        return view;
+    }
     getGravityMetricAgg() {
         return this._readSampler('gravityMetricAgg', 0, () => (
             { active: false, requested: null, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 }
@@ -1132,11 +1301,13 @@ export class WasmBridgeProxy {
     setBoundaryShape() {}
     setReflectiveBoundary() {}
     setFluxBoundaryMode(mode) {
+        if (this._backgroundSuspended) return;
         const normalized = validateScale0BoundarySelector(mode, 2);
         this._requestedFluxBoundaryMode = normalized;
         this._cmd('setFluxBoundary', normalized);
     }
     setFluxPeriodicAxis(axis) {
+        if (this._backgroundSuspended) return;
         const normalized = validateScale0BoundarySelector(axis, 3);
         this._requestedFluxPeriodicAxis = normalized;
         this._cmd('setFluxPeriodicAxis', normalized);
@@ -1221,6 +1392,7 @@ export class WasmBridgeProxy {
     }
 
     inspectVoxel(x, y, z) {
+        if (this._backgroundSuspended) return this.getInspectionSample(x, y, z);
         if (!this._inspectionAvailable()) return null;
         const coordinate = this._inspectionCoordinate(x, y, z);
         if (!coordinate) return null;
@@ -1245,6 +1417,7 @@ export class WasmBridgeProxy {
         return c && c.x === x && c.y === y && c.z === z ? structuredClone(c.force) : null;
     }
     getForceAt(x, y, z) {
+        if (this._backgroundSuspended) return this.getForceSample(x, y, z);
         this._worker.postMessage({
             type: 'getForceAt', x, y, z,
             configurationToken: this._pendingConfigurationToken,
@@ -1319,6 +1492,7 @@ export class WasmBridgeProxy {
     }
 
     setRunning(v) {
+        if (this._backgroundSuspended && v) return;
         v = !!v;
         if (v === this._running) return;                              // dedupe — tick.js calls every frame
         this._running = v;
@@ -1332,6 +1506,7 @@ export class WasmBridgeProxy {
         }
     }
     setTicksPerFrame(v) {
+        if (this._backgroundSuspended) return;
         if (typeof v !== 'number' || !Number.isFinite(v)
             || Math.round(v * 1000) < 1 || Math.round(v * 1000) > 0x7fffffff) {
             throw new RangeError('Worker speed must fit the positive fixed-point control word');
@@ -1340,6 +1515,32 @@ export class WasmBridgeProxy {
         if (this._ctrl) Atomics.store(this._ctrl, CTRL.TICKS_PER_FRAME, Math.round(v * 1000));
     }
     tickOnce() { this._cmd('tickScale0'); }
+    /** FIFO barrier: keep the same engine resident, with no worker timer/readbacks. */
+    async suspendBackgroundWork() {
+        if (this._backgroundSuspended) return () => {};
+        this.setRunning(false);
+        this._backgroundSuspended = true;
+        const seq = ++this._backgroundSuspendSeq;
+        const resume = () => {
+            if (!this._backgroundSuspended) return;
+            this._backgroundSuspended = false;
+            if (!this._terminated && !this._disposing) {
+                this._worker.postMessage({ type: 'setBackgroundSuspended', value: false,
+                    seq: ++this._backgroundSuspendSeq });
+            }
+        };
+        try {
+            await new Promise((resolve, reject) => {
+                const timer = setTimeout(() => {
+                    this._backgroundSuspendPending.delete(seq);
+                    reject(new Error('Lattice worker did not acknowledge suspension'));
+                }, 10000);
+                this._backgroundSuspendPending.set(seq, { resolve, reject, timer });
+                this._worker.postMessage({ type: 'setBackgroundSuspended', value: true, seq });
+            });
+        } catch (error) { resume(); throw error; }
+        return resume;
+    }
     /**
      * Forward the telemetry demand mask to the worker.
      *
@@ -1349,25 +1550,27 @@ export class WasmBridgeProxy {
      * whether any panel consumed them. Sent only on change to avoid a
      * postMessage per frame.
      */
-    setTelemetryMask(wantAudit = true, wantLag = true, wantGravity = false) {
-        const a = !!wantAudit, l = !!wantLag, g = !!wantGravity;
-        if (a === this._wantAudit && l === this._wantLag && g === this._wantGravity) return;
-        this._wantAudit = a; this._wantLag = l; this._wantGravity = g;
+    setTelemetryMask(wantAudit = false, wantLag = false, wantGravity = false, wantProperTime = false) {
+        if (this._backgroundSuspended) return;
+        const a = !!wantAudit, l = !!wantLag, g = !!wantGravity, p = !!wantProperTime;
+        if (a === this._wantAudit && l === this._wantLag && g === this._wantGravity && p === this._wantProperTime) return;
+        this._wantAudit = a; this._wantLag = l; this._wantGravity = g; this._wantProperTime = p;
         if (this._worker && !this._terminated && !this._disposing) {
             this._worker.postMessage({
-                type: 'setTelemetryMask', wantAudit: a, wantLag: l, wantGravity: g,
+                type: 'setTelemetryMask', wantAudit: a, wantLag: l, wantGravity: g, wantProperTime: p,
             });
         }
     }
 
     // ── Mutators (the inject UI / param sliders call these on the bridge) ────
-    setToggle(k, v) { this._toggles[k] = v; this._cmd('setToggle', k, v); }
+    setToggle(k, v) { if (this._backgroundSuspended) return; this._toggles[k] = v; this._cmd('setToggle', k, v); }
     /**
      * Apply a dependency-ordered toggle profile in one worker transaction.
      * The ready path yields one invariant pass and one authoritative readback;
      * pre-ready/configuration-barrier paths retain the established FIFO queue.
      */
     setToggles(entries) {
+        if (this._backgroundSuspended) return;
         const normalized = Array.isArray(entries)
             ? entries
                 .filter((entry) => Array.isArray(entry) && typeof entry[0] === 'string')
@@ -1399,7 +1602,7 @@ export class WasmBridgeProxy {
     // command, it IS what the worker's RenderBridge now holds. Defaults
     // match term_toggles.h (omega0=1.0, langevin_T=0.0) so an unset read
     // before the first setter call matches the engine's own default.
-    setOmega0(w) { this._omega0 = w; this._cmd('setOmega0', w); }
+    setOmega0(w) { if (this._backgroundSuspended) return; this._omega0 = w; this._cmd('setOmega0', w); }
     getOmega0() { return this._omega0 ?? 1.0; }
     // Flux-cell mechanisms (engine/include/ftd/flux_cell.h, 2026-09-02).
     setFluxCellRegion(...a) { this._cmd('setFluxCellRegion', ...a); }
@@ -1413,16 +1616,16 @@ export class WasmBridgeProxy {
         this._cmd('setFluxCellPort', cx, cy, cz, nx, ny, nz, radius, openTick | 0, +surfaceOffset);
     }
     clearFluxCellPort() { this._cmd('clearFluxCellPort'); }
-    setLangevinTemp(t) { this._langevinTemp = t; this._cmd('setLangevinTemp', t); }
+    setLangevinTemp(t) { if (this._backgroundSuspended) return; this._langevinTemp = t; this._cmd('setLangevinTemp', t); }
     getLangevinTemp() { return this._langevinTemp ?? 0.0; }
-    setLangevinGamma(g) { this._langevinGamma = g; this._cmd('setLangevinGamma', g); }
+    setLangevinGamma(g) { if (this._backgroundSuspended) return; this._langevinGamma = g; this._cmd('setLangevinGamma', g); }
     getLangevinGamma() { return this._langevinGamma ?? 0.01; }
     injectParticle(...a) { this._cmd('injectParticle', ...a); }
     injectFlux(...a) { this._cmd('injectFlux', ...a); }
     injectFluxBulk(records) { this._cmd('injectFluxBulk', records instanceof Float64Array ? records.buffer.slice(records.byteOffset, records.byteOffset + records.byteLength) : records); }
-    setSorIterations(n) { this._sorIterations = Math.max(1, n | 0); this._cmd('setSorIterations', this._sorIterations); }
+    setSorIterations(n) { if (this._backgroundSuspended) return; this._sorIterations = Math.max(1, n | 0); this._cmd('setSorIterations', this._sorIterations); }
     getSorIterations() { return this._sorIterations ?? 6; }
-    setLinkEnergyObservation(on) { this._linkEnergyObservation = !!on; this._cmd('setLinkEnergyObservation', this._linkEnergyObservation); }
+    setLinkEnergyObservation(on) { if (this._backgroundSuspended) return; this._linkEnergyObservation = !!on; this._cmd('setLinkEnergyObservation', this._linkEnergyObservation); }
     getLinkEnergyObservation() { return this._linkEnergyObservation ?? false; }
     // Stride has no meaning for link transport; the sample is always keyed linkEnergy@1.
     getLinkEnergyCurrent() { return this._wantSampler('linkEnergy', 1, EMPTY_LINKS); }
@@ -1434,6 +1637,7 @@ export class WasmBridgeProxy {
 
     // ── Lifecycle ───────────────────────────────────────────────────────────
     reset(n) {
+        if (!this.canReconfigure()) return;
         if (typeof n === 'number' && n > 0) this.latticeSize = (n % 2 === 0) ? n + 1 : n;
         this.beginConfiguration({ latticeSize: this.latticeSize, scenarioId: this._scenarioId });
         this.setupScenario(this._scenarioId);
@@ -1441,6 +1645,16 @@ export class WasmBridgeProxy {
     resize(n) { this.reset(n); }
     _finalizeWorkerTermination(mode) {
         if (this._terminated) return;
+        for (const pending of this._controlPending?.values() ?? []) {
+            clearTimeout(pending.timer);
+            pending.reject(Object.assign(new Error('Lattice disposed before control acknowledgement'), { status: 'unknown' }));
+        }
+        this._controlPending?.clear();
+        for (const pending of this._backgroundSuspendPending?.values() ?? []) {
+            clearTimeout(pending.timer);
+            pending.reject(new Error('Lattice worker disposed during suspension'));
+        }
+        this._backgroundSuspendPending?.clear();
         this._clearInspectionCaches();
         this._terminated = true;
         this._disposing = false;

@@ -1,5 +1,6 @@
 import { applyUiTooltipDefinitions } from './definitions.js?v=5';
 import { renderMathInHtml } from '../../math-format/render.js';
+import { LifetimeScope } from '../../utils/lifetime-scope.js';
 
 function escapeHtml(s) {
     return String(s ?? '')
@@ -43,9 +44,13 @@ export class TooltipComponent {
         this.pointerX = 0;
         this.pointerY = 0;
         this._observer = null;
+        this._scope = null;
+        this._ownsTooltipElement = false;
     }
 
     init() {
+        if (this._scope && !this._scope.disposed) return this;
+        this._scope = new LifetimeScope();
         this._ensureTooltipElement();
         this.annotate(this.app || document);
         this._bindEvents();
@@ -72,10 +77,11 @@ export class TooltipComponent {
         el.hidden = true;
         document.body.appendChild(el);
         this.tooltipEl = el;
+        this._ownsTooltipElement = true;
     }
 
     _bindEvents() {
-        document.addEventListener('pointerover', (event) => {
+        this._scope.on(document, 'pointerover', (event) => {
             const target = event.target instanceof Element ? event.target.closest('[data-ui-tooltip]') : null;
             if (!(target instanceof HTMLElement)) return;
             this.pointerX = event.clientX;
@@ -83,38 +89,38 @@ export class TooltipComponent {
             this.show(target, 'pointer');
         });
 
-        document.addEventListener('pointermove', (event) => {
+        this._scope.on(document, 'pointermove', (event) => {
             if (this.activeMode !== 'pointer') return;
             this.pointerX = event.clientX;
             this.pointerY = event.clientY;
             this._position();
         });
 
-        document.addEventListener('pointerout', (event) => {
+        this._scope.on(document, 'pointerout', (event) => {
             if (!this.activeTarget) return;
             const next = event.relatedTarget instanceof Node ? event.relatedTarget : null;
             if (next && this.activeTarget.contains(next)) return;
             if (event.target instanceof Node && this.activeTarget.contains(event.target)) this.hide();
         });
 
-        document.addEventListener('focusin', (event) => {
+        this._scope.on(document, 'focusin', (event) => {
             const target = event.target instanceof Element ? event.target.closest('[data-ui-tooltip]') : null;
             if (target instanceof HTMLElement) this.show(target, 'focus');
         });
 
-        document.addEventListener('focusout', (event) => {
+        this._scope.on(document, 'focusout', (event) => {
             if (!this.activeTarget) return;
             const next = event.relatedTarget instanceof Node ? event.relatedTarget : null;
             if (next && this.activeTarget.contains(next)) return;
             if (event.target instanceof Node && this.activeTarget.contains(event.target)) this.hide();
         });
 
-        document.addEventListener('keydown', (event) => {
+        this._scope.on(document, 'keydown', (event) => {
             if (event.key === 'Escape') this.hide();
         });
 
-        window.addEventListener('scroll', () => this._position(), true);
-        window.addEventListener('resize', () => this._position());
+        this._scope.on(window, 'scroll', () => this._position(), true);
+        this._scope.on(window, 'resize', () => this._position());
     }
 
     _watchMutations() {
@@ -129,6 +135,7 @@ export class TooltipComponent {
             }
         });
         this._observer.observe(this.app, { childList: true, subtree: true });
+        this._scope.defer(() => this._observer?.disconnect());
     }
 
     show(target, mode = 'pointer') {
@@ -190,5 +197,19 @@ export class TooltipComponent {
         this.tooltipEl.dataset.placement = placement;
         this.tooltipEl.style.left = `${left}px`;
         this.tooltipEl.style.top = `${top}px`;
+    }
+
+    destroy() {
+        if (!this._scope || this._scope.disposed) return;
+        this.hide();
+        this._scope.dispose();
+        this._observer = null;
+        if (this._ownsTooltipElement) this.tooltipEl?.remove();
+        this.tooltipEl = null;
+        this._ownsTooltipElement = false;
+    }
+
+    cleanup() {
+        this.destroy();
     }
 }

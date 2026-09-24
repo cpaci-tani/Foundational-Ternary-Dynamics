@@ -61,6 +61,31 @@ function fixture(t, v3 = true) {
     return { bridge, sent };
 }
 
+test('native flux-sector aggregate requires advertised capability and correlated provenance', async t => {
+    const { bridge, sent } = fixture(t);
+    await assert.rejects(bridge.getFluxSectors(), /unavailable/);
+    assert.equal(sent.length, 0);
+    bridge.fluxSectorVersion = 1;
+    const pending = bridge.getFluxSectors();
+    assert.equal(sent[0].cmd, 'get_flux_sectors');
+    bridge._handleJSON(JSON.stringify({ _requestId: sent[0]._requestId, type: 'flux_sectors', schemaVersion: 1,
+        nativeInstanceId: INSTANCE, sourceEpoch: 4, epoch: 6, sampleTick: 0, tick: 0, latticeSize: 9,
+        physicalTime: 0, dt: 1, sectors: [] }));
+    const result = await pending;
+    assert.equal(result.provenance.nativeInstanceId, INSTANCE);
+    assert.equal(result.provenance.epoch, 6);
+});
+
+test('native aggregate rejects a same-tick intervention during its read', async t => {
+    const { bridge, sent } = fixture(t);
+    bridge.fluxSectorVersion = 1;
+    const pending = bridge.getFluxSectors();
+    bridge._markVisualDataDirty(false);
+    bridge._handleJSON(JSON.stringify({ _requestId: sent[0]._requestId, type: 'flux_sectors', schemaVersion: 1,
+        nativeInstanceId: INSTANCE, sourceEpoch: 4, epoch: 6, sampleTick: 0, tick: 0, latticeSize: 9 }));
+    await assert.rejects(pending, /Retired visual/);
+});
+
 test('uint64 normalization is exact at safe-number and unsigned-maximum boundaries', () => {
     assert.equal(exactCounter('9007199254740991'), Number.MAX_SAFE_INTEGER);
     assert.equal(exactCounter(9007199254740992n), '9007199254740992');

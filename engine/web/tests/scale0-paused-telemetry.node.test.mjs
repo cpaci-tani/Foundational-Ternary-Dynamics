@@ -5,7 +5,14 @@ import vm from 'node:vm';
 import { TelemetryHub } from '../js/telemetry-hub.js';
 
 const source = readFileSync(new URL('../js/telemetry/demand.js', import.meta.url), 'utf8');
-const collect = vm.runInNewContext(`${source.replace(/^import[^;]+;\s*/gm, '').replace(/\bexport /g, '')}\ncollectScale0OnDemand`);
+const cadenceScope = { self: {} };
+vm.runInNewContext(readFileSync(new URL('../js/bridge/sampler-cadence.classic.js', import.meta.url), 'utf8'), cadenceScope);
+const demandScope = { FTD_SAMPLER_CADENCE: cadenceScope.self.FTD_SAMPLER_CADENCE };
+demandScope.globalThis = demandScope;
+const collect = vm.runInNewContext(
+    `${source.replace(/^import[^;]+;\s*/gm, '').replace(/\bexport /g, '')}\ncollectScale0OnDemand`,
+    demandScope,
+);
 
 function fixture(worker = true) {
     const hub = new TelemetryHub();
@@ -84,12 +91,49 @@ test('closed demands never read worker telemetry caches', () => {
     f.collect(false, false); assert.equal(f.calls.audit, 1);
 });
 
-test('direct WASM retains bounded reduction calls per version or demand opening', () => {
+test('direct WASM Lagrangian follows completed tick/display cadence rather than every data version', () => {
     const f = fixture(false); f.publish('audit'); f.publish('lagrangian');
+    let now = 0;
+    f.hub._demandNow = () => now;
     for (let i = 0; i < 6; i++) f.collect(true, true);
     assert.equal(f.calls.audit, 1); assert.equal(f.calls.lagrangian, 1);
     f.state.fieldDataVersion++; f.collect(true, true);
-    assert.equal(f.calls.audit, 2); assert.equal(f.calls.lagrangian, 2);
+    assert.equal(f.calls.audit, 2, 'audit remains version-gated');
+    assert.equal(f.calls.lagrangian, 1, 'a new version alone cannot trigger an O(L^3) direct reduction');
+    now = 17; f.collect(true, true);
+    assert.equal(f.calls.lagrangian, 2, 'one changed tick at the display-budget deadline is sampled');
     f.collect(false, false); f.collect(true, false);
     assert.equal(f.calls.audit, 3); assert.equal(f.calls.lagrangian, 2);
+});
+
+test('direct unavailable Lagrangian respects the shared cooldown across later ticks', () => {
+    const f = fixture(false);
+    let now = 0;
+    f.hub._demandNow = () => now;
+    f.values.lagrangian = null;
+    f.collect(false, true);
+    assert.equal(f.calls.lagrangian, 1);
+    for (let tick = 20; tick < 25; tick++) {
+        f.state.fieldDataVersion = tick;
+        now += 20;
+        f.collect(false, true);
+    }
+    assert.equal(f.calls.lagrangian, 1, 'failed direct reduction cannot retry once per new tick');
+    f.state.fieldDataVersion++;
+    now = 125;
+    f.collect(false, true);
+    assert.equal(f.calls.lagrangian, 2);
+});
+
+test('direct unknown-clock owner does not reset cadence or invent tick zero', () => {
+    const f = fixture(false);
+    let now = 0;
+    f.hub._demandNow = () => now;
+    f.state.fieldDataVersion = null;
+    f.publish('lagrangian');
+    f.collect(false, true);
+    assert.equal(f.calls.lagrangian, 1);
+    now = 500;
+    f.collect(false, true);
+    assert.equal(f.calls.lagrangian, 1, 'a successful value without a source clock remains held');
 });

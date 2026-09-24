@@ -71,6 +71,11 @@ int main() {
     };
     for (const auto& raw:valid) { try { validate_ws_command(parse_json_object(raw)); check(true,"valid caller schema"); } catch(const std::exception& e) { check(false,raw+e.what()); } }
     const std::vector<std::string> invalid{
+        R"({"cmd":"tick","expectedNativeInstanceId":"server"})",
+        R"({"cmd":"tick","expectedSourceEpoch":1})",
+        R"({"cmd":"tick","expectedNativeInstanceId":"","expectedSourceEpoch":1})",
+        R"({"cmd":"tick","expectedNativeInstanceId":"server","expectedSourceEpoch":1.5})",
+        R"({"cmd":"set_param","name":"omega0","value":1,"expectedNativeInstanceId":"server","expectedSourceEpoch":1})",
         R"({"cmd":"set_toggle","name":"wave_propagation","value":0,"other":true})",
         R"({"cmd":"set_toggle","name":"wave_propagation","value":null})",
         R"({"cmd":"set_toggle","name":"wave_propagation"})",
@@ -132,6 +137,24 @@ int main() {
               && telemetry.snapshot_version()==initial_snapshot
               && telemetry.demand().enabled_mask==initial_demand.enabled_mask
               && telemetry.demand().every_ticks==initial_demand.every_ticks,"rejection precedes scheduler mutation");
+    }
+    // Fenced controls reject another source/server before touching the owner.
+    const std::string instance = native_instance_id();
+    for (const auto& fence : std::vector<std::string>{
+            "\"expectedNativeInstanceId\":\"retired-server\",\"expectedSourceEpoch\":" + std::to_string(telemetry.source_epoch()),
+            "\"expectedNativeInstanceId\":\"" + instance + "\",\"expectedSourceEpoch\":" + std::to_string(telemetry.source_epoch() + 1)}) {
+        ws_server_detail::handle_command("{\"cmd\":\"tick\",\"_requestId\":31," + fence + "}", sockets.server, bridge, telemetry, size);
+        check(parse_json_object(sockets.response()).has("error") && bridge->current_tick() == 0,
+              "source/server fence rejects tick before mutation");
+    }
+    const auto source_before_steps = telemetry.source_epoch();
+    const std::string valid_tick = "{\"cmd\":\"tick\",\"_requestId\":32,\"expectedNativeInstanceId\":\""
+        + instance + "\",\"expectedSourceEpoch\":" + std::to_string(source_before_steps) + "}";
+    for (int tick = 1; tick <= 2; ++tick) {
+        ws_server_detail::handle_command(valid_tick, sockets.server, bridge, telemetry, size);
+        const auto response = parse_json_object(sockets.response());
+        check(!response.has("error") && response.integer("tick", 0, kJsonSafeInteger) == tick
+              && telemetry.source_epoch() == source_before_steps, "acknowledged ordinary ticks retain the source fence");
     }
     // Valid decoded labels must be escaped again when serialized in success
     // responses, not only in errors. This traverses the actual profile path.

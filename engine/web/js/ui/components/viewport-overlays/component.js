@@ -14,18 +14,27 @@ import { getScale2OverlayTemplate } from '../../../scales/scale2/ui/overlays/tem
 import { getScale4OverlayTemplate } from '../../../scales/scale4/ui/overlays/template.js?v=4';
 import { getScale5OverlayTemplate } from '../../../scales/scale5/ui/overlays/template.js';
 import { bindScale5OverlayControls } from '../../../scales/scale5/ui/overlays/component.js';
+import { LifetimeScope } from '../../utils/lifetime-scope.js';
 
 export class ViewportOverlaysComponent {
   constructor(viewportEl) {
     this.viewport = viewportEl;
     this.overlays = new Map();
     this._legends = [];
+    this._scope = null;
+    this._ownedRoots = [];
+    this._collapseButtons = [];
   }
 
   init() {
     if (!this.viewport) return this;
+    if (this._scope && !this._scope.disposed) return this;
+    this._scope = new LifetimeScope();
 
     const append = (el) => {
+      const existing = el.id ? this.viewport.querySelector(`#${el.id}`) : null;
+      if (existing) return existing;
+      this._ownedRoots.push(el);
       return this.viewport.appendChild(el);
     };
 
@@ -39,9 +48,10 @@ export class ViewportOverlaysComponent {
     this.overlays.set('scale3', scale2);
 
     this.overlays.set('scale4', append(getScale4OverlayTemplate()));
-    const scale5 = append(getScale5OverlayTemplate());
+    const scale5Template = getScale5OverlayTemplate();
+    const scale5 = append(scale5Template);
     this.overlays.set('scale5', scale5);
-    bindScale5OverlayControls(scale5);
+    if (scale5 === scale5Template) bindScale5OverlayControls(scale5);
 
     this._mountUniversalOverlays();
     this._wireCollapsibles();
@@ -67,18 +77,23 @@ export class ViewportOverlaysComponent {
       if (isS0) {
         btn = el.querySelector('.s0-overlay-collapse');
       } else {
-        btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'viewport-overlay-collapse';
-        btn.setAttribute('aria-label', 'Collapse overlay');
-        btn.setAttribute('aria-expanded', 'true');
-        btn.title = 'Collapse overlay';
-        btn.innerHTML = '<span class="viewport-overlay-collapse-icon" aria-hidden="true">&#9652;</span>';
-        const slot = el.querySelector('.scale-overlay-collapse-slot');
-        if (slot) slot.appendChild(btn);
-        else el.prepend(btn);
+        btn = el.querySelector('.viewport-overlay-collapse');
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'viewport-overlay-collapse';
+          btn.setAttribute('aria-label', 'Collapse overlay');
+          btn.setAttribute('aria-expanded', 'true');
+          btn.title = 'Collapse overlay';
+          btn.innerHTML = '<span class="viewport-overlay-collapse-icon" aria-hidden="true">&#9652;</span>';
+          const slot = el.querySelector('.scale-overlay-collapse-slot');
+          if (slot) slot.appendChild(btn);
+          else el.prepend(btn);
+        }
       }
-      if (!btn) continue;
+      if (!btn || btn.dataset.viewportOverlayCollapseWired === 'true') continue;
+      btn.dataset.viewportOverlayCollapseWired = 'true';
+      this._collapseButtons.push(btn);
 
       const apply = (collapsed) => {
         el.classList.toggle('is-collapsed', !!collapsed);
@@ -89,7 +104,7 @@ export class ViewportOverlaysComponent {
       // Restore persisted state
       try { apply(localStorage.getItem(lsKey) === '1'); } catch { /* ignore */ }
 
-      btn.addEventListener('click', (ev) => {
+      this._scope.on(btn, 'click', (ev) => {
         ev.stopPropagation();
         const next = !el.classList.contains('is-collapsed');
         apply(next);
@@ -170,6 +185,7 @@ export class ViewportOverlaysComponent {
 
     const fpsItem = document.getElementById('status-fps')?.closest('.status-item');
     statusBar.insertBefore(controls, fpsItem || null);
+    this._ownedRoots.push(controls);
     this._wireStatusMenus(controls);
   }
 
@@ -182,24 +198,34 @@ export class ViewportOverlaysComponent {
     };
 
     for (const menu of menus) {
-      menu.querySelector('summary')?.addEventListener('click', () => closeOthers(menu));
-      menu.addEventListener('toggle', () => {
+      this._scope.on(menu.querySelector('summary'), 'click', () => closeOthers(menu));
+      this._scope.on(menu, 'toggle', () => {
         if (menu.open) closeOthers(menu);
       });
     }
 
-    document.addEventListener('click', (ev) => {
+    this._scope.on(document, 'click', (ev) => {
       if (root.contains(ev.target)) return;
       closeOthers(null);
     });
 
-    document.addEventListener('keydown', (ev) => {
+    this._scope.on(document, 'keydown', (ev) => {
       if (ev.key !== 'Escape') return;
       closeOthers(null);
     });
   }
 
   cleanup() {
+    this.destroy();
+  }
+
+  destroy() {
+    if (!this._scope || this._scope.disposed) return;
+    this._scope.dispose();
+    for (const button of this._collapseButtons) delete button.dataset.viewportOverlayCollapseWired;
+    this._collapseButtons = [];
+    for (const root of this._ownedRoots.reverse()) root.remove();
+    this._ownedRoots = [];
     this.overlays.clear();
     this._legends = [];
   }

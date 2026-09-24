@@ -6,7 +6,10 @@
 import { getScale0State, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { WaveInfoComponent } from './wave-lab/wave-info.js?v=2';
-import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
+import {
+    isPanelLive,
+    PANEL_VISIBILITY_CHANGE_EVENT,
+} from '../../../../ui/panels/panel-visibility.js';
 
 const PANEL_ID = 'wave-lab-panel';
 const UPDATE_INTERVAL_MS = 250;
@@ -15,16 +18,6 @@ function buildPanel() {
     const root = document.createElement('div');
     root.id = PANEL_ID;
     root.className = 'scale0-only s0-overlay-panel p1-observables-panel dock-mode';
-    root.style.cssText = `
-        position: relative;
-        width: 100%;
-        padding: 14px 14px 18px;
-        background: transparent;
-        font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
-        font-size: 16px;
-        line-height: 1.45;
-        color: var(--text-primary);
-    `;
     root.innerHTML = `
         <header class="p1-panel-header">
             <span class="p1-panel-title">Wave Lab</span>
@@ -43,7 +36,7 @@ export function mountWaveLabPanel(host, getBridge) {
     host.appendChild(panel);
 
     const bodyEl = panel.querySelector(`#${PANEL_ID}-body`);
-    const waveInfoComp = new WaveInfoComponent();
+    const waveInfoComp = new WaveInfoComponent({ historyHost: panel });
     waveInfoComp.mount(bodyEl);
 
     function update() {
@@ -56,12 +49,18 @@ export function mountWaveLabPanel(host, getBridge) {
 
     const HZ = Math.round(1000 / UPDATE_INTERVAL_MS);
     const sub = rafCoordinator.subscribe(PANEL_ID, { hz: HZ, cb: update });
+    const handleVisibilityBoundary = () => {
+        if (!isPanelLive(host)) waveInfoComp.releaseSamplerDemand();
+        else update();
+    };
+    window.addEventListener(PANEL_VISIBILITY_CHANGE_EVENT, handleVisibilityBoundary);
 
     const api = {
         update,
         element: panel,
         dispose: () => {
             sub?.unsubscribe?.();
+            window.removeEventListener(PANEL_VISIBILITY_CHANGE_EVENT, handleVisibilityBoundary);
             waveInfoComp.unmount();
             if (typeof window !== 'undefined' && window.__ftdWaveLabPanel === api) {
                 window.__ftdWaveLabPanel = null;

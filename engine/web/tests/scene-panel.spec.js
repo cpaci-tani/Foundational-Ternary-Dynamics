@@ -1,14 +1,7 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
-async function bootShell(page) {
-    await page.goto('/');
-    await page.waitForFunction(() => document.getElementById('app')?.dataset?.shellReady === 'true', { timeout: 10000 });
-    await page.waitForFunction(
-        () => document.getElementById('loading-overlay')?.classList.contains('hidden'),
-        { timeout: 15000 }
-    );
-}
+import { gotoAndReady as bootShell } from './_helpers.js';
 
 async function openScene(page) {
     // Wait for the scene-shell to be INSERTED — it's initially inside an

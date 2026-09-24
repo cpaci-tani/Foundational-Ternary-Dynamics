@@ -1,5 +1,51 @@
 /* Meta Pedagogy Panel Styles */
 
+/* Scale 6's viewport instrument. The viewport is already below the measured
+   topbar, while the lower inset reserves the transport/status controls. */
+.meta-floating-panel {
+    --meta-panel-bottom-clearance: calc(var(--status-bar-offset, 28px) + 72px);
+    position: absolute;
+    grid-area: viewport;
+    inset-block-start: max(12px, env(safe-area-inset-top));
+    inset-inline-start: max(12px, env(safe-area-inset-left));
+    z-index: var(--z-micropanel);
+    width: min(300px, calc(100% - 24px));
+    max-height: calc(100% - var(--meta-panel-bottom-clearance) - 24px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 12px);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    box-shadow: var(--card-shadow);
+    -webkit-backdrop-filter: var(--glass-filter-mid);
+    backdrop-filter: var(--glass-filter-mid);
+}
+
+/* Desktop keeps the instrument clear of the left Dashboard dock. */
+@media (min-width: 768px) {
+    .meta-floating-panel {
+        inset-inline-start: auto;
+        inset-inline-end: max(12px, env(safe-area-inset-right));
+    }
+}
+
+/* Short/compact viewports have transport and Dashboard layers over the
+   viewport. Promote this scrollable instrument while it is open so its own
+   controls remain reachable instead of sitting underneath both layers. */
+@media (max-width: 767px), (max-height: 500px) {
+    .meta-floating-panel {
+        inset-inline-start: auto;
+        inset-inline-end: max(12px, env(safe-area-inset-right));
+        inset-block-start: max(12px, env(safe-area-inset-top));
+        width: min(280px, calc(100% - 24px));
+        max-height: calc(100% - 24px);
+        z-index: var(--z-popover);
+        background: var(--bg-elevated);
+    }
+}
+
 .meta-panel-root {
     font-family: var(--font-mono, monospace);
     font-size: var(--fs-lg, 16px);
@@ -65,6 +111,7 @@
     font-size: var(--fs-lg);
     font-weight: 600;
     color: var(--text-primary);
+    min-height: var(--ctrl-height-min);
 }
 
 .meta-card-head .dot {
@@ -103,6 +150,7 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background 0.15s;
+    min-height: var(--ctrl-height-min);
 }
 
 .meta-shell-row:hover {
@@ -154,6 +202,7 @@
     transition: background-color 0.15s,
                 color 0.15s,
                 border-color 0.15s;
+    min-height: var(--ctrl-height-min);
 }
 
 .meta-btn:hover {
@@ -253,6 +302,12 @@
 }
 
 @media (max-width: 479px) {
+    .meta-floating-panel {
+        --meta-panel-bottom-clearance: calc(var(--status-bar-offset, 28px) + 80px);
+        inset-inline-end: max(12px, env(safe-area-inset-right));
+        width: auto;
+    }
+
     .meta-stat-grid {
         grid-template-columns: 1fr;
     }

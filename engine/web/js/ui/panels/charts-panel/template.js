@@ -5,6 +5,6 @@
 export function getChartsPanelTemplate() {
     return `
         <div class="charts-chip-strip" role="toolbar" aria-label="Chart visibility"></div>
-        <div class="charts-grid"></div>
+        <div class="charts-grid" data-panel-grid></div>
     `;
 }

@@ -13,6 +13,7 @@ body{
   font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 button,input,select,textarea{font-family:inherit;font-size:max(16px,1em)}
+button,input,select,textarea{min-height:44px}
 #atlas-root{
   display:grid;height:100vh;
   grid-template-columns:264px 1fr 300px;
@@ -58,14 +59,14 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);ou
 .atlas-detail-math{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:16px;background:var(--panel-2);
   border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:12px;color:#cfe6ff;overflow-x:auto;white-space:nowrap}
 .atlas-detail-tag{font-size:16px;font-weight:700;letter-spacing:.2px;margin-bottom:6px}
-.atlas-detail-doc{font-size:16px;color:var(--text-dim);margin-bottom:12px}
+.atlas-detail-doc{font-size:16px;color:var(--text-dim);margin-bottom:12px;overflow-wrap:anywhere;word-break:break-word}
 .atlas-detail-flows{font-size:16px;color:var(--text-dim);padding-top:10px;border-top:1px solid var(--border)}
 .atlas-detail-footer{margin-top:14px;padding-top:10px;border-top:1px solid var(--border);
   font-size:16px;line-height:1.5;color:var(--text-dim)}
 
 /* ── Bottom: chain stepper ────────────────────────────────────────────── */
 .atlas-stepper{display:flex;align-items:center;gap:14px;height:100%}
-.atlas-play{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);
+.atlas-play{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1px solid var(--border);
   background:var(--panel-2);color:var(--accent);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .atlas-play:hover{background:color-mix(in srgb,var(--accent) 18%,transparent)}
 .atlas-track{display:flex;align-items:flex-start;gap:2px;flex:1;overflow-x:auto;overflow-y:hidden;padding-bottom:4px}
@@ -84,3 +85,34 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);ou
 .atlas-node.active .atlas-node-cap{font-weight:600;white-space:normal}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* The desktop Atlas is a three-rail application shell. At tablet and phone
+   widths those rails become a document flow so neither the 264px layer rail
+   nor the 300px detail rail can force horizontal page overflow. */
+@media (max-width:900px){
+  html,body{height:auto;min-height:100%;overflow-x:hidden}
+  body{overflow-y:auto}
+  #atlas-root{
+    width:100%;height:auto;min-height:100dvh;
+    grid-template-columns:minmax(0,1fr);
+    grid-template-rows:auto minmax(50dvh,1fr) auto auto auto;
+    grid-template-areas:"top" "viewport" "panel" "detail" "stepper";
+  }
+  #atlas-top{min-width:0;flex-wrap:wrap;padding:10px 12px;gap:8px 12px}
+  #atlas-tagline{min-width:0;flex:1 1 180px}
+  #mode-switch{margin-left:0}
+  #viewport{min-height:50dvh}
+  #layer-panel,#detail-panel{max-height:50dvh}
+  #detail-panel{padding-bottom:calc(116px + env(safe-area-inset-bottom,0px));scroll-padding-bottom:calc(116px + env(safe-area-inset-bottom,0px))}
+  #chain-stepper{min-width:0}
+}
+
+@media (max-width:480px){
+  #atlas-top h1,#atlas-tagline{width:100%}
+  #mode-switch{display:flex;width:100%}
+  #mode-switch button{flex:1 1 0;min-width:0}
+  #reset-view{width:100%}
+  #viewport{min-height:52dvh}
+  #chain-stepper{padding-inline:10px}
+  .atlas-stepper{align-items:flex-start}
+}

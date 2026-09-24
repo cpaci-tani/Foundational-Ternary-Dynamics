@@ -43,6 +43,8 @@ _SERVE_DIR = os.path.dirname(os.path.abspath(__file__))
 if _SERVE_DIR not in sys.path:
     sys.path.insert(0, _SERVE_DIR)
 import server_controls
+import ai_service
+import mcp_relay
 
 # Idle auto-stop + "stop all engine servers" (spec 2026-09-16-idle-shutdown-
 # and-kill-all.md, §2-5): one process-lifetime controller. Every new route
@@ -131,6 +133,11 @@ QUIET = False
 
 
 class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
+    # Hundreds of ES modules share a few connections. HTTP/1.0 closed one
+    # socket per import and exhausted Windows ephemeral ports during repeated
+    # browser runs (Chromium reported ERR_ADDRESS_IN_USE for random modules).
+    protocol_version = "HTTP/1.1"
+    timeout = 30
     extensions_map = {**http.server.SimpleHTTPRequestHandler.extensions_map,
                       ".mjs": "text/javascript", ".wasm": "application/wasm"}
 
@@ -156,11 +163,21 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
             pass
 
     def log_message(self, format, *args):
+        if getattr(self, "_mcp_request", False) or getattr(self, "path", "").startswith("/api/mcp/"):
+            return
         if not QUIET:
             super().log_message(format, *args)
 
     def end_headers(self):
-        if not ALLOW_CACHE:
+        if self.command == "POST":
+            # Rejected POST routes may deliberately leave a request body unread.
+            # Close instead of parsing those bytes as another HTTP request.
+            self.close_connection = True
+            self.send_header("Connection", "close")
+        if getattr(self, "_ai_immutable_asset", False):
+            self.send_header("Cache-Control", "public, max-age=31536000, immutable")
+            self._ai_immutable_asset = False
+        elif not ALLOW_CACHE:
             self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
             self.send_header("Pragma", "no-cache")
             self.send_header("Expires", "0")
@@ -188,6 +205,10 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         route = self.path.split("?", 1)[0]
         if CONTROLS.handle(self, route):
+            return
+        if ai_service.handle(self, route):
+            return
+        if mcp_relay.handle(self, route):
             return
         if route in ("/api/lattice/records/catalog", "/api/lattice/records/checkpoint"):
             return self._record_lattice(route)
@@ -249,6 +270,10 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         route = self.path.split("?", 1)[0]
         if CONTROLS.handle(self, route):
+            return
+        if ai_service.handle(self, route):
+            return
+        if mcp_relay.handle(self, route):
             return
         if route == "/api/lattice/records/seed":
             return self._record_seed()

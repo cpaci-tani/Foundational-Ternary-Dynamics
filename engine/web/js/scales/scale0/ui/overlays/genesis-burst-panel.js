@@ -16,6 +16,10 @@
 import { BaseComponent } from '../../../../core/component.js';
 import { K_GENESIS } from '../../../../constants.js';
 import { configureGenesisClusterTerms } from '../../runtime/genesis-cluster-profile.js';
+import { createCanvasSurface } from '../../../../ui/utils/canvas-surface.js';
+import { LifetimeScope } from '../../../../ui/utils/lifetime-scope.js';
+import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
+import { attachInstrumentPanelCollapse } from '../../../../ui/utils/instrument-panel.js';
 import {
     commitScale0ScientificMutation,
     getScale0State,
@@ -37,24 +41,24 @@ const KNEE_A = 16;
 const SWEEP_GRID = [10, 12, 14, 16, 20, 25, 30, 40, 50, 70, 90];
 
 const TEMPLATE = `
-    <div id="genesis-burst-panel" style="position:absolute; top:12px; right:12px; z-index:40; width:300px; padding:12px 14px; border-radius:12px; font-family:var(--font-sans,sans-serif); font-size:16px; background:var(--color-background-primary,rgba(20,20,24,0.92)); border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.25)); color:var(--color-text-primary,#eee); box-shadow:0 2px 12px rgba(0,0,0,0.3)">
-        <div style="font-weight:500;margin-bottom:8px">Selected genesis response N(A)</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+    <div id="genesis-burst-panel" class="genesis-burst-panel instrument-panel" role="region" aria-label="Selected genesis response">
+        <div class="genesis-burst-title">Selected genesis response N(A)</div>
+        <div class="genesis-burst-amplitude">
             <span>A</span>
-            <input ref="slider" type="range" min="5" max="90" step="1" value="16" style="flex:1">
-            <span ref="aval" style="width:24px;text-align:right">16</span>
+            <input ref="slider" type="range" min="5" max="90" step="1" value="16">
+            <span ref="aval" class="genesis-burst-value">16</span>
         </div>
-        <div style="display:flex;gap:6px;margin-bottom:8px">
-            <button ref="fire" style="flex:1;padding:5px;border-radius:8px;cursor:pointer">Fire</button>
-            <button ref="sweep" style="flex:1;padding:5px;border-radius:8px;cursor:pointer">Sweep</button>
-            <button ref="clear" style="padding:5px 8px;border-radius:8px;cursor:pointer">Clear</button>
+        <div class="genesis-burst-actions">
+            <button ref="fire" class="genesis-burst-fire">Fire</button>
+            <button ref="sweep" class="genesis-burst-sweep">Sweep</button>
+            <button ref="clear" class="genesis-burst-clear">Clear</button>
         </div>
-        <div ref="status" style="margin-bottom:6px;color:var(--color-text-secondary,#aaa);min-height:15px">ready</div>
-        <canvas ref="plot" width="276" height="200" style="width:100%;display:block;border-radius:8px;background:var(--color-background-secondary,rgba(255,255,255,0.04))"></canvas>
-        <div style="margin-top:6px;font-size:16px;color:var(--color-text-tertiary,#888);line-height:1.4">
-            <span style="color:#378ADD">&#9679;</span> live (active owner) &nbsp;
-            <span style="color:#BA7517">&#9675;</span> historical GPU run &nbsp;
-            <span style="color:#639922">&#8211;</span> selected quadratic comparison
+        <div ref="status" class="genesis-burst-status">ready</div>
+        <canvas ref="plot" width="276" height="200" class="genesis-burst-plot"></canvas>
+        <div class="genesis-burst-legend">
+            <span class="genesis-burst-marker-live">&#9679;</span> live (active owner) &nbsp;
+            <span class="genesis-burst-marker-historical">&#9675;</span> historical GPU run &nbsp;
+            <span class="genesis-burst-marker-comparison">&#8211;</span> selected quadratic comparison
         </div>
     </div>
 `;
@@ -66,7 +70,10 @@ export class GenesisBurstPanelComponent extends BaseComponent {
 }
 
 export function mountGenesisBurstPanel(harness) {
-    const host = document.getElementById('viewport') || document.body;
+    // Portal the scenario instrument at shell level. The viewport owns a
+    // stacking context; keeping the panel inside it makes the mobile transport
+    // and dock siblings intercept the chart regardless of panel z-index.
+    const host = document.getElementById('app') || document.body;
     document.getElementById(PANEL_ID)?.remove();
     if (typeof window !== 'undefined' && window.__ftdGenesisBurstPanel) {
         try { window.__ftdGenesisBurstPanel.dispose(); } catch (e) { /* noop */ }
@@ -76,11 +83,18 @@ export function mountGenesisBurstPanel(harness) {
     const panel = comp.element;
 
     const slider = comp.refs.slider, aval = comp.refs.aval, status = comp.refs.status, canvas = comp.refs.plot;
-    const ctx2d = canvas.getContext('2d');
     const points = [];   // [{ A, N }]
     let busy = false;
     let disposed = false;
     let activeToken = null;
+    let canvasSurface = null;
+    const lifetime = new LifetimeScope();
+    const collapse = attachInstrumentPanelCollapse({
+        element: panel,
+        lifetime,
+        label: 'Selected genesis response',
+    });
+    const redraw = () => canvasSurface?.redrawNow();
 
     const nativeUnavailableMessage = 'Live N(A) is unavailable on the native backend until reset, injection, and stepping have one acknowledged transaction. Switch to WASM for this experiment.';
     const nativeExperimentUnavailable = () => {
@@ -105,10 +119,10 @@ export function mountGenesisBurstPanel(harness) {
         return !unavailable;
     };
 
-    slider.addEventListener('input', () => { aval.textContent = slider.value; });
-    comp.refs.fire.addEventListener('click', () => fire(parseInt(slider.value, 10)));
-    comp.refs.sweep.addEventListener('click', () => sweep());
-    comp.refs.clear.addEventListener('click', () => { points.length = 0; draw(); status.textContent = 'cleared'; });
+    lifetime.on(slider, 'input', () => { aval.textContent = slider.value; });
+    lifetime.on(comp.refs.fire, 'click', () => fire(parseInt(slider.value, 10)));
+    lifetime.on(comp.refs.sweep, 'click', () => sweep());
+    lifetime.on(comp.refs.clear, 'click', () => { points.length = 0; redraw(); status.textContent = 'cleared'; });
 
     function tokenIsCurrent(token) {
         const liveCtx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
@@ -161,7 +175,7 @@ export function mountGenesisBurstPanel(harness) {
         if (!tokenIsCurrent(token)) return null;
         const N = harness.getDiagnostics?.()?.manifested ?? 0;
         points.push({ A, N });
-        draw();
+        redraw();
         status.textContent = `A=${A} → N=${N}  (k=${(N / (A * A)).toFixed(3)})`;
         return N;
     }
@@ -237,10 +251,11 @@ export function mountGenesisBurstPanel(harness) {
     }
 
     // ---- bespoke log-log N(A) plotter -------------------------------------
-    function draw() {
-        const W = canvas.width, H = canvas.height;
-        const padL = 30, padR = 8, padT = 8, padB = 18;
-        const x0 = padL, x1 = W - padR, y0 = H - padB, y1 = padT;
+    function draw(surface) {
+        const { ctx: ctx2d, width: W, height: H } = surface;
+        ctx2d.font = '16px sans-serif';
+        const layout = computeGenesisPlotLayout(W, H, (text) => ctx2d.measureText(text).width);
+        const { x0, x1, y0, y1 } = layout;
         const lAlo = Math.log10(5), lAhi = Math.log10(90);
         const lNlo = Math.log10(2), lNhi = Math.log10(700);
         const px = (A) => x0 + (Math.log10(A) - lAlo) / (lAhi - lAlo) * (x1 - x0);
@@ -249,9 +264,10 @@ export function mountGenesisBurstPanel(harness) {
         ctx2d.clearRect(0, 0, W, H);
         ctx2d.strokeStyle = 'rgba(136,135,128,0.5)'; ctx2d.lineWidth = 1;
         ctx2d.beginPath(); ctx2d.moveTo(x0, y1); ctx2d.lineTo(x0, y0); ctx2d.lineTo(x1, y0); ctx2d.stroke();
-        ctx2d.fillStyle = 'rgba(150,150,150,0.9)'; ctx2d.font = '16px sans-serif';
-        ctx2d.fillText('N', 4, y1 + 8); ctx2d.fillText('A', x1 - 8, y0 + 14);
-        for (const A of [10, 16, 30, 90]) ctx2d.fillText(String(A), px(A) - 5, y0 + 12);
+        ctx2d.fillStyle = 'rgba(150,150,150,0.9)';
+        ctx2d.fillText('N', 4, y1 + 16);
+        ctx2d.fillText('A', layout.axisLabel.left, layout.labelBaseline);
+        for (const tick of layout.ticks) ctx2d.fillText(tick.text, tick.left, layout.labelBaseline);
 
         // knee marker
         ctx2d.strokeStyle = 'rgba(95,94,90,0.8)'; ctx2d.setLineDash([3, 3]);
@@ -277,29 +293,77 @@ export function mountGenesisBurstPanel(harness) {
         ctx2d.stroke();
         for (const p of sorted) { ctx2d.beginPath(); ctx2d.arc(px(p.A), py(p.N), 3.2, 0, 6.2832); ctx2d.fill(); }
     }
-    draw();
+    canvasSurface = createCanvasSurface(canvas, draw);
+    canvasSurface.redrawNow();
     renderBackendSupport();
 
     // ---- scenario-switch disposal guard -----------------------------------
-    const guard = setInterval(() => {
+    const guard = rafCoordinator.subscribe('genesis-burst-panel-guard', { hz: 2, cb: () => {
         const sel = document.getElementById('scenario-select');
         if (sel && sel.value !== SCENARIO_ID) api.dispose();
         else renderBackendSupport();
-    }, 500);
+    } });
+    lifetime.defer(() => guard.unsubscribe());
 
     const api = {
         element: panel,
+        suspendBackgroundWork: () => { if (activeToken) activeToken.cancelled = true; },
         fire,
         getPoints: () => points.map((p) => ({ ...p })),
         getSupportStatus: () => panel.dataset.liveExperimentStatus,
+        collapse,
         dispose: () => {
             disposed = true;
             if (activeToken) activeToken.cancelled = true;
-            clearInterval(guard);
+            lifetime.dispose();
+            canvasSurface?.dispose();
+            canvasSurface = null;
             if (typeof window !== 'undefined' && window.__ftdGenesisBurstPanel === api) window.__ftdGenesisBurstPanel = null;
             panel.remove();
         },
     };
     if (typeof window !== 'undefined') window.__ftdGenesisBurstPanel = api;
     return api;
+}
+
+/** Logical plot geometry, exported so responsive label bounds can be tested. */
+export function computeGenesisPlotLayout(width, height, measureText = (text) => String(text).length * 8) {
+    const W = Math.max(1, Number(width) || 1);
+    const H = Math.max(1, Number(height) || 1);
+    const axisWidth = measureText('A');
+    const rightTickWidth = measureText('90');
+    const labelGap = 8;
+    const outerRight = 6;
+    const padL = 30;
+    const padR = Math.ceil(rightTickWidth / 2 + labelGap + axisWidth + outerRight);
+    const padT = 8;
+    const padB = 26;
+    const x0 = padL;
+    const x1 = Math.max(x0 + 1, W - padR);
+    const y0 = Math.max(padT + 1, H - padB);
+    const y1 = padT;
+    const lAlo = Math.log10(5);
+    const lAhi = Math.log10(90);
+    const px = (A) => x0 + (Math.log10(A) - lAlo) / (lAhi - lAlo) * (x1 - x0);
+    const ticks = [10, 16, 30, 90].map((value) => {
+        const text = String(value);
+        const textWidth = measureText(text);
+        const left = px(value) - textWidth / 2;
+        return { value, text, left, right: left + textWidth };
+    });
+    const axisLabel = {
+        text: 'A',
+        left: W - outerRight - axisWidth,
+        right: W - outerRight,
+    };
+    return {
+        x0,
+        x1,
+        y0,
+        y1,
+        labelBaseline: H - 8,
+        ticks,
+        axisLabel,
+        labelGap,
+    };
 }

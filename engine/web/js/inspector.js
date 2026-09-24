@@ -14,6 +14,7 @@ import { TickHistoryControl } from './ui/charts/history-window.js';
 import { updateInspectorChrome, resetInspectorSelection } from './inspector/chrome.js?v=3';
 import { collectInspectorDom } from './inspector/dom-bindings.js?v=2';
 import { bindInspectorPointerControls } from './inspector/pointer-controller.js';
+import { LifetimeScope } from './ui/utils/lifetime-scope.js';
 import {
     normalizeLatticePosition,
     handleLatticeClick,
@@ -94,6 +95,7 @@ export class Inspector {
         this._selectedCosmicId = -1;
         this._cosmicRenderer = null;
         this._dragThresholdPx = 6;
+        this._scope = new LifetimeScope();
         Object.assign(this, collectInspectorDom());
         this.chartHistoryControl = this.chartHistoryHost
             ? new TickHistoryControl(this.chartHistoryHost, {
@@ -111,7 +113,7 @@ export class Inspector {
         // Focus Voxel button
         const btnFocus = this.focusSelectionBtn;
         if (btnFocus) {
-            btnFocus.addEventListener('click', () => {
+            this._scope.on(btnFocus, 'click', () => {
                 if (this._selectedPos && this.viewport && this.viewport.controls) {
                     const {x, y, z} = this._selectedPos;
                     this.viewport.controls.target.set(x + 0.5, y + 0.5, z + 0.5);
@@ -124,30 +126,30 @@ export class Inspector {
             });
         }
         if (this.clearSelectionBtn) {
-            this.clearSelectionBtn.addEventListener('click', () => this.clearSelection());
+            this._scope.on(this.clearSelectionBtn, 'click', () => this.clearSelection());
         }
 
         // Coordinate manual adjustments
         ['x', 'y', 'z'].forEach(axis => {
             const el = document.getElementById(`insp-pos-${axis}`);
             if (el) {
-                el.addEventListener('change', (e) => {
+                this._scope.on(el, 'change', (e) => {
                     this.selectLatticePosition({ ...(this._selectedPos || { x: 0, y: 0, z: 0 }),
                         [axis]: e.target.value });
                 });
             }
         });
 
-        this._releasePointerControls = bindInspectorPointerControls({
+        this._releasePointerControls = this._scope.defer(bindInspectorPointerControls({
             viewport,
             dragThresholdPx: this._dragThresholdPx,
             onClick: (e) => this._onClick(e),
             onEscape: () => this.clearSelection(),
-        });
+        }));
         
         const threshInput = document.getElementById('raycast-threshold');
         if (threshInput) {
-            threshInput.addEventListener('input', (e) => {
+            this._scope.on(threshInput, 'input', (e) => {
                 this.raycaster.params.Points.threshold = parseFloat(e.target.value);
                 const valDisplay = document.getElementById('raycast-threshold-val');
                 if (valDisplay) valDisplay.textContent = e.target.value;
@@ -165,6 +167,22 @@ export class Inspector {
                 this._hideLatticeInspector();
             }
         }
+    }
+
+    destroy() {
+        if (!this._scope || this._scope.disposed) return;
+        this._scope.dispose();
+        this._releasePointerControls = null;
+        this.chartHistoryControl?.destroy?.();
+        this.chartHistoryControl = null;
+        this._cloudParticleMap = null;
+        this._peTypeMap = null;
+        this._aeAtomData = null;
+        this._aeAtomIds = null;
+        this._aeCloudAtomMap = null;
+        this._planetaryRenderer = null;
+        this._cosmicRenderer = null;
+        this.bridge = null;
     }
 
     getSelectedLatticePosition() {

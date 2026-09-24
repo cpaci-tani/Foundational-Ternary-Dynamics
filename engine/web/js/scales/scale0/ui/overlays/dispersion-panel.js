@@ -39,28 +39,6 @@ const DIR_COLOR = { '100': 'var(--accent,#e8b04b)', '110': '#4bb7e8', '111': '#e
 const L_P = FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M, C_PHYS = C_MS;
 function kOverKzone(fHz) { return (2 * L_P) / (C_PHYS / fHz); }   // dimensionless
 
-function ensureCss() {
-    if (typeof document === 'undefined' || document.getElementById('dispersion-panel-css')) return;
-    const s = document.createElement('style');
-    s.id = 'dispersion-panel-css';
-    s.textContent = `
-    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:16px;color:var(--text-primary,#eee);padding:2px}
-    #${PANEL_ID} .dp-title{font-weight:600;margin:2px 0 6px}
-    #${PANEL_ID} .dp-title small{color:var(--text-muted,#888);font-weight:400}
-    #${PANEL_ID} svg.dp-plot{width:100%;display:block;background:#0c0c11;border-radius:6px}
-    #${PANEL_ID} .dp-legend{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0;font-size:16px;color:var(--text-secondary,#ccc)}
-    #${PANEL_ID} .dp-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle}
-    #${PANEL_ID} .dp-rows{margin:4px 0}
-    #${PANEL_ID} .dp-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:0.5px solid var(--border-light,rgba(255,255,255,0.06))}
-    #${PANEL_ID} .dp-row span:last-child{font-variant-numeric:tabular-nums;color:var(--text-secondary,#ccc)}
-    #${PANEL_ID} .dp-actions{display:flex;gap:6px;align-items:center;margin:6px 0 2px}
-    #${PANEL_ID} .dp-actions button{padding:5px 9px;border-radius:6px;cursor:pointer;border:0.5px solid var(--border-light,rgba(255,255,255,0.18));background:var(--surface-2,rgba(255,255,255,0.06));color:inherit;font-size:16px}
-    #${PANEL_ID} .dp-status{font-size:16px;color:var(--text-muted,#888)}
-    #${PANEL_ID} .dp-foot{margin-top:8px;padding-top:7px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.12));font-size:16px;color:var(--text-muted,#888);line-height:1.45}
-    #${PANEL_ID} .dp-foot b{color:var(--text-secondary,#aaa)}`;
-    document.head.appendChild(s);
-}
-
 function buildPanel() {
     const root = document.createElement('div');
     root.id = PANEL_ID;
@@ -69,11 +47,11 @@ function buildPanel() {
         <div class="dp-title">Dispersion ω(k) <small>· reference stencil · FTD-0298/0299</small></div>
         <svg class="dp-plot" id="${PANEL_ID}-plot" viewBox="0 0 360 220" preserveAspectRatio="xMidYMid meet"></svg>
         <div class="dp-legend">
-            <span><i style="background:var(--text-muted,#888)"></i>analytic 2c·sin(k/2)</span>
-            <span><i style="background:${DIR_COLOR['100']}"></i>⟨100⟩</span>
-            <span><i style="background:${DIR_COLOR['110']}"></i>⟨110⟩</span>
-            <span><i style="background:${DIR_COLOR['111']}"></i>⟨111⟩</span>
-            <span id="${PANEL_ID}-livelegend" hidden><i style="background:#7CFC8C"></i>live</span>
+            <span><i class="dp-key-analytic"></i>analytic 2c·sin(k/2)</span>
+            <span><i class="dp-key-100"></i>⟨100⟩</span>
+            <span><i class="dp-key-110"></i>⟨110⟩</span>
+            <span><i class="dp-key-111"></i>⟨111⟩</span>
+            <span id="${PANEL_ID}-livelegend" hidden><i class="dp-key-live"></i>live</span>
         </div>
         <div class="dp-rows" id="${PANEL_ID}-rows"></div>
         <div class="dp-actions">
@@ -137,7 +115,6 @@ function rowHTML(label, value, tip = '') {
 
 export function mountDispersionPanel(host, getBridge) {
     if (!host) return null;
-    ensureCss();
     document.getElementById(PANEL_ID)?.remove();
     const panel = buildPanel();
     host.appendChild(panel);

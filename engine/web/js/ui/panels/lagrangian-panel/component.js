@@ -3,14 +3,14 @@ import { UPlotChart } from '../../charts/uplot-chart.js';
 import { attachFullscreen } from '../../charts/chart-fullscreen.js';
 import { DiagnosticsTable } from '../diagnostics-panel/table.js';
 import { TermRow } from './term-row.js';
-import { terms, actionRows, constantRows } from './descriptors/scale0.js';
+import { terms, actionRows } from './descriptors/scale0.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
-import * as consts from '../../../constants.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
 import { formatValue } from '../diagnostics-panel/formatters.js';
 import { getScale0State } from '../../../scales/scale0/state/store.js';
 import { TickHistoryControl } from '../../charts/history-window.js';
+import { setTextIfChanged } from '../../utils/dom-text.js';
 
 const LS_HIDDEN = 'ftd.chart.lagrangian.hidden';
 const EMPTY_SCENARIO_ID = 'empty';
@@ -55,10 +55,6 @@ export function interpretEmptyObserverBaseline(lagrangian, {
     };
 }
 
-function setTextIfChanged(element, text) {
-    if (element && element.textContent !== text) element.textContent = text;
-}
-
 function loadHidden() {
     try {
         const raw = localStorage.getItem(LS_HIDDEN);
@@ -82,7 +78,10 @@ export class LagrangianPanelComponent {
                     const entry = [...this.cards.values()].find(
                         candidate => candidate.card === observed.target,
                     );
-                    if (entry) entry.onScreen = observed.isIntersecting;
+                    if (entry) {
+                        entry.onScreen = observed.isIntersecting;
+                        if (entry.onScreen && isPanelLive(this.el)) this._ensureChart(entry).update();
+                    }
                 }
             }, { root: null, rootMargin: '150px 0px', threshold: 0 })
             : null;
@@ -102,6 +101,10 @@ export class LagrangianPanelComponent {
         this.historyControl = new TickHistoryControl(this.el, {
             id: 'lagrangian-panel',
             defaultTicks: 240,
+            onChange: () => {
+                for (const table of this.tables) table.invalidateHistoryWindow();
+                this.update();
+            },
         });
         this.observerCard = this.el.querySelector('.lag-observer-baseline');
         this.observerValue = this.el.querySelector('[data-lag-observer-value]');
@@ -126,27 +129,21 @@ export class LagrangianPanelComponent {
         });
         this.el.querySelector('.lag-term-row-host').appendChild(this.termRow.el);
 
-        // Sidecar tables.
-        const hubView = Object.create(telemetryHub);
-        hubView.consts = consts;
+        // The action table shares the same observation owner and selected
+        // history window as the term charts above it.
         const dataCol = this.el.querySelector('.lag-data-col');
         const actionTable = new DiagnosticsTable(
             {
                 id: 'lag-action', title: 'Action & Constraints', rows: actionRows,
                 telemetryGroups: ['lagrangian', 'audit', 'diagnostics'],
             },
-            hubView,
-            { resetScope: 0 }
-        );
-        const constantsTable = new DiagnosticsTable(
-            { id: 'lag-constants', title: 'Ontic Constants', rows: constantRows, variant: 'static' },
-            hubView
+            telemetryHub,
+            { resetScope: 0, historyControl: this.historyControl }
         );
         dataCol.appendChild(actionTable.el);
-        dataCol.appendChild(constantsTable.el);
-        this.tables.push(actionTable, constantsTable);
+        this.tables.push(actionTable);
 
-        // Initial render so cells show 0 / constants immediately.
+        // Initial render shows the current sample or an unavailable marker.
         for (const t of this.tables) t.update();
         this._updateObserverBaseline();
 
@@ -173,8 +170,19 @@ export class LagrangianPanelComponent {
             <div class="chart-card-plot"></div>
         `;
         attachFullscreen(card);
-        const plotEl = card.querySelector('.chart-card-plot');
-        const chart = new UPlotChart(plotEl, {
+        const entry = { term, card, chart: null, onScreen: !this.cardObserver, mountFrame: null };
+        entry.mountFrame = requestAnimationFrame(() => {
+            entry.mountFrame = null;
+            card.classList.add('is-mounted');
+        });
+        return entry;
+    }
+
+    /** Allocate plots only when a card approaches the visible viewport. */
+    _ensureChart(entry) {
+        if (entry.chart) return entry.chart;
+        const { term, card } = entry;
+        entry.chart = new UPlotChart(card.querySelector('.chart-card-plot'), {
             id:     'lag-term-' + term.key,
             title:  '',
             tooltipTitle: term.label,
@@ -182,9 +190,10 @@ export class LagrangianPanelComponent {
             xLabel: 'tick', yLabel: 'ℒ',
             hub:    telemetryHub.lag,
             historyControl: this.historyControl,
+            isVisible: () => isPanelLive(this.el)
+                && (entry.onScreen || !!entry.card._ftdCard?._isFullscreen),
         });
-        requestAnimationFrame(() => card.classList.add('is-mounted'));
-        return { term, card, chart, onScreen: true };
+        return entry.chart;
     }
 
     /** Reconcile rendered cards with the non-hidden term set. */
@@ -193,17 +202,21 @@ export class LagrangianPanelComponent {
         for (const [key, entry] of this.cards) {
             if (this.hidden.has(key)) {
                 if (entry.card._ftdCard?._isFullscreen) entry.card._ftdCard._exitFullscreen();
-                entry.chart.destroy();
+                if (entry.mountFrame != null) cancelAnimationFrame(entry.mountFrame);
+                entry.chart?.destroy();
                 this.cardObserver?.unobserve(entry.card);
                 entry.card.remove();
                 this.cards.delete(key);
             }
         }
         // Add cards for newly-visible terms (preserving descriptor order).
-        for (const term of terms) {
+        for (const [index, term] of terms.entries()) {
             if (this.hidden.has(term.key) || this.cards.has(term.key)) continue;
             const entry = this._makeTermCard(term);
-            this.grid.appendChild(entry.card);
+            const next = terms.slice(index + 1)
+                .map(candidate => this.cards.get(candidate.key)?.card)
+                .find(card => card?.parentNode === this.grid) ?? null;
+            this.grid.insertBefore(entry.card, next);
             this.cards.set(term.key, entry);
             this.cardObserver?.observe(entry.card);
         }
@@ -259,7 +272,7 @@ export class LagrangianPanelComponent {
             this.el.classList.toggle('lag-telemetry-stale', stale);
         }
         for (const entry of this.cards.values()) {
-            if (entry.onScreen) entry.chart.update();
+            if (entry.onScreen || entry.card._ftdCard?._isFullscreen) this._ensureChart(entry).update();
         }
         for (const t of this.tables) t.update();
         this._updateObserverBaseline();
@@ -269,7 +282,8 @@ export class LagrangianPanelComponent {
         this.cardObserver?.disconnect();
         for (const entry of this.cards.values()) {
             if (entry.card._ftdCard?._isFullscreen) entry.card._ftdCard._exitFullscreen();
-            entry.chart.destroy();
+            if (entry.mountFrame != null) cancelAnimationFrame(entry.mountFrame);
+            entry.chart?.destroy();
         }
         this.cards.clear();
         for (const t of this.tables) t.destroy();

@@ -4,12 +4,7 @@ import {
     SCALE1_M3_VIEWS,
 } from '../../scenario-registry.js?v=15';
 import { scale1State } from '../../state/store.js?v=7';
-
-function htmlToElement(markup) {
-    const template = document.createElement('template');
-    template.innerHTML = markup.trim();
-    return template.content.firstElementChild;
-}
+import { htmlToElement } from '../../../../ui/utils/scale-toolbar.js';
 
 export function createScale1ScenarioToolbarGroup() {
     const element = htmlToElement(getScale1ScenarioToolbarTemplate());

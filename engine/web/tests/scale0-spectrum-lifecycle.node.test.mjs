@@ -73,7 +73,19 @@ function fixture() {
         },
         renderSpectrum() {}, renderTopology() {}, renderMetrics() {}, renderEnergy() {},
     };
-    const mount = vm.runInNewContext(`${mountedSource}\nmountSpectrumPanel`, env);
+    // Execute the shared applicability owner with the same deterministic DOM
+    // and frame clock as the real panel, rather than duplicating its behavior.
+    const context = vm.createContext(env);
+    for (const [path, symbol] of [
+        ['ui/utils/lifetime-scope.js', 'LifetimeScope'],
+        ['ui/utils/scenario-applicability-binding.js', 'ScenarioApplicabilityBinding'],
+    ]) {
+        const dependency = readFileSync(new URL('../js/' + path, import.meta.url), 'utf8')
+            .replace(/^import[\s\S]*?from\s+['"][^'"]+['"];\s*/gm, '')
+            .replace(/export\s+/g, '');
+        vm.runInContext(dependency, context);
+    }
+    const mount = vm.runInContext(`${mountedSource}\nmountSpectrumPanel`, context);
     const api = mount(host, () => bridge);
     return {
         api, host, state, counts, timers, callbacks, owner,

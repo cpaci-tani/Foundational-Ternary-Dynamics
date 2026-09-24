@@ -1,0 +1,2 @@
+# NPM bundle contains embedded CRLF bytes; preserve its recorded SHA256 exactly.
+index.js binary

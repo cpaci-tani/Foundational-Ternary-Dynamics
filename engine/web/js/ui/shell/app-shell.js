@@ -21,6 +21,7 @@ import { registerScale2ToolbarUI } from '../../scales/scale2/ui/register-scale2-
 import { registerScale3ToolbarUI } from '../../scales/scale3/ui/register-scale3-ui.js';
 import { registerScale4ToolbarUI } from '../../scales/scale4/ui/register-scale4-ui.js?v=4';
 import { registerScale5ToolbarUI } from '../../scales/scale5/ui/register-scale5-ui.js';
+import { LifetimeScope } from '../utils/lifetime-scope.js';
 
 /**
  * Shell facade around the current dashboard DOM.
@@ -32,9 +33,10 @@ import { registerScale5ToolbarUI } from '../../scales/scale5/ui/register-scale5-
  * - own panel dock behavior
  */
 export class AppShell {
-    constructor({ app, onViewportResize = null } = {}) {
+    constructor({ app, onViewportResize = null, onDestroy = null } = {}) {
         this.app = app || document.getElementById('app');
         this.onViewportResize = typeof onViewportResize === 'function' ? onViewportResize : null;
+        this.onDestroy = typeof onDestroy === 'function' ? onDestroy : null;
         this.registry = null;
         this.breakpoints = null;
         this.panelDock = null;
@@ -47,10 +49,16 @@ export class AppShell {
         this.scaleUiRegistry = null;
         this.tooltips = null;
         this.knowledgeBase = null;
+        this.faq = null;
         this.keyboardHelp = null;
+        this.viewportOverlays = null;
+        this._scope = null;
+        this._visualViewportUpdate = null;
     }
 
     init() {
+        if (this._scope && !this._scope.disposed) return this;
+        this._scope = new LifetimeScope();
         this.registry = ensureShellTemplate(this.app);
         this.scaleUiRegistry = createScaleUiRegistry();
         registerScale0ToolbarUI(this.scaleUiRegistry.toolbar);
@@ -80,7 +88,7 @@ export class AppShell {
             app: this.app,
             getMutexPartners: () => [this.knowledgeBase],
         }).init();
-        new ViewportOverlaysComponent(this.getRegion('viewport')).init();
+        this.viewportOverlays = new ViewportOverlaysComponent(this.getRegion('viewport')).init();
         this.workspaceTabs = new WorkspaceTabsComponent(this.getRegion('tabs'), this.scaleUiRegistry.panels).init();
         this.panelDockView = new PanelDockComponent(this.getRegion('panels')).init();
         this.tooltips = new TooltipComponent({ app: this.app }).init();
@@ -120,7 +128,7 @@ export class AppShell {
     _initVisualViewport() {
         if (!window.visualViewport) return;
         const root = document.documentElement;
-        const update = () => {
+        this._visualViewportUpdate = () => {
             const vvh = Math.round(window.visualViewport.height);
             const lvh = window.innerHeight;
             // The gap between layout-viewport height and visual-viewport height
@@ -131,9 +139,9 @@ export class AppShell {
             root.style.setProperty('--visual-viewport-height', `${vvh}px`);
             root.style.setProperty('--browser-nav-inset', `${navInset}px`);
         };
-        window.visualViewport.addEventListener('resize', update, { passive: true });
-        window.visualViewport.addEventListener('scroll', update, { passive: true });
-        update(); // set immediately so first paint is already correct
+        this._scope.on(window.visualViewport, 'resize', this._visualViewportUpdate, { passive: true });
+        this._scope.on(window.visualViewport, 'scroll', this._visualViewportUpdate, { passive: true });
+        this._visualViewportUpdate(); // set immediately so first paint is already correct
     }
 
     setReady() {
@@ -159,7 +167,7 @@ export class AppShell {
             this.setActivePanelTitle(
                 this.getRegion('tabs')?.querySelector(`.tab[data-panel="${activeTab}"]`)?.textContent?.trim() || 'Controls'
             );
-            document.getElementById('btn-panel-hide-mobile')?.addEventListener('click', () => {
+            this._scope.on(document.getElementById('btn-panel-hide-mobile'), 'click', () => {
                 this.panelDock?.setCollapsed(true);
             });
 
@@ -172,7 +180,7 @@ export class AppShell {
             }).init();
 
             // Re-sync scroll lock on viewport resize (mobile ↔ desktop transitions)
-            window.addEventListener('resize', () => this.mobilePanel?._syncScrollLock(), { passive: true });
+            this._scope.on(window, 'resize', () => this.mobilePanel?._syncScrollLock(), { passive: true });
         }
         return this.panelDock;
     }
@@ -215,5 +223,52 @@ export class AppShell {
         document.documentElement.dataset.layoutMode = snapshot.layoutMode;
         document.documentElement.dataset.orientation = snapshot.orientation;
         this.panelDock?.setCompactMode(snapshot.isCompact);
+    }
+
+    destroy() {
+        if (!this._scope || this._scope.disposed) return;
+        const errors = [];
+        const release = (callback) => {
+            try { callback?.(); } catch (error) { errors.push(error); }
+        };
+        const disposeComponent = (component) => {
+            if (typeof component?.destroy === 'function') component.destroy();
+            else if (typeof component?.cleanup === 'function') component.cleanup();
+        };
+
+        // Let app wiring release its frame loop and app-owned controls before
+        // shell components remove their DOM roots.
+        release(this.onDestroy);
+        this.onDestroy = null;
+        // Detach component-owned global listeners before their DOM roots are
+        // removed. App wiring invokes this only for explicit programmatic
+        // teardown; pagehide must remain BFCache-safe.
+        for (const component of [
+            this.mobilePanel, this.panelDock, this.keyboardHelp, this.tooltips,
+            this.knowledgeBase, this.faq, this.viewportOverlays, this.workspaceTabs,
+            this.panelDockView, this.viewportFrame, this.topbar, this.loadingOverlay,
+        ]) release(() => disposeComponent(component));
+        release(() => this.breakpoints?.stop?.());
+        release(() => this._scope.dispose());
+        document.documentElement.style.removeProperty('--visual-viewport-height');
+        document.documentElement.style.removeProperty('--browser-nav-inset');
+        delete this.app?.dataset.shellReady;
+        this.panelDock = null;
+        this.mobilePanel = null;
+        this.loadingOverlay = null;
+        this.topbar = null;
+        this.workspaceTabs = null;
+        this.panelDockView = null;
+        this.viewportFrame = null;
+        this.viewportOverlays = null;
+        this.tooltips = null;
+        this.knowledgeBase = null;
+        this.faq = null;
+        this.keyboardHelp = null;
+        this.breakpoints = null;
+        this.scaleUiRegistry = null;
+        this.registry = null;
+        this._visualViewportUpdate = null;
+        if (errors.length) throw new AggregateError(errors, 'AppShell cleanup failed');
     }
 }

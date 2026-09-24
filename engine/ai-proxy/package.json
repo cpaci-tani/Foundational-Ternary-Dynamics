@@ -1,0 +1,14 @@
+{
+  "name": "ftd-jev-proxy",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run --outdir ../.cache/ai-proxy-build"
+  },
+  "devDependencies": {
+    "wrangler": "4.136.0"
+  }
+}

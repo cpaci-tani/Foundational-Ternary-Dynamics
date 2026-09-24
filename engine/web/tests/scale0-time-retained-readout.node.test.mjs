@@ -7,6 +7,8 @@ import * as cards from '../js/scales/scale0/ui/overlays/_card-helpers.js';
 import * as reference from '../js/scales/scale0/data/ftd0252-reference.js';
 import { C_SPEED } from '../js/constants.js';
 import { TickHistoryControl } from '../js/ui/charts/history-window.js';
+import { projectHistoryIndices } from '../js/ui/charts/history-index.js';
+import { reduceProperTimeSamples } from '../js/scales/scale0/analysis/proper-time-metrics.js';
 
 const source = readFileSync(new URL('../js/scales/scale0/ui/overlays/time-panel.js', import.meta.url), 'utf8');
 const executable = source.replace(/^import[\s\S]*?from\s+['"][^'"]+['"];\s*/gm, '').replace(/export\s+/g, '');
@@ -28,7 +30,12 @@ class Element {
 
 function fixture(panelSource = source) {
     const executable = panelSource.replace(/^import[\s\S]*?from\s+['"][^'"]+['"];\s*/gm, '').replace(/export\s+/g, '');
-    const state = { live: true, reset: 0, epoch: 1, tick: 10, time: 5, valid: true };
+    const state = { live: true, reset: 0, epoch: 1, tick: 10, time: 5, valid: true,
+        ptime: reduceProperTimeSamples({
+            tau: { values: new Float32Array([2, 4]), count: 2, effectiveStride: 2 },
+            lapse: { values: new Float32Array([0.8, 1]), count: 2, effectiveStride: 2 },
+            phase: { values: new Float32Array([0, Math.PI]), count: 2, effectiveStride: 2 },
+        }) };
     const samples = [], publications = [], demands = [], retained = [], subs = new Map();
     let historyControl;
     const bridge = {
@@ -50,13 +57,17 @@ function fixture(panelSource = source) {
     };
     const hub = {
         s0: { get diag() { return { tick: state.tick, physicalTime: state.time, dt: 0.5 }; },
+            get properTime() { return state.ptime; },
             meta: { get expectedSourceEpoch() { return state.epoch; }, expectedSource: 'fixture' } },
         getResetVersion: () => state.reset,
-        getScale0TelemetryMeta: () => state.valid ? { tick: state.tick, stale: false } : null,
+        getScale0TelemetryMeta: group => state.valid
+            ? { tick: group === 'properTime' ? (state.ptime?.sampleTick ?? state.tick) : state.tick, stale: false }
+            : null,
         publishScale0ProperTimeMetrics: (value, tick) => publications.push({ value, tick }),
     };
     const context = {
-        ...clock, ...cards, ...reference, C_SPEED, telemetryHub: hub,
+        ...clock, ...cards, ...reference, C_SPEED, telemetryHub: hub, projectHistoryIndices,
+        reduceProperTimeSamples,
         document: { createElement: () => new Element(), getElementById: () => null },
         isPanelLive: () => state.live,
         updateRetainedReadout(container, markup) {
@@ -89,13 +100,13 @@ function fixture(panelSource = source) {
         get historyControl() { return historyControl; } };
 }
 
-test('actual Time update preserves sample kinds, strides, reductions and qualified publication', () => {
+test('actual Time update consumes canonical proper-time telemetry without duplicate acquisition', () => {
     const f = fixture(); f.api.update();
-    assert.deepEqual(f.samples, [['latency',2], ['tau',1], ['lapse',1], ['dbPhase',1]]);
-    assert.equal(f.publications.length, 1); assert.equal(f.publications[0].tick, 10);
-    const metrics = f.publications[0].value;
+    assert.deepEqual(f.samples, [['latency',2]]);
+    assert.equal(f.publications.length, 0);
+    const metrics = f.state.ptime;
     assert.equal(metrics.properTimeMean, 3); assert.equal(metrics.properTimeMin, 2);
-    assert.equal(metrics.properTimeMax, 4); assert.equal(metrics.lapseMean, 0.9);
+    assert.equal(metrics.properTimeMax, 4); assert.ok(Math.abs(metrics.lapseMean - 0.9) < 1e-6);
     assert.ok(Number.isNaN(metrics.dbPhaseMean)); assert.ok(metrics.dbPhaseCircVar > 0.999999);
     assert.equal(metrics.phaseStride, 2);
     assert.match(f.card('a').innerHTML, /t =  5\.0/);
@@ -114,13 +125,13 @@ test('same-tick readouts remain current without duplicate quadrature or reduced 
     const f = fixture(); f.api.update();
     f.state.time = 5.25; f.api.update();
     assert.match(f.card('a').innerHTML, /t =  5\.3/);
-    assert.equal(f.api.historyLength, 0); assert.equal(f.publications.length, 2);
-    assert.equal(f.samples.length, 8);
+    assert.equal(f.api.historyLength, 0); assert.equal(f.publications.length, 0);
+    assert.equal(f.samples.length, 2);
     f.state.tick = 11; f.state.time = 6; f.api.update();
     assert.equal(f.api.twin.tauDeep, 0.8); assert.equal(f.api.twin.tauFar, 1);
     assert.equal(f.api.historyLength, 1);
     f.api.update(); assert.equal(f.api.historyLength, 1);
-    assert.equal(f.samples.length, 16); assert.equal(f.publications.length, 4);
+    assert.equal(f.samples.length, 4); assert.equal(f.publications.length, 0);
 });
 
 test('unavailable readouts recover and Card D rebuilds only on actual imposed-value change', () => {
@@ -128,7 +139,7 @@ test('unavailable readouts recover and Card D rebuilds only on actual imposed-va
     assert.equal(d.writes, 1);
     f.api.update(); f.state.valid = false; f.api.update(); f.api.update();
     for (const id of ['a','b','c']) assert.match(f.card(id).innerHTML, /unavailable/);
-    assert.equal(f.samples.length, 4); assert.equal(f.publications.length, 1);
+    assert.equal(f.samples.length, 1); assert.equal(f.publications.length, 0);
     assert.equal(d.writes, 1);
     f.api.setImposedV(0.3); assert.equal(d.writes, 1);
     f.api.setImposedV(0.7); assert.equal(d.writes, 2);
@@ -144,7 +155,7 @@ test('hidden time clears demand; source reset discards quadrature; disposal rele
     const f = fixture(); f.api.update(); f.state.tick++; f.state.time++; f.api.update();
     assert.equal(f.api.historyLength, 1);
     f.state.live = false; f.api.update();
-    assert.equal(f.samples.length, 8); assert.equal(f.publications.length, 2);
+    assert.equal(f.samples.length, 2); assert.equal(f.publications.length, 0);
     assert.deepEqual(f.demands.at(-1), ['time-panel', []]);
     f.state.epoch++; f.state.tick = 0; f.state.time = 0; f.state.live = true; f.api.update();
     assert.equal(f.api.historyLength, 0); assert.equal(f.api.twin.tauDeep, 0);
@@ -154,10 +165,16 @@ test('hidden time clears demand; source reset discards quadrature; disposal rele
     assert.deepEqual(f.demands.at(-1), ['time-panel', []]);
 });
 
-function visible(twin, control) {
+function visible(twin, control, buffer = null) {
     const start = source.indexOf('    function visibleTwin()');
     const end = source.indexOf('    // Card D', start);
-    return vm.runInNewContext(source.slice(start, end) + '\nvisibleTwin()', { twin, historyControl: control });
+    const twinHistoryBuffer = buffer || {
+        get count() { return twin.history.length; }, get total() { return twin.history.length; },
+        generation: 0, get: index => twin.history[index], getTick: index => twin.historyTicks[index],
+    };
+    return vm.runInNewContext(source.slice(start, end) + '\nvisibleTwin()', {
+        twin, historyControl: control, twinHistoryBuffer, projectHistoryIndices,
+    });
 }
 function priorWindow(twin, control) {
     const entries = twin.history.map((value, i) => ({ value, tick: twin.historyTicks[i] ?? i }));
@@ -178,8 +195,8 @@ test('display window matches existing inclusive tick-window oracle including fal
     assert.deepEqual(Array.from(visible(twin, { isAll: false, ticks: 10 }).history), [3,4]);
 });
 
-test('rolling display does not read or copy hidden history values; All remains complete', () => {
-    const data = Array.from({ length: 1000 }, (_, i) => i / 10), reads = [];
+test('rolling display avoids hidden values and All projects actual extrema to a pixel budget', () => {
+    const data = Array.from({ length: 100000 }, (_, i) => i / 10), reads = [];
     const history = new Proxy(data, { get(target, key, receiver) {
         if (/^\d+$/.test(String(key))) reads.push(Number(key));
         return Reflect.get(target, key, receiver);
@@ -187,10 +204,18 @@ test('rolling display does not read or copy hidden history values; All remains c
     const twin = { history, historyTicks: data.map((_, i) => i) };
     const result = visible(twin, { isAll: false, ticks: 10 });
     assert.equal(result.history.length, 11);
-    assert.deepEqual(reads, Array.from({ length: 11 }, (_, i) => 989 + i));
+    assert.deepEqual(reads, Array.from({ length: 11 }, (_, i) => 99989 + i));
     reads.length = 0;
-    assert.equal(visible(twin, { isAll: true, ticks: 10 }).history.length, 1000);
-    assert.equal(reads.length, 1000); assert.equal(data.length, 1000);
+    const stableBuffer = {
+        get count() { return twin.history.length; }, get total() { return twin.history.length; },
+        generation: 0, get: index => twin.history[index], getTick: index => twin.historyTicks[index],
+    };
+    visible(twin, { isAll: true, ticks: 10 }, stableBuffer);
+    reads.length = 0;
+    const all = visible(twin, { isAll: true, ticks: 10 }, stableBuffer).history;
+    assert.ok(all.length < 500);
+    assert.equal(all[0], data[0]); assert.equal(all.at(-1), data.at(-1));
+    assert.ok(reads.length < 20000); assert.equal(data.length, 100000);
 });
 
 // The full-source golden comparison imports this fixture, not extracted or
@@ -205,11 +230,9 @@ test('count-driven zero samples and Float32 circular cancellation remain observa
         lapse: { values: new Float32Array([0, 0, 0]), count: 3, effectiveStride: 1 },
         dbPhase: { values: new Float32Array([0, Math.PI]), count: 2, effectiveStride: 1 },
     };
-    const original = f.bridge.capabilities.scale0.getScale0FieldSamples;
-    f.bridge.capabilities.scale0.getScale0FieldSamples = options =>
-        options.kind === 'latency' ? original(options) : data[options.kind];
+    f.state.ptime = reduceProperTimeSamples({ tau: data.tau, lapse: data.lapse, phase: data.dbPhase });
     f.api.update();
-    const m = f.publications.at(-1).value;
+    const m = f.state.ptime;
     assert.equal(m.hasField, true); assert.equal(m.properTimeMean, 0);
     assert.equal(m.properTimeMin, 0); assert.equal(m.properTimeMax, 0);
     assert.equal(m.lapseMean, 0); assert.equal(m.tauCount, 3);
@@ -218,8 +241,9 @@ test('count-driven zero samples and Float32 circular cancellation remain observa
     assert.match(f.card('f').innerHTML, /3 sampled manifested voxels/);
     data.tau = { values: new Float32Array(0), count: 0 };
     data.dbPhase = { values: new Float32Array([-0.01, 0.01]), count: 2 };
+    f.state.ptime = reduceProperTimeSamples({ tau: data.tau, lapse: data.lapse, phase: data.dbPhase });
     f.api.update();
-    const n = f.publications.at(-1).value;
+    const n = f.state.ptime;
     assert.ok(Number.isNaN(n.properTimeMean)); assert.equal(n.lapseMean, 0);
     assert.equal(n.dbPhaseMean, 0); assert.ok(n.dbPhaseCircVar < 0.001);
     assert.match(f.card('f').innerHTML, /effective stride unavailable/);

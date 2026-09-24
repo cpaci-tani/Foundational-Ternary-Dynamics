@@ -6,13 +6,13 @@
     gap: 7px;
     flex: 0 0 auto;
     min-width: 96px;
-    min-height: 32px;
+    min-height: var(--ctrl-height-min);
     padding: 6px 10px;
     border: 1px solid var(--border-light, #547082);
     border-radius: var(--radius-lg, 8px);
     background: var(--bg-card, #1b2c38);
     color: var(--validity-color);
-    font: 600 var(--fs-sm, 12px)/1.2 var(--font-body, system-ui, sans-serif);
+    font: 600 var(--fs-sm, 16px)/1.2 var(--font-body, system-ui, sans-serif);
     white-space: nowrap;
     cursor: help;
 }
@@ -24,7 +24,7 @@
 .validity-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .validity-status-details {
     position: fixed;
-    z-index: 10000;
+    z-index: var(--z-popover);
     width: max-content;
     max-width: min(370px, calc(100vw - 20px));
     max-height: calc(100dvh - 20px);
@@ -34,17 +34,11 @@
     border-radius: 10px;
     background: var(--bg-raised, #16222c);
     color: var(--text-primary, #e2e9ee);
-    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: var(--tooltip-backdrop);
+    backdrop-filter: var(--tooltip-backdrop);
     box-shadow: var(--tooltip-shadow, 0 6px 24px #0006);
-    font: var(--fs-sm, 12px)/1.5 var(--font-body, system-ui, sans-serif);
+    font: var(--fs-sm, 16px)/1.5 var(--font-body, system-ui, sans-serif);
     white-space: pre-line;
     overflow-wrap: anywhere;
 }
 .validity-status-details[hidden] { display: none; }
-/* Automatic daylight currently changes the surface palette without overriding
-   the semantic text tokens. Keep this small readout legible in that mode too. */
-@media (prefers-color-scheme: light) {
-    :root:not([data-theme]) #toolbar .validity-status[data-severity="ok"] { --validity-color: #047857; }
-    :root:not([data-theme]) #toolbar .validity-status[data-severity="warning"] { --validity-color: #92400e; }
-    :root:not([data-theme]) #toolbar .validity-status[data-severity="error"] { --validity-color: #b91c1c; }
-}

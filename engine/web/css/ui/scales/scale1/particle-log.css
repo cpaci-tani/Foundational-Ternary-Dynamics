@@ -41,7 +41,7 @@
     max-width: 76ch;
     margin: 5px 0 0;
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: var(--fs-sm);
     line-height: 1.45;
 }
 
@@ -71,7 +71,7 @@
 
 .particle-log-stat span {
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: var(--fs-xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -81,7 +81,7 @@
     overflow: visible;
     color: var(--text-primary);
     font-family: var(--font-mono);
-    font-size: 14px;
+    font-size: var(--fs-sm);
     overflow-wrap: anywhere;
 }
 
@@ -106,10 +106,17 @@
     gap: 8px;
     margin-bottom: 8px;
     color: var(--text-muted);
-    font-size: 11px;
+    font-size: var(--fs-xs);
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
+    flex-wrap: wrap;
+}
+
+.panel.panel-mount-left .interaction-hierarchy-shell .particle-log-actions,
+.panel.panel-mount-right .interaction-hierarchy-shell .particle-log-actions {
+    width: 100%;
+    flex-wrap: wrap;
 }
 
 .particle-log-retention,
@@ -117,7 +124,7 @@
 #particle-log-visible-events {
     color: var(--accent-cyan);
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--fs-xs);
     font-weight: 500;
     letter-spacing: 0;
     text-transform: none;
@@ -138,7 +145,7 @@
 .particle-log-filter-toggle {
     display: flex;
     min-width: 0;
-    min-height: 30px;
+    min-height: var(--ctrl-height-min);
     align-items: center;
     justify-content: flex-start;
     gap: 7px;
@@ -148,7 +155,7 @@
     background: var(--control-bg);
     color: var(--text-secondary);
     cursor: pointer;
-    font-size: 11px;
+    font-size: var(--fs-xs);
     line-height: 1.15;
 }
 
@@ -187,7 +194,7 @@
     background: color-mix(in srgb, var(--accent-cyan) 7%, transparent);
     color: var(--text-secondary);
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--fs-xs);
 }
 
 .particle-log-global-label,
@@ -217,14 +224,14 @@
 
 .particle-log-cluster > summary {
     display: flex;
-    min-height: 34px;
+    min-height: var(--ctrl-height-min);
     align-items: center;
     gap: 9px;
     padding: 6px 8px;
     color: var(--text-secondary);
     cursor: pointer;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--fs-xs);
     list-style-position: inside;
 }
 
@@ -243,7 +250,7 @@
     border-bottom: 1px solid var(--border-subtle);
     color: var(--text-muted);
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--fs-xs);
 }
 
 .particle-log-tree,
@@ -275,6 +282,7 @@
     color: inherit;
     text-align: left;
     cursor: pointer;
+    min-height: var(--ctrl-height-min);
 }
 
 .particle-log-node-select:hover,
@@ -299,7 +307,7 @@
     gap: 6px;
     color: var(--text-secondary);
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: var(--fs-sm);
 }
 
 .particle-log-node-branch {
@@ -314,7 +322,7 @@
 .particle-log-node-energy {
     margin-left: auto;
     color: #fbbf24;
-    font-size: 10px;
+    font-size: var(--fs-xs);
 }
 
 .particle-log-anchor-badge {
@@ -322,7 +330,7 @@
     border: 1px solid color-mix(in srgb, #a78bfa 55%, transparent);
     border-radius: 999px;
     color: #c4b5fd;
-    font-size: 9px;
+    font-size: var(--fs-xs);
 }
 
 .particle-log-node-meta,
@@ -332,7 +340,7 @@
     padding-left: 16px;
     color: var(--text-muted);
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--fs-xs);
     line-height: 1.35;
 }
 
@@ -368,7 +376,7 @@
     display: grid;
     place-items: center;
     color: var(--log-event-color);
-    font-size: 12px;
+    font-size: var(--fs-sm);
     font-weight: 800;
 }
 
@@ -386,7 +394,7 @@
     margin-bottom: 3px;
     color: var(--text-muted);
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--fs-xs);
 }
 
 .particle-log-event-category {
@@ -403,14 +411,14 @@
 .particle-log-event-content > strong {
     display: block;
     color: var(--text-primary);
-    font-size: 13px;
+    font-size: var(--fs-sm);
     line-height: 1.25;
 }
 
 .particle-log-event-content p {
     margin: 3px 0 0;
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: var(--fs-sm);
     line-height: 1.45;
 }
 
@@ -418,7 +426,7 @@
     margin-top: 4px;
     color: color-mix(in srgb, var(--text-muted) 76%, transparent);
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--fs-xs);
 }
 
 .particle-log-empty {
@@ -427,7 +435,7 @@
     place-items: center;
     padding: 16px;
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: var(--fs-sm);
     text-align: center;
 }
 
@@ -447,6 +455,25 @@
 }
 
 @container floating-sidepanel (max-width: 520px) {
+    .particle-log-summary,
+    .particle-log-category-toggles {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .particle-log-hero {
+        flex-direction: column;
+    }
+
+    .particle-log-actions,
+    .particle-log-actions .ctrl-btn {
+        width: 100%;
+    }
+}
+
+/* Docked side panels use their own containment context. Apply the same
+   composition contract there so the title keeps a useful line measure beside
+   the action group instead of collapsing to one character per line. */
+@container docked-sidepanel (max-width: 520px) {
     .particle-log-summary,
     .particle-log-category-toggles {
         grid-template-columns: minmax(0, 1fr);

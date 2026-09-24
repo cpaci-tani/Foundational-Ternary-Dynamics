@@ -27,6 +27,7 @@ export class Scale0ControlsComponent {
       gridContainer.className = 'panel-grid panel-grid-3';
       this.panel.appendChild(gridContainer);
     }
+    gridContainer.dataset.panelGrid = '3';
 
     // Reconcile the six Scale-0 cards by stable ownership key. bindUI can run
     // again after an engine-mode round trip; replacing or appending cards on

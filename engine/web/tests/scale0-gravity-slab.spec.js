@@ -57,13 +57,22 @@ test('mounted Gravity uses one batch for all planes, exact pixels and unavailabl
         proxy.getFluxVolume = () => { throw Error('Gravity attempted a forbidden full-volume fallback'); };
         proxy.getDiagnostics = () => { throw Error('Gravity attempted a diagnostics-normalizer substitute'); };
         const batches = [];
+        let invalidNextBatch = false;
         const getBatch = proxy.getFluxSlabsWithMaxRho.bind(proxy);
         proxy.getFluxSlabsWithMaxRho = requests => {
-            const result = getBatch(requests);
+            let result = getBatch(requests);
+            if (invalidNextBatch && result) {
+                invalidNextBatch = false;
+                result = { ...result, slabs: result.slabs.slice(0, 2) };
+            }
             batches.push({ selectors: requests.map(r => [r.axis, r.index]), result });
             return result;
         };
-        proxy.capabilities = { scale0: createScale0Capabilities(proxy) };
+        const scale0Capabilities = createScale0Capabilities(proxy);
+        // This fixture audits the legacy slab fallback independently of the
+        // worker's atomic gravity-observation bundle.
+        scale0Capabilities.getScale0GravityObservation = undefined;
+        proxy.capabilities = { scale0: scale0Capabilities };
         const host = document.createElement('section');
         host.className = 'active';
         document.body.appendChild(host);
@@ -77,57 +86,109 @@ test('mounted Gravity uses one batch for all planes, exact pixels and unavailabl
             const quantities = [];
             for (const kind of ['latency', 'dilation', 'kretschmann', 'force']) {
                 const button = host.querySelector(`.grav-qbtn[data-kind="${kind}"]`);
+                const beforeQuantity = batches.length;
                 button.click(); // actual delegated quantity-change path
-                const observed = batches.at(-1).result;
+                const prepared = [];
+                for (let axis = 0; axis < 3; axis++) {
+                    prepared.push(transposeAndFlipNN(gravitySlice(data, N, axis, mid, kind), N));
+                }
+                let upper = 1;
+                if (kind === 'kretschmann' || kind === 'force') {
+                    upper = 0;
+                    for (const plane of prepared) {
+                        for (const value of plane) if (value > upper) upper = value;
+                    }
+                }
                 const pixelMatches = [];
                 for (let axis = 0; axis < 3; axis++) {
-                    const original = gravitySlice(data, N, axis, mid, kind);
-                    const transformed = transposeAndFlipNN(original, N);
-                    let max = 0;
-                    for (const value of transformed) if (value > max) max = value;
                     const referenceCanvas = document.createElement('canvas');
                     referenceCanvas.width = 116; referenceCanvas.height = 116;
-                    paintSliceToCanvas(referenceCanvas, transformed, N,
-                        { ramp: rampFor[kind], norm: max > 1e-30 ? 1 / max : 1 });
+                    paintSliceToCanvas(referenceCanvas, prepared[axis], N,
+                        { ramp: rampFor[kind], norm: upper > 1e-30 ? 1 / upper : 1 });
                     const actualCanvas = host.querySelector(`#gravity-panel-tile-${axis}`);
                     const actualPixels = actualCanvas.getContext('2d').getImageData(0, 0, 116, 116).data;
                     const originalPixels = referenceCanvas.getContext('2d').getImageData(0, 0, 116, 116).data;
                     pixelMatches.push(samePixels(actualPixels, originalPixels));
                 }
-                quantities.push({ kind, selectors: batches.at(-1).selectors, pixelMatches,
-                    commonMetadata: observed.slabs.every(s => s.metadata === observed.metadata),
-                    maxRho: observed.maxRho, tick: observed.metadata.sampleTick });
+                quantities.push({ kind, reads: batches.length - beforeQuantity, pixelMatches,
+                    pressedStates: [...host.querySelectorAll('.grav-qbtn')]
+                        .map(el => [el.dataset.kind, el.getAttribute('aria-pressed')]),
+                    activeKind: api.activeKind,
+                    ticks: [...host.querySelectorAll('.grav-tile-tick')].map(el => el.textContent),
+                    sampleTick: api.sampleTick });
             }
+
+            const canvases = [...host.querySelectorAll('.grav-tile canvas')];
+            const pixelsBeforeFailure = canvases.map(canvas =>
+                [...canvas.getContext('2d').getImageData(0, 0, 116, 116).data]);
+            const readoutsBeforeFailure = [...host.querySelectorAll('.grav-tile-readout')]
+                .map(el => el.textContent);
+            invalidNextBatch = true;
+            const beforeInvalid = batches.length;
+            store.getScale0State().fieldDataVersion++;
+            api.update();
+            const invalid = {
+                count: batches.length - beforeInvalid,
+                incomplete: batches.at(-1).result?.slabs?.length === 2,
+                pixelsRetained: canvases.map((canvas, axis) => samePixels(
+                    [...canvas.getContext('2d').getImageData(0, 0, 116, 116).data],
+                    pixelsBeforeFailure[axis])),
+                readoutsRetained: [...host.querySelectorAll('.grav-tile-readout')]
+                    .every((el, axis) => el.textContent === readoutsBeforeFailure[axis]),
+            };
             const beforeFailure = batches.length;
             const pin = pub.acquire(buffer, N ** 3);
-            try { api.setKind('latency'); } finally { pin.release(); }
+            store.getScale0State().fieldDataVersion++;
+            try { api.update(); } finally { pin.release(); }
             const unavailable = {
                 count: batches.length - beforeFailure,
                 nullRead: batches.at(-1).result === null,
-                readouts: [...host.querySelectorAll('.grav-tile-readout')].map(el => el.textContent),
-                waiting: host.querySelector('.grav-mode').textContent,
+                readoutsReady: [...host.querySelectorAll('.grav-tile-readout')]
+                    .every(el => /^max /.test(el.textContent)),
+                pixelsRetained: canvases.map((canvas, axis) => samePixels(
+                    [...canvas.getContext('2d').getImageData(0, 0, 116, 116).data],
+                    pixelsBeforeFailure[axis])),
+                readoutsRetained: [...host.querySelectorAll('.grav-tile-readout')]
+                    .every((el, axis) => el.textContent === readoutsBeforeFailure[axis]),
+                status: host.querySelector('.grav-observation-status').textContent,
             };
-            // Versions remain fixed. Recover every cleared plane in one batch,
-            // rather than letting the paused-read latch retain blank tiles.
+            // The next field version must reacquire all three planes atomically.
             const beforeRecovery = batches.length;
+            store.getScale0State().fieldDataVersion++;
             api.update();
             const recovery = { count: batches.length - beforeRecovery,
                 selectors: batches.at(-1).selectors,
                 readoutsReady: [...host.querySelectorAll('.grav-tile-readout')].every(el => /^max /.test(el.textContent)),
+                pixelsRestored: canvases.map((canvas, axis) => samePixels(
+                    [...canvas.getContext('2d').getImageData(0, 0, 116, 116).data],
+                    pixelsBeforeFailure[axis])),
+                tickLabels: [...host.querySelectorAll('.grav-tile-tick')].map(el => el.textContent),
+                sampleTick: api.sampleTick,
                 noDenseCache: proxy._fluxSnapshot === null };
             host.classList.remove('active');
             const beforeHidden = batches.length;
             api.update();
             const hiddenNoRead = batches.length === beforeHidden;
-            return { initialBatches, quantities, unavailable, recovery, hiddenNoRead };
+            return { initialBatches, quantities, invalid, unavailable, recovery, hiddenNoRead };
         } finally { api.dispose(); host.remove(); select.remove(); }
     });
-    expect(result.initialBatches).toEqual([[[0, 3]]]);
+    expect(result.initialBatches).toEqual([[[0, 3], [1, 3], [2, 3]]]);
     expect(result.quantities).toEqual(['latency', 'dilation', 'kretschmann', 'force'].map(kind => ({
-        kind, selectors: [[0, 3], [1, 3], [2, 3]], pixelMatches: [true, true, true],
-        commonMetadata: true, maxRho: 97 * 97, tick: null,
+        kind, reads: 0, pixelMatches: [true, true, true],
+        pressedStates: ['latency', 'kretschmann', 'force', 'dilation']
+            .map(candidate => [candidate, String(candidate === kind)]),
+        activeKind: kind,
+        ticks: ['tick unavailable', 'tick unavailable', 'tick unavailable'], sampleTick: null,
     })));
-    expect(result.unavailable).toEqual({ count: 1, nullRead: true, readouts: ['—', '—', '—'], waiting: 'proxy · waiting' });
-    expect(result.recovery).toEqual({ count: 1, selectors: [[0, 3], [1, 3], [2, 3]], readoutsReady: true, noDenseCache: true });
+    expect(result.invalid).toEqual({ count: 1, incomplete: true,
+        pixelsRetained: [true, true, true], readoutsRetained: true });
+    expect(result.unavailable).toEqual({ count: 1, nullRead: true,
+        readoutsReady: true,
+        pixelsRetained: [true, true, true], readoutsRetained: true,
+        status: 'Waiting for a complete observation · previous tick retained' });
+    expect(result.recovery).toEqual({ count: 1, selectors: [[0, 3], [1, 3], [2, 3]],
+        readoutsReady: true, pixelsRestored: [true, true, true],
+        tickLabels: ['tick unavailable', 'tick unavailable', 'tick unavailable'],
+        sampleTick: null, noDenseCache: true });
     expect(result.hiddenNoRead).toBe(true);
 });

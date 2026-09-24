@@ -2,8 +2,12 @@
 // one reader; pin a slot during the reader's copy so the writer cannot lap it.
 (function install(root) {
     'use strict';
-    const HEADER_BYTES = 16;
-    const PROTOCOL = 'pinned-flux-v1';
+    // [version, slot0 lock, slot1 lock, ready, slot0 tick, slot1 tick].
+    // Tick belongs to the slot rather than the publication header: a writer
+    // may prepare the inactive slot while a reader holds the active one, so a
+    // shared tick word could otherwise describe the wrong pinned payload.
+    const HEADER_BYTES = 24;
+    const PROTOCOL = 'pinned-flux-v2';
     const MAX_CELL_PROBES = 128;
 
     function create(length) {
@@ -16,10 +20,17 @@
             || buffer?.byteLength !== HEADER_BYTES + 2 * length * 8) {
             throw new RangeError('invalid flux publication layout');
         }
-        return new Int32Array(buffer, 0, 4);
+        return new Int32Array(buffer, 0, 6);
     }
 
-    function publish(buffer, values) {
+    function publicationTick(value) {
+        // The C++ clock is a non-negative signed 32-bit counter. Do not
+        // coerce an absent or wider JS value to zero: no exact clock is an
+        // unavailable clock.
+        return Number.isSafeInteger(value) && value >= 0 && value <= 0x7fffffff ? value : -1;
+    }
+
+    function publish(buffer, values, sampleTick = null) {
         const length = values.length;
         const header = layout(buffer, length);
         const version = Atomics.load(header, 0);
@@ -29,6 +40,7 @@
         if (Atomics.compareExchange(header, 1 + slot, 0, -1) !== 0) return false;
         try {
             new Float64Array(buffer, HEADER_BYTES + slot * length * 8, length).set(values);
+            Atomics.store(header, 4 + slot, publicationTick(sampleTick));
             Atomics.store(header, 0, (version + 1) | 0);
             Atomics.store(header, 3, 1);
         } finally {
@@ -49,7 +61,9 @@
                 continue;
             }
             try {
-                return { version, view: new Float64Array(buffer, HEADER_BYTES + slot * length * 8, length),
+                const tick = Atomics.load(header, 4 + slot);
+                return { version, sampleTick: tick >= 0 ? tick : null,
+                    view: new Float64Array(buffer, HEADER_BYTES + slot * length * 8, length),
                     release() { Atomics.store(header, 1 + slot, 0); } };
             } catch (error) {
                 // Even constructing the shared view can fail. No release
@@ -68,7 +82,7 @@
         const read = acquire(buffer, length);
         if (!read) return cached?.buffer === buffer ? cached : null;
         try {
-            return { buffer, version: read.version, data: new Float64Array(read.view) };
+            return { buffer, version: read.version, sampleTick: read.sampleTick, data: new Float64Array(read.view) };
         } finally {
             read.release();
         }
@@ -102,7 +116,7 @@
                     data[a * size + b] = read.view[offset];
                 }
             }
-            return { version: read.version, data };
+            return { version: read.version, sampleTick: read.sampleTick, data };
         } finally {
             read.release();
         }
@@ -115,8 +129,7 @@
      * data[(plane-startPlane)*N*N + a*N + b]: axis 0 uses (a,b)=(y,z),
      * axis 1 uses (x,z), and axis 2 uses (x,y).
      */
-    function snapshotSlabsWithMaxRho(buffer, size, requests) {
-        const length = cubeLength(size);
+    function captureSlabSelectors(size, requests) {
         const count = requests?.length;
         if (!Array.isArray(requests) || !Number.isSafeInteger(count) || count < 1 || count > 3) {
             throw new RangeError('invalid flux slab requests');
@@ -133,32 +146,55 @@
             const planeCount = Math.min(size - 1, index + 1) - startPlane + 1;
             selectors[i] = { axis, index, startPlane, planeCount };
         }
+        return selectors;
+    }
+
+    // Shared by the pinned-SAB reader and the worker's atomic Gravity batch.
+    // It only reads the supplied already-captured magnitude view: callers must
+    // establish their own data/provenance boundary before invoking it.
+    function copySlabsWithMaxRho(values, size, requests) {
+        const length = cubeLength(size);
+        if (!values || values.length < length) throw new RangeError('invalid flux values');
+        const selectors = captureSlabSelectors(size, requests);
+        return copySlabsFromSelectors(values, size, length, selectors);
+    }
+
+    function copySlabsFromSelectors(values, size, length, selectors) {
+        // Match gravity-analysis.maxRhoOf exactly, including initial value,
+        // Double multiplication, ascending linear order and strict compare.
+        let maxRho = 1e-30;
+        for (let i = 0; i < length; i++) {
+            const r = values[i] * values[i];
+            if (r > maxRho) maxRho = r;
+        }
+        const square = size * size;
+        const slabs = selectors.map(({ axis, index, startPlane, planeCount }) => {
+            const data = new Float64Array(planeCount * square);
+            for (let plane = startPlane; plane < startPlane + planeCount; plane++) {
+                for (let a = 0; a < size; a++) {
+                    for (let b = 0; b < size; b++) {
+                        const offset = axis === 0 ? b * square + a * size + plane
+                            : axis === 1 ? b * square + plane * size + a
+                                : plane * square + b * size + a;
+                        data[(plane - startPlane) * square + a * size + b] = values[offset];
+                    }
+                }
+            }
+            return { data, N: size, axis, index, startPlane, planeCount };
+        });
+        return { N: size, maxRho, slabs };
+    }
+
+    function snapshotSlabsWithMaxRho(buffer, size, requests) {
+        const length = cubeLength(size);
+        // Run potentially user-defined request getters before pinning a SAB
+        // slot; the published view must never be held while client code runs.
+        const selectors = captureSlabSelectors(size, requests);
         const read = acquire(buffer, length);
         if (!read) return null;
         try {
-            // Match gravity-analysis.maxRhoOf exactly, including initial value,
-            // Double multiplication, ascending linear order and strict compare.
-            let maxRho = 1e-30;
-            for (let i = 0; i < length; i++) {
-                const r = read.view[i] * read.view[i];
-                if (r > maxRho) maxRho = r;
-            }
-            const square = size * size;
-            const slabs = selectors.map(({ axis, index, startPlane, planeCount }) => {
-                const data = new Float64Array(planeCount * square);
-                for (let plane = startPlane; plane < startPlane + planeCount; plane++) {
-                    for (let a = 0; a < size; a++) {
-                        for (let b = 0; b < size; b++) {
-                            const offset = axis === 0 ? b * square + a * size + plane
-                                : axis === 1 ? b * square + plane * size + a
-                                    : plane * square + b * size + a;
-                            data[(plane - startPlane) * square + a * size + b] = read.view[offset];
-                        }
-                    }
-                }
-                return { data, N: size, axis, index, startPlane, planeCount };
-            });
-            return { version: read.version, N: size, maxRho, slabs };
+            return { version: read.version, sampleTick: read.sampleTick,
+                ...copySlabsFromSelectors(read.view, size, length, selectors) };
         } finally {
             read.release();
         }
@@ -166,7 +202,7 @@
 
     function snapshotSlabWithMaxRho(buffer, size, axis, index) {
         const batch = snapshotSlabsWithMaxRho(buffer, size, [{ axis, index }]);
-        return batch ? { ...batch.slabs[0], version: batch.version, maxRho: batch.maxRho } : null;
+        return batch ? { ...batch.slabs[0], version: batch.version, sampleTick: batch.sampleTick, maxRho: batch.maxRho } : null;
     }
 
     /**
@@ -194,12 +230,13 @@
         try {
             const data = new Float64Array(cells.length);
             for (let i = 0; i < cells.length; i++) data[i] = read.view[cells[i]];
-            return { version: read.version, data };
+            return { version: read.version, sampleTick: read.sampleTick, data };
         } finally {
             read.release();
         }
     }
 
     root.FTD_FLUX_PUBLICATION = Object.freeze({ PROTOCOL, HEADER_BYTES, MAX_CELL_PROBES,
-        create, publish, acquire, snapshot, snapshotSlice, snapshotCells, snapshotSlabWithMaxRho, snapshotSlabsWithMaxRho });
+        create, publish, acquire, snapshot, snapshotSlice, snapshotCells, snapshotSlabWithMaxRho,
+        snapshotSlabsWithMaxRho, copySlabsWithMaxRho });
 })(typeof self !== 'undefined' ? self : globalThis);

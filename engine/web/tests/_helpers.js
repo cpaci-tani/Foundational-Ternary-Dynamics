@@ -16,22 +16,73 @@
  * @param {{ path?: string, timeout?: number }} [opts]
  */
 export async function gotoAndReady(page, opts = {}) {
-    const path = opts.path ?? '/';
-    const timeout = opts.timeout ?? 60_000;
+    await gotoDashboard(page, opts);
+    await waitForBridge(page, opts);
+    await waitForShell(page, opts);
+}
+
+/** Navigate without assuming that shell-only tests require a physics backend. */
+export async function gotoDashboard(page, { path = '/', timeout = 60_000 } = {}) {
     await page.goto(path, { waitUntil: 'domcontentloaded', timeout: Math.max(timeout, 60_000) });
-    // Playwright's second parameter is the argument passed into the page
-    // function; timeout belongs in the third options parameter. Passing the
-    // object second silently left this wait at the page's 30 s default.
+}
+
+export async function waitForBridge(page, { timeout = 60_000 } = {}) {
     await page.waitForFunction(() => !!window._ftdBridge, undefined, { timeout });
 }
 
+export async function waitForShell(page, { timeout = 60_000 } = {}) {
+    await page.waitForFunction(() => !!document.getElementById('error-overlay')
+        || (document.getElementById('app')?.dataset.shellReady === 'true'
+        && document.getElementById('loading-overlay')?.classList.contains('hidden')), undefined, { timeout });
+    const failure = await page.evaluate(() => document.getElementById('error-overlay')?.textContent);
+    if (failure) throw new Error(`Dashboard startup failed: ${failure.trim()}`);
+}
+
+/** Declare the backend/capabilities an integration test actually needs. */
+export async function bootDashboard(page, { engine = 'wasm', mode = 'lattice', requiredCapabilities = [], timeout = 60_000 } = {}) {
+    await gotoAndReady(page, { path: `/?engine=${encodeURIComponent(engine)}`, timeout });
+    if (mode !== 'lattice') await switchMode(page, mode);
+    if (requiredCapabilities.length) {
+        await page.waitForFunction(keys => keys.every(key => !!window._ftdBridge?.capabilities?.[key]), requiredCapabilities, { timeout });
+    }
+}
+
+/** Use the actual tab interaction, including scroll-to-reveal on narrow rails. */
+export async function openDockPanel(page, panel) {
+    await page.locator(`#tab-bar .tab[data-panel="${panel}"]`).click();
+    await page.waitForFunction(id => document.getElementById(`panel-${id}`)?.classList.contains('active'), panel);
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+}
+
+const SCALE_SCENARIO_DRIVERS = {
+    particles: { select: 'pe-scenario-select', read: 'peGetParticleData' },
+    atoms: { select: 'ae-scenario-select', read: 'aeGetAtomData' },
+};
+
+export async function runScaleScenario(page, { mode, scenario, minimumCount = 2, settleMs = 1200 }) {
+    const driver = SCALE_SCENARIO_DRIVERS[mode];
+    if (!driver) throw new Error(`No side-panel scenario driver for ${mode}`);
+    await bootDashboard(page, { engine: 'wasm', mode });
+    await page.selectOption(`#${driver.select}`, scenario);
+    await page.waitForFunction(({ read, minimumCount }) => (window._ftdBridge?.[read]?.()?.count || 0) >= minimumCount,
+        { read: driver.read, minimumCount }, { timeout: 10_000 });
+    if (await page.locator('#btn-play').getAttribute('data-paused') === 'true') await page.locator('#btn-play').click();
+    if (settleMs) await page.waitForTimeout(settleMs);
+}
+
 /**
- * Set the engine-mode select and fire its change handler.
+ * Use the public simulation buttons, with the retained scale gateway for test-only modes.
  * @param {import('@playwright/test').Page} page
  * @param {string} mode - one of 'lattice', 'particles', 'atoms', 'molecules',
  *   'planetary', 'cosmic', 'meta', 'reference frame context', 'hamiltonian-bridge'
  */
 export async function switchMode(page, mode) {
+    const choice = page.locator('[data-simulation-mode]');
+    const publicMode = await choice.evaluateAll((buttons, requested) => buttons.some(button => button.dataset.simulationMode === requested), mode);
+    if (publicMode) {
+        if (await page.locator('#simulation-menu-trigger').getAttribute('aria-expanded') !== 'true') await page.locator('#simulation-menu-trigger').click();
+        await page.locator(`[data-simulation-mode=${JSON.stringify(mode)}]`).click();
+    } else {
     await page.evaluate((m) => {
         const sel = document.getElementById('engine-mode');
         if (!sel) throw new Error('engine-mode select not found');
@@ -48,12 +99,21 @@ export async function switchMode(page, mode) {
         sel.value = m;
         sel.dispatchEvent(new Event('change', { bubbles: true }));
     }, mode);
+    }
     await page.waitForFunction(
         (m) => document.getElementById('engine-mode')?.value === m
             && window.__ftdCtx?.engineMode === m,
         mode,
         { timeout: 15_000 },
     );
+}
+
+/** Launch the observer from the public simulation dropdown, preserving scale. */
+export async function openObserverWorkspace(page) {
+    await page.locator('#simulation-menu-trigger').click();
+    await page.locator('#btn-observer-workspace').click();
+    await page.waitForFunction(() => document.getElementById('observer-workspace')?.dataset.active === 'true'
+        || window.__FTD_DEV__?.registry?.get('observerHost')?.active === true);
 }
 
 /**

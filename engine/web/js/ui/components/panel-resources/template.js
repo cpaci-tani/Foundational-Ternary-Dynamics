@@ -65,7 +65,7 @@ export function getScaleControlsBlocksTemplate() {
         </div>
         <!-- Cosmic Controls (visible only in cosmic mode) -->
         <div class="scale5-only scale-controls-block">
-            <div class="panel-grid panel-grid-3" id="panel-controls-grid-scale5">
+            <div class="panel-grid panel-grid-3" id="panel-controls-grid-scale5" data-panel-grid>
                 <div class="card">
                     <div class="card-title">Simulation</div>
                     <div class="scale-info-mono" id="cosmic-ctrl-sim">
@@ -161,7 +161,7 @@ export function getParticleLogPanelTemplate() {
                     </div>
                 </section>
 
-                <section class="particle-log-summary" aria-label="Particle event log summary">
+                <section class="particle-log-summary" aria-label="Particle event log summary" data-panel-grid>
                     <div class="particle-log-stat"><span>Tick</span><strong id="particle-log-tick">0</strong></div>
                     <div class="particle-log-stat"><span>Retained</span><strong id="particle-log-events">0</strong></div>
                     <div class="particle-log-stat"><span>Visible</span><strong id="particle-log-visible-events">0</strong></div>
@@ -172,8 +172,8 @@ export function getParticleLogPanelTemplate() {
                         <span>Visible log categories</span>
                         <span class="particle-log-retention" id="particle-log-retention">0 / 4096 retained</span>
                     </div>
-                    <div id="particle-log-category-toggles" class="particle-log-category-toggles"></div>
-                    <div class="particle-log-view-toggles">
+                    <div id="particle-log-category-toggles" class="particle-log-category-toggles" data-panel-grid></div>
+                    <div class="particle-log-view-toggles" data-panel-grid>
                         <label class="particle-log-filter-toggle" title="Keep the event list scrolled to the newest visible event.">
                             <input type="checkbox" id="particle-log-follow" checked>
                             <span>Follow latest</span>
@@ -211,7 +211,7 @@ export function getInteractionHierarchyPanelTemplate() {
                     </div>
                 </section>
 
-                <section class="particle-log-summary" aria-label="Interaction hierarchy summary">
+                <section class="particle-log-summary" aria-label="Interaction hierarchy summary" data-panel-grid>
                     <div class="particle-log-stat"><span>Tick</span><strong id="interaction-hierarchy-tick">0</strong></div>
                     <div class="particle-log-stat"><span>Particles</span><strong id="interaction-hierarchy-particles">0</strong></div>
                     <div class="particle-log-stat"><span>Clusters</span><strong id="interaction-hierarchy-clusters">0</strong></div>
@@ -234,6 +234,7 @@ export function getInspectorPanelTemplate() {
     return `
         <div class="panel" id="panel-inspector">
             <div class="panel-resource-shell panel-resource-shell-padded">
+                <div id="inspector-chart-history" class="scale-ae"></div>
                 <div class="card panel-inspector-hero">
                     <div class="panel-inspector-hero-copy">
                         <div class="card-title">Selection Inspector</div>
@@ -257,12 +258,11 @@ export function getInspectorPanelTemplate() {
                     </div>
                     <div class="panel-inspector-hit-help">Increase this when lattice selections feel too sparse or hard to grab.</div>
                 </div>
-                <div id="inspector-chart-history" class="scale-ae"></div>
                 <div class="inspector-empty scale0-only" id="inspector-empty">
                     Select a voxel or manifested particle to inspect its local state.
                 </div>
                 <div id="inspector-content" class="scale0-only panel-resource-hidden">
-                    <div class="panel-resource-grid panel-resource-grid-2">
+                    <div class="panel-resource-grid panel-resource-grid-2" data-panel-grid>
                         <div class="card panel-resource-card">
                             <div class="card-title">Identity</div>
                             <dl class="inspector-grid">
@@ -356,7 +356,7 @@ export function getInspectorPanelTemplate() {
                             <dd id="pe-insp-cluster-energy">--</dd>
                         </dl>
                     </div>
-                    <div class="panel-resource-grid panel-resource-grid-3">
+                    <div class="panel-resource-grid panel-resource-grid-3" data-panel-grid>
                         <div class="card panel-resource-card" title="Identifiers, category, mass, charge, spin, and color indices.">
                             <div class="card-title" id="pe-insp-identity-title">Identity</div>
                             <div class="pe-insp-header">
@@ -470,7 +470,7 @@ export function getInspectorPanelTemplate() {
                             <dd id="ae-insp-component-ke">--</dd>
                         </dl>
                     </div>
-                    <div class="panel-resource-grid panel-resource-grid-3">
+                    <div class="panel-resource-grid panel-resource-grid-3" data-panel-grid>
                         <div class="card panel-resource-card">
                             <div class="card-title">Element</div>
                             <div class="pe-insp-header">
@@ -603,7 +603,7 @@ export function getInspectorPanelTemplate() {
                     Select the Sun, a planet, a dwarf planet, or a modeled major moon to inspect its physical and live orbital state.
                 </div>
                 <div id="planetary-inspector-content" class="scale4-only panel-resource-hidden">
-                    <div class="panel-resource-grid panel-resource-grid-2">
+                    <div class="panel-resource-grid panel-resource-grid-2" data-panel-grid>
                         <div class="card panel-resource-card">
                             <div class="card-title">Body Identity</div>
                             <div class="pe-insp-header">
@@ -678,7 +678,7 @@ export function getInspectorPanelTemplate() {
                     Select a body to inspect its mass, motion, and evolutionary state.
                 </div>
                 <div id="cosmic-inspector-content" class="scale5-only panel-resource-hidden">
-                    <div class="panel-resource-grid panel-resource-grid-3">
+                    <div class="panel-resource-grid panel-resource-grid-3" data-panel-grid>
                         <div class="card panel-resource-card">
                             <div class="card-title">Astrophysical Identity</div>
                             <div class="pe-insp-header">
@@ -735,7 +735,7 @@ export function getPhysicsPanelTemplate() {
     return `
         <div class="panel" id="panel-physics">
             <div class="panel-resource-shell panel-resource-shell-padded">
-                <div class="scale-ae panel-resource-grid panel-resource-grid-2">
+                <div class="scale-ae panel-resource-grid panel-resource-grid-2" data-panel-grid>
                     <div class="card panel-resource-card" id="physics-constants">
                         <div class="card-title">Ontic Chain Constants</div>
                         <div class="panel-resource-empty">Loading...</div>

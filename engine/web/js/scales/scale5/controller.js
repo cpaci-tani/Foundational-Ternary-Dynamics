@@ -28,8 +28,9 @@ import { createStatusBarCache, hideScale0Overlays, createTickAccumulator, saveSc
 import { telemetryHub } from '../../telemetry-hub.js';
 import { syncScale5Toggles } from './ui/toggle-sync.js';
 import { Scale5ControlsComponent } from './ui/controls/component.js';
-import { syncScale5Overlays } from './ui/overlays/component.js';
+import { getScale5ComovingGrid, setScale5ComovingGrid, syncScale5Overlays } from './ui/overlays/component.js';
 import { isPanelLive } from '../../ui/panels/panel-visibility.js';
+import { drawGasProfileBars } from './ui/gas-profile-canvas.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -57,80 +58,6 @@ function formatCosmicTelemetry(tel) {
         .slice(0, COSMIC_TELEMETRY_MAX_PAIRS)
         .map((k) => k + ': ' + tel[k])
         .join(' · ');
-}
-
-/**
- * Draw one bar-chart row for the gas-lab profile card (Task 5). `mode`
- * 'nonneg' draws bars up from the bottom (density, always >= 0); 'signed'
- * draws bars from a mid-line, positive up / negative down (radial or x
- * velocity, which can be either sign). Normalizes to the series' own max
- * absolute value each call — a display convenience, not a physical scale.
- *
- * Pass B: an optional 5th `edges` argument (the bin-edge array
- * `_computeGasProfile()` already returns and this function previously
- * ignored) reserves a 16px bottom margin and prints the first/last bin
- * edge there, so the two blind bar charts gain an axis scale. `edges` is
- * optional so a caller with no profile data yet can still clear the canvas.
- *
- * @param {HTMLCanvasElement|null} canvas
- * @param {Float64Array|number[]|undefined} values
- * @param {string} color
- * @param {'nonneg'|'signed'} mode
- * @param {Float64Array|number[]|undefined} [edges]
- */
-function _drawGasProfileBars(canvas, values, color, mode, edges) {
-    if (!canvas) return;
-    const ctx2d = canvas.getContext('2d');
-    if (!ctx2d) return;
-    const w = canvas.width, h = canvas.height;
-    ctx2d.clearRect(0, 0, w, h);
-    if (!values || values.length === 0) return;
-
-    // 16px font floor (project styling rule) reserves the same 16px for the
-    // label row, so the axis text is never sub-floor and never overlaps bars.
-    const labelH = 16;
-    const plotH = h - labelH;
-
-    let maxAbs = 0;
-    for (let i = 0; i < values.length; i++) {
-        const a = Math.abs(values[i]);
-        if (a > maxAbs) maxAbs = a;
-    }
-    if (!(maxAbs > 0)) return;
-
-    const n = values.length;
-    const barW = w / n;
-    ctx2d.fillStyle = color;
-
-    if (mode === 'signed') {
-        const midY = plotH / 2;
-        ctx2d.strokeStyle = '#3a4a6a';
-        ctx2d.lineWidth = 1;
-        ctx2d.beginPath();
-        ctx2d.moveTo(0, midY);
-        ctx2d.lineTo(w, midY);
-        ctx2d.stroke();
-        for (let i = 0; i < n; i++) {
-            const barH = (values[i] / maxAbs) * (plotH / 2 - 2);
-            const y = barH >= 0 ? midY - barH : midY;
-            ctx2d.fillRect(i * barW, y, Math.max(1, barW - 1), Math.abs(barH));
-        }
-    } else {
-        for (let i = 0; i < n; i++) {
-            const barH = (values[i] / maxAbs) * (plotH - 4);
-            ctx2d.fillRect(i * barW, plotH - barH, Math.max(1, barW - 1), barH);
-        }
-    }
-
-    if (edges && edges.length >= 2) {
-        ctx2d.fillStyle = '#8a9bbf';
-        ctx2d.font = '16px sans-serif';
-        ctx2d.textBaseline = 'bottom';
-        ctx2d.textAlign = 'left';
-        ctx2d.fillText(edges[0].toFixed(1), 1, h);
-        ctx2d.textAlign = 'right';
-        ctx2d.fillText(edges[edges.length - 1].toFixed(1), w - 1, h);
-    }
 }
 
 // ---------------------------------------------------------------------------
@@ -408,6 +335,14 @@ class Scale5LifecycleController extends BaseLifecycleController {
         }
     }
 
+    _disposeCosmicRenderer() {
+        if (!this.renderer) return;
+        const trackedIndex = this._threeObjects.indexOf(this.renderer);
+        if (trackedIndex >= 0) this._threeObjects.splice(trackedIndex, 1);
+        this.renderer.dispose();
+        this.renderer = null;
+    }
+
     loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
         this._mountControls(ctx);
         _tickAcc.reset();
@@ -464,9 +399,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
         saveScaleCameraState(this, viewport);
 
         // Create cosmic renderer
-        if (this.renderer) {
-            this.renderer.dispose();
-        }
+        this._disposeCosmicRenderer();
         this.renderer = new CosmicRenderer(viewport.scene, viewport.camera, viewport.renderer, viewport.controls);
         this.trackThreeObject(this.renderer);
 
@@ -577,6 +510,9 @@ class Scale5LifecycleController extends BaseLifecycleController {
     }
 
     destroy(ctx) {
+        // The controller owns the renderer. Untrack before disposal so the
+        // base lifecycle cannot retain or dispose it a second time.
+        this._disposeCosmicRenderer();
         super.destroy(ctx);
         // super.destroy() removed the "Scenario defaults" button's listener,
         // but the button itself persists in the DOM (hidden via
@@ -605,10 +541,6 @@ class Scale5LifecycleController extends BaseLifecycleController {
         if (clockGainInput) delete clockGainInput.dataset.s5CtrlBound;
         const dmFractionSelect = document.getElementById('cosmic-cosmology-dm-fraction');
         if (dmFractionSelect) delete dmFractionSelect.dataset.s5CtrlBound;
-        if (this.renderer) {
-            this.renderer.dispose();
-            this.renderer = null;
-        }
         this.bridge = null;
         syncScale5Toggles(null); // stop the toolbar checkbox driving a destroyed bridge
         syncScale5Overlays(null); // stop the overlay controls driving a disposed renderer
@@ -821,8 +753,8 @@ export function animateCosmic(ctx) {
             _panelStatus.update('cosmic-profile-axis', profile.axis);
             _panelStatus.update('cosmic-thermal', profile.thermal.toExponential(3));
             _panelStatus.update('cosmic-kinetic', profile.kinetic.toExponential(3));
-            _drawGasProfileBars(document.getElementById('cosmic-profile-density'), profile.density, '#4ade80', 'nonneg', profile.edges);
-            _drawGasProfileBars(document.getElementById('cosmic-profile-velocity'), profile.velocity, '#42a5f5', 'signed', profile.edges);
+            drawGasProfileBars(document.getElementById('cosmic-profile-density'), profile.density, '#4ade80', 'nonneg', profile.edges);
+            drawGasProfileBars(document.getElementById('cosmic-profile-velocity'), profile.velocity, '#42a5f5', 'signed', profile.edges);
         } else if (profileCard) {
             profileCard.hidden = true;
         }
@@ -842,6 +774,19 @@ export function step(ctx) {
 
 export function setCameraPreset(preset) {
     _lifecycleController.setCameraPreset(preset);
+}
+
+/** The shared grid control maps to Scale 5's comoving reference box. */
+export function setGridVisible(visible) {
+    setScale5ComovingGrid(visible);
+}
+
+export function getViewControlCapabilities() {
+    return { axes: false, grid: true, boundaryOrientation: false, globalClock: false };
+}
+
+export function getViewControlState() {
+    return { axes: false, grid: getScale5ComovingGrid() };
 }
 
 export function resetScale5(ctx) {

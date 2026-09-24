@@ -13,51 +13,27 @@ import { GravityComponent } from './p1-observables/gravity.js';
 import { G2Component } from './p1-observables/g2.js';
 import { ThomsonComponent } from './p1-observables/thomson.js?v=2';
 import { FineStructureComponent } from './p1-observables/fine-structure.js?v=2';
-import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
+import {
+    isPanelLive,
+    PANEL_VISIBILITY_CHANGE_EVENT,
+} from '../../../../ui/panels/panel-visibility.js';
 import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
+import { ScenarioApplicabilityBinding } from '../../../../ui/utils/scenario-applicability-binding.js';
 
 const PANEL_ID = 'p1-observables-panel';
 const UPDATE_INTERVAL_MS = 250;            // 4 Hz; observables are slow signals
 const EMPTY_SCENARIO_ID = 'empty';
-const SCENARIO_SYNC_MAX_FRAMES = 120;
+const THOMSON_SCENARIO_IDS = new Set([
+    's0-field-thomson-scattering',
+    's0-field-thomson-unlocked-recoil',
+]);
 
 function buildPanel(dockMode = false) {
     const root = document.createElement('div');
     root.id = PANEL_ID;
     root.className = 'scale0-only s0-overlay-panel p1-observables-panel';
     root.dataset.applicability = 'applicable';
-    const baseTypography = `
-        font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
-        font-size: 16px;
-        line-height: 1.45;
-        color: var(--text-primary);
-    `;
-    if (dockMode) {
-        root.classList.add('dock-mode');
-        root.style.cssText = `
-            position: relative;
-            width: 100%;
-            padding: 14px 14px 18px;
-            background: transparent;
-            ${baseTypography}
-        `;
-    } else {
-        root.style.cssText = `
-            position: absolute;
-            bottom: 12px;
-            left: 12px;
-            width: min(420px, calc(100vw - 20px));
-            max-height: 70vh;
-            overflow-y: auto;
-            background: rgba(8, 12, 20, 0.92);
-            border: 1px solid rgba(120, 200, 255, 0.25);
-            border-radius: 6px;
-            padding: 14px 14px 18px;
-            z-index: 50;
-            backdrop-filter: blur(4px);
-            ${baseTypography}
-        `;
-    }
+    if (dockMode) root.classList.add('dock-mode');
     const trailingBtn = dockMode
         ? `<button id="${PANEL_ID}-expand" type="button" class="p1-header-btn" title="Expand to full-screen modal">⛶</button>`
         : `<button id="${PANEL_ID}-collapse" type="button" class="p1-header-btn" title="Collapse">▴</button>`;
@@ -70,7 +46,7 @@ function buildPanel(dockMode = false) {
     ` : `
         <header class="p1-panel-header">
             <span class="p1-panel-title">P1 Observables</span>
-            <div style="display:flex;gap:4px;">
+            <div class="p1-panel-header-actions">
                 <button class="p1-header-btn p1-btn-reset" title="Reset all simulations">↺</button>
                 <button class="p1-header-btn p1-btn-close" title="Close Panel">×</button>
             </div>
@@ -192,9 +168,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
     let disposed = false;
     let sub = null;
     let updateCount = 0;
-    let scenarioSelect = null;
-    let scenarioSyncRaf = 0;
-    let scenarioSyncToken = 0;
+    let scenarioBinding = null;
 
     // Invalidate retained particle IDs at the transaction boundary even while
     // the panel is hidden and its sampling callback is inactive.
@@ -243,7 +217,10 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
             return;
         }
         if (!components || panel.dataset.applicability !== 'applicable') return;
-        if (!isPanelLive(host)) return;
+        if (!isPanelLive(host)) {
+            components.gravity.releaseSamplerDemand();
+            return;
+        }
         const now = performance.now();
         const bridge = getBridge?.();
         if (!bridge) return;
@@ -267,9 +244,18 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
             mutationEpoch: state.mutationEpoch,
             ready: !state.authoritativeLoad,
         });
-        components.thomson.update(bridge, scenarioId);
-        components.fineStructure.update(bridge, scenarioId);
+        // Thomson and coupling-audit cards describe the same observation.
+        // Acquire it once so their rows cannot mix two bridge reads/ticks.
+        const thomsonMetrics = THOMSON_SCENARIO_IDS.has(scenarioId)
+            ? (bridge.getThomsonScatteringMetrics?.() || null) : null;
+        components.thomson.update(bridge, scenarioId, thomsonMetrics);
+        components.fineStructure.update(bridge, scenarioId, thomsonMetrics);
     }
+
+    const handleVisibilityBoundary = () => {
+        if (components && !isPanelLive(host)) components.gravity.releaseSamplerDemand();
+    };
+    window.addEventListener(PANEL_VISIBILITY_CHANGE_EVENT, handleVisibilityBoundary);
 
     const HZ = Math.round(1000 / UPDATE_INTERVAL_MS);
 
@@ -296,10 +282,6 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
     }
 
     function handleScenarioIntent(scenarioId) {
-        const token = ++scenarioSyncToken;
-        if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
-        scenarioSyncRaf = 0;
-
         // Suspend immediately on selection intent so an older nonempty engine
         // generation cannot publish one last observation into the Empty panel.
         if (scenarioId === EMPTY_SCENARIO_ID) {
@@ -314,36 +296,21 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
         bodyEl.setAttribute('aria-hidden', 'true');
         inapplicableMessage.hidden = true;
 
-        let remaining = SCENARIO_SYNC_MAX_FRAMES;
-        const reconcile = () => {
-            scenarioSyncRaf = 0;
-            if (disposed || token !== scenarioSyncToken) return;
-            if (getScale0State().currentScenarioId === scenarioId) {
-                setEmptyApplicability(false);
-                return;
-            }
-            remaining--;
-            if (remaining > 0) scenarioSyncRaf = requestAnimationFrame(reconcile);
-        };
-        reconcile();
-    }
-
-    function onScenarioChange(event) {
-        handleScenarioIntent(String(event.currentTarget?.value || ''));
+        scenarioBinding.reconcile({
+            scenarioId,
+            isReady: () => getScale0State().currentScenarioId === scenarioId,
+            onReady: () => setEmptyApplicability(false),
+        });
     }
 
     function rebindScenarioApplicability() {
-        const nextSelect = document.getElementById('scenario-select');
-        if (nextSelect !== scenarioSelect) {
-            scenarioSelect?.removeEventListener('change', onScenarioChange);
-            scenarioSelect = nextSelect;
-            scenarioSelect?.addEventListener('change', onScenarioChange);
-        }
-        handleScenarioIntent(String(
-            scenarioSelect?.value || getScale0State().currentScenarioId || '',
-        ));
+        scenarioBinding?.bind();
     }
 
+    scenarioBinding = new ScenarioApplicabilityBinding({
+        getCurrentScenarioId: () => getScale0State().currentScenarioId,
+        onIntent: handleScenarioIntent,
+    });
     rebindScenarioApplicability();
 
     const api = {
@@ -356,14 +323,12 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
         rebindScenarioApplicability,
         dispose: () => {
             disposed = true;
+            window.removeEventListener(PANEL_VISIBILITY_CHANGE_EVENT, handleVisibilityBoundary);
             unsubscribeQualification();
             stopCoordinator();
             unmountComponents();
-            if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
-            scenarioSyncRaf = 0;
-            scenarioSyncToken++;
-            scenarioSelect?.removeEventListener('change', onScenarioChange);
-            scenarioSelect = null;
+            scenarioBinding?.dispose();
+            scenarioBinding = null;
             if (activeModal) { try { activeModal.close(); } catch {} activeModal = null; }
             if (expandBtnRef && expandClickHandler) {
                 expandBtnRef.removeEventListener('click', expandClickHandler);

@@ -2,6 +2,7 @@ import { readStoredBoolean, writeStoredBoolean } from './layout-state.js';
 import { floatingWindowManager } from '../components/floating-window/component.js?v=2';
 import { applyPanelMountClasses, updateSafeEdges } from '../components/panel-dock/mount-toggle.js';
 import { notifyPanelVisibilityChange } from '../panels/panel-visibility.js?v=2';
+import { LifetimeScope } from '../utils/lifetime-scope.js';
 
 const PANEL_WIDTH_STORAGE_KEY = 'ftd.panel.side-width';
 const RAIL_WIDTH_STORAGE_KEY = 'ftd.panel.rail-width';
@@ -57,6 +58,10 @@ export class PanelDockController {
         this.onViewportResize = typeof onViewportResize === 'function' ? onViewportResize : null;
 
         this._bound = false;
+        this._scope = null;
+        this._gestureCleanups = new Set();
+        this._ownsRailResizeHandle = false;
+        this._ownsSideResizeHandle = false;
         this._compactMode = false;
         this._viewportResizeTimer = null;
         this._resizeRaf = null;
@@ -84,6 +89,7 @@ export class PanelDockController {
     bind({ initialActiveTab = 'controls' } = {}) {
         if (this._bound) return;
         this._bound = true;
+        this._scope = new LifetimeScope();
 
         this._bindTabs();
         this._bindCompactSelect();
@@ -92,8 +98,8 @@ export class PanelDockController {
         this._restoreSizeState();
         this._bindResizeHandle();
         this._bindRailResizeHandle();
-        window.addEventListener('resize', this._handleWindowResize, { passive: true });
-        window.addEventListener('blur', this._handleResizePointerUp);
+        this._scope.on(window, 'resize', this._handleWindowResize, { passive: true });
+        this._scope.on(window, 'blur', this._handleResizePointerUp);
         this._restoreCollapsedState();
         this.activate(initialActiveTab, { emit: false, autoExpand: false });
     }
@@ -108,7 +114,7 @@ export class PanelDockController {
             // Flash title bar to alert user
             if (win.header) {
                 win.header.style.background = 'rgba(0, 229, 255, 0.2)';
-                setTimeout(() => {
+                this._scope.timeout(() => {
                     if (win.header) win.header.style.background = '';
                 }, 180);
             }
@@ -230,6 +236,7 @@ export class PanelDockController {
                 window.removeEventListener('pointerup', onPointerUp);
                 window.removeEventListener('pointercancel', onPointerUp);
                 window.removeEventListener('blur', onPointerUp);
+                this._gestureCleanups.delete(clearGesture);
             };
 
             const onPointerMove = (e) => {
@@ -271,7 +278,7 @@ export class PanelDockController {
 
             const onPointerUp = () => clearGesture();
 
-            tab.addEventListener('pointerdown', (e) => {
+            this._scope.on(tab, 'pointerdown', (e) => {
                 // Only left click / standard pointer touch
                 if (e.button !== 0) return;
                 startX = e.clientX;
@@ -285,9 +292,10 @@ export class PanelDockController {
                 window.addEventListener('pointerup', onPointerUp);
                 window.addEventListener('pointercancel', onPointerUp);
                 window.addEventListener('blur', onPointerUp);
+                this._gestureCleanups.add(clearGesture);
             });
 
-            tab.addEventListener('click', (e) => {
+            this._scope.on(tab, 'click', (e) => {
                 if (!hasDragged) {
                     this.activate(tab.dataset.panel);
                 }
@@ -332,13 +340,13 @@ export class PanelDockController {
 
     _bindCompactSelect() {
         if (!this.compactSelect) return;
-        this.compactSelect.addEventListener('change', () => this.activate(this.compactSelect.value));
+        this._scope.on(this.compactSelect, 'change', () => this.activate(this.compactSelect.value));
         this._syncCompactOptions();
     }
 
     _bindCollapseToggle() {
         if (!this.app || typeof this.app.addEventListener !== 'function') return;
-        this.app.addEventListener('click', (event) => {
+        this._scope.on(this.app, 'click', (event) => {
             const btn = event.target.closest('#btn-panel-toggle');
             if (btn) {
                 const collapsed = !this.app.classList?.contains('panels-collapsed');
@@ -355,18 +363,18 @@ export class PanelDockController {
             if (!handle) return;
             handle.setAttribute('role', 'separator');
             handle.setAttribute('tabindex', '0');
-            handle.addEventListener('pointerdown', (event) => {
+            this._scope.on(handle, 'pointerdown', (event) => {
                 if (this._compactMode || event.button !== 0) return;
                 const mount = this._getMount();
                 if ((sideOnly && mount === 'bottom') || (!sideOnly && mount !== 'bottom')) return;
                 const rect = this.panelArea.getBoundingClientRect();
                 this._startResize('panel', event, mount === 'bottom' ? rect.height : rect.width, mount);
             });
-            handle.addEventListener('pointermove', this._handleResizePointerMove);
-            handle.addEventListener('pointerup', this._handleResizePointerUp);
-            handle.addEventListener('pointercancel', this._handleResizePointerUp);
-            handle.addEventListener('lostpointercapture', this._handleResizePointerUp);
-            handle.addEventListener('keydown', this._handleOuterResizeKeydown);
+            this._scope.on(handle, 'pointermove', this._handleResizePointerMove);
+            this._scope.on(handle, 'pointerup', this._handleResizePointerUp);
+            this._scope.on(handle, 'pointercancel', this._handleResizePointerUp);
+            this._scope.on(handle, 'lostpointercapture', this._handleResizePointerUp);
+            this._scope.on(handle, 'keydown', this._handleOuterResizeKeydown);
         };
         bindHandle(this.resizeHandle, false);
         bindHandle(this._sideResizeHandle, true);
@@ -380,6 +388,7 @@ export class PanelDockController {
             handle.id = 'panel-rail-resizer';
             handle.innerHTML = '<span aria-hidden="true"></span>';
             this.app.appendChild(handle);
+            this._ownsRailResizeHandle = true;
         }
         handle.setAttribute('role', 'separator');
         handle.setAttribute('tabindex', '0');
@@ -394,6 +403,7 @@ export class PanelDockController {
             sideHandle.id = 'panel-side-resizer';
             sideHandle.innerHTML = '<span aria-hidden="true"></span>';
             this.app.appendChild(sideHandle);
+            this._ownsSideResizeHandle = true;
         }
         sideHandle.setAttribute('role', 'separator');
         sideHandle.setAttribute('tabindex', '0');
@@ -407,15 +417,15 @@ export class PanelDockController {
     _bindRailResizeHandle() {
         const handle = this._railResizeHandle;
         if (!handle) return;
-        handle.addEventListener('pointerdown', (event) => {
+        this._scope.on(handle, 'pointerdown', (event) => {
             if (this._compactMode || event.button !== 0 || !this._isSideMount()) return;
             this._startResize('rail', event, this._getRailWidth(), this._getMount());
         });
-        handle.addEventListener('pointermove', this._handleResizePointerMove);
-        handle.addEventListener('pointerup', this._handleResizePointerUp);
-        handle.addEventListener('pointercancel', this._handleResizePointerUp);
-        handle.addEventListener('keydown', this._handleRailResizeKeydown);
-        handle.addEventListener('dblclick', () => this._toggleRailWidth());
+        this._scope.on(handle, 'pointermove', this._handleResizePointerMove);
+        this._scope.on(handle, 'pointerup', this._handleResizePointerUp);
+        this._scope.on(handle, 'pointercancel', this._handleResizePointerUp);
+        this._scope.on(handle, 'keydown', this._handleRailResizeKeydown);
+        this._scope.on(handle, 'dblclick', () => this._toggleRailWidth());
     }
 
     _startResize(kind, event, startSize, mount) {
@@ -662,5 +672,30 @@ export class PanelDockController {
     _syncCompactSelect(activePanel) {
         if (!this.compactSelect) return;
         this._syncCompactOptions(activePanel);
+    }
+
+    destroy() {
+        if (!this._bound) return;
+        this._handleResizePointerUp();
+        for (const clearGesture of [...this._gestureCleanups]) clearGesture();
+        this._gestureCleanups.clear();
+        if (this._resizeRaf !== null) window.cancelAnimationFrame(this._resizeRaf);
+        if (this._windowResizeRaf !== null) window.cancelAnimationFrame(this._windowResizeRaf);
+        if (this._viewportResizeTimer !== null) window.clearTimeout(this._viewportResizeTimer);
+        this._resizeRaf = null;
+        this._windowResizeRaf = null;
+        this._viewportResizeTimer = null;
+        this._scope?.dispose();
+        this._scope = null;
+        // Dock while the panel mounts still exist, so a later shell init starts
+        // with one panel owner rather than detached floating content.
+        floatingWindowManager.dockAll();
+        if (this._ownsRailResizeHandle) this._railResizeHandle?.remove();
+        if (this._ownsSideResizeHandle) this._sideResizeHandle?.remove();
+        this._railResizeHandle = null;
+        this._sideResizeHandle = null;
+        this._ownsRailResizeHandle = false;
+        this._ownsSideResizeHandle = false;
+        this._bound = false;
     }
 }

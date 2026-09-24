@@ -9,6 +9,24 @@ export default [
   },
   js.configs.recommended,
   {
+    files: ["engine/web/tests/assistant-*.node.test.mjs", "engine/web/tests/assistant-*.spec.js"],
+    languageOptions: {
+      globals: Object.fromEntries([
+        "AbortController", "AbortSignal", "Buffer", "URL", "URLSearchParams", "TextEncoder", "TextDecoder",
+        "setTimeout", "clearTimeout", "setInterval", "clearInterval", "structuredClone", "process", "console",
+      ].map(name => [name, "readonly"])),
+    },
+  },
+  {
+    files: ["engine/web/tests/assistant-*.spec.js"],
+    languageOptions: {
+      globals: Object.fromEntries([
+        "window", "document", "navigator", "location", "performance", "fetch", "requestAnimationFrame",
+        "localStorage", "sessionStorage", "CustomEvent", "Event", "HTMLInputElement",
+      ].map(name => [name, "readonly"])),
+    },
+  },
+  {
     files: ["engine/web/js/**/*.js", "engine/web/js/**/*.ts"],
     plugins: {
       import: importPlugin,

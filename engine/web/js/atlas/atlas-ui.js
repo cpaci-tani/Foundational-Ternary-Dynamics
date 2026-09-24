@@ -10,6 +10,8 @@
 // mode stays consistent; syncToggles() reflects live layer state back into the
 // checkboxes (the stepper calls it after each stage).
 
+import { LifetimeScope } from '../ui/utils/lifetime-scope.js';
+
 // hex (#rrggbb or 0xRRGGBB or number) → "r, g, b" for rgba() fills.
 function rgbTriplet(hex) {
   let h = hex;
@@ -21,6 +23,7 @@ function rgbTriplet(hex) {
 }
 
 export function createUI(dom, ctx) {
+  const lifetime = new LifetimeScope();
   const { layers, LAYERS, GROUPS, STAGES, api } = ctx;
   const groupColor = new Map(GROUPS.map((g) => [g.id, g.color]));
 
@@ -53,7 +56,7 @@ export function createUI(dom, ctx) {
       const master = document.createElement('input');
       master.type = 'checkbox';
       master.className = 'atlas-master';
-      master.addEventListener('change', () => {
+      lifetime.on(master, 'change', () => {
         for (const id of ids) api.setLayerVisible(id, master.checked);
         ctx.onUserInteract?.();
         syncToggles();
@@ -78,7 +81,7 @@ export function createUI(dom, ctx) {
         const cb = document.createElement('input');
         cb.type = 'checkbox';
         cb.className = 'atlas-row-cb';
-        cb.addEventListener('change', () => {
+        lifetime.on(cb, 'change', () => {
           api.setLayerVisible(id, cb.checked);
           ctx.onUserInteract?.();
           syncToggles();
@@ -95,7 +98,7 @@ export function createUI(dom, ctx) {
         name.className = 'atlas-row-name';
         name.textContent = L.name;
         name.title = `${L.name} — ${L.tag}`;
-        name.addEventListener('click', () => showDetail(id));
+        lifetime.on(name, 'click', () => showDetail(id));
 
         row.append(cb, sym, name);
         section.appendChild(row);
@@ -205,7 +208,7 @@ export function createUI(dom, ctx) {
 
   // ── Bottom: chain stepper ───────────────────────────────────────────────
   let playing = false;
-  let playTimer = null;
+  let cancelPlayTimer = null;
   const PLAY_MS = 2200;
   const nodeEls = [];
   let playBtn = null;
@@ -231,7 +234,7 @@ export function createUI(dom, ctx) {
     playBtn.className = 'atlas-play';
     playBtn.setAttribute('aria-label', 'Play chain');
     playBtn.textContent = '▶';
-    playBtn.addEventListener('click', () => (playing ? pause() : play()));
+    lifetime.on(playBtn, 'click', () => (playing ? pause() : play()));
     bar.appendChild(playBtn);
 
     const track = document.createElement('div');
@@ -250,7 +253,7 @@ export function createUI(dom, ctx) {
       cap.className = 'atlas-node-cap';
       cap.textContent = STAGES[i].title;
       node.append(dot, cap);
-      node.addEventListener('click', () => {
+      lifetime.on(node, 'click', () => {
         pause();
         ctx.onUserInteract?.();
         api.setStage(i);
@@ -276,14 +279,18 @@ export function createUI(dom, ctx) {
     if (playing) return;
     playing = true;
     if (playBtn) { playBtn.textContent = '❚❚'; playBtn.setAttribute('aria-label', 'Pause chain'); }
-    playTimer = setInterval(() => {
+    const advance = () => {
+      if (!playing || lifetime.disposed) return;
       api.nextStage();
-    }, PLAY_MS);
+      cancelPlayTimer = lifetime.timeout(advance, PLAY_MS);
+    };
+    cancelPlayTimer = lifetime.timeout(advance, PLAY_MS);
   }
   function pause() {
     playing = false;
     if (playBtn) { playBtn.textContent = '▶'; playBtn.setAttribute('aria-label', 'Play chain'); }
-    if (playTimer) { clearInterval(playTimer); playTimer = null; }
+    cancelPlayTimer?.();
+    cancelPlayTimer = null;
   }
 
   // ── Mode switch (guided ⇆ free) ─────────────────────────────────────────
@@ -302,7 +309,7 @@ export function createUI(dom, ctx) {
   function getMode() { return mode; }
 
   for (const btn of dom.modeButtons) {
-    btn.addEventListener('click', () => {
+    lifetime.on(btn, 'click', () => {
       pause();
       ctx.onUserInteract?.();
       setMode(btn.dataset.mode);
@@ -314,5 +321,13 @@ export function createUI(dom, ctx) {
   buildStepper();
   syncToggles();
 
-  return { showDetail, syncToggles, setMode, getMode, markActive, selected: () => selectedKey, isPlaying: () => playing, pause };
+  function dispose() {
+    pause();
+    lifetime.dispose();
+    dom.layerPanel.replaceChildren();
+    dom.detailPanel.replaceChildren();
+    dom.stepper.replaceChildren();
+  }
+
+  return { showDetail, syncToggles, setMode, getMode, markActive, selected: () => selectedKey, isPlaying: () => playing, pause, dispose };
 }

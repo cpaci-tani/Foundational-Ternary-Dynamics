@@ -22,6 +22,7 @@ export class Scale1ControlsComponent {
       gridContainer.className = 'panel-grid panel-grid-3';
       this.panel.appendChild(gridContainer);
     }
+    gridContainer.dataset.panelGrid = '3';
 
     if (!gridContainer.querySelector('[data-scale1-control-card="context"]')) {
       const contextCard = createPeControlsCard();

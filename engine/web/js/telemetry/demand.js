@@ -4,6 +4,7 @@
  */
 
 import { isScale0AuthoritativeGenerationReady } from '../scales/scale0/state/store.js';
+import '../bridge/sampler-cadence.classic.js?v=5';
 
 /** Scale-0 chart ids whose series are filled from the energy-audit path. */
 const SCALE0_AUDIT_CHART_IDS = Object.freeze(['eb-energy', 'gauss']);
@@ -29,7 +30,7 @@ function scale0ChartsWantAudit(ctx, visible) {
 /**
  * @param {object} ctx - scale-0 controller context (isPanelVisible, activeTab, …)
  * @param {object|null} state - optional Scale-0 runtime state for scenario gates
- * @returns {{ diagnostics:boolean, wantAudit:boolean, wantLag:boolean,
+ * @returns {{ diagnostics:boolean, wantAudit:boolean, wantLag:boolean, wantProperTime:boolean,
  *            wantGravity:boolean, audit:boolean, lagrangian:boolean,
  *            gravity:boolean, everyTicks:object }}
  */
@@ -48,7 +49,7 @@ export function getScale0TelemetryDemand(ctx, state = null) {
     const knotsTracking = state == null ? true : !!state.knotTracking;
     const wantAudit = visible('diagnostics')
         || scale0ChartsWantAudit(ctx, visible)
-        || visible('lagrangian') || visible('telemetry-grid')
+        || visible('lagrangian') || visible('telemetry-grid') || visible('thermo')
         // Spectrum renders the E/B/wave/field partition and conservation
         // drift from the audit stream. Without this explicit ownership its
         // energy card races the demand gate and can remain permanently empty.
@@ -71,7 +72,13 @@ export function getScale0TelemetryDemand(ctx, state = null) {
         && isScale0AuthoritativeGenerationReady(state)
     );
     const wantGravity = gravityApplicable && (visible('gravity') || visible('time'));
-    const latticeSize = Math.max(1, Math.trunc(Number(ctx?.bridge?.latticeSize) || 32));
+    // Proper-time is a sampled field aggregate, not a state diagnostic. Its
+    // one collector is demanded by either consumer; opening the grid alone
+    // must not rely on the Time panel's rAF loop or render Time's heavy cards.
+    const wantProperTime = gravityApplicable && (visible('time') || visible('telemetry-grid'));
+    const activeOwner = state?.useFluxMock ? state?.fluxMock : ctx?.bridge;
+    const latticeSize = Math.max(1, Math.trunc(Number(activeOwner?.latticeSize) || 32));
+    const properTimeStride = Math.max(2, Math.ceil(latticeSize / 25));
     const everyTicks = latticeSize >= 113
         ? { diagnostics: 1, audit: 8, gravity: 4, lagrangian: 12 }
         : (latticeSize >= 65
@@ -85,6 +92,8 @@ export function getScale0TelemetryDemand(ctx, state = null) {
         wantAudit,
         wantLag,
         wantGravity,
+        wantProperTime,
+        properTimeStride,
         everyTicks,
     };
 }
@@ -106,6 +115,80 @@ function publishNativeTelemetryDemand(ctx, state, demand) {
     return typeof ctx.bridge.getTelemetrySnapshot === 'function';
 }
 
+function exactSampleCounter(value) {
+    if (value === null || value === undefined || value === '') return null;
+    const n = Number(value);
+    return Number.isSafeInteger(n) && n >= 0 ? n : null;
+}
+
+function demandNow(telemetryHub) {
+    if (typeof telemetryHub?._demandNow === 'function') return telemetryHub._demandNow();
+    return typeof performance !== 'undefined' && typeof performance.now === 'function'
+        ? performance.now() : Date.now();
+}
+
+function directLagrangianCadence(telemetryHub) {
+    if (telemetryHub._directLagrangianCadence) return telemetryHub._directLagrangianCadence;
+    const create = globalThis.FTD_SAMPLER_CADENCE?.createBoundedReductionCadence;
+    if (typeof create !== 'function') {
+        throw new Error('bounded Lagrangian cadence is unavailable');
+    }
+    telemetryHub._directLagrangianCadence = create({
+        // A synchronous direct-WASM reduction runs on the render thread. A
+        // cheap lattice may therefore publish at the display budget, while its
+        // measured cost still limits duty. Getter failures retry much slower.
+        targetIntervalMs: 1000 / 60,
+        retryIntervalMs: 125,
+    });
+    return telemetryHub._directLagrangianCadence;
+}
+
+/**
+ * Full direct-WASM Lagrangian extraction is an O(L^3) reduction.  Unlike the
+ * worker cache, it must be paced by the simulation observation clock, never by
+ * the rAF/UI refresh clock or a field-data version that advances every tick.
+ * A source/owner boundary and a panel opening deliberately take one immediate
+ * observation; later calls retain it until the shared wall-time/duty-budget
+ * cadence permits a new simulation-clock observation.
+ */
+function directLagrangianDue(telemetryHub, owner, state, demand, opened) {
+    const diagnosticsMeta = telemetryHub.getScale0TelemetryMeta?.('diagnostics')
+        ?? owner?.getScale0TelemetryGroupMeta?.('diagnostics')
+        ?? null;
+    const sampleTick = exactSampleCounter(
+        diagnosticsMeta?.sampleTick ?? diagnosticsMeta?.tick ?? state?.fieldDataVersion,
+    );
+    const sourceEpoch = exactSampleCounter(
+        diagnosticsMeta?.sourceEpoch ?? diagnosticsMeta?.epoch,
+    );
+    const previous = telemetryHub._directLagrangianSchedule;
+    const cadence = directLagrangianCadence(telemetryHub);
+    const now = demandNow(telemetryHub);
+    const ownerBoundary = opened || !previous || previous.owner !== owner
+        || previous.sourceEpoch !== sourceEpoch
+        || (previous.sampleTick !== null && sampleTick < previous.sampleTick);
+    if (ownerBoundary) cadence.reset();
+    const due = cadence.shouldRun(true, previous?.hasSample === true, now, sampleTick);
+    if (due) {
+        // Store the attempted observation too. A missing ABI/error must not
+        // turn a demanded panel into one full reduction per UI frame.
+        telemetryHub._directLagrangianSchedule = { owner, sourceEpoch, sampleTick, startedAt: now };
+    }
+    return due;
+}
+
+function finishDirectLagrangianAttempt(telemetryHub, result) {
+    const schedule = telemetryHub._directLagrangianSchedule;
+    if (!schedule) return;
+    const finishedAt = demandNow(telemetryHub);
+    directLagrangianCadence(telemetryHub).complete(
+        finishedAt, schedule.sampleTick, Math.max(0, finishedAt - schedule.startedAt),
+        { retry: !result },
+    );
+    schedule.hasSample = !!result;
+    delete schedule.startedAt;
+}
+
 /**
  * Apply demand-gated audit/Lagrangian collection with field-version coalescing.
  *
@@ -116,12 +199,15 @@ function publishNativeTelemetryDemand(ctx, state, demand) {
  *            diagnostics?: boolean, everyTicks?: object }} demand
  */
 export function collectScale0OnDemand(telemetryHub, ctx, state, demand) {
-    const { wantAudit, wantLag } = demand;
+    const { wantAudit, wantLag, wantProperTime = false, properTimeStride = 2 } = demand;
 
     const fm = state.useFluxMock ? state.fluxMock : null;
-    if (fm && typeof fm.setTelemetryMask === 'function') {
-        fm.setTelemetryMask(wantAudit, wantLag, !!demand.wantGravity);
+    const samplerOwner = fm || ctx?.bridge;
+    if (samplerOwner && typeof samplerOwner.setTelemetryMask === 'function') {
+        samplerOwner.setTelemetryMask(wantAudit, wantLag, !!demand.wantGravity, wantProperTime);
     }
+    samplerOwner?.replaceSamplerWants?.('proper-time-telemetry', wantProperTime
+        ? [`tau@${properTimeStride}`, `lapse@${properTimeStride}`, `dbPhase@${properTimeStride}`] : []);
 
     // Native `getTelemetrySnapshot()` is a read-only versioned store. Ingest
     // it every UI pass so an async push received while paused is visible even
@@ -129,13 +215,21 @@ export function collectScale0OnDemand(telemetryHub, ctx, state, demand) {
     // CUDA reduction and no panel-triggered WebSocket request.
     if (publishNativeTelemetryDemand(ctx, state, demand)) {
         telemetryHub.collectScale0(ctx.bridge, state.fluxMock, state.useFluxMock);
+        // Native snapshots do not yet contain a proper-time group. The
+        // capability is cache-only, so this marks the group unavailable rather
+        // than creating a per-panel WebSocket reduction or holding old data.
+        if (wantProperTime) telemetryHub.collectScale0ProperTime(
+            ctx.bridge, state.fluxMock, state.useFluxMock, properTimeStride,
+        );
         telemetryHub._prevWantAudit = wantAudit;
         telemetryHub._prevWantLag = wantLag;
+        telemetryHub._prevWantProperTime = wantProperTime;
         return;
     }
 
-    const ver = state.fieldDataVersion | 0;
+    const ver = exactSampleCounter(state.fieldDataVersion) ?? -1;
     const verChanged = ver !== telemetryHub._lastAuditVersion;
+    const properTimeVersionChanged = ver !== telemetryHub._lastProperTimeVersion;
     const openedA = wantAudit && !telemetryHub._prevWantAudit;
     const openedL = wantLag && !telemetryHub._prevWantLag;
     // A paused worker can finish an asynchronous telemetry request without a
@@ -143,17 +237,35 @@ export function collectScale0OnDemand(telemetryHub, ctx, state, demand) {
     // ingest them on UI passes while demanded, preserving their own group
     // versions/timestamps. Direct WASM getters still perform reductions and
     // retain the existing field-version gate below.
-    const workerCache = fm?.isWorker === true;
+    const workerCache = samplerOwner?.isWorker === true;
+    const openedP = wantProperTime && !telemetryHub._prevWantProperTime;
 
     if (wantAudit && (workerCache || verChanged || openedA)) {
         telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
     }
-    if (wantLag && (workerCache || verChanged || openedL)) {
-        telemetryHub.collectScale0Lagrangian(ctx.bridge, state.fluxMock, state.useFluxMock);
+    const directLagDue = wantLag && !workerCache && directLagrangianDue(
+        telemetryHub, samplerOwner, state, demand, openedL,
+    );
+    if (wantLag && (workerCache || directLagDue)) {
+        const result = telemetryHub.collectScale0Lagrangian(
+            ctx.bridge, state.fluxMock, state.useFluxMock,
+        );
+        if (directLagDue) finishDirectLagrangianAttempt(telemetryHub, result);
+    }
+    if (wantProperTime && (workerCache || properTimeVersionChanged || openedP)) {
+        telemetryHub.collectScale0ProperTime(
+            ctx.bridge, state.fluxMock, state.useFluxMock, properTimeStride,
+        );
     }
     if (wantAudit || wantLag) telemetryHub._lastAuditVersion = ver;
+    if (wantProperTime) telemetryHub._lastProperTimeVersion = ver;
+    if (!wantLag) {
+        telemetryHub._directLagrangianSchedule = null;
+        telemetryHub._directLagrangianCadence?.reset();
+    }
     telemetryHub._prevWantAudit = wantAudit;
     telemetryHub._prevWantLag = wantLag;
+    telemetryHub._prevWantProperTime = wantProperTime;
 }
 
 /**
@@ -167,6 +279,9 @@ export function collectScale0Unconditional(telemetryHub, ctx, state) {
         audit: true,
         lagrangian: true,
         gravity: gravityReady,
+        wantProperTime: gravityReady,
+        properTimeStride: Math.max(2, Math.ceil(Math.max(1,
+            Math.trunc(Number((state.useFluxMock ? state.fluxMock : ctx?.bridge)?.latticeSize) || 32)) / 25)),
         everyTicks: { diagnostics: 1, audit: 1, gravity: 1, lagrangian: 1 },
     };
     // The rollback path must restore the worker transport mask as well as read
@@ -174,13 +289,21 @@ export function collectScale0Unconditional(telemetryHub, ctx, state) {
     // returns null/stale audit state, which made "always collect" behave like
     // demand gating for every worker-owned scenario.
     const fm = state.useFluxMock ? state.fluxMock : null;
-    if (fm && typeof fm.setTelemetryMask === 'function') {
-        fm.setTelemetryMask(true, true, gravityReady);
-    }
+    const samplerOwner = fm || ctx?.bridge;
+    samplerOwner?.setTelemetryMask?.(true, true, gravityReady, gravityReady);
+    samplerOwner?.replaceSamplerWants?.('proper-time-telemetry', gravityReady
+        ? [`tau@${demand.properTimeStride}`, `lapse@${demand.properTimeStride}`,
+            `dbPhase@${demand.properTimeStride}`] : []);
     if (publishNativeTelemetryDemand(ctx, state, demand)) {
         telemetryHub.collectScale0(ctx.bridge, state.fluxMock, state.useFluxMock);
+        if (gravityReady) telemetryHub.collectScale0ProperTime(
+            ctx.bridge, state.fluxMock, state.useFluxMock, demand.properTimeStride,
+        );
         return;
     }
     telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
     telemetryHub.collectScale0Lagrangian(ctx.bridge, state.fluxMock, state.useFluxMock);
+    if (gravityReady) telemetryHub.collectScale0ProperTime(
+        ctx.bridge, state.fluxMock, state.useFluxMock, demand.properTimeStride,
+    );
 }

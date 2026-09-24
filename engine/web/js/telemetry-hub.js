@@ -20,13 +20,14 @@
 
 import { C_SPEED, G_N } from './constants.js';
 import { exactCounter, compareExactCounters, safeCounterNumber, normalizeNativeCounters } from './lib/exact-counter.js';
+import { reduceProperTimeSamples } from './scales/scale0/analysis/proper-time-metrics.js';
 
 // Native CUDA telemetry is published as independent group deltas.  Keep each
 // group’s provenance instead of attaching one misleading "current tick" to
 // every side-panel value: audit, gravity, and Lagrangian reductions can
 // deliberately run less often than the inexpensive diagnostics summary.
 const SCALE0_SNAPSHOT_GROUPS = Object.freeze([
-    'diagnostics', 'audit', 'lagrangian', 'gravity',
+    'diagnostics', 'audit', 'lagrangian', 'gravity', 'properTime',
 ]);
 
 function hasOwn(value, key) {
@@ -74,12 +75,21 @@ function scale0SampleStamp(meta) {
     ].join(':');
 }
 
+function sameScale0TickAndEpoch(left, right) {
+    return !!left && !!right
+        && left.stale !== true && right.stale !== true
+        && Number.isFinite(left.tick) && left.tick === right.tick
+        && left.source === right.source
+        && left.sourceEpoch === right.sourceEpoch;
+}
+
 function freshScale0State() {
     return {
         diag: null,
         audit: null,
         lagrangian: null,
         gravity: null,
+        properTime: null,
         // `groups` contains the source provenance of the value currently held
         // in the matching property above. `ageMs` is deliberately a receipt
         // age, not a claim about when a staggered GPU reduction was computed.
@@ -114,6 +124,7 @@ export class RingBuffer {
         this.head  = 0;
         this.count = 0;
         this.total = 0;
+        this.generation = 0;
     }
 
     _grow() {
@@ -206,7 +217,7 @@ export class RingBuffer {
         return n;
     }
 
-    clear() { this.head = 0; this.count = 0; this.total = 0; }
+    clear() { this.head = 0; this.count = 0; this.total = 0; this.generation++; }
 }
 
 // ── Telemetry Hub ────────────────────────────────────────────────────────────
@@ -222,6 +233,7 @@ export class MultiRingBuffer {
         this.head = 0;
         this.count = 0;
         this.total = 0;
+        this.generation = 0;
         
         this.views = {};
         channelNames.forEach((name, i) => {
@@ -283,6 +295,7 @@ export class MultiRingBuffer {
         this.head = 0;
         this.count = 0;
         this.total = 0;
+        this.generation++;
     }
 }
 
@@ -295,6 +308,7 @@ export class RingBufferView {
     get count() { return this.parent.count; }
     get total() { return this.parent.total; }
     get size() { return this.parent.size; }
+    get generation() { return this.parent.generation; }
 
     get(i) {
         if (i < 0 || i >= this.parent.count) return unavailableSample();
@@ -406,8 +420,12 @@ export class TelemetryHub {
         // The audit / Lagrangian streams collect only when a consumer is visible AND
         // the field version advanced (or a panel just opened — catch-up edge).
         this._lastAuditVersion = -1;
+        this._lastProperTimeVersion = -1;
+        this._directLagrangianSchedule = null;
+        this._directLagrangianCadence = null;
         this._prevWantAudit = false;
         this._prevWantLag = false;
+        this._prevWantProperTime = false;
         // Synthetic sequence for direct WASM/mock reads. Native snapshots
         // supply their own per-group stateVersion/snapshotVersion metadata.
         this._s0LocalSampleSequence = 0;
@@ -473,7 +491,9 @@ export class TelemetryHub {
         // otherwise.
                 this._s0_ptime = new MultiRingBuffer(200, ['properTimeMean', 'properTimeMin', 'properTimeMax', 'properTimeSpread', 'lapseMean', 'dbPhaseMean', 'dbPhaseCircVar']);
         this.ptime = this._s0_ptime.views;
-        this._lastTickPTime = -1;
+        this._lastProperTimeStamp = null;
+        this._lastProperTimeInputStamp = null;
+        this._lastProperTimeOwner = null;
 
         // ── Scale 1 — Particle Engine (200-sample) ─────
                 // peAnnihilations RETIRED (2026-07 revision): the native engine
@@ -717,74 +737,73 @@ export class TelemetryHub {
     }
 
     _publishScale0Diagnostics(diag, meta) {
-        this.s0.diag = diag;
+        const auditMeta = this.getScale0TelemetryMeta('audit');
+        const sameTickAuditEnergy = sameScale0TickAndEpoch(meta, auditMeta)
+            ? this.s0.audit?.dynamicEnergy : undefined;
+        const publishedDiag = !Number.isFinite(diag?.dynamicEnergy)
+            && Number.isFinite(sameTickAuditEnergy)
+            ? { ...diag, dynamicEnergy: sameTickAuditEnergy, energySampleSource: 'same-tick-audit' }
+            : diag;
+        this.s0.diag = publishedDiag;
         this._setScale0GroupMeta('diagnostics', meta);
 
         const sampleStamp = scale0SampleStamp(meta);
         if (!meta.stale && sampleStamp !== null && sampleStamp !== this._lastTick0) {
             this._lastTick0 = sampleStamp;
 
-            const positive = finiteSample(diag.positive);
-            const negative = finiteSample(diag.negative);
+            const positive = finiteSample(publishedDiag.positive);
+            const negative = finiteSample(publishedDiag.negative);
             const chargeBalance = firstFiniteSample(
-                diag.chargeBalance,
+                publishedDiag.chargeBalance,
                 finiteDifference(positive, negative),
             );
             const fieldSpin = finiteMagnitude(
-                finiteSample(diag.fieldSpinX),
-                finiteSample(diag.fieldSpinY),
-                finiteSample(diag.fieldSpinZ),
+                finiteSample(publishedDiag.fieldSpinX),
+                finiteSample(publishedDiag.fieldSpinY),
+                finiteSample(publishedDiag.fieldSpinZ),
             );
             // Dynamic energy normally arrives from the engine's cached
             // per-tick EnergyLedger. Older/direct transports may instead join
             // an exact same-state audit into Diagnostics; the observer-baseline
             // total must never be substituted here.
-            const auditMeta = this.getScale0TelemetryMeta('audit');
-            const retainedAuditEnergy = auditMeta
-                && auditMeta.stale !== true
-                && (auditMeta.status == null || auditMeta.status === 'available')
-                ? this.s0.audit?.dynamicEnergy : undefined;
-            // Diagnostics is intentionally cheaper and advances between full
-            // audit reductions. Keep the chart's aligned core row continuous
-            // with an explicitly sampled zero-order hold of the latest valid
-            // audit energy; a fresh same-tick audit still refines this row via
-            // setLast() below. Source-boundary invalidation makes auditMeta
-            // stale, so old energy never leaks into a new scenario/profile.
-            const dynamicEnergy = Number.isFinite(diag.dynamicEnergy)
-                ? diag.dynamicEnergy
-                : finiteSample(retainedAuditEnergy);
+            // Diagnostics is intentionally cheaper than the full audit. Do
+            // not retimestamp a retained audit energy onto later state ticks:
+            // absent per-tick energy is an honest chart gap. A completed audit
+            // may only refine this exact source/epoch/tick observation.
+            const dynamicEnergy = Number.isFinite(publishedDiag.dynamicEnergy)
+                ? publishedDiag.dynamicEnergy
+                : finiteSample(sameTickAuditEnergy);
 
             // 500-sample buffers for charts
             this._s0_core.push({
-                flux: finiteSample(diag.totalFlux),
+                flux: finiteSample(publishedDiag.totalFlux),
                 energy: dynamicEnergy,
-                manifested: finiteSample(diag.manifested),
-                entropy: finiteSample(diag.entropy),
+                manifested: finiteSample(publishedDiag.manifested),
+                entropy: finiteSample(publishedDiag.entropy),
                 positive,
                 negative,
                 charges: chargeBalance,
                 fieldSpin,
-                fieldHelicity: finiteSample(diag.fieldHelicity),
+                fieldHelicity: finiteSample(publishedDiag.fieldHelicity),
             }, meta.tick);
 
             // 80-sample sparkline buffers
             this._s0_sp.push({
-                manifested: finiteSample(diag.manifested),
+                manifested: finiteSample(publishedDiag.manifested),
                 charges: chargeBalance,
-                flux: finiteSample(diag.totalFlux),
+                flux: finiteSample(publishedDiag.totalFlux),
                 energy: dynamicEnergy,
-                entropy: finiteSample(diag.entropy),
+                entropy: finiteSample(publishedDiag.entropy),
             }, meta.tick);
         }
-        return diag;
+        return publishedDiag;
     }
 
     /**
      * Publish one tick's worth of proper-time / lapse / de Broglie phase
      * overlay-sampler aggregates (2026-09-03). Unlike _publishScale0Diagnostics,
-     * this is NOT fed by the engine's per-tick Diagnostics struct — the caller
-     * (e.g. the Time Observatory panel) computes these reductions itself from
-     * getScale0FieldSamples({kind:'tau'|'lapse'|'dbPhase'}) and hands them in.
+     * this is NOT fed by the engine's per-tick Diagnostics struct — the canonical
+     * Scale-0 sampler collector computes it from tau/lapse/dbPhase observations.
      * `metrics` fields not supplied fall back to unavailableSample() (NaN) so a
      * scenario/toggle state that cannot produce one quantity (e.g. φ without
      * de_broglie_clock) still advances the others. `tick` gates against
@@ -794,9 +813,27 @@ export class TelemetryHub {
      *          lapseMean?:number, dbPhaseMean?:number, dbPhaseCircVar?:number}} metrics
      * @param {number} tick
      */
-    publishScale0ProperTimeMetrics(metrics, tick) {
-        if (tick === this._lastTickPTime) return;
-        this._lastTickPTime = tick;
+    publishScale0ProperTimeMetrics(metrics, tick, provenance = {}) {
+        const safeTick = exactCounter(tick);
+        const meta = {
+            source: provenance.source ?? 'unknown',
+            sourceEpoch: exactCounter(provenance.sourceEpoch),
+            epoch: exactCounter(provenance.epoch),
+            stateVersion: safeTick,
+            snapshotVersion: safeTick,
+            tick: safeTick,
+            sampleTick: safeTick,
+            stale: provenance.stale === true || safeTick === null,
+            status: provenance.stale === true || safeTick === null ? 'unavailable' : 'available',
+            unavailableReason: provenance.unavailableReason ?? null,
+            unavailableDetail: provenance.unavailableDetail ?? null,
+            receivedAt: telemetryNow(),
+        };
+        this.s0.properTime = metrics && !meta.stale ? { ...metrics } : null;
+        this._setScale0GroupMeta('properTime', meta);
+        const sampleStamp = scale0SampleStamp(meta);
+        if (meta.stale || sampleStamp === null || sampleStamp === this._lastProperTimeStamp) return false;
+        this._lastProperTimeStamp = sampleStamp;
         const mean = finiteSample(metrics?.properTimeMean);
         const min = finiteSample(metrics?.properTimeMin);
         const max = finiteSample(metrics?.properTimeMax);
@@ -810,6 +847,107 @@ export class TelemetryHub {
             dbPhaseMean: finiteSample(metrics?.dbPhaseMean),
             dbPhaseCircVar: finiteSample(metrics?.dbPhaseCircVar),
         }, tick);
+        return true;
+    }
+
+    /**
+     * Canonical proper-time sampler acquisition. Both Time and telemetry-grid
+     * consume this source; no panel runs a second field reduction.
+     */
+    collectScale0ProperTime(bridge, fluxMock, useFluxMock, stride = 2) {
+        const mainCaps = bridge?.capabilities?.scale0;
+        const mockCaps = useFluxMock ? (fluxMock?.capabilities?.scale0 ?? null) : null;
+        const caps = mockCaps || mainCaps;
+        const owner = mockCaps ? fluxMock : bridge;
+        const fallbackSource = mockCaps ? 'mock' : 'wasm';
+        const boundedStride = Math.max(1, Math.trunc(Number(stride) || 2));
+        const read = caps?.getScale0ProperTimeSamples;
+        if (typeof read !== 'function') {
+            this.publishScale0ProperTimeMetrics(null, null, {
+                ...this._directScale0Meta('properTime', null, fallbackSource, owner),
+                stale: true, unavailableReason: 'proper-time-sampler-unavailable',
+            });
+            return null;
+        }
+        // Direct embind getters may expose scratch-backed views. Copy each
+        // scalar field before invoking the next getter. Worker cache data is
+        // already stable but copying it is bounded and keeps one contract.
+        const snapshot = (sample) => {
+            if (!sample || typeof sample !== 'object') return sample;
+            // Worker rows are immutable message copies: avoid a fresh O(L²)
+            // allocation just to compute their unchanged-cache stamp. Direct
+            // embind rows may be scratch-backed and must be copied eagerly.
+            if (owner?.isWorker === true) return sample;
+            const values = sample.values;
+            const copied = ArrayBuffer.isView(values) ? values.slice()
+                : (Array.isArray(values) ? values.slice() : values);
+            return copied === values ? sample : { ...sample, values: copied };
+        };
+        const samples = {
+            tau: snapshot(read({ kind: 'tau', stride: boundedStride })),
+            lapse: snapshot(read({ kind: 'lapse', stride: boundedStride })),
+            phase: snapshot(read({ kind: 'dbPhase', stride: boundedStride })),
+        };
+        // Avoid repeating three O(L^2) reductions on every UI pass when a
+        // worker cache row has not changed. Include provenance and count so
+        // equal-length source refills still produce a new observation.
+        const toggleState = [
+            owner?.getToggle?.('latency_field'), owner?.getToggle?.('de_broglie_clock'),
+        ].map(value => value === true ? 'on' : (value === false ? 'off' : 'unknown')).join(':');
+        const inputStamp = ['tau', 'lapse', 'phase'].map(kind => {
+            const sample = samples[kind] || {};
+            return [kind, sample.source ?? sample.provenance?.source ?? 'unknown',
+                sample.sourceEpoch ?? sample.provenance?.sourceEpoch ?? 'none',
+                sample.epoch ?? sample.provenance?.epoch ?? 'none',
+                sample.stateVersion ?? sample.provenance?.stateVersion ?? 'none',
+                sample.snapshotVersion ?? sample.provenance?.snapshotVersion ?? 'none',
+                sample.sampleTick ?? sample.provenance?.sampleTick ?? sample.provenance?.tick ?? 'none',
+                sample.count ?? 0, sample.effectiveStride ?? boundedStride].join(':');
+        }).join('|') + `|toggles:${toggleState}`;
+        if (owner === this._lastProperTimeOwner
+            && inputStamp === this._lastProperTimeInputStamp) return this.s0.properTime;
+        const ownerChanged = this._lastProperTimeOwner !== null && owner !== this._lastProperTimeOwner;
+        this._lastProperTimeOwner = owner;
+        this._lastProperTimeInputStamp = inputStamp;
+        const metrics = reduceProperTimeSamples(samples);
+        const directMeta = this._directScale0Meta('properTime', null, fallbackSource, owner);
+        const coherent = metrics.coherent === true && metrics.hasField === true
+            && Number.isSafeInteger(metrics.sampleTick);
+        const rows = [samples.tau, samples.lapse, samples.phase];
+        const completedRows = rows.every(sample => {
+            const provenance = sample?.provenance ?? {};
+            return Number.isSafeInteger(sample?.sampleTick ?? provenance.sampleTick ?? provenance.tick)
+                && typeof (sample?.source ?? provenance.source) === 'string'
+                && (sample?.source ?? provenance.source) !== 'unavailable';
+        });
+        const latencyEnabled = owner?.getToggle?.('latency_field');
+        const clockEnabled = owner?.getToggle?.('de_broglie_clock');
+        let unavailableReason = null;
+        let unavailableDetail = null;
+        if (!coherent) {
+            if (!metrics.coherent) unavailableReason = 'proper-time-provenance-mismatch';
+            else if (latencyEnabled === false && clockEnabled === false) {
+                unavailableReason = 'proper-time-disabled';
+                if (completedRows && !metrics.hasField) {
+                    unavailableDetail = 'no-manifested-voxel-support';
+                }
+            } else if (completedRows && !metrics.hasField) {
+                unavailableReason = 'no-manifested-voxel-support';
+            } else if (ownerChanged) {
+                unavailableReason = 'source-owner-changed';
+            } else {
+                unavailableReason = 'proper-time-sampler-pending';
+            }
+        }
+        this.publishScale0ProperTimeMetrics(metrics, metrics.sampleTick, {
+            source: metrics.source ?? directMeta.source,
+            sourceEpoch: metrics.sourceEpoch ?? directMeta.sourceEpoch,
+            epoch: metrics.epoch ?? directMeta.epoch,
+            stale: !coherent,
+            unavailableReason,
+            unavailableDetail,
+        });
+        return coherent ? metrics : null;
     }
 
     _publishScale0Audit(audit, meta) {
@@ -847,10 +985,14 @@ export class TelemetryHub {
             // row; never mutate the diagnostics object or relabel audit data.
             const diagMeta = this.getScale0TelemetryMeta('diagnostics');
             if (Number.isFinite(currentH) && this.energy.count > 0
-                && !diagMeta?.stale && Number.isFinite(meta.tick)
-                && meta.tick === diagMeta?.tick) {
+                && sameScale0TickAndEpoch(meta, diagMeta)) {
                 this.energy.setLast(currentH);
                 this.sp.energy.setLast(currentH);
+                this.s0.diag = {
+                    ...this.s0.diag,
+                    dynamicEnergy: currentH,
+                    energySampleSource: 'same-tick-audit',
+                };
             }
 
             // Per-field trend buffers (drive diagnostics table sparklines)
@@ -1743,12 +1885,18 @@ export class TelemetryHub {
                 this._initialEnergy = null;
                 this._s0LocalSampleSequence = 0;
                 this._lastAuditVersion = -1;
+                this._lastProperTimeVersion = -1;
+                this._directLagrangianSchedule = null;
+                this._directLagrangianCadence?.reset();
                 this._prevWantAudit = false;
                 this._prevWantLag = false;
+                this._prevWantProperTime = false;
                 this._lastTick0 = -1;
                 this._lastAuditTick = -1;
                 this._lastLagTick = -1;
-                this._lastTickPTime = -1;
+                this._lastProperTimeStamp = null;
+                this._lastProperTimeInputStamp = null;
+                this._lastProperTimeOwner = null;
                 break;
                         case 1:
                 this._s1_pe.clear();

@@ -27,6 +27,7 @@
 #include <cstdint>
 #include <vector>
 #include "ftd/dynamical_state_digest.h"
+#include "ftd/flux_sectors.h"
 #include "ftd/telemetry_snapshot.h"
 #include "ftd/visual_snapshot.h"
 
@@ -122,6 +123,7 @@ public:
     /// bytes or a hidden full GPU mirror.
     virtual bool capture_dynamical_state_digest(
         DynamicalStateDigest& /*out*/) { return false; }
+    virtual bool capture_flux_sectors(FluxSectors& /*out*/) { return false; }
 
     /// Stage one versioned telemetry observation. GPU implementations return
     /// immediately after enqueuing their reduction/D2H fence; CPU captures a
@@ -232,6 +234,7 @@ public:
     bool copy_visual_particle_attributes(
         const std::vector<int>& indices, std::vector<float>& out) override;
     bool copy_compact_diagnostics(Diagnostics& out) override;
+    bool capture_flux_sectors(FluxSectors& out) override;
     bool copy_compact_energy_audit(EnergyAudit& out) override;
     bool copy_compact_gravity_metric(GravityMetricAgg& out) override;
     bool copy_compact_lagrangian(LagrangianDiag& out) override;

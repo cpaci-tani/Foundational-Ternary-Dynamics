@@ -83,6 +83,30 @@ export function circularFluxDecay(samples) {
     return decayPoints;
 }
 
+/**
+ * Read the 128 ring points from one measured z-plane. The bridge's axis-2
+ * slice contract is data[x * L + y], so a panel that only probes one z value
+ * never needs to allocate/copy the complete L³ volume.
+ */
+export function circularFluxDecayFromZSlice(slice, latticeSize, cx, cy) {
+    const L = Math.max(1, Math.trunc(Number(latticeSize) || 0));
+    if (!ArrayBuffer.isView(slice) || slice.length < L * L) return null;
+    const wrap = (value) => ((Math.round(value) % L) + L) % L;
+    const samples = new Float64Array(RADII.length * ANGULAR_SAMPLES);
+    let next = 0;
+    for (const r of RADII) {
+        for (let i = 0; i < ANGULAR_SAMPLES; i++) {
+            const theta = (i * 2.0 * Math.PI) / ANGULAR_SAMPLES;
+            const x = wrap(cx + r * Math.cos(theta));
+            const y = wrap(cy + r * Math.sin(theta));
+            const value = Number(slice[x * L + y]);
+            if (!Number.isFinite(value)) return null;
+            samples[next++] = value;
+        }
+    }
+    return circularFluxDecay(samples);
+}
+
 const TEMPLATE = `
     <section data-section="anisotropy" style="${cardStyle(220)}">
         <div style="${titleStyle()}">Sampled circular field anisotropy</div>
@@ -128,12 +152,18 @@ export class AnisotropyComponent extends BaseComponent {
                 const samples = this._probeIndices ? bridge.sampleFluxAtCells(this._probeIndices) : null;
                 this._decayPoints = circularFluxDecay(samples);
                 this._sampleStride = 1;
+            } else if (typeof bridge.getFluxSlice === 'function') {
+                // All circular probes share one z coordinate. Direct browser
+                // WASM can therefore supply one O(L²) plane instead of the
+                // former O(L³) getFluxVolume copy on every refresh.
+                const slice = bridge.getFluxSlice(2, ((Math.round(cz) % L) + L) % L);
+                this._decayPoints = circularFluxDecayFromZSlice(slice, L, cx, cy);
+                this._sampleStride = 1;
             } else {
-                const sampler = makeFluxMagnitudeSampler(bridge.getFluxVolume?.(), L);
-                if (sampler) {
-                    this._decayPoints = this._computeDecayPoints(sampler, cx, cy, cz);
-                    this._sampleStride = sampler.stride;
-                } else this._decayPoints = null;
+                // A bridge without sparse-cell or plane sampling cannot support
+                // this interactive diagnostic without copying an L³ volume.
+                this._decayPoints = null;
+                this._sampleStride = 1;
             }
         }
 

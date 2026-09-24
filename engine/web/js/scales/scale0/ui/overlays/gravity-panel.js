@@ -21,13 +21,13 @@
 
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { cardStyle, titleStyle, heroStyle, tagBadge, formatExp, formatFixed } from './_card-helpers.js';
-import { transposeAndFlipNN, paintSliceToCanvas } from './slice-render.js';
+import { paintSliceToCanvas } from './slice-render.js';
+import { prepareGravitySlabSlice, prepareGravityVolumeSlice } from './gravity-slice-view.js';
+import { readGravityObservation } from './gravity-observation.js';
+import { renderDelta, histogramPath, histogramAriaLabel } from './gravity-chart-view.js?v=1';
 import {
     aggregateMetrics,
     forceMagnitudes,
-    gravityProxySamplesFromVolume,
-    gravitySlice,
-    gravitySliceFromSlab,
     maxRhoOf,
 } from '../../analysis/gravity-analysis.js?v=4';
 import {
@@ -42,14 +42,18 @@ import {
 } from '../../../../ui/panels/panel-visibility.js?v=2';
 import { rampViridis, rampEmEnergy, rampVorticity } from '../../../../viewport/color-ramps.js';
 import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
+import { projectHistoryIndices } from '../../../../ui/charts/history-index.js';
+import { ScenarioApplicabilityBinding } from '../../../../ui/utils/scenario-applicability-binding.js';
 
 const PANEL_ID = 'gravity-panel';
-// This is an instrument panel, not a render surface. Four fresh snapshots per
-// second preserve the live response while preventing three field samplers, a
-// compact volume, and a metric aggregate from being enqueued every animation
-// frame on the native WebSocket bridge.
-const HZ = 4;
+// Worker observations already own bounded slabs and scalar samples. Consume
+// every fresh completed state at display cadence; a second wall-clock throttle
+// visibly steps both the heatmaps and the four history traces.
+const DISPLAY_HZ = 60;
+const LEGACY_READ_INTERVAL_MS = 250;
+const DIRECT_MAX_DUTY = 0.25;
 const EMPTY_SCENARIO_ID = 'empty';
+const MAX_DIRECT_DENSE_SLICE_L = 48;
 
 // Load the panel stylesheet via a JS-injected (async, NON-render-blocking) link
 // instead of a <head> <link>, and only on first show. A render-blocking <link>
@@ -60,7 +64,7 @@ function ensureGravityCss() {
     const l = document.createElement('link');
     l.id = 'gravity-panel-css';
     l.rel = 'stylesheet';
-    l.href = 'css/ui/components/gravity-panel.css';
+    l.href = 'css/ui/components/gravity-panel.css?v=2';
     document.head.appendChild(l);
 }
 // Preserve dense sampling on small lattices, but keep the number of sampled
@@ -105,7 +109,7 @@ const AXES = [
 const SECTION_HELP = {
     slices: 'Per-axis 2D slices through the lattice mid-planes (yz / xz / xy). Lₚ, Kₚ, |Fₚ|, and 1−fₚ are explicitly named web proxies derived from displayed |J|; they are not the native Poisson-derived latency record or a full curvature tensor.',
     telemetry: 'Sampled scalar gravity telemetry. L and K are |J|²-derived web proxies. The engine-force row identifies the exact selected radius-2 branch and whether both the forces umbrella and gravity channel enable it; the sampler evaluates regular support sites, while phase_forces applies the branch only at manifested sites. A disabled branch is explicitly counterfactual. Values belong to the stated regular-grid stride, not necessarily the full lattice. The bottom block is the engine Poisson-derived [IMPOSED] latency map (voxel.latency), shown when the engine runs it.',
-    delta: 'How gravity RESPONDS as you mutate fields. Sparklines track L_max / K_max / |F|_mean / dilation% over accepted panel sample cycles; "Δ since last observation" compares the previous accepted observation with the current one. A 4 Hz panel may skip intervening 60 Hz physics ticks.',
+    delta: 'How gravity RESPONDS as you mutate fields. Sparklines track L_max / K_max / |F|_mean / dilation% over accepted panel sample cycles; "Δ since last observation" compares the previous accepted observation with the current one. Fresh worker observations are displayed together; each plotted point retains its measured simulation tick.',
 };
 
 // ── compute ──────────────────────────────────────────────────────────────────
@@ -151,28 +155,29 @@ function readDirectWasmGravityForce(caps, stride) {
     };
 }
 
-function readDirectWasmGravityMetrics(caps, stride, volume, forceSample) {
-    const latticeSize = Math.max(1, Math.trunc(Number(caps.latticeSize) || 1));
-    const expected = latticeSize * latticeSize * latticeSize;
-    if (!ArrayBuffer.isView(volume) || volume.length < expected) {
-        return { ready: false, snapshotVersions: [null, null, null], metrics: null, maxRho: 0 };
-    }
-    const proxy = gravityProxySamplesFromVolume(volume, latticeSize, stride);
+function readDirectWasmGravityMetrics(caps, stride) {
+    // Embind can reuse its result storage on the next call. Snapshot each
+    // bounded sampler immediately; never retain a native view across calls.
+    const readScalar = (kind) => {
+        const sample = caps.getScale0FieldSamples?.({ kind, stride }) || { values: [], count: 0 };
+        const count = Math.max(0, Math.min(sample.count | 0, sample.values?.length || 0));
+        return { values: Float64Array.from(sample.values?.subarray?.(0, count) ?? []), count };
+    };
+    const latency = readScalar('latency');
+    const kret = readScalar('kretschmann');
+    const forceSample = readDirectWasmGravityForce(caps, stride);
     return {
-        // The direct bridge is synchronous. L_p/K_p are completed from the one
-        // prepared volume; only the exact engine-force sampler has transport
-        // readiness to check (and direct WASM reports it synchronously too).
-        ready: forceSample.ready,
+        // Direct WASM reports every bounded sampler synchronously.
+        ready: typeof caps.getScale0FieldSamples === 'function' && forceSample.ready,
         snapshotVersions: [null, null, forceSample.snapshotVersion],
         metrics: aggregateMetrics({
-            latencyVals: proxy.latencyVals,
-            latencyCount: proxy.latencyCount,
-            kretVals: proxy.kretVals,
-            kretCount: proxy.kretCount,
+            latencyVals: latency.values,
+            latencyCount: latency.count,
+            kretVals: kret.values,
+            kretCount: kret.count,
             forceMags: forceSample.forceMags,
             forceCount: forceSample.forceCount,
         }),
-        maxRho: proxy.maxRho,
     };
 }
 
@@ -185,21 +190,6 @@ export function samplerVersionsAdvanced(previous, next) {
 }
 
 // ── small render helpers ──────────────────────────────────────────────────────
-
-function sparklinePath(values, w = 116, h = 26) {
-    const n = values.length;
-    if (n < 2) return '';
-    let min = Infinity, max = -Infinity;
-    for (const v of values) { if (v < min) min = v; if (v > max) max = v; }
-    const span = (max - min) || 1;
-    let d = '';
-    for (let i = 0; i < n; i++) {
-        const x = (i / (n - 1)) * w;
-        const y = h - ((values[i] - min) / span) * (h - 2) - 1;
-        d += `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)} `;
-    }
-    return d;
-}
 
 function setText(node, value) {
     const text = String(value);
@@ -264,22 +254,6 @@ function latencyRequestState(bridge, aggregate) {
     return null;
 }
 
-function histogramPath(hist, w = 70, h = 20) {
-    const counts = hist?.counts;
-    if (!counts?.length) return '';
-    const n = counts.length;
-    let max = 1;
-    for (let i = 0; i < n; i++) if (counts[i] > max) max = counts[i];
-    const bw = w / n;
-    let path = '';
-    for (let i = 0; i < n; i++) {
-        const x = i * bw;
-        const y = h - (counts[i] / max) * h;
-        path += `M${x.toFixed(1)},${h}V${y.toFixed(1)}H${(x + bw - 0.3).toFixed(1)}V${h}Z`;
-    }
-    return path;
-}
-
 // ── section renderers ─────────────────────────────────────────────────────────
 
 function renderTelemetry(
@@ -291,6 +265,7 @@ function renderTelemetry(
     snapshotVersions = [],
     forceLaw = forceLawPresentation(null),
     latencyRequested = null,
+    sampleTick = null,
 ) {
     if (!container._gravityTelemetryView) {
         container.innerHTML = `
@@ -304,9 +279,9 @@ function renderTelemetry(
             ${telemetryRowTemplate('gn', 'G_N lattice coupling', 'I', '[IMPOSED] Scale-0 lattice-toy coupling in engine units; it is not physical Newton G.')}
             ${telemetryRowTemplate('alpha-g', 'α_G physical reference', 'T', 'External gravitational fine-structure reference for scale context; it is not produced by this Scale-0 run.')}
             <div class="grav-hist-row">
-                <span>L <svg viewBox="0 0 70 20" class="grav-mini-hist"><path data-grav-hist="L" fill="var(--accent)" opacity="0.7"/></svg></span>
-                <span>K <svg viewBox="0 0 70 20" class="grav-mini-hist"><path data-grav-hist="K" fill="var(--accent)" opacity="0.7"/></svg></span>
-                <span>|F| <svg viewBox="0 0 70 20" class="grav-mini-hist"><path data-grav-hist="F" fill="var(--accent)" opacity="0.7"/></svg></span>
+                <span>L <svg viewBox="0 0 70 20" preserveAspectRatio="none" class="grav-mini-hist" role="img" aria-label="Sample distribution"><path data-grav-hist="L" fill="var(--accent)" opacity="0.7"/></svg><small data-grav-hist-range="L"></small></span>
+                <span>K <svg viewBox="0 0 70 20" preserveAspectRatio="none" class="grav-mini-hist" role="img" aria-label="Sample distribution"><path data-grav-hist="K" fill="var(--accent)" opacity="0.7"/></svg><small data-grav-hist-range="K"></small></span>
+                <span>|F| <svg viewBox="0 0 70 20" preserveAspectRatio="none" class="grav-mini-hist" role="img" aria-label="Sample distribution"><path data-grav-hist="F" fill="var(--accent)" opacity="0.7"/></svg><small data-grav-hist-range="F"></small></span>
             </div>
             <div data-grav-sampler-provenance style="font-size:16px;color:var(--text-muted);padding:4px 0;"></div>
             <div data-grav-cpp-heading style="margin:8px 0 4px;padding-top:6px;border-top:1px solid var(--border-subtle,rgba(255,255,255,.09));font-size:16px;font-weight:600;color:var(--text-secondary);" title="Engine path: ∇²φ_latency = 4πG_N(ρ−ρ̄), then L=√clamp(−φ_latency, 0, LATENCY_HORIZON_CLAMP). [IMPOSED] ρ contains M_GRAVITATIONAL|s| plus optional ½(|J|²+|wave_vel|²) and optional selected strong T00/c². This is an engine mapping, not a derivation of spacetime geometry, and is distinct from the normalized web-proxy rows above.">Engine latency map (Poisson-derived; [IMPOSED]) ⓘ</div>
@@ -353,11 +328,19 @@ function renderTelemetry(
     setAttr(view.histL, 'd', histogramPath(m.histL));
     setAttr(view.histK, 'd', histogramPath(m.histK));
     setAttr(view.histF, 'd', histogramPath(m.histF));
+    for (const key of ['L', 'K', 'F']) {
+        const histogram = m[`hist${key}`];
+        setAttr(view[`hist${key}`].parentNode, 'aria-label', histogramAriaLabel(key, histogram));
+        setText(container.querySelector(`[data-grav-hist-range="${key}"]`),
+            `${formatExp(histogram.min).trim()}–${formatExp(histogram.max).trim()}`);
+    }
 
     const finiteVersions = snapshotVersions
         .filter((version) => version !== null && Number.isFinite(Number(version)))
         .map(Number);
-    if (!finiteVersions.length) {
+    if (Number.isSafeInteger(sampleTick) && sampleTick >= 0) {
+        setText(view.samplerProvenance, `Sample tick ${sampleTick} · shared observation · grid stride h=${stride}.`);
+    } else if (!finiteVersions.length) {
         setText(view.samplerProvenance, `Sampler provenance: synchronous current snapshot; regular-grid stride h=${stride}.`);
     } else {
         const minVersion = Math.min(...finiteVersions);
@@ -391,52 +374,6 @@ function renderTelemetry(
     }
 }
 
-function renderDelta(container, history, latched, cur) {
-    if (!history.length) {
-        container.innerHTML = `<div class="grav-empty">No field data yet — load a gravity scenario.</div>`;
-        container._gravityDeltaView = null;
-        return;
-    }
-    const series = [
-        { key: 'Lmax', label: 'L max', color: 'var(--accent)', sel: (h) => h.Lmax, c: cur.L.max },
-        { key: 'Kmax', label: 'K max', color: 'var(--caution, #fb8c00)', sel: (h) => h.Kmax, c: cur.K.max },
-        { key: 'Fmean', label: '|F| mean', color: 'var(--positive-text)', sel: (h) => h.Fmean, c: cur.F.mean },
-        { key: 'dil', label: 'dilation %', color: 'var(--negative-text)', sel: (h) => h.dil, c: cur.dilationPct },
-    ];
-    if (!container._gravityDeltaView) {
-        container.innerHTML = series.map((s) => `<div class="grav-spark-row" data-grav-series="${s.key}">
-            <span class="grav-spark-label">${s.label}</span>
-            <svg viewBox="0 0 116 26" class="grav-spark"><path fill="none" stroke="${s.color}" stroke-width="1.2"/></svg>
-            <span class="grav-spark-now">—</span>
-            <span class="grav-spark-delta">Δ —</span>
-        </div>`).join('');
-        container._gravityDeltaView = Object.fromEntries([...container.querySelectorAll('[data-grav-series]')]
-            .map((node) => [node.dataset.gravSeries, {
-                path: node.querySelector('path'),
-                now: node.querySelector('.grav-spark-now'),
-                delta: node.querySelector('.grav-spark-delta'),
-            }]));
-    }
-    for (const s of series) {
-        const view = container._gravityDeltaView[s.key];
-        const vals = history.map(s.sel);
-        setAttr(view.path, 'd', sparklinePath(vals));
-        setText(view.now, formatExp(s.c));
-        const base = latched ? latched[s.key] : null;
-        if (base == null) {
-            setText(view.delta, 'Δ —');
-            if (view.delta.style.color !== 'var(--text-muted)') view.delta.style.color = 'var(--text-muted)';
-            continue;
-        }
-        const delta = s.c - base;
-        const color = Math.abs(delta) < 1e-12
-            ? 'var(--text-muted)'
-            : (delta > 0 ? 'var(--positive-text)' : 'var(--negative-text)');
-        setText(view.delta, `Δ ${delta > 0 ? '+' : ''}${formatExp(delta)}`);
-        if (view.delta.style.color !== color) view.delta.style.color = color;
-    }
-}
-
 // ── panel shell ───────────────────────────────────────────────────────────────
 
 function buildPanel() {
@@ -445,9 +382,9 @@ function buildPanel() {
     root.className = 'scale0-only gravity-panel';
     root.dataset.applicability = 'applicable';
     const qbtns = QUANTITIES.map((q, i) =>
-        `<button type="button" class="grav-qbtn${i === 0 ? ' active' : ''}" data-kind="${q.kind}" title="${q.help}">${q.label}</button>`).join('');
+        `<button type="button" class="grav-qbtn${i === 0 ? ' active' : ''}" aria-pressed="${i === 0}" data-kind="${q.kind}" title="${q.help}">${q.label}</button>`).join('');
     const tiles = AXES.map((a) =>
-        `<div class="grav-tile"><canvas id="${PANEL_ID}-tile-${a.axis}" width="${TILE_PX}" height="${TILE_PX}"></canvas><div class="grav-tile-meta"><span>${a.tag}</span><span id="${PANEL_ID}-rd-${a.axis}" class="grav-tile-readout">—</span></div></div>`).join('');
+        `<div class="grav-tile"><canvas id="${PANEL_ID}-tile-${a.axis}" width="${TILE_PX}" height="${TILE_PX}" role="img" aria-label="${a.tag} gravity slice awaiting observation"></canvas><div class="grav-tile-meta"><span>${a.tag}</span><span id="${PANEL_ID}-tick-${a.axis}" class="grav-tile-tick">tick —</span></div><span id="${PANEL_ID}-rd-${a.axis}" class="grav-tile-readout grav-tile-range">—</span></div>`).join('');
     root.innerHTML = `
         <div class="gravity-applicable-content">
             <header class="grav-header">
@@ -456,8 +393,10 @@ function buildPanel() {
             </header>
             <section style="${cardStyle(210)}">
                 <div style="${titleStyle()}" title="${SECTION_HELP.slices}">Gravity field slices ⓘ</div>
-                <div class="grav-qsel" id="${PANEL_ID}-qsel">${qbtns}</div>
+                <div class="grav-qsel" role="group" aria-label="Gravity field quantity" id="${PANEL_ID}-qsel">${qbtns}</div>
+                <div class="grav-observation-status" role="status">Waiting for a complete observation…</div>
                 <div class="grav-slice-tiles">${tiles}</div>
+                <div class="grav-slice-legend"><span class="grav-legend-label"></span><span class="grav-color-ramp" aria-hidden="true"></span><span class="grav-legend-range"></span></div>
             </section>
             <section style="${cardStyle(220)}">
                 <div style="${titleStyle()}" title="${SECTION_HELP.telemetry}">Gravity telemetry ⓘ</div>
@@ -497,8 +436,10 @@ export function mountGravityPanel(host, getBridge) {
 
     const el = (id) => panel.querySelector(`#${PANEL_ID}-${id}`);
     const telBody = el('telemetry'), deltaBody = el('delta'), modeEl = el('mode');
-    const tiles = AXES.map((a) => ({ axis: a.axis, tag: a.tag, canvas: el(`tile-${a.axis}`), readout: el(`rd-${a.axis}`) }));
+    const tiles = AXES.map((a) => ({ axis: a.axis, tag: a.tag, canvas: el(`tile-${a.axis}`), readout: el(`rd-${a.axis}`), tickLabel: el(`tick-${a.axis}`) }));
     const applicableContent = panel.querySelector('.gravity-applicable-content');
+    const observationStatus = panel.querySelector('.grav-observation-status');
+    const legend = panel.querySelector('.grav-slice-legend');
     const inapplicableMessage = panel.querySelector('.gravity-inapplicable');
     const pendingMessage = panel.querySelector('.gravity-pending');
     const pendingDetail = panel.querySelector('.gravity-pending-detail');
@@ -508,7 +449,7 @@ export function mountGravityPanel(host, getBridge) {
         defaultTicks: SPARK_MAX,
         onChange: () => {
             if (lastMetrics) {
-                renderDelta(deltaBody, historyControl.slice(history, entry => entry.ver), latched, lastMetrics);
+                renderDelta(deltaBody, visibleHistory(), latched, lastMetrics);
             }
         },
     });
@@ -516,32 +457,56 @@ export function mountGravityPanel(host, getBridge) {
     let activeKind = 'latency';
     let lastMetrics = null;
     let lastAgg = null;
+    let lastObservation = null;
+    let lastObservationStamp = null;
+    let lastSliceSnapshot = null;
+    let sampleTick = null;
     let bridgeId = null;
     let history = [];     // [{ ver, Lmax, Kmax, Fmean, dil }]
+    let historyGeneration = 0;
+    const historyBuffers = ['Lmax', 'Kmax', 'Fmean', 'dil'].map(key => ({
+        get count() { return history.length; },
+        get total() { return history.length; },
+        get generation() { return historyGeneration; },
+        get: index => history[index]?.[key],
+        getTick: index => history[index]?.tick,
+    }));
+    function visibleHistory() {
+        const count = historyControl.visibleCount(historyBuffers[0]);
+        const indices = projectHistoryIndices(historyBuffers, count, 116);
+        return indices ? indices.map(index => history[index]) : history.slice(history.length - count);
+    }
     let latched = null;   // metric vector at the previous accepted sample cycle
     let lastVer = -1;
     let lastComputedVer = -1;
     let lastSamplerVersions = null;
     let lastHadVolume = false;
-    let sliceCursor = 0;
-    let slabRetryAll = false;
     let inapplicable = false;
     let disposed = false;
     let armSub = null;
     let liveSub = null;
     let samplerWantSignature = '';
     let samplerBridge = null;
-    let scenarioSelect = null;
+    let scenarioBinding = null;
     let unsubscribeQualification = null;
     let qualifiedLoadGeneration = null;
 
-    panel.querySelector(`#${PANEL_ID}-qsel`).addEventListener('click', (e) => {
-        const btn = e.target.closest('.grav-qbtn');
-        if (!btn || inapplicable || panel.dataset.applicability !== 'applicable') return;
-        activeKind = btn.dataset.kind;
-        panel.querySelectorAll('.grav-qbtn').forEach((b) => b.classList.toggle('active', b === btn));
+    function setKind(kind) {
+        if (!QUANTITIES.some(quantity => quantity.kind === kind)
+            || inapplicable || panel.dataset.applicability !== 'applicable') return;
+        activeKind = kind;
+        for (const button of quantityButtons) {
+            button.classList.toggle('active', button.dataset.kind === kind);
+            button.setAttribute('aria-pressed', String(button.dataset.kind === kind));
+        }
+        // A presentation change renders the retained complete observation;
+        // it cannot pair later slice pixels with earlier telemetry/history.
         const caps = getCaps();
-        if (caps) paintSlices(caps, { all: true });
+        if (caps && lastSliceSnapshot) paintSlices(caps, { snapshot: lastSliceSnapshot });
+    }
+    panel.querySelector(`#${PANEL_ID}-qsel`).addEventListener('click', event => {
+        const button = event.target.closest('.grav-qbtn');
+        if (button) setKind(button.dataset.kind);
     });
 
     function getCaps() {
@@ -571,15 +536,23 @@ export function mountGravityPanel(host, getBridge) {
     function resetAnalysisState() {
         lastMetrics = null;
         lastAgg = null;
+        lastObservation = null;
+        lastObservationStamp = null;
+        lastSliceSnapshot = null;
+        sampleTick = null;
+        delete panel.dataset.sampleTick;
+        delete telBody.dataset.sampleTick;
+        delete deltaBody.dataset.sampleTick;
+        setText(observationStatus, 'Waiting for a complete observation…');
+        legend.hidden = true;
         bridgeId = null;
         history = [];
+        historyGeneration++;
         latched = null;
         lastVer = -1;
         lastComputedVer = -1;
         lastSamplerVersions = null;
         lastHadVolume = false;
-        sliceCursor = 0;
-        slabRetryAll = false;
         // Never reveal a previous scenario generation while the new transport
         // is still filling its lazy sampler caches. Neutralize every rendered
         // scientific surface at the same boundary that retires the JS values.
@@ -595,96 +568,119 @@ export function mountGravityPanel(host, getBridge) {
             const context = tile.canvas?.getContext?.('2d');
             context?.clearRect(0, 0, tile.canvas.width, tile.canvas.height);
             tile.readout.textContent = '—';
+            delete tile.canvas.dataset.sampleTick;
+            setText(tile.tickLabel, 'tick —');
         }
     }
 
-    function paintSlices(caps, { all = false, preparedVolume = null, preparedMaxRho = 0 } = {}) {
+    function paintSlices(caps, { preparedVolume = null, snapshot = null, tick = null } = {}) {
         const L = caps.latticeSize || 33;
-        const q = QUANTITIES.find((x) => x.kind === activeKind) || QUANTITIES[0];
-        if (typeof caps.getScale0FluxSlabsWithMaxRho === 'function') {
-            // Both rotating refresh and quantity-change batches acquire exactly
-            // one publication and scan its full-grid normalizer once. The
-            // publication still carries no exact physics sample tick.
-            const mid = gravitySliceMidIndex(L, L);
-            const repaintAll = all || slabRetryAll;
-            const targetTiles = repaintAll ? tiles : [tiles[sliceCursor % tiles.length]];
-            const batch = caps.getScale0FluxSlabsWithMaxRho(targetTiles.map(t => ({ axis: t.axis, index: mid })));
-            const valid = L > 1 && batch?.N === L && batch.slabs?.length === targetTiles.length;
-            for (let i = 0; i < targetTiles.length; i++) {
-                const t = targetTiles[i], slab = valid ? batch.slabs[i] : null;
-                const raw = slab?.axis === t.axis && slab?.index === mid
-                    && slab?.maxRho === batch.maxRho && slab?.metadata === batch.metadata
-                    ? gravitySliceFromSlab(slab, activeKind) : null;
-                if (!raw) {
-                    // A failed quantity-change read must be retried even when
-                    // the paused field/sampler versions have not advanced.
-                    lastHadVolume = false;
-                    slabRetryAll = true;
-                    for (const tile of tiles) {
-                        paintSliceToCanvas(tile.canvas, null, L, {});
-                        tile.readout.textContent = '—';
-                    }
-                    setText(modeEl, 'proxy · waiting');
-                    modeEl.title = 'Waiting for coherent magnitude slabs and their full-grid normalization.';
-                    return false;
-                }
-                const data = transposeAndFlipNN(raw, L);
-                let max = 0;
-                for (let j = 0; j < data.length; j++) if (data[j] > max) max = data[j];
-                const norm = max > 1e-30 ? 1 / max : 1;
-                paintSliceToCanvas(t.canvas, data, L, { ramp: q.ramp, signed: false, norm });
-                t.readout.textContent = `max ${formatExp(max)}`;
+        const quantity = QUANTITIES.find(item => item.kind === activeKind);
+        let source = snapshot;
+        if (!source && typeof caps.getScale0FluxSlabsWithMaxRho === 'function') {
+            const mid = L >> 1;
+            const batch = caps.getScale0FluxSlabsWithMaxRho(AXES.map(({ axis }) => ({ axis, index: mid })));
+            if (batch) source = { ...batch, sampleTick: batch.metadata?.sampleTick ?? null };
+        } else if (!source) {
+            const volume = preparedVolume || caps.getScale0FluxVolume?.();
+            const compact = volume && !ArrayBuffer.isView(volume) && ArrayBuffer.isView(volume.data);
+            const gridN = compact ? Math.trunc(Number(volume.axisCount) || 0) : L;
+            const spacing = compact ? Math.max(1, Number(volume.stride) || 1) : 1;
+            const origin = compact && Number.isFinite(Number(volume.origin)) ? Number(volume.origin) : 0;
+            const magnitude = compact ? volume.data : volume;
+            if (ArrayBuffer.isView(magnitude) && gridN > 1 && magnitude.length >= gridN ** 3
+                && (!compact || Number(volume.latticeSize) === L)) {
+                // Retain an owned view so quantity changes cannot read a reused
+                // native buffer or a later asynchronous visual publication.
+                source = { magnitude: new Float64Array(magnitude), gridN, spacing, origin,
+                    N: L, sampleTick: compact ? (volume.sampleTick ?? null) : tick };
             }
-            if (!repaintAll) sliceCursor++;
-            slabRetryAll = false;
-            setText(modeEl, `proxy · dense ${L}³ grid`);
-            modeEl.title = 'Slices retain full-grid normalization from the same observation; sample tick is unavailable.';
-            return true;
         }
-        // Mock/WASM expose dense N³ |J|. Native FTV2 exposes the same quantity
-        // as a bounded regular grid; compute the proxy derivatives directly on
-        // that grid with its physical spacing instead of expanding to N³.
-        const volume = preparedVolume || caps.getScale0FluxVolume?.();
-        const compact = volume && !ArrayBuffer.isView(volume) && ArrayBuffer.isView(volume.data);
-        const gridN = compact ? Math.trunc(Number(volume.axisCount) || 0) : L;
-        const spacing = compact ? Math.max(1, Number(volume.stride) || 1) : 1;
-        const origin = compact && Number.isFinite(Number(volume.origin))
-            ? Number(volume.origin)
-            : 0;
-        const mag = compact ? volume.data : volume;
-        const M = gridN * gridN * gridN;
-        const valid = ArrayBuffer.isView(mag) && gridN > 1 && mag.length >= M
-            && (!compact || Math.trunc(Number(volume.latticeSize)) === L);
-        if (!valid) {
-            for (const t of tiles) { paintSliceToCanvas(t.canvas, null, L, {}); t.readout.textContent = '—'; }
+        let prepared = null;
+        if (source?.N === L && source.slabs?.length === 3 && Number.isFinite(source.maxRho)) {
+            prepared = AXES.map(({ axis }) => {
+                const slab = source.slabs[axis];
+                if (slab?.axis !== axis || slab.N !== L || slab.index !== (L >> 1)) return null;
+                return prepareGravitySlabSlice({ ...slab, maxRho: source.maxRho }, activeKind, L);
+            });
+        } else if (source?.magnitude) {
+            const { magnitude, gridN, spacing, origin } = source;
+            const mid = gravitySliceMidIndex(L, gridN, spacing, origin);
+            const rho = maxRhoOf(magnitude, gridN ** 3);
+            prepared = AXES.map(({ axis }) => prepareGravityVolumeSlice(magnitude, gridN, axis, mid, activeKind, rho, spacing));
+        }
+        // Stage all three before publishing any pixels. A missing plane cannot
+        // leave two new tiles beside a retained tile from an older observation.
+        if (!prepared?.every(plane => plane?.data?.length && Number.isFinite(plane.max))) {
+            lastHadVolume = false;
+            setText(observationStatus, lastSliceSnapshot ? 'Waiting for a complete observation · previous tick retained' : 'Waiting for a complete observation…');
             return false;
         }
-        const mid = gravitySliceMidIndex(L, gridN, spacing, origin);
-        if (compact) {
-            setText(modeEl, `proxy · native ${gridN}³ support grid (h=${spacing})`);
-            modeEl.title = `Slices use the bounded native FTV2 support grid: ${gridN} samples/axis, spacing h=${spacing}, origin=${origin}. They are not a dense ${L}³ readback.`;
-        } else {
-            setText(modeEl, `proxy · dense ${gridN}³ grid`);
-            modeEl.title = `Slices use the dense ${gridN}³ browser volume.`;
+        const gridN = source.gridN || L;
+        const knownTick = Number.isSafeInteger(source.sampleTick) && source.sampleTick >= 0;
+        const upper = (activeKind === 'latency' || activeKind === 'dilation') ? 1
+            : Math.max(...prepared.map(plane => plane.max));
+        const norm = upper > 1e-30 ? 1 / upper : 1;
+        for (let i = 0; i < tiles.length; i++) {
+            const tile = tiles[i], plane = prepared[i];
+            if (knownTick) tile.canvas.dataset.sampleTick = String(source.sampleTick);
+            else delete tile.canvas.dataset.sampleTick;
+            tile.canvas.dataset.sourceEpoch = String(source.sourceEpoch ?? source.metadata?.sourceEpoch ?? '');
+            setText(tile.tickLabel, knownTick ? `tick ${source.sampleTick}` : 'tick unavailable');
+            tile.canvas.setAttribute('aria-label', `${quantity.name}, ${tile.tag} mid-plane, ${tile.tickLabel.textContent}, maximum ${formatExp(plane.max)}`);
+            paintSliceToCanvas(tile.canvas, plane.data, gridN, { ramp: quantity.ramp, signed: false, norm });
+            setText(tile.readout, `max ${formatExp(plane.max)}`);
         }
-        const rho = preparedMaxRho > 0 ? preparedMaxRho : maxRhoOf(mag, M);
-        // Periodic refresh rotates one plane per callback. This bounds the
-        // callback and allocation spike while every plane still advances at
-        // 4/3 Hz. Direct quantity changes repaint all three immediately.
-        const targetTiles = all ? tiles : [tiles[sliceCursor++ % tiles.length]];
-        for (const t of targetTiles) {
-            const raw = gravitySlice(mag, gridN, t.axis, mid, activeKind, rho, spacing);
-            const data = transposeAndFlipNN(raw, gridN);
-            let max = 0;
-            for (let i = 0; i < data.length; i++) if (data[i] > max) max = data[i];
-            const norm = max > 1e-30 ? 1 / max : 1;
-            paintSliceToCanvas(t.canvas, data, gridN, { ramp: q.ramp, signed: false, norm });
-            t.readout.textContent = `max ${formatExp(max)}`;
+        lastSliceSnapshot = source;
+        setText(modeEl, source.spacing > 1 ? `proxy · ${gridN}³ support grid` : `proxy · dense ${L}³ grid`);
+        modeEl.title = 'All three mid-planes share one retained field observation and one color scale.';
+        setText(observationStatus, knownTick ? `Sample tick ${source.sampleTick} · all three planes` : 'Same field snapshot · source tick unavailable');
+        const colors = [], rgb = [0, 0, 0];
+        for (let step = 0; step <= 8; step++) {
+            quantity.ramp(step / 8, rgb, 0);
+            colors.push(`rgb(${rgb.map(value => Math.round(value * 255)).join(',')}) ${step / 8 * 100}%`);
         }
-        // A valid zero-valued proxy volume in a supported nonempty control is
-        // still a completed transport snapshot; applicability is decided from
-        // the scenario contract before this scientific path is entered.
+        legend.style.setProperty('--gravity-ramp', `linear-gradient(to right, ${colors.join(',')})`);
+        setText(legend.querySelector('.grav-legend-label'), quantity.name);
+        setText(legend.querySelector('.grav-legend-range'), `0 — ${formatExp(upper)} · shared scale`);
+        legend.hidden = false;
         return true;
+    }
+
+    function acceptWorkerObservation(caps, stride) {
+        const raw = caps.getScale0GravityObservation(stride);
+        if (raw === lastObservation) return;
+        const accepted = readGravityObservation(raw, caps.latticeSize, stride);
+        if (!accepted) {
+            setText(observationStatus, lastObservation ? `Sample tick ${sampleTick} retained · waiting for complete observation` : 'Waiting for a complete observation…');
+            return;
+        }
+        if (accepted.stamp === lastObservationStamp) return;
+        if (lastObservation?.sourceEpoch === raw.sourceEpoch && accepted.tick < sampleTick) return;
+        if (lastObservation && lastObservation.sourceEpoch !== raw.sourceEpoch) {
+            history = []; latched = null; historyGeneration++;
+        }
+        if (!paintSlices(caps, { snapshot: raw })) return;
+        lastObservation = raw;
+        lastObservationStamp = accepted.stamp;
+        sampleTick = accepted.tick;
+        lastMetrics = accepted.metrics;
+        lastAgg = accepted.aggregate;
+        lastHadVolume = true;
+        panel.dataset.telemetryState = 'ready';
+        panel.dataset.sampleTick = String(sampleTick);
+        applicableContent.setAttribute('aria-busy', 'false');
+        const observedBridge = { getToggle: name => raw.engineToggles?.[name] };
+        renderTelemetry(telBody, lastMetrics, lastAgg, stride, true, [],
+            forceLawPresentation(observedBridge), latencyRequestState(observedBridge, lastAgg), sampleTick);
+        const entry = { tick: sampleTick, ver: sampleTick, Lmax: lastMetrics.L.max,
+            Kmax: lastMetrics.K.max, Fmean: lastMetrics.F.mean, dil: lastMetrics.dilationPct };
+        if (history.at(-1)?.tick === sampleTick) history[history.length - 1] = entry;
+        else { latched = history.at(-1) || null; history.push(entry); }
+        renderDelta(deltaBody, visibleHistory(), latched, lastMetrics);
+        telBody.dataset.sampleTick = String(sampleTick);
+        deltaBody.dataset.sampleTick = String(sampleTick);
+        setText(observationStatus, `Sample tick ${sampleTick} · slices, telemetry and traces`);
     }
 
     function update() {
@@ -710,12 +706,10 @@ export function mountGravityPanel(host, getBridge) {
         if (!caps) return;
         // reset trace if the bridge identity changed (scenario / scale switch)
         if (b !== bridgeId) {
+            // A replacement owner can reuse the same epoch/tick numbers. Retire
+            // the complete prior observation before comparing publication IDs.
+            resetAnalysisState();
             bridgeId = b;
-            history = [];
-            latched = null;
-            lastVer = -1;
-            lastComputedVer = -1;
-            lastHadVolume = false;
         }
 
         // Gate the heavy work (full-volume read + O(N³) maxRho + 3 slices +
@@ -732,6 +726,12 @@ export function mountGravityPanel(host, getBridge) {
             `latency@${stride}`, `kretschmann@${stride}`, `gravity@${stride}`, 'gravityMetricAgg@0',
         ]);
 
+        if (b.isWorker && typeof caps.getScale0GravityObservation === 'function') {
+            acceptWorkerObservation(caps, stride);
+            return;
+        }
+        const currentTick = b.currentTick?.();
+        const observationTick = Number.isSafeInteger(currentTick) && currentTick >= 0 && !b.isNativeGPU ? currentTick : null;
         const ver = (getScale0State()?.fieldDataVersion) | 0;
         // A native visual read is asynchronous. Do not recompute/paint a
         // stable field over and over, but keep polling while its first compact
@@ -753,6 +753,7 @@ export function mountGravityPanel(host, getBridge) {
                     lastSamplerVersions,
                     forceLawPresentation(b),
                     latencyRequestState(b, lastAgg),
+                    observationTick,
                 );
                 return;
             }
@@ -786,28 +787,37 @@ export function mountGravityPanel(host, getBridge) {
         let agg = null;
         let preparedVolume = null;
         if (directMainWasm) {
-            // Preserve embind's zero-copy lifetime contract: every exact WASM
-            // call happens before getFluxVolume. The volume is then consumed by
-            // proxy reduction and slice paint without another WASM call.
-            const forceSample = readDirectWasmGravityForce(caps, stride);
+            // Panel telemetry consumes bounded regular samples. Dense direct
+            // readback is presentation-only and remains limited to small L;
+            // large browser-WASM sessions must use the worker/slab contract.
+            sample ||= readDirectWasmGravityMetrics(caps, stride);
             agg = aggReady ? (caps.getScale0GravityMetricAgg?.() || null) : null;
-            preparedVolume = caps.getScale0FluxVolume?.();
-            sample ||= readDirectWasmGravityMetrics(caps, stride, preparedVolume, forceSample);
+            if ((Number(caps.latticeSize) || 0) <= MAX_DIRECT_DENSE_SLICE_L) {
+                preparedVolume = caps.getScale0FluxVolume?.();
+            }
         } else {
             sample ||= readGravityMetrics(caps, stride);
             agg = aggReady ? (caps.getScale0GravityMetricAgg?.() || null) : null;
         }
         lastAgg = agg;
         if (repaintSlices) {
-            lastHadVolume = !!paintSlices(caps, {
-                preparedVolume,
-                preparedMaxRho: sample.maxRho || 0,
-            });
+            if (directMainWasm && (Number(caps.latticeSize) || 0) > MAX_DIRECT_DENSE_SLICE_L) {
+                for (const tile of tiles) {
+                    const context = tile.canvas?.getContext?.('2d');
+                    context?.clearRect(0, 0, tile.canvas.width, tile.canvas.height);
+                    tile.readout.textContent = 'worker/slab required';
+                }
+                setText(modeEl, 'proxy slices · unavailable in large direct WASM');
+                modeEl.title = 'Dense L³ readback is disabled above L=48 on the browser main thread. Use the worker-backed WASM owner for coherent bounded slabs.';
+                lastHadVolume = false;
+            } else {
+                lastHadVolume = !!paintSlices(caps, { preparedVolume, tick: observationTick });
+            }
         }
         if (!sample.ready) {
             // Worker/native samplers are lazy and may arrive after the compact
             // volume without advancing fieldDataVersion. Do not latch the
-            // version, history, or a zero-valued placeholder; the 4 Hz callback
+            // version, history, or a zero-valued placeholder; the visible callback
             // keeps polling until all three requested scientific samples exist.
             return;
         }
@@ -835,14 +845,23 @@ export function mountGravityPanel(host, getBridge) {
             lastSamplerVersions,
             forceLawPresentation(b),
             latencyRequestState(b, agg),
+            observationTick,
         );
 
         if (ver !== lastVer) {
             latched = history.length ? history[history.length - 1] : null;   // previous accepted sample = baseline
             lastVer = ver;
-            history.push({ ver, Lmax: m.L.max, Kmax: m.K.max, Fmean: m.F.mean, dil: m.dilationPct });
+            const entry = { ver, tick: observationTick, Lmax: m.L.max, Kmax: m.K.max, Fmean: m.F.mean, dil: m.dilationPct };
+            if (observationTick != null && history.at(-1)?.tick === observationTick) history[history.length - 1] = entry;
+            else history.push(entry);
         }
-        renderDelta(deltaBody, historyControl.slice(history, entry => entry.ver), latched, m);
+        sampleTick = observationTick;
+        if (sampleTick != null) {
+            panel.dataset.sampleTick = String(sampleTick);
+            telBody.dataset.sampleTick = String(sampleTick);
+            deltaBody.dataset.sampleTick = String(sampleTick);
+        }
+        renderDelta(deltaBody, visibleHistory(), latched, m);
         lastComputedVer = ver;
     }
 
@@ -856,7 +875,8 @@ export function mountGravityPanel(host, getBridge) {
     function subscribeLive() {
         if (liveSub || disposed || inapplicable
             || panel.dataset.applicability !== 'applicable') return;
-        liveSub = rafCoordinator.subscribe(PANEL_ID, { hz: HZ, cb: () => {
+        let nextLegacyReadAt = Number.NEGATIVE_INFINITY;
+        liveSub = rafCoordinator.subscribe(PANEL_ID, { hz: DISPLAY_HZ, cb: () => {
             // Explicit dock/floating notifications normally take this path
             // synchronously. This guard is the fail-safe for any visibility
             // mutation outside those controllers.
@@ -865,7 +885,20 @@ export function mountGravityPanel(host, getBridge) {
                 startRuntime();
                 return;
             }
+            const bridge = getBridge?.();
+            if (bridge?.isWorker === true) {
+                update();
+                return;
+            }
+            // Direct WASM targets display cadence with a measured work budget.
+            // The asynchronous legacy native transport retains its read limit.
+            const now = performance.now();
+            if (now < nextLegacyReadAt) return;
             update();
+            const elapsed = Math.max(0, performance.now() - now);
+            nextLegacyReadAt = now + (bridge?.isWasm
+                ? Math.max(1000 / DISPLAY_HZ, elapsed / DIRECT_MAX_DUTY)
+                : LEGACY_READ_INTERVAL_MS);
         } });
     }
 
@@ -1026,22 +1059,14 @@ export function mountGravityPanel(host, getBridge) {
         startRuntime();
     }
 
-    function onScenarioChange(event) {
-        handleScenarioIntent(String(event.currentTarget?.value || ''));
-    }
-
     function rebindScenarioApplicability() {
-        const nextSelect = document.getElementById('scenario-select');
-        if (nextSelect !== scenarioSelect) {
-            scenarioSelect?.removeEventListener('change', onScenarioChange);
-            scenarioSelect = nextSelect;
-            scenarioSelect?.addEventListener('change', onScenarioChange);
-        }
-        handleScenarioIntent(String(
-            scenarioSelect?.value || getScale0State().currentScenarioId || '',
-        ));
+        scenarioBinding?.bind();
     }
 
+    scenarioBinding = new ScenarioApplicabilityBinding({
+        getCurrentScenarioId: () => getScale0State().currentScenarioId,
+        onIntent: handleScenarioIntent,
+    });
     rebindScenarioApplicability();
     unsubscribeQualification = subscribeScale0Qualification(handleQualification);
 
@@ -1051,13 +1076,10 @@ export function mountGravityPanel(host, getBridge) {
         get lastMetrics() { return lastMetrics; },
         get lastAgg() { return lastAgg; },
         get activeKind() { return activeKind; },
-        refreshHz: HZ,
-        setKind: (k) => {
-            if (inapplicable || panel.dataset.applicability !== 'applicable') return;
-            activeKind = k;
-            const caps = getCaps();
-            if (caps) paintSlices(caps, { all: true });
-        },
+        get refreshHz() { return getBridge?.()?.isWasm ? DISPLAY_HZ : 1000 / LEGACY_READ_INTERVAL_MS; },
+        setKind,
+        get sampleTick() { return sampleTick; },
+        get observationStamp() { return lastObservationStamp; },
         get historyLength() { return history.length; },
         get telemetryState() { return panel.dataset.telemetryState; },
         get applicability() { return panel.dataset.applicability; },
@@ -1076,8 +1098,8 @@ export function mountGravityPanel(host, getBridge) {
             stopRuntime();
             unsubscribeQualification?.();
             unsubscribeQualification = null;
-            scenarioSelect?.removeEventListener('change', onScenarioChange);
-            scenarioSelect = null;
+            scenarioBinding?.dispose();
+            scenarioBinding = null;
             window.removeEventListener(PANEL_VISIBILITY_CHANGE_EVENT, onPanelVisibilityChange);
             historyControl.destroy();
             if (typeof window !== 'undefined' && window.__ftdGravityPanel === api) window.__ftdGravityPanel = null;

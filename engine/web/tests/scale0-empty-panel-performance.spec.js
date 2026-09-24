@@ -14,6 +14,7 @@ import {
     gotoAndReady,
     realErrors,
     selectScale0Scenario,
+    switchMode,
 } from './_helpers.js';
 
 // The campaign measures compositor cadence. Playwright trace screencasts add
@@ -1062,7 +1063,7 @@ test('Gravity restores nonempty analysis and rejects rapid stale-generation reac
         });
         expect(before).toEqual({ connected: true, registryCurrent: true });
 
-        await page.selectOption('#engine-mode', 'particles');
+        await switchMode(page, 'particles');
         await expect.poll(() => page.evaluate(() => document.getElementById('app')?.classList.contains('mode-particles')))
             .toBe(true);
         expect(await page.evaluate(() => ({
@@ -1076,7 +1077,7 @@ test('Gravity restores nonempty analysis and rejects rapid stale-generation reac
             oldSamplerWantsActive: false, globalCleared: true, registryCleared: true,
         });
 
-        await page.selectOption('#engine-mode', 'lattice');
+        await switchMode(page, 'lattice');
         await expect.poll(readPanel, { timeout: 90_000 }).toMatchObject({
             status: 'applicable', authoritativeGenerationReady: true,
             qualificationStatus: 'within-contract', loadStatus: null,

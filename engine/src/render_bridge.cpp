@@ -495,16 +495,39 @@ GravityMetricAgg RenderBridge::gravity_metric_agg() const {
     }
     const auto& vox = voxels();
     const int N = static_cast<int>(vox.size());
+    constexpr int CHUNK_SIZE = 2048;
+    struct Chunk {
+        double latency_max = 0.0;
+        double gamma_max = 1.0;
+        double latency_sum = 0.0;
+        int count = 0;
+    };
+    const int chunk_count = (N + CHUNK_SIZE - 1) / CHUNK_SIZE;
+    std::vector<Chunk> chunks(static_cast<std::size_t>(chunk_count));
+    parallel_for(0, chunk_count, [&](int chunk_lo, int chunk_hi) {
+        for (int chunk_index = chunk_lo; chunk_index < chunk_hi; ++chunk_index) {
+            Chunk local;
+            const int begin = chunk_index * CHUNK_SIZE;
+            const int end = std::min(N, begin + CHUNK_SIZE);
+            for (int i = begin; i < end; ++i) {
+                const double L = vox[static_cast<std::size_t>(i)].latency;
+                if (L <= 0.0) continue;
+                local.latency_max = std::max(local.latency_max, L);
+                local.gamma_max = std::max(local.gamma_max,
+                    vox[static_cast<std::size_t>(i)].gamma_ftd());
+                local.latency_sum += L;
+                ++local.count;
+            }
+            chunks[static_cast<std::size_t>(chunk_index)] = local;
+        }
+    });
     double lat_sum = 0.0;
     int count = 0;
-    for (int i = 0; i < N; ++i) {
-        const double L = vox[i].latency;
-        if (L <= 0.0) continue;
-        if (L > a.latency_max) a.latency_max = L;
-        const double g = vox[i].gamma_ftd();
-        if (g > a.gamma_max) a.gamma_max = g;
-        lat_sum += L;
-        ++count;
+    for (const Chunk& chunk : chunks) {
+        a.latency_max = std::max(a.latency_max, chunk.latency_max);
+        a.gamma_max = std::max(a.gamma_max, chunk.gamma_max);
+        lat_sum += chunk.latency_sum;
+        count += chunk.count;
     }
     a.voxel_count = count;
     if (count > 0) {
@@ -1268,6 +1291,24 @@ bool RenderBridge::capture_dynamical_state_digest(
     DynamicalStateDigest& out) {
   assert_sim_thread();
   return backend_ && backend_->capture_dynamical_state_digest(out);
+}
+
+FluxSectors RenderBridge::capture_flux_sectors() {
+  assert_sim_thread();
+  FluxSectors out;
+  if (backend_ && backend_->capture_flux_sectors(out)) return out;
+  // CPU resident canonical state only; GPU implementations must not fall back
+  // to a full host mirror for this compact observation.
+  if (backend_ && backend_->kind() == Backend::Kind::Gpu)
+    throw std::runtime_error("GPU flux-sector reduction unavailable");
+  out.lattice_size = lattice_.size();
+  out.tick = tick_;
+  for (std::size_t i = 0; i < voxels_.size(); ++i) {
+    const auto& j = voxels_[i].flux;
+    accumulate_flux_sector(out, static_cast<int>(i), j.x, j.y, j.z);
+  }
+  validate_flux_sector_sums(out);
+  return out;
 }
 
 EnergyAudit RenderBridge::energy_audit() const {

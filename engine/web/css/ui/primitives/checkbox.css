@@ -1,7 +1,7 @@
 /* Checkbox primitive styles */
 
 /* ── Global checkbox accent ──────────────────────────── */
-/* Note: also referenced from layout.css (global reset) */
+/* Global reset ownership lives in tokens.css. */
 input[type="checkbox"] {
     accent-color: var(--accent);
 }

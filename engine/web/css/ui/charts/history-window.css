@@ -7,7 +7,7 @@
     border-radius: var(--radius, 8px);
     background: color-mix(in oklch, var(--bg-surface, #222a38) 92%, transparent);
     color: var(--text-secondary, #c7cfda);
-    font-size: var(--fs-xs, 12px);
+    font-size: var(--fs-xs, 16px);
 }
 
 .tick-history-control__label,
@@ -43,7 +43,7 @@
 }
 
 .tick-history-control__modes button {
-    min-height: 28px;
+    min-height: var(--ctrl-height-min);
     padding: 3px 9px;
     border: 0;
     border-radius: 5px;
@@ -68,7 +68,7 @@
 
 .tick-history-control__ticks input {
     width: 84px;
-    min-height: 30px;
+    min-height: var(--ctrl-height-min);
     box-sizing: border-box;
     padding: 4px 7px;
     border: 1px solid var(--border, rgba(255, 255, 255, 0.12));

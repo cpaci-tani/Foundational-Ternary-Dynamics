@@ -144,6 +144,9 @@ test.describe('Scale 0 panel shell audit gate', () => {
             const grids = layoutClasses.map((className) => {
                 const grid = document.createElement('div');
                 grid.className = className;
+                // Structural layout is an explicit component contract; axis
+                // triplets retain their intrinsic three-column geometry.
+                if (className !== 'flux-slice-row-tiles') grid.dataset.panelGrid = '';
                 grid.style.display = 'grid';
                 grid.replaceChildren(
                     document.createElement('div'),
@@ -244,6 +247,7 @@ test.describe('Scale 0 panel shell audit gate', () => {
             const grids = layoutClasses.map((className) => {
                 const grid = document.createElement('div');
                 grid.className = className;
+                if (className !== 'flux-slice-row-tiles') grid.dataset.panelGrid = '';
                 grid.style.display = 'grid';
                 grid.replaceChildren(
                     document.createElement('div'),

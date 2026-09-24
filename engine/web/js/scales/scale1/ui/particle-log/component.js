@@ -2,6 +2,7 @@ import {
     PARTICLE_LOG_CATEGORIES,
     scale1ParticleLedger,
 } from '../../telemetry/particle-ledger.js?v=2';
+import { LifetimeScope } from '../../../../ui/utils/lifetime-scope.js';
 
 const MAX_RENDERED_EVENTS = 240;
 const MAX_RENDERED_HIERARCHY_NODES = 360;
@@ -94,11 +95,13 @@ export class ParticleLogPanelComponent {
         this.lastHierarchyRevision = -1;
         this.lastEventRevision = -1;
         this.initialized = false;
+        this.lifetime = null;
     }
 
     init() {
         if (!this.el || this.initialized) return this;
         this.initialized = true;
+        this.lifetime = new LifetimeScope();
         const toggleRoot = this.el.querySelector('#particle-log-category-toggles');
         if (toggleRoot) {
             toggleRoot.innerHTML = PARTICLE_LOG_CATEGORIES.map(category => `
@@ -109,7 +112,7 @@ export class ParticleLogPanelComponent {
                     <span>${category.label}</span>
                 </label>
             `).join('');
-            toggleRoot.addEventListener('change', event => {
+            this.lifetime.on(toggleRoot, 'change', event => {
                 const input = event.target.closest?.('[data-log-category]');
                 if (!input) return;
                 if (input.checked) this.visibleCategories.add(input.dataset.logCategory);
@@ -119,10 +122,13 @@ export class ParticleLogPanelComponent {
             });
         }
 
-        this.el.querySelector('#particle-log-clear')?.addEventListener('click', () => {
+        this.lifetime.on(this.el.querySelector('#particle-log-clear'), 'click', () => {
             this.ledger.clearEvents();
             this.lastEventRevision = -1;
             this.update(true);
+        });
+        this.lifetime.on(this.el.querySelector('#particle-log-follow'), 'change', event => {
+            if (event.currentTarget.checked) this._scrollToLatest();
         });
 
         this.update(true);
@@ -169,12 +175,15 @@ export class ParticleLogPanelComponent {
             `;
         }).join('');
         if (this.el.querySelector('#particle-log-follow')?.checked) {
-            requestAnimationFrame(() => {
-                const scrollOwner = list.closest('.floating-window-body') ||
-                    this.el.querySelector('.particle-log-shell');
-                if (scrollOwner) scrollOwner.scrollTop = scrollOwner.scrollHeight;
-            });
+            this.lifetime?.frame(() => this._scrollToLatest());
         }
+    }
+
+    _scrollToLatest() {
+        const list = this.el?.querySelector('#particle-log-event-list');
+        const scrollOwner = list?.closest('.floating-window-body') ||
+            this.el?.querySelector('.particle-log-shell');
+        if (scrollOwner) scrollOwner.scrollTop = scrollOwner.scrollHeight;
     }
 
     update(force = false) {
@@ -191,6 +200,8 @@ export class ParticleLogPanelComponent {
     }
 
     destroy() {
+        this.lifetime?.dispose();
+        this.lifetime = null;
         this.initialized = false;
         this.el = null;
     }
@@ -206,13 +217,15 @@ export class InteractionHierarchyPanelComponent {
         this.expandAll = true;
         this.initialized = false;
         this._onInspectionChange = () => this.update(true);
+        this.lifetime = null;
     }
 
     init() {
         if (!this.el || this.initialized) return this;
         this.initialized = true;
-        document.addEventListener('ftd:scale1-inspection-change', this._onInspectionChange);
-        this.el.querySelector('#interaction-hierarchy-expand')?.addEventListener('click', event => {
+        this.lifetime = new LifetimeScope();
+        this.lifetime.on(document, 'ftd:scale1-inspection-change', this._onInspectionChange);
+        this.lifetime.on(this.el.querySelector('#interaction-hierarchy-expand'), 'click', event => {
             this.expandAll = !this.expandAll;
             this.collapsedClusters.clear();
             this.el.querySelectorAll('.particle-log-cluster').forEach(details => {
@@ -221,7 +234,7 @@ export class InteractionHierarchyPanelComponent {
             });
             event.currentTarget.textContent = this.expandAll ? 'Collapse' : 'Expand';
         });
-        this.el.querySelector('#interaction-hierarchy-root')?.addEventListener('toggle', event => {
+        this.lifetime.on(this.el.querySelector('#interaction-hierarchy-root'), 'toggle', event => {
             const details = event.target.closest?.('.particle-log-cluster');
             if (!details) return;
             if (details.open) this.collapsedClusters.delete(details.dataset.clusterKey);
@@ -230,7 +243,7 @@ export class InteractionHierarchyPanelComponent {
                 queueMicrotask(() => this.update(true));
             }
         }, true);
-        this.el.querySelector('#interaction-hierarchy-root')?.addEventListener('click', event => {
+        this.lifetime.on(this.el.querySelector('#interaction-hierarchy-root'), 'click', event => {
             const particleButton = event.target.closest?.('[data-inspect-particle]');
             if (particleButton) {
                 event.preventDefault();
@@ -252,7 +265,7 @@ export class InteractionHierarchyPanelComponent {
                 );
             }
         });
-        this.el.querySelector('#interaction-hierarchy-clear-focus')?.addEventListener('click', () => {
+        this.lifetime.on(this.el.querySelector('#interaction-hierarchy-clear-focus'), 'click', () => {
             this.inspector?.clearPEInspection?.();
         });
         this.update(true);
@@ -325,7 +338,8 @@ export class InteractionHierarchyPanelComponent {
     }
 
     destroy() {
-        document.removeEventListener('ftd:scale1-inspection-change', this._onInspectionChange);
+        this.lifetime?.dispose();
+        this.lifetime = null;
         this.initialized = false;
         this.el = null;
     }

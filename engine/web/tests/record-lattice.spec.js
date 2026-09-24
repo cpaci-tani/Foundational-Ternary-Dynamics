@@ -1,5 +1,5 @@
 import {test, expect} from '@playwright/test';
-import {gotoAndReady} from './_helpers.js';
+import {gotoAndReady, switchMode} from './_helpers.js';
 const read = page => page.evaluate(async () => {
     const {getActiveScale0Bridge} = await import('/js/scales/scale0/state/store.js');
     const owner = getActiveScale0Bridge(window.__ftdCtx);
@@ -83,7 +83,7 @@ test('family cases, size/reset, queued ticks and return to existing scenarios sh
     await page.click('#btn-step'); await expect.poll(async () => (await read(page)).rawTick).toBeGreaterThan(previousTick);
     await expect(page.locator('#record-observation-card')).not.toBeVisible();
     await page.selectOption('#scenario-select', 'record-sparse'); await ready(page, 'record-sparse');
-    await page.selectOption('#engine-mode', 'particles');
+    await switchMode(page, 'particles');
     await expect.poll(async () => (await read(page)).finite).toBe(false);
     expect(errors).toEqual([]);
 });

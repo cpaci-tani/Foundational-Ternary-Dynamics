@@ -33,6 +33,7 @@ export function createScene(canvas) {
   scene.add(fill);
 
   let composer = null, bloom = null;
+  let disposed = false;
   function buildComposer(w, h) {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
@@ -43,7 +44,9 @@ export function createScene(canvas) {
     return { w: Math.max(1, canvas.clientWidth), h: Math.max(1, canvas.clientHeight) };
   }
   function onResize() {
+    if (disposed) return;
     const { w, h } = size();
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
     if (!composer) buildComposer(w, h); else composer.setSize(w, h);
@@ -51,7 +54,16 @@ export function createScene(canvas) {
   }
   onResize();
 
-  function render() { controls.update(); composer.render(); }
+  const resizeObserver = typeof ResizeObserver !== 'undefined'
+    ? new ResizeObserver(() => onResize())
+    : null;
+  resizeObserver?.observe(canvas);
+
+  function render() {
+    if (disposed) return;
+    controls.update();
+    composer.render();
+  }
 
   const _v = new THREE.Vector3();
   function worldToScreen(vec3) {
@@ -60,5 +72,37 @@ export function createScene(canvas) {
     return { x: (_v.x * 0.5 + 0.5) * w, y: (-_v.y * 0.5 + 0.5) * h, visible: _v.z < 1 };
   }
 
-  return { THREE, scene, camera, controls, renderer, render, onResize, worldToScreen };
+  function dispose() {
+    if (disposed) return;
+    disposed = true;
+    resizeObserver?.disconnect();
+    controls.dispose();
+
+    const geometries = new Set();
+    const materials = new Set();
+    const textures = new Set();
+    scene.traverse((object) => {
+      if (object.geometry?.dispose) geometries.add(object.geometry);
+      const list = Array.isArray(object.material) ? object.material : [object.material];
+      for (const material of list) {
+        if (!material) continue;
+        materials.add(material);
+        for (const value of Object.values(material)) {
+          if (value?.isTexture && value.dispose) textures.add(value);
+        }
+        for (const uniform of Object.values(material.uniforms || {})) {
+          if (uniform?.value?.isTexture && uniform.value.dispose) textures.add(uniform.value);
+        }
+      }
+    });
+    for (const texture of textures) texture.dispose();
+    for (const material of materials) material.dispose();
+    for (const geometry of geometries) geometry.dispose();
+    composer?.dispose?.();
+    bloom?.dispose?.();
+    renderer.renderLists?.dispose?.();
+    renderer.dispose();
+  }
+
+  return { THREE, scene, camera, controls, renderer, render, onResize, worldToScreen, dispose };
 }

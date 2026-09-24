@@ -46,6 +46,12 @@
     margin-bottom: var(--row-gap);
 }
 
+.pe-ctrl-row > select,
+.pe-ctrl-row > input {
+    min-width: 0;
+    max-width: 100%;
+}
+
 .pe-ctrl-label {
     font-size: var(--fs-xs);
     color: var(--text-muted);
@@ -168,7 +174,8 @@
     position: relative;
     display: inline-flex;
     align-items: stretch;
-    flex: 0 0 auto;
+    flex: 1 1 96px;
+    min-width: 0;
 }
 
 /* 72px input footprint, 20px reserved on the right for the stepper
@@ -311,13 +318,13 @@
     opacity: 0.55;
 }
 .ctrl-enable-all-btn {
-    color: rgba(185, 238, 205, 0.95);
-    border-color: rgba(95, 205, 135, 0.5);
+    color: var(--positive-text);
+    border-color: color-mix(in srgb, var(--positive) 58%, var(--border));
 }
 .ctrl-enable-all-btn:hover:not(:disabled) {
-    color: rgba(220, 255, 232, 1);
-    border-color: rgba(95, 205, 135, 0.8);
-    background: rgba(70, 175, 110, 0.12);
+    color: var(--on-positive);
+    border-color: var(--positive);
+    background: var(--positive);
 }
 
 /* Touch target — the reset pill reaches the tap floor on phones. */
@@ -341,6 +348,7 @@
 /* Action row at the bottom of a card */
 .ctrl-action-row {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--sp-sm);
     margin-top: var(--sp-sm);
 }
@@ -350,7 +358,8 @@
 
 /* Selection card axis navigation */
 .sel-axis-nav {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
     gap: 4px;
     margin-top: 4px;
 }
@@ -358,6 +367,17 @@
     display: flex;
     flex: 1;
     gap: 2px;
+}
+
+/* Coordinate rows previously kept all three steppers on one unbreakable line,
+   pushing Z and its buttons outside narrow cards. */
+.ctrl-row:has(> .coord-stepper) {
+    flex-wrap: wrap;
+}
+
+.coord-stepper input.ctrl-input-coord {
+    min-width: 0;
+    max-width: 100%;
 }
 .sel-axis-btn {
     flex: 1;

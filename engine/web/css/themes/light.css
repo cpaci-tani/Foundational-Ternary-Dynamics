@@ -1,99 +1,259 @@
 /* ============================================================
- *  light.css — Clean daylight mode
- *  Overrides the full canonical theme surface from tokens.css.
+ * light.css — canonical daylight palette
+ *
+ * Every daylight literal is declared once below. Both the named "light"
+ * theme and the automatic OS-light mode map the live semantic tokens to this
+ * same palette, so the two activation routes cannot drift independently.
  * ============================================================ */
 
+:root {
+    --theme-light-bg-deep: #f8fafc;
+    --theme-light-bg-surface: #ffffff;
+    --theme-light-bg-card: #f0f2f5;
+    --theme-light-bg-input: #e5e7eb;
+    --theme-light-bg-elevated: #ffffff;
+    --theme-light-bg-raised: #f8fafc;
+    --theme-light-glass-surface: rgba(255, 255, 255, 0.60);
+    --theme-light-glass-card: rgba(255, 255, 255, 0.75);
+    --theme-light-glass-input: rgba(226, 232, 240, 0.80);
+    --theme-light-glass-elevated: rgba(255, 255, 255, 0.90);
+    --theme-light-glass-raised: rgba(255, 255, 255, 0.98);
+    --theme-light-border: rgba(15, 23, 42, 0.08);
+    --theme-light-border-light: rgba(15, 23, 42, 0.15);
+    --theme-light-border-glow: rgba(59, 130, 246, 0.40);
+    --theme-light-text-primary: #0f172a;
+    --theme-light-text-secondary: #334155;
+    --theme-light-text-muted: #475569;
+    --theme-light-text-accent: #1e293b;
+    --theme-light-text-dim: #64748b;
+    --theme-light-accent: #3b82f6;
+    --theme-light-accent-dim: #2563eb;
+    --theme-light-accent-glow: rgba(59, 130, 246, 0.45);
+    --theme-light-accent-text: #1d4ed8;
+    --theme-light-on-accent: #ffffff;
+    --theme-light-positive: #10b981;
+    --theme-light-positive-text: #047857;
+    --theme-light-on-positive: #052e16;
+    --theme-light-negative: #ef4444;
+    --theme-light-negative-text: #b91c1c;
+    --theme-light-on-negative: #0f172a;
+    --theme-light-warning: #f59e0b;
+    --theme-light-warning-text: #92400e;
+    --theme-light-on-warning: #2e1a02;
+    --theme-light-caution: #f97316;
+    --theme-light-caution-text: #9a3412;
+    --theme-light-axis-x-text: #b91c1c;
+    --theme-light-axis-y-text: #065f46;
+    --theme-light-axis-z-text: #1d4ed8;
+    --theme-light-selection-text: #075985;
+    --theme-light-state-hover-bg: rgba(59, 130, 246, 0.08);
+    --theme-light-state-active-bg: rgba(59, 130, 246, 0.18);
+    --theme-light-state-focus-ring: 0 0 0 2px rgba(59, 130, 246, 0.45);
+    --theme-light-viewport-bg: radial-gradient(circle at top right, #e2e8f0 0%, #cbd5e1 100%);
+    --theme-light-card-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+    --theme-light-card-hover-bg: rgba(255, 255, 255, 0.85);
+    --theme-light-chrome-shadow: 0 8px 32px rgba(15, 23, 42, 0.10);
+    --theme-light-dock-shadow: 0 24px 64px rgba(15, 23, 42, 0.15);
+    --theme-light-tabs-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    --theme-light-modal-backdrop: rgba(15, 23, 42, 0.30);
+    --theme-light-tooltip-bg: rgba(255, 255, 255, 0.98);
+    --theme-light-tooltip-border: rgba(59, 130, 246, 0.25);
+    --theme-light-tooltip-text: #0f172a;
+    --theme-light-tooltip-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+    --theme-light-tooltip-kicker: #1d4ed8;
+    --theme-light-tooltip-muted: #475569;
+    --theme-light-chart-flux: #c2600a;
+    --theme-light-chart-energy: #1565c0;
+    --theme-light-chart-total: #374151;
+    --theme-light-chart-positive: #166534;
+    --theme-light-chart-negative: #991b1b;
+    --theme-light-chart-charge: #166534;
+    --theme-light-chart-eb: #5b21b6;
+    --theme-light-chart-gauss: #92400e;
+    --theme-light-chart-entropy: #1e40af;
+    --theme-light-chart-pe-gravity: #475569;
+    --theme-light-chart-pe-force-mean: #92400e;
+    --theme-light-chart-ae-pe-vdw: #0f766e;
+    --theme-light-chart-ae-pe-bond: #92400e;
+    --theme-light-legend-field-kinetic: #166534;
+    --theme-light-legend-field-gradient: #0f766e;
+    --theme-light-legend-bi: #991b1b;
+    --theme-light-legend-coupling: #c2600a;
+    --theme-light-legend-velocity: #854d0e;
+    --theme-light-legend-gauss: #1565c0;
+    --theme-light-legend-dissipation: #374151;
+}
+
 html[data-theme="light"] {
-    /* Background ladder - Pristine Daylight Glass */
-    --bg-deep:     #f8fafc;
-    --bg-surface:  rgba(255, 255, 255, 0.60);
-    --bg-card:     rgba(255, 255, 255, 0.75);
-    --bg-input:    rgba(226, 232, 240, 0.80);
-    --bg-elevated: rgba(255, 255, 255, 0.90);
-    --bg-raised:   rgba(255, 255, 255, 0.98);
-
-    /* Borders */
-    --border:       rgba(15, 23, 42, 0.08);
-    --border-light: rgba(15, 23, 42, 0.15);
-    --border-glow:  rgba(59, 130, 246, 0.40);
-
-    /* Text hierarchy — dark glyphs on light (AA contrast) */
-    --text-primary:   #0f172a;
-    --text-secondary: #334155;
-    --text-muted:     #475569;
-    --text-accent:    #1e293b;
-    --text-dim:       #94a3b8;   /* disabled / inert (≥3:1 per WCAG 1.4.11) */
-
-    /* Interaction accent (vibrant blue) */
-    --accent:      #3b82f6;
-    --accent-dim:  #2563eb;
-    --accent-glow: rgba(59, 130, 246, 0.45);
-    --accent-text:    #1d4ed8;
-    --on-accent:      #ffffff;
-    --positive-text:  #047857;
-    --negative-text:  #b91c1c;
-    --warning-text:   #92400e;
-    --caution-text:   #9a3412;
-    --on-positive:    #052e16;
-    --on-negative:    #0f172a;
-    --on-warning:     #2e1a02;
-    --axis-x-text:    #b91c1c;
-    --axis-y-text:    #065f46;
-    --axis-z-text:    #1d4ed8;
-    --selection-text: #075985;
-
-    /* Status */
-    --positive: #10b981;
-    --negative: #ef4444;
-    --warning:  #f59e0b;
-    --caution:  #f97316;
-
-    /* State tints — blue, darker against light bg */
-    --state-hover-bg:   rgba(59, 130, 246, 0.08);
-    --state-active-bg:  rgba(59, 130, 246, 0.18);
-    --state-focus-ring: 0 0 0 2px rgba(59, 130, 246, 0.45);
-
-    /* Viewport + card surfaces */
-    --viewport-bg:    radial-gradient(circle at top right, #e2e8f0 0%, #cbd5e1 100%);
-    --card-shadow:    0 4px 16px rgba(15, 23, 42, 0.06);
-    --card-hover-bg:  rgba(255, 255, 255, 0.85);
-    --chrome-shadow:  0 8px 32px rgba(15, 23, 42, 0.10);
-    --dock-shadow:    0 24px 64px rgba(15, 23, 42, 0.15);
-    --tabs-shadow:    0 8px 24px rgba(15, 23, 42, 0.08);
-    --modal-backdrop: rgba(15, 23, 42, 0.30);
-    --tooltip-bg:     rgba(255, 255, 255, 0.98);
-    --tooltip-border: rgba(59, 130, 246, 0.25);
-    --tooltip-text:   #0f172a;
-    --tooltip-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
-    --tooltip-kicker: #3b82f6;
-    --tooltip-muted:  #64748b;
+    color-scheme: light;
+    --bg-deep: var(--theme-light-bg-deep);
+    --bg-surface: var(--theme-light-bg-surface);
+    --bg-card: var(--theme-light-bg-card);
+    --bg-input: var(--theme-light-bg-input);
+    --bg-elevated: var(--theme-light-bg-elevated);
+    --bg-raised: var(--theme-light-bg-raised);
+    --border: var(--theme-light-border);
+    --border-light: var(--theme-light-border-light);
+    --border-glow: var(--theme-light-border-glow);
+    --text-primary: var(--theme-light-text-primary);
+    --text-secondary: var(--theme-light-text-secondary);
+    --text-muted: var(--theme-light-text-muted);
+    --text-accent: var(--theme-light-text-accent);
+    --text-dim: var(--theme-light-text-dim);
+    --accent: var(--theme-light-accent);
+    --accent-dim: var(--theme-light-accent-dim);
+    --accent-glow: var(--theme-light-accent-glow);
+    --accent-text: var(--theme-light-accent-text);
+    --on-accent: var(--theme-light-on-accent);
+    --positive: var(--theme-light-positive);
+    --positive-text: var(--theme-light-positive-text);
+    --on-positive: var(--theme-light-on-positive);
+    --negative: var(--theme-light-negative);
+    --negative-text: var(--theme-light-negative-text);
+    --on-negative: var(--theme-light-on-negative);
+    --warning: var(--theme-light-warning);
+    --warning-text: var(--theme-light-warning-text);
+    --on-warning: var(--theme-light-on-warning);
+    --caution: var(--theme-light-caution);
+    --caution-text: var(--theme-light-caution-text);
+    --axis-x-text: var(--theme-light-axis-x-text);
+    --axis-y-text: var(--theme-light-axis-y-text);
+    --axis-z-text: var(--theme-light-axis-z-text);
+    --selection-text: var(--theme-light-selection-text);
+    --state-hover-bg: var(--theme-light-state-hover-bg);
+    --state-active-bg: var(--theme-light-state-active-bg);
+    --state-focus-ring: var(--theme-light-state-focus-ring);
+    --viewport-bg: var(--theme-light-viewport-bg);
+    --card-shadow: var(--theme-light-card-shadow);
+    --card-hover-bg: var(--theme-light-card-hover-bg);
+    --chrome-shadow: var(--theme-light-chrome-shadow);
+    --dock-shadow: var(--theme-light-dock-shadow);
+    --tabs-shadow: var(--theme-light-tabs-shadow);
+    --modal-backdrop: var(--theme-light-modal-backdrop);
+    --tooltip-bg: var(--theme-light-tooltip-bg);
+    --tooltip-border: var(--theme-light-tooltip-border);
+    --tooltip-text: var(--theme-light-tooltip-text);
+    --tooltip-shadow: var(--theme-light-tooltip-shadow);
+    --tooltip-kicker: var(--theme-light-tooltip-kicker);
+    --tooltip-muted: var(--theme-light-tooltip-muted);
+    --chart-flux: var(--theme-light-chart-flux);
+    --chart-energy: var(--theme-light-chart-energy);
+    --chart-total: var(--theme-light-chart-total);
+    --chart-positive: var(--theme-light-chart-positive);
+    --chart-negative: var(--theme-light-chart-negative);
+    --chart-charge: var(--theme-light-chart-charge);
+    --chart-eb: var(--theme-light-chart-eb);
+    --chart-gauss: var(--theme-light-chart-gauss);
+    --chart-entropy: var(--theme-light-chart-entropy);
+    --chart-pe-gravity: var(--theme-light-chart-pe-gravity);
+    --chart-pe-force-mean: var(--theme-light-chart-pe-force-mean);
+    --chart-ae-pe-vdw: var(--theme-light-chart-ae-pe-vdw);
+    --chart-ae-pe-bond: var(--theme-light-chart-ae-pe-bond);
+    --legend-field-kinetic: var(--theme-light-legend-field-kinetic);
+    --legend-field-gradient: var(--theme-light-legend-field-gradient);
+    --legend-bi: var(--theme-light-legend-bi);
+    --legend-coupling: var(--theme-light-legend-coupling);
+    --legend-velocity: var(--theme-light-legend-velocity);
+    --legend-gauss: var(--theme-light-legend-gauss);
+    --legend-dissipation: var(--theme-light-legend-dissipation);
 }
 
 html[data-theme="light"] .card {
-    border-color: rgba(15, 23, 42, 0.06);
+    border-color: color-mix(in srgb, var(--border) 75%, transparent);
 }
 
-html[data-theme="light"] {
-    /* Chart series — dark enough to read on white/light-gray backgrounds */
-    --chart-flux:     #c2600a;
-    --chart-energy:   #1565c0;
-    --chart-total:    #374151;
-    --chart-positive: #166534;
-    --chart-negative: #991b1b;
-    --chart-charge:   #166534;
-    --chart-eb:       #5b21b6;
-    --chart-gauss:    #92400e;
-    --chart-entropy:  #1e40af;
-    --chart-pe-gravity:    #475569;
-    --chart-pe-force-mean: #b45309;
-    --chart-ae-pe-vdw:     #0f766e;
-    --chart-ae-pe-bond:    #b45309;
+html[data-theme="light"][data-glass="on"] {
+    --bg-surface: var(--theme-light-glass-surface);
+    --bg-card: var(--theme-light-glass-card);
+    --bg-input: var(--theme-light-glass-input);
+    --bg-elevated: var(--theme-light-glass-elevated);
+    --bg-raised: var(--theme-light-glass-raised);
+}
 
-    --legend-field-kinetic:  #166534;
-    --legend-field-gradient: #0f766e;
-    --legend-bi:             #991b1b;
-    --legend-coupling:       #c2600a;
-    --legend-velocity:       #854d0e;
-    --legend-gauss:          #1565c0;
-    --legend-dissipation:    #374151;
+@media (prefers-color-scheme: light) {
+    html:not([data-theme]) {
+        color-scheme: light;
+        --bg-deep: var(--theme-light-bg-deep);
+        --bg-surface: var(--theme-light-bg-surface);
+        --bg-card: var(--theme-light-bg-card);
+        --bg-input: var(--theme-light-bg-input);
+        --bg-elevated: var(--theme-light-bg-elevated);
+        --bg-raised: var(--theme-light-bg-raised);
+        --border: var(--theme-light-border);
+        --border-light: var(--theme-light-border-light);
+        --border-glow: var(--theme-light-border-glow);
+        --text-primary: var(--theme-light-text-primary);
+        --text-secondary: var(--theme-light-text-secondary);
+        --text-muted: var(--theme-light-text-muted);
+        --text-accent: var(--theme-light-text-accent);
+        --text-dim: var(--theme-light-text-dim);
+        --accent: var(--theme-light-accent);
+        --accent-dim: var(--theme-light-accent-dim);
+        --accent-glow: var(--theme-light-accent-glow);
+        --accent-text: var(--theme-light-accent-text);
+        --on-accent: var(--theme-light-on-accent);
+        --positive: var(--theme-light-positive);
+        --positive-text: var(--theme-light-positive-text);
+        --on-positive: var(--theme-light-on-positive);
+        --negative: var(--theme-light-negative);
+        --negative-text: var(--theme-light-negative-text);
+        --on-negative: var(--theme-light-on-negative);
+        --warning: var(--theme-light-warning);
+        --warning-text: var(--theme-light-warning-text);
+        --on-warning: var(--theme-light-on-warning);
+        --caution: var(--theme-light-caution);
+        --caution-text: var(--theme-light-caution-text);
+        --axis-x-text: var(--theme-light-axis-x-text);
+        --axis-y-text: var(--theme-light-axis-y-text);
+        --axis-z-text: var(--theme-light-axis-z-text);
+        --selection-text: var(--theme-light-selection-text);
+        --state-hover-bg: var(--theme-light-state-hover-bg);
+        --state-active-bg: var(--theme-light-state-active-bg);
+        --state-focus-ring: var(--theme-light-state-focus-ring);
+        --viewport-bg: var(--theme-light-viewport-bg);
+        --card-shadow: var(--theme-light-card-shadow);
+        --card-hover-bg: var(--theme-light-card-hover-bg);
+        --chrome-shadow: var(--theme-light-chrome-shadow);
+        --dock-shadow: var(--theme-light-dock-shadow);
+        --tabs-shadow: var(--theme-light-tabs-shadow);
+        --modal-backdrop: var(--theme-light-modal-backdrop);
+        --tooltip-bg: var(--theme-light-tooltip-bg);
+        --tooltip-border: var(--theme-light-tooltip-border);
+        --tooltip-text: var(--theme-light-tooltip-text);
+        --tooltip-shadow: var(--theme-light-tooltip-shadow);
+        --tooltip-kicker: var(--theme-light-tooltip-kicker);
+        --tooltip-muted: var(--theme-light-tooltip-muted);
+        --chart-flux: var(--theme-light-chart-flux);
+        --chart-energy: var(--theme-light-chart-energy);
+        --chart-total: var(--theme-light-chart-total);
+        --chart-positive: var(--theme-light-chart-positive);
+        --chart-negative: var(--theme-light-chart-negative);
+        --chart-charge: var(--theme-light-chart-charge);
+        --chart-eb: var(--theme-light-chart-eb);
+        --chart-gauss: var(--theme-light-chart-gauss);
+        --chart-entropy: var(--theme-light-chart-entropy);
+        --chart-pe-gravity: var(--theme-light-chart-pe-gravity);
+        --chart-pe-force-mean: var(--theme-light-chart-pe-force-mean);
+        --chart-ae-pe-vdw: var(--theme-light-chart-ae-pe-vdw);
+        --chart-ae-pe-bond: var(--theme-light-chart-ae-pe-bond);
+        --legend-field-kinetic: var(--theme-light-legend-field-kinetic);
+        --legend-field-gradient: var(--theme-light-legend-field-gradient);
+        --legend-bi: var(--theme-light-legend-bi);
+        --legend-coupling: var(--theme-light-legend-coupling);
+        --legend-velocity: var(--theme-light-legend-velocity);
+        --legend-gauss: var(--theme-light-legend-gauss);
+        --legend-dissipation: var(--theme-light-legend-dissipation);
+    }
+
+    html:not([data-theme]) .card {
+        border-color: color-mix(in srgb, var(--border) 75%, transparent);
+    }
+
+    html:not([data-theme])[data-glass="on"] {
+        --bg-surface: var(--theme-light-glass-surface);
+        --bg-card: var(--theme-light-glass-card);
+        --bg-input: var(--theme-light-glass-input);
+        --bg-elevated: var(--theme-light-glass-elevated);
+        --bg-raised: var(--theme-light-glass-raised);
+    }
 }

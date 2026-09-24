@@ -9,6 +9,7 @@
  */
 
 import { UPlotChart } from '../../charts/uplot-chart.js';
+import { setTextIfChanged } from '../../utils/dom-text.js';
 import { attachFullscreen } from '../../charts/chart-fullscreen.js';
 
 const GROUP_LABELS = Object.freeze({
@@ -55,6 +56,8 @@ export class ChartCard {
         this.hub        = hub;
         this.telemetryGroups = resolveChartTelemetryGroups(descriptor);
         this._freshnessStamp = '';
+        this.onScreen = typeof IntersectionObserver !== 'function';
+        this._destroyed = false;
 
         this.el = document.createElement('article');
         this.el.className = 'chart-card';
@@ -85,18 +88,30 @@ export class ChartCard {
             yLabel: descriptor.yLabel,
             hub,
             historyControl,
+            isVisible: () => this.onScreen && !this._destroyed,
         });
-        requestAnimationFrame(() => this.el.classList.add('is-mounted'));
+        this._observer = typeof IntersectionObserver === 'function'
+            ? new IntersectionObserver(entries => {
+                if (this._destroyed) return;
+                this.onScreen = entries.some(entry => entry.isIntersecting);
+                if (this.onScreen) this.update();
+            }, { rootMargin: '96px 0px' }) : null;
+        this._observer?.observe(this.el);
+        this._mountFrame = requestAnimationFrame(() => {
+            this._mountFrame = 0;
+            if (!this._destroyed) this.el.classList.add('is-mounted');
+        });
     }
 
     update() {
+        if (this._destroyed || !this.onScreen) return;
         if (this.telemetryGroups.length
             && typeof this.hub.getScale0TelemetryMeta === 'function') {
             const presentation = getChartFreshnessPresentation(this.hub, this.telemetryGroups);
             const stamp = `${presentation.state}|${presentation.text}`;
             if (stamp !== this._freshnessStamp) {
                 this._freshnessStamp = stamp;
-                if (this.freshnessEl) this.freshnessEl.textContent = presentation.text;
+                setTextIfChanged(this.freshnessEl, presentation.text);
                 const waiting = presentation.state === 'waiting'
                     || presentation.state === 'mixed-waiting';
                 this.el.classList.toggle('chart-card-telemetry-stale', waiting);
@@ -107,6 +122,11 @@ export class ChartCard {
     }
 
     destroy() {
+        if (this._destroyed) return;
+        this._destroyed = true;
+        this._observer?.disconnect();
+        if (this._mountFrame) cancelAnimationFrame(this._mountFrame);
+        this._mountFrame = 0;
         if (this.el._ftdCard?._isFullscreen) this.el._ftdCard._exitFullscreen();
         this.chart.destroy();
         this.el.remove();

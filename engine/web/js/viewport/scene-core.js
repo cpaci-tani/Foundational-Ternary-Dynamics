@@ -765,6 +765,15 @@ export class ViewportSceneCore {
         });
     }
 
+    getViewControlState() {
+        return {
+            axes: !!this._showAxes,
+            grid: !!this._showGrid,
+            boundaryOrientation: !!this._showBoundaryOrientation,
+            globalClock: !!this._showGlobalClock,
+        };
+    }
+
     toggleAxes(on) {
         this._showAxes = on;
         const mode = this._engineMode || 'lattice';

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["three"],
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["engine/web/js/observer/**/*.js", "engine/web/js/ui/components/topbar/simulation-menu.js"],
+  "exclude": ["node_modules", "engine/web/js/vendor"]
+}

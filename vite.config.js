@@ -19,7 +19,11 @@ export default defineConfig({
       'Cross-Origin-Embedder-Policy': 'require-corp',
     },
   },
+  worker: {
+    format: 'es',
+  },
   build: {
+    target: 'es2022',
     outDir: '../../dist',
     minify: 'esbuild',
     sourcemap: true,

@@ -33,13 +33,14 @@ export class ChartHoverTooltip {
         this.el = document.createElement('div');
         this.el.className = 'chart-hover-tooltip';
         this.el.hidden = true;
+        this._markup = '';
         container.classList.add('chart-hover-scope');
         container.appendChild(this.el);
     }
 
     hide() {
+        if (this.el.hidden) return;
         this.el.hidden = true;
-        this.el.innerHTML = '';
     }
 
     render({ title = '', xLabel = 'sample', xValue = null, rows = [], anchorLeft = 0, anchorTop = 0 }) {
@@ -49,7 +50,7 @@ export class ChartHoverTooltip {
             return;
         }
 
-        this.el.innerHTML = `
+        const markup = `
             <div class="chart-hover-title">${escapeHtml(title)}</div>
             <div class="chart-hover-meta">
                 <span>${escapeHtml(xLabel)}</span>
@@ -65,6 +66,10 @@ export class ChartHoverTooltip {
                 `).join('')}
             </div>
         `;
+        if (markup !== this._markup) {
+            this._markup = markup;
+            this.el.innerHTML = markup;
+        }
         this.el.hidden = false;
         this._position(anchorLeft, anchorTop);
     }

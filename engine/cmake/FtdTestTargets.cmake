@@ -86,6 +86,9 @@ target_include_directories(ftd_test_support PUBLIC
 # bridge_fixtures.cpp uses RenderBridge; ftd_core supplies it.
 target_link_libraries(ftd_test_support PUBLIC ftd_core)
 
+# Read-only full-resolution native parity measurement, with CUDA parity when built.
+ftd_add_test(test_flux_sectors tests/test_flux_sectors.cpp GPU_HEAVY TIMEOUT 120)
+
 # UI observer-neutrality + thread-guard coverage of ftd_core's RenderBridge:
 # a const observer reading the bridge must never perturb the sim (golden hash,
 # ledger, and toggle profile stay bit-identical), and a const observer called
@@ -592,6 +595,18 @@ target_link_libraries(test_thermodynamics ftd_core)
 
 add_executable(test_lagrangian tests/test_lagrangian.cpp)
 target_link_libraries(test_lagrangian ftd_core)
+
+ftd_add_test(test_lagrangian_global_gradient
+             tests/test_lagrangian_global_gradient.cpp
+             CTEST_NAME lagrangian_global_gradient
+             LABELS unit lagrangian regression)
+ftd_add_test(test_diagnostics_parallel tests/test_diagnostics_parallel.cpp
+             CTEST_NAME diagnostics_parallel
+             LABELS unit diagnostics regression)
+ftd_add_test(test_gravity_metric_agg_parallel
+             tests/test_gravity_metric_agg_parallel.cpp
+             CTEST_NAME gravity_metric_agg_parallel
+             LABELS unit diagnostics regression)
 
 # Ontic physics
 add_executable(test_ontic_chain tests/test_ontic_chain.cpp)

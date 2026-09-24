@@ -2,6 +2,10 @@
  * sections (Camera, Lighting, Post-processing, Environment). Keeps a
  * three-column grid per row: label / input / readout. */
 
+#panel-scene {
+    container: scene-panel / inline-size;
+}
+
 #panel-scene .scene-shell {
     display: flex;
     flex-direction: column;
@@ -133,6 +137,19 @@
 @media (max-width: 560px) {
     #panel-scene .scene-control {
         grid-template-columns: 1fr auto;
+    }
+    #panel-scene .scene-control label {
+        grid-column: 1 / -1;
+    }
+}
+
+@container scene-panel (max-width: 560px) {
+    #panel-scene .scene-shell {
+        padding-inline: var(--sp-md);
+    }
+    #panel-scene .scene-control {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: var(--sp-sm);
     }
     #panel-scene .scene-control label {
         grid-column: 1 / -1;

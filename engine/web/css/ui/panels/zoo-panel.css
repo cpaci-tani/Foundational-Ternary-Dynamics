@@ -114,6 +114,35 @@
     min-width: 0;
 }
 
+/* Preserve the mass and charge/spin as atomic readings in a narrow dock.
+   The provenance expression gets a full row rather than consuming the last
+   few characters beside two non-shrinking values. */
+@container docked-sidepanel (max-width: 360px) {
+    .zoo-card-line2 {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 4px 10px;
+    }
+
+    .zoo-formula {
+        grid-column: 1 / -1;
+        overflow-wrap: break-word;
+    }
+}
+
+@container floating-sidepanel (max-width: 360px) {
+    .zoo-card-line2 {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 4px 10px;
+    }
+
+    .zoo-formula {
+        grid-column: 1 / -1;
+        overflow-wrap: break-word;
+    }
+}
+
 /* Collapsible category/generation divider. */
 .zoo-cat-header {
     position: sticky;
@@ -179,7 +208,7 @@
     border-radius: 999px;
     background: color-mix(in srgb, var(--zoo-group-color) 10%, transparent);
     font-family: var(--font-mono);
-    font-size: var(--fs-2xs, 10px);
+    font-size: var(--fs-xs, 16px);
     letter-spacing: 0;
 }
 
@@ -245,8 +274,9 @@
 /* ── Zoo inject button (moved from primitives/button.css in Phase D) ─── */
 .zoo-inject-btn {
     flex: none;
-    width: 28px;
-    height: 28px;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    min-height: var(--tap-min);
     border-radius: 50%;
     background: var(--bg-input);
     border: 1px solid var(--border);

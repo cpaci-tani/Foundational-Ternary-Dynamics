@@ -19,6 +19,7 @@
  */
 
 import { getSidebarLibraryTemplate } from './template.js';
+import { LifetimeScope } from '../../utils/lifetime-scope.js';
 
 function escapeHtml(s) {
     return String(s ?? '')
@@ -94,10 +95,14 @@ export class SidebarLibraryComponent {
         this.activeEntryId = this.sections[0]?.entries[0]?.id || null;
         this.isOpen = false;
         this.dom = null;
+        this._scope = null;
+        this._ownsMarkup = false;
     }
 
     init() {
         if (!this.app) return this;
+        if (this._scope && !this._scope.disposed) return this;
+        this._scope = new LifetimeScope();
         this._ensureMarkup();
         this._collectDom();
         this._bindEvents();
@@ -115,6 +120,7 @@ export class SidebarLibraryComponent {
             showSearch: this.showSearch,
             searchPlaceholder: this.searchPlaceholder,
         }));
+        this._ownsMarkup = true;
     }
 
     _collectDom() {
@@ -133,21 +139,21 @@ export class SidebarLibraryComponent {
     }
 
     _bindEvents() {
-        this.dom.sidebarOpenButton?.addEventListener('click', () => this.open());
-        this.dom.sidebarCloseButton?.addEventListener('click', () => this.close());
-        this.dom.backdrop?.addEventListener('click', () => this.close());
+        this._scope.on(this.dom.sidebarOpenButton, 'click', () => this.open());
+        this._scope.on(this.dom.sidebarCloseButton, 'click', () => this.close());
+        this._scope.on(this.dom.backdrop, 'click', () => this.close());
 
         if (this.showSearch && this.dom.sidebarSearch) {
-            this.dom.sidebarSearch.addEventListener('input', (e) => {
+            this._scope.on(this.dom.sidebarSearch, 'input', (e) => {
                 this.query = e.target.value || '';
                 this.render();
             });
         }
 
-        this.dom.sidebarSections?.addEventListener('click', (e) => this._handleSectionClick(e));
-        this.dom.sidebarList?.addEventListener('click', (e) => this._handleEntryClick(e));
+        this._scope.on(this.dom.sidebarSections, 'click', (e) => this._handleSectionClick(e));
+        this._scope.on(this.dom.sidebarList, 'click', (e) => this._handleEntryClick(e));
 
-        document.addEventListener('keydown', (e) => {
+        this._scope.on(document, 'keydown', (e) => {
             if (this.isOpen && e.key === 'Escape') this.close();
         });
     }
@@ -235,5 +241,17 @@ export class SidebarLibraryComponent {
         if (this.openClassName) this.app.classList.toggle(this.openClassName, this.isOpen);
         if (this.dom.sidebar) this.dom.sidebar.setAttribute('aria-hidden', this.isOpen ? 'false' : 'true');
         if (this.dom.backdrop) this.dom.backdrop.hidden = !this.isOpen;
+    }
+
+    destroy() {
+        if (!this._scope || this._scope.disposed) return;
+        this.close();
+        this._scope.dispose();
+        if (this._ownsMarkup) {
+            this.dom?.sidebar?.remove();
+            this.dom?.backdrop?.remove();
+        }
+        this.dom = null;
+        this._ownsMarkup = false;
     }
 }

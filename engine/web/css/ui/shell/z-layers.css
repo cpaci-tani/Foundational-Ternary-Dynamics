@@ -43,6 +43,7 @@
     --z-focus-control:    9401;
     --z-modal:            9500;
     --z-shortcuts:        9600;
+    --z-popover:          9700;
 
     /* Fatal / bootstrap */
     --z-loading:          9999;

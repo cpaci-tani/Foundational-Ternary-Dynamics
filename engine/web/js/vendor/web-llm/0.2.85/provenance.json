@@ -1,0 +1,9 @@
+{
+  "package": "@mlc-ai/web-llm",
+  "version": "0.2.85",
+  "license": "Apache-2.0",
+  "tarball": "https://registry.npmjs.org/@mlc-ai/web-llm/-/web-llm-0.2.85.tgz",
+  "integrity": "sha512-CwUiSAvDCYnmAZlpPMkurPHDfBLq6fvdRB3vRgoA894hRG/V/BSeY9bmMm6iIIU5VpjJxfb/dLPpJX2at0L9rw==",
+  "sha256": "341bae95822bfee1d0fd6a0e6cd2db8613bb8edf809390ac142fba36ec17792c",
+  "bytes": 6586947
+}

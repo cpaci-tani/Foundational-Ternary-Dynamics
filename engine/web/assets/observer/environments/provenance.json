@@ -1,0 +1,44 @@
+{
+  "source": "Poly Haven",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://polyhaven.com/license",
+  "purpose": "Local copies of existing dashboard panorama presets for static serving under same-origin CSP",
+  "assets": [
+    {
+      "file": "studio_small_09_1k.hdr",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_09_1k.hdr",
+      "bytes": 1615248,
+      "sha256": "e7cfda5f4e98e623db12b8bfd0184e048488e4855d9c83e2751fb44a32e80c45"
+    },
+    {
+      "file": "machine_shop_02_1k.hdr",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/machine_shop_02_1k.hdr",
+      "bytes": 1695085,
+      "sha256": "51daf55cce4919262ddab7f224cff97f66daf341a5c96d31ef6a43b71ff18c99"
+    },
+    {
+      "file": "kloofendal_48d_partly_cloudy_puresky_1k.hdr",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
+      "bytes": 1435119,
+      "sha256": "fd94c84997b8a3c353b62c2125a9b44e19509956986a126e472684432a02d798"
+    },
+    {
+      "file": "moonless_golf_1k.hdr",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/moonless_golf_1k.hdr",
+      "bytes": 1672754,
+      "sha256": "4f597078024bd81429431e872d466d8808653ad62a8bc8c61d8052af7466c3aa"
+    },
+    {
+      "file": "syferfontein_18d_clear_puresky_1k.hdr",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/syferfontein_18d_clear_puresky_1k.hdr",
+      "bytes": 1107348,
+      "sha256": "d457bdf2fd8100e11b406200a6dde99adaf6d5613ae88780da3b3d2c5e3d5d53"
+    },
+    {
+      "file": "potsdamer_platz_1k.hdr",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/potsdamer_platz_1k.hdr",
+      "bytes": 1540678,
+      "sha256": "7afe4c2f9700ee78c7477c53fa355463d7dda1fdede401432d6b5f9ff0a95696"
+    }
+  ]
+}

@@ -18,6 +18,7 @@
 
 import { getChartTheme, makeAxis, resolveChartColor } from './theme.js';
 import { ChartHoverTooltip, formatChartValue } from './chart-hover-tooltip.js';
+import { projectHistoryIndices } from './history-index.js';
 
 const LS_PREFIX = 'ftd.chart.';
 const DEFAULT_VISIBLE_SAMPLES = 160;
@@ -111,7 +112,7 @@ export class UPlotChart {
     _maxBufferSize() {
         const maxBuffer = Math.max(...this.series.map((s) => this.hub[s.buffer]?.size || 500));
         return this.historyControl?.isAll ? Math.max(2, Math.min(maxBuffer, 512))
-            : Math.max(2, Math.min(maxBuffer, this.historyControl?.ticks || this.visibleSamples));
+            : Math.max(2, Math.min(maxBuffer, 512, this.historyControl?.ticks || this.visibleSamples));
     }
 
     _ensureCapacity(size) {
@@ -159,16 +160,19 @@ export class UPlotChart {
             this._lastWidth = width;
             this._lastHeight = height;
             this.uplot.setSize({ width, height });
+            this._historyDirty = true;
+            this.update();
         });
     }
 
     update() {
         if (this._destroyed) return;
+        if (this.opts?.isVisible && !this.opts.isVisible()) return;
         const firstBuf = this.hub[this.series[0].buffer];
-        const n = this.historyControl
+        const visibleCount = this.historyControl
             ? this.historyControl.visibleCount(firstBuf)
             : Math.min(firstBuf?.count || 0, this.visibleSamples);
-        if (n < 2) {
+        if (visibleCount < 2) {
             this._lastData = null;
             if (!this._emptyPublished) {
                 this.uplot.setData(this._emptyData(), true);
@@ -188,22 +192,36 @@ export class UPlotChart {
             const total = buf?.total ?? -1;
             const count = buf?.count ?? -1;
             const last = count > 0 ? buf.last() : Number.NaN;
+            const clock = buf?.parent && buf.parent === firstBuf?.parent ? firstBuf : buf;
+            const tick = clock?.getTick?.(count - 1);
+            const generation = buf?.generation;
             const stamp = this._bufferStamps[i];
             if (stamp.buffer !== buf || stamp.total !== total || stamp.count !== count
+                || stamp.generation !== generation || !Object.is(stamp.tick, tick)
                 || !Object.is(stamp.last, last)) {
                 stamp.buffer = buf;
                 stamp.total = total;
                 stamp.count = count;
                 stamp.last = last;
+                stamp.tick = tick;
+                stamp.generation = generation;
                 dirty = true;
             }
         }
         if (!dirty) return;
 
+        const buffers = this.series.map(s => this.hub[s.buffer]).filter(Boolean);
+        const aligned = buffers.every(buf => buf === firstBuf || (buf.parent && buf.parent === firstBuf.parent));
+        // Independent clocks keep the exact timestamp join below. Shared hub
+        // channels use one pixel envelope preserving each channel's extrema.
+        const indices = aligned ? projectHistoryIndices(buffers, visibleCount, this._lastWidth) : null;
+        const n = indices?.length ?? visibleCount;
         this._ensureCapacity(n);
 
         const xs = this.xs.subarray(0, n);
-        if (typeof firstBuf?.flattenTicksInto === 'function') {
+        if (indices) {
+            for (let i = 0; i < n; i++) xs[i] = firstBuf.getTick?.(indices[i]) ?? indices[i];
+        } else if (typeof firstBuf?.flattenTicksInto === 'function') {
             firstBuf.flattenTicksInto(xs, n);
         } else {
             const xStart = Math.max(0, (firstBuf?.total ?? firstBuf?.count ?? n) - n);
@@ -219,7 +237,8 @@ export class UPlotChart {
             // can publish at different ticks: join exact timestamps, never
             // place their last n values onto another group's time axis.
             if ((buf === firstBuf || (buf.parent && buf.parent === firstBuf.parent)) && buf.flattenInto) {
-                buf.flattenInto(col, n);
+                if (indices) for (let i = 0; i < n; i++) col[i] = buf.get(indices[i]);
+                else buf.flattenInto(col, n);
             } else if (typeof buf.get === 'function') {
                 const stamped = typeof firstBuf.flattenTicksInto === 'function';
                 if (stamped && typeof buf.getTick !== 'function') return col;

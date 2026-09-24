@@ -7,11 +7,11 @@ export function getDiagnosticsPanelTemplate() {
                  (.diag-scale1-root) backed by telemetryHub — the single
                  Scale-1 diagnostics surface. -->
             <!-- Scale 2+3 AE: runtime energy/count cards removed (2026-06-15) — those
-                 quantities live in the descriptor table (.diag-ae-root). Keep only
+                 quantities live in the descriptor table (.diag-scale2-root / .diag-scale3-root). Keep only
                  the supplemental nuclear/binding row for element-level pedagogy. -->
             <details class="scale-ae ae-nuclear-diag" id="ae-nuclear-diag">
                 <summary class="ae-nuclear-diag-summary">Nuclear &amp; binding energies</summary>
-                <div class="panel-grid panel-grid-4 ae-diag-row ae-diag-nuclear">
+                <div class="panel-grid panel-grid-4 ae-diag-row ae-diag-nuclear" data-panel-grid>
                     <div class="card">
                         <div class="card-title">Atomic Mass</div>
                         <div class="stat-value" id="ae-diag-mass">--</div>
@@ -33,9 +33,9 @@ export function getDiagnosticsPanelTemplate() {
                         <div class="stat-value" id="ae-diag-mass-kb">--</div>
                     </div>
                 </div>
-                <div class="card ae-diag-nuclear" style="margin-top:8px">
+                <div class="card ae-diag-nuclear ae-diag-chart-card">
                     <div class="card-title" title="Binding energy per nucleon (B/A) vs. mass number (A), all 118 elements — the classic curve peaking at Fe-56 that explains why fusion releases energy for light nuclei and fission for heavy ones.">B/A vs. mass number (all 118 elements)</div>
-                    <canvas id="ae-diag-ba-chart" width="276" height="140" style="width:100%;display:block;border-radius:8px;background:var(--color-background-secondary,rgba(255,255,255,0.04))"></canvas>
+                    <canvas id="ae-diag-ba-chart" class="ae-diag-chart" width="276" height="140"></canvas>
                 </div>
             </details>
         </div>

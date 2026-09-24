@@ -96,6 +96,7 @@ canvas {
     --ctrl-pad-x:       var(--sp-md);   /* min horizontal padding inside a control */
     --ctrl-height-min:  44px; /* Universal baseline touch target natively 44px */
     --tap-min:          44px;                         /* WCAG 2.5.5 touch-target floor — used in compact @media for coarse pointers */
+    --floating-window-inset: 12px;                    /* Keep draggable panels reachable inside the visual viewport */
     --row-gap:          var(--sp-sm);   /* min gap between siblings in a flex row  */
     --row-pad-y:        var(--sp-xs);   /* min vertical padding of a control row   */
     --sec-gap:          var(--sp-md);   /* min gap between sections inside a card  */
@@ -155,6 +156,15 @@ canvas {
     --axis-y-text:    #4ade80;
     --axis-z-text:    #60a5fa;
     --selection-text: #38bdf8;
+
+    /* Compatibility role aliases. Keep legacy component vocabulary mapped to
+       the canonical live theme roles so unresolved var() calls never discard
+       an entire declaration. New components should use the canonical names. */
+    --accent-cyan:   var(--accent-text);
+    --border-subtle: var(--border);
+    --border-strong: var(--border-light);
+    --control-bg:    var(--bg-input);
+    --panel-bg:      var(--bg-card);
 
     /* Semantic status */
     --positive: #34d399;
@@ -584,61 +594,8 @@ body, #toolbar, #tab-bar, .tab, #panel-area, .panel, .card,
     overflow: hidden;
 }
 
-/* ╔══════════════════════════════════════════════════════╗
-   ║  RESPONSIVE THEME TRIGGERS                           ║
-   ║  Auto-adapts the default theme to OS preferences.    ║
-   ║  User's explicit theme choice ([data-theme=...])     ║
-   ║  always wins — these blocks only apply when the      ║
-   ║  user hasn't set a theme.                            ║
-   ╚══════════════════════════════════════════════════════╝ */
-
-/* When the user hasn't picked a theme and the OS prefers light mode,
-   inherit the light theme's surface palette automatically. */
-@media (prefers-color-scheme: light) {
-    :root:not([data-theme]) {
-        --bg-deep:     #f8f9fb;
-        --bg-surface:  #ffffff;
-        --bg-card:     #f0f2f5;
-        --bg-input:    #e5e7eb;
-        --bg-elevated: #ffffff;
-        --bg-raised:   #f8fafc;
-
-        --border:       #d1d5db;
-        --border-light: #c0c4cc;
-        --border-glow:  rgba(37, 99, 235, 0.40);
-
-        --text-primary:   #111827;
-        --text-secondary: #374151;
-        --text-muted:     #4b5563;
-        --text-accent:    #1f2937;
-        --text-dim:       #9ca3af;
-
-        --accent:      #2563eb;
-        --accent-dim:  #1d4ed8;
-        --accent-glow: #2563eb44;
-
-        --positive: #16a34a;
-        --negative: #dc2626;
-        --warning:  #d97706;
-
-        --state-hover-bg:   rgba(37, 99, 235, 0.08);
-        --state-active-bg:  rgba(37, 99, 235, 0.18);
-        --state-focus-ring: 0 0 0 2px rgba(37, 99, 235, 0.40);
-
-        --viewport-bg: linear-gradient(180deg, #e0e4ea 0%, #c8cdd6 100%);
-        --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-
-        color-scheme: light;
-    }
-
-    :root:not([data-theme])[data-glass="on"] {
-        --bg-surface:  rgba(255, 255, 255, 0.60);
-        --bg-card:     rgba(255, 255, 255, 0.75);
-        --bg-input:    rgba(226, 232, 240, 0.80);
-        --bg-elevated: rgba(255, 255, 255, 0.90);
-        --bg-raised:   rgba(255, 255, 255, 0.98);
-    }
-}
+/* Automatic light-mode activation is owned by themes/light.css beside the
+   named light contract. Keeping both routes in one file prevents token drift. */
 
 /* High-contrast accessibility boost — stacks with any active theme. */
 @media (prefers-contrast: more) {

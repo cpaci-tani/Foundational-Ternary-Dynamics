@@ -164,3 +164,89 @@
 #viewport-overlay.panel-mount-right:not(.s0-overlay-panel) {
     justify-content: flex-start;
 }
+
+/* Shared chrome for shell-level scientific instrument panels. The collapsed
+   state intentionally reduces to one 44 px control so transport and viewport
+   controls beneath a compact-screen panel become reachable. */
+.instrument-panel-chrome {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-local-raised);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    min-width: 0;
+    min-height: var(--ctrl-height-min);
+    margin: calc(-1 * var(--sp-sm)) calc(-1 * var(--sp-sm)) var(--sp-sm);
+    padding-inline-start: var(--sp-md);
+    background: var(--bg-surface);
+    border-block-end: 1px solid var(--border);
+}
+
+.instrument-panel-chrome-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: var(--fs-base);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.instrument-panel-collapse {
+    flex: 0 0 var(--ctrl-height-min);
+    inline-size: var(--ctrl-height-min);
+    min-inline-size: var(--ctrl-height-min);
+    block-size: var(--ctrl-height-min);
+    min-block-size: var(--ctrl-height-min);
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    color: var(--text-primary);
+    background: var(--bg-elevated, var(--bg-surface));
+    border: 0;
+    border-inline-start: 1px solid var(--border);
+    cursor: pointer;
+}
+
+.instrument-panel-collapse:hover,
+.instrument-panel-collapse:focus-visible {
+    color: var(--accent-text);
+    background: color-mix(in oklch, var(--accent) 12%, var(--bg-surface));
+}
+
+.instrument-panel-collapse-icon {
+    font-size: var(--fs-base);
+    line-height: 1;
+}
+
+.instrument-panel.instrument-panel-collapsed {
+    inline-size: var(--ctrl-height-min) !important;
+    min-inline-size: var(--ctrl-height-min) !important;
+    max-inline-size: var(--ctrl-height-min) !important;
+    block-size: var(--ctrl-height-min) !important;
+    min-block-size: var(--ctrl-height-min) !important;
+    max-block-size: var(--ctrl-height-min) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    scrollbar-gutter: auto !important;
+}
+
+.instrument-panel.instrument-panel-collapsed > :not(.instrument-panel-chrome),
+.instrument-panel.instrument-panel-collapsed .instrument-panel-chrome-title {
+    display: none !important;
+}
+
+.instrument-panel.instrument-panel-collapsed .instrument-panel-chrome {
+    position: static;
+    inline-size: var(--ctrl-height-min);
+    min-block-size: var(--ctrl-height-min);
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.instrument-panel.instrument-panel-collapsed .instrument-panel-collapse {
+    border: 0;
+}

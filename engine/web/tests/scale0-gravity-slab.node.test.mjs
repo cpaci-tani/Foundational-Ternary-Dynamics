@@ -317,3 +317,86 @@ test('capabilities expose optional batch/single observers only on supporting own
     proxy._ready = false;
     assert.equal(caps.getScale0FluxSlabsWithMaxRho(requests), null);
 });
+
+test('pinned publications keep the tick paired with its slot across an inactive-slot write', () => {
+    const buffer = pub.create(27);
+    assert.equal(pub.publish(buffer, new Float64Array(27).fill(3), 41), true);
+    const first = pub.acquire(buffer, 27);
+    assert.equal(first.sampleTick, 41);
+    try {
+        // Version 1 is slot 1, so this writes only inactive slot 0 while the
+        // reader still pins slot 1. A global tick header would now be wrong.
+        assert.equal(pub.publish(buffer, new Float64Array(27).fill(7), 42), true);
+        assert.equal(first.sampleTick, 41);
+        assert.equal(first.view[0], 3);
+    } finally { first.release(); }
+    const second = pub.snapshot(buffer, 27);
+    assert.equal(second.sampleTick, 42);
+    assert.equal(second.data[0], 7);
+    assert.equal(pub.publish(buffer, new Float64Array(27).fill(9), null), true);
+    assert.equal(pub.snapshot(buffer, 27).sampleTick, null, 'an unavailable producer clock is never coerced to tick zero');
+});
+
+test('proxy bounded reads retain the exact slot tick and worker source namespace', () => {
+    const { proxy, buffer } = boundProxy();
+    assert.equal(pub.publish(buffer, new Float64Array(343).fill(4), 73), true);
+    const plane = proxy.getFluxSlice(0, 3);
+    const probes = proxy.sampleFluxAtCells([0, 342]);
+    const slabs = proxy.getFluxSlabsWithMaxRho([{ axis: 0, index: 3 }]);
+    for (const meta of [plane.meta, probes.meta, slabs.metadata]) {
+        assert.equal(meta.sampleTick, 73);
+        assert.equal(meta.source, 'wasm-worker');
+        assert.equal(meta.sourceEpoch, 2);
+    }
+});
+
+test('proxy accepts only a complete same-frame gravity observation and exposes it by support stride', () => {
+    const { proxy, buffer } = boundProxy();
+    const N = 7, mid = 3;
+    const slab = axis => ({ N, axis, index: mid, startPlane: 2, planeCount: 3,
+        data: new Float64Array(3 * N * N).fill(axis + 1) });
+    const observation = {
+        N, sampleTick: 91, source: 'wasm-worker', sourceEpoch: 2,
+        configurationToken: 2, loadGeneration: 1, dataVersion: 17,
+        maxRho: 9, slabs: [slab(0), slab(1), slab(2)],
+        samples: [{ stride: 6,
+            latency: { values: new Float32Array([1]), count: 1 },
+            kretschmann: { values: new Float32Array([2]), count: 1 },
+            gravity: { vectors: new Float32Array([3, 4, 5]), count: 1 } }],
+        gravityMetricAgg: { active: true },
+        engineToggles: { forces: true, gravity: true },
+    };
+    proxy._acceptFrameMessage({ configurationToken: 2, tick: 91, dataVersion: 17,
+        diag: { tick: 91 }, samplers: {}, gravityObservation: observation });
+    const accepted = proxy.getGravityObservation(6);
+    assert.equal(accepted.stride, 6);
+    assert.equal(accepted.sampleTick, 91);
+    assert.equal(accepted.sourceEpoch, 2);
+    assert.equal(accepted.loadGeneration, 1);
+    assert.equal(accepted.slabs[2].data[0], 3);
+    assert.equal(accepted.gravity.vectors[2], 5);
+    assert.strictEqual(proxy.getGravityObservation(6), accepted,
+        'an unchanged observation reuses its validated display view');
+    assert.equal(proxy.getGravityObservation(2), null, 'a caller cannot relabel a different support stride');
+
+    // A newer independent flux publication is not a coherent Gravity bundle
+    // and cannot invalidate or replace the retained view.
+    assert.equal(pub.publish(buffer, new Float64Array(N ** 3).fill(12), 92), true);
+    assert.strictEqual(proxy.getGravityObservation(6), accepted);
+
+    // A late/mixed packet cannot replace the retained coherent observation.
+    proxy._acceptFrameMessage({ configurationToken: 2, tick: 92, dataVersion: 18,
+        diag: { tick: 92 }, samplers: {}, gravityObservation: { ...observation, sampleTick: 91, dataVersion: 18 } });
+    assert.strictEqual(proxy.getGravityObservation(6), accepted);
+
+    // A complete next bundle replaces the cached view exactly once, after
+    // which repeated display reads again retain stable identity.
+    const nextObservation = { ...observation, sampleTick: 92, dataVersion: 18,
+        slabs: [slab(0), slab(1), slab(2)] };
+    proxy._acceptFrameMessage({ configurationToken: 2, tick: 92, dataVersion: 18,
+        diag: { tick: 92 }, samplers: {}, gravityObservation: nextObservation });
+    const next = proxy.getGravityObservation(6);
+    assert.notStrictEqual(next, accepted);
+    assert.equal(next.sampleTick, 92);
+    assert.strictEqual(proxy.getGravityObservation(6), next);
+});

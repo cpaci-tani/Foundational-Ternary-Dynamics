@@ -583,6 +583,10 @@ bool handle_command(const std::string& json, SOCKET client,
             "_requestId", 0, 1, ftd::kJsonSafeInteger));
         cmd = record.string("cmd");
         ftd::validate_ws_command(record);
+        if (record.has("expectedNativeInstanceId")
+            && (record.string("expectedNativeInstanceId") != ftd::native_instance_id()
+                || static_cast<std::uint64_t>(record.integer("expectedSourceEpoch", 0, ftd::kJsonSafeInteger)) != telemetry.source_epoch()))
+            throw std::invalid_argument("Control belongs to a superseded native lattice source");
         binary_version = static_cast<int>(record.integer_or("_binaryVersion", 2, 2, 3));
         if (binary_version == 3 && request_id == 0)
             throw std::invalid_argument("binary version 3 requires _requestId");
@@ -756,6 +760,32 @@ bool handle_command(const std::string& json, SOCKET client,
                 cmd), request_id);
         }
         return send_json_response(client, response, request_id);
+    }
+    else if (cmd == "get_flux_sectors") {
+        return observed_json([&] {
+            const auto data = rb->capture_flux_sectors();
+            std::ostringstream ss;
+            ss << std::setprecision(17)
+               << "{\"type\":\"flux_sectors\",\"schemaVersion\":1"
+               << ",\"compute\":\"" << (rb->backend_kind() == ftd::Backend::Kind::Gpu ? "GPU" : "CPU") << "\""
+               << ",\"latticeSize\":" << data.lattice_size
+               << ",\"siteCount\":" << static_cast<std::uint64_t>(data.lattice_size) * data.lattice_size * data.lattice_size
+               << ",\"tick\":" << data.tick
+               << ",\"stateVersion\":" << ftd::json_exact_uint64(data.state_version)
+               << ",\"nonfiniteValueCount\":" << data.nonfinite_value_count
+               << ",\"relativeRoundingAllowance\":0.000001"
+               << ",\"sampling\":\"all sites; no threshold; Float64 accumulation\",\"sectors\":[";
+            for (int p = 0; p < 2; ++p) {
+                if (p) ss << ',';
+                const auto& sector = data.sectors[p];
+                ss << "{\"parity\":" << p << ",\"totalSites\":" << sector.total_sites
+                   << ",\"nonzeroSites\":" << sector.nonzero_sites
+                   << ",\"squaredNorm\":" << sector.squared_norm
+                   << ",\"maxAbsComponent\":" << sector.max_abs_component << '}';
+            }
+            ss << "]}";
+            return ss.str();
+        });
     }
     else if (cmd == "get_dynamical_state_digest") {
         const auto response = json_dynamical_state_digest(*rb, telemetry);

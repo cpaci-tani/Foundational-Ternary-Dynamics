@@ -11,7 +11,9 @@
  */
 
 import { Sparkline } from '../../charts/sparkline.js';
+import { getHistoryStats } from '../../charts/history-index.js';
 import { formatValue } from './formatters.js';
+import { setTextIfChanged as writeText } from '../../utils/dom-text.js';
 
 const DASH = '\u2014';
 const DYNAMIC_COLS = 6;
@@ -78,7 +80,8 @@ function bufferSampleStamp(buf) {
     // not its wrapping `head`.  Using head made every Diagnostics sparkline
     // backed by a MultiRingBuffer view stop updating as soon as count reached
     // capacity: the old stamp collapsed to `undefined:<capacity>` forever.
-    return `${buf.total ?? buf.head ?? 0}:${buf.count ?? 0}`;
+    const generation = buf.generation ?? buf.parent?.generation ?? 0;
+    return `${generation}:${buf.total ?? buf.head ?? 0}:${buf.count ?? 0}`;
 }
 
 function bufferRenderStamp(buf) {
@@ -104,8 +107,33 @@ function scopeTick(hub, scope) {
     return null;
 }
 
-function setTextIfChanged(el, text) {
-    if (el && el.textContent !== text) el.textContent = text;
+function setTextIfChanged(el, text, fullText = text) {
+    if (!el) return false;
+    if (el.classList.contains('diag-value') || el.classList.contains('diag-stat')) {
+        const nextTitle = text === DASH ? '' : String(fullText);
+        if (el.title !== nextTitle) el.title = nextTitle;
+    }
+    return writeText(el, text);
+}
+
+export function formatStatValue(value) {
+    if (!Number.isFinite(value)) return DASH;
+    if (value === 0) return '0';
+    const magnitude = Math.abs(value);
+    if (magnitude >= 1e4 || magnitude < 1e-3) {
+        for (let digits = 2; digits >= 0; digits--) {
+            const compact = value.toExponential(digits)
+                .replace('e+', 'e')
+                .replace(/\.?0+(?=e)/, '');
+            if (compact.length <= 7) return compact;
+        }
+        return value.toExponential(0).replace('e+', 'e');
+    }
+    if (Number.isInteger(value)) return String(value);
+    const compact = Number(value.toPrecision(4)).toString();
+    return compact.length <= 7
+        ? compact
+        : value.toExponential(0).replace('e+', 'e');
 }
 
 function rowTooltip(section, row, isStatic) {
@@ -115,8 +143,8 @@ function rowTooltip(section, row, isStatic) {
         : 'Read from the current coherent telemetry snapshot.';
     if (isStatic) return `${meaning}\n${source}`;
     const history = row.trend
-        ? 'Min, max, average, and the sparkline follow distinct samples in the selected tick-history window.'
-        : 'Min, max, and average follow distinct numeric samples in the selected tick-history window.';
+        ? 'Min, max, average, and the sparkline follow retained samples in the selected tick-history window.'
+        : 'Min, max, and average follow distinct values observed while Diagnostics is live since the current scale reset.';
     return `${meaning}\n${source}\n${history}`;
 }
 
@@ -199,7 +227,10 @@ export class DiagnosticsTable {
 
         const tbody = this.el.querySelector('tbody');
         this.freshnessEl = this.el.querySelector('.diag-section-freshness');
+        this.freshnessStale = null;
         this.cells = new Map();
+        this.rowEls = new Map();
+        this.rowCurrent = new Map();
         this.stats = new Map();
         this.pulseTokens = new Map();
         this.sparkEntries = [];
@@ -230,11 +261,13 @@ export class DiagnosticsTable {
 
             const metricCell = document.createElement('td');
             metricCell.className = 'diag-metric';
+            metricCell.dataset.label = 'Metric';
             metricCell.textContent = row.label;
             tr.appendChild(metricCell);
 
             const valueCell = document.createElement('td');
             valueCell.className = 'diag-value';
+            valueCell.dataset.label = 'Value';
             valueCell.dataset.value = '';
             valueCell.textContent = DASH;
             tr.appendChild(valueCell);
@@ -242,22 +275,26 @@ export class DiagnosticsTable {
 
             const unitCell = document.createElement('td');
             unitCell.className = 'diag-unit';
+            unitCell.dataset.label = 'Unit';
             unitCell.textContent = row.unit || DASH;
             tr.appendChild(unitCell);
 
             if (!isStatic) {
                 const minCell = document.createElement('td');
                 minCell.className = 'diag-stat diag-stat-min';
+                minCell.dataset.label = 'Min';
                 minCell.textContent = DASH;
                 tr.appendChild(minCell);
 
                 const maxCell = document.createElement('td');
                 maxCell.className = 'diag-stat diag-stat-max';
+                maxCell.dataset.label = 'Max';
                 maxCell.textContent = DASH;
                 tr.appendChild(maxCell);
 
                 const avgCell = document.createElement('td');
                 avgCell.className = 'diag-stat diag-stat-avg';
+                avgCell.dataset.label = 'Avg';
                 avgCell.textContent = DASH;
                 tr.appendChild(avgCell);
 
@@ -265,6 +302,7 @@ export class DiagnosticsTable {
                 this.cells.set(`${row.id}:max`, maxCell);
                 this.cells.set(`${row.id}:avg`, avgCell);
                 this.stats.set(row.id, new RunningStats());
+                this.rowEls.set(row.id, tr);
 
                 tbody.appendChild(tr);
 
@@ -300,6 +338,7 @@ export class DiagnosticsTable {
                     tbody.appendChild(trendRow);
                 }
             } else {
+                this.rowEls.set(row.id, tr);
                 tbody.appendChild(tr);
             }
         });
@@ -329,9 +368,11 @@ export class DiagnosticsTable {
             const raw = current ? readSource(this.hub, row) : undefined;
             const formatted = formatValue(raw, { kind: row.format || 'scalar' });
             const cell = this.cells.get(row.id);
-            cell.closest('tr')?.classList.toggle('diag-row-telemetry-stale', !current);
-            if (cell.textContent !== formatted) {
-                cell.textContent = formatted;
+            if (this.rowCurrent.get(row.id) !== current) {
+                this.rowCurrent.set(row.id, current);
+                this.rowEls.get(row.id)?.classList.toggle('diag-row-telemetry-stale', !current);
+            }
+            if (setTextIfChanged(cell, formatted)) {
                 if (this.pulseTokens.get(row.id) !== undefined) {
                     // Never force a synchronous layout merely to restart a
                     // decorative pulse. At L=65 this old offsetWidth read ran
@@ -348,10 +389,21 @@ export class DiagnosticsTable {
                 this.pulseTokens.set(row.id, formatted);
             }
 
+            const buf = this.trendBuffers.get(row.id);
+            if (row.trend && buf) {
+                const visibleCount = this.historyControl?.visibleCount(buf) ?? buf.count ?? 0;
+                const stamp = `${bufferRenderStamp(buf)}:${visibleCount}`;
+                if (stamp !== this.sampleStamps.get(row.id)) {
+                    this.sampleStamps.set(row.id, stamp);
+                    const start = Math.max(0, (buf.count ?? 0) - visibleCount);
+                    this.renderStatsSnapshot(row.id, getHistoryStats(buf, start, visibleCount));
+                }
+                continue;
+            }
+
             const sample = numericSample(row, raw);
             if (sample !== null) {
-                const buf = this.trendBuffers.get(row.id);
-                const stamp = buf ? bufferSampleStamp(buf) : String(tick ?? formatted);
+                const stamp = String(tick ?? formatted);
                 if (stamp !== this.sampleStamps.get(row.id)) {
                     this.sampleStamps.set(row.id, stamp);
                     this.updateStats(row.id, sample);
@@ -414,12 +466,15 @@ export class DiagnosticsTable {
             };
         });
         const text = entries.map(entry => entry.text).join('  |  ');
-        if (this.freshnessEl.textContent !== text) this.freshnessEl.textContent = text;
+        setTextIfChanged(this.freshnessEl, text);
         const stale = entries.some(entry => entry.stale);
-        this.el.classList.toggle('diag-telemetry-stale', stale);
+        if (this.freshnessStale !== stale) {
+            this.freshnessStale = stale;
+            this.el.classList.toggle('diag-telemetry-stale', stale);
+        }
         const title = stale
-            ? 'Waiting for a settled native GPU telemetry snapshot.'
-            : 'Each group is sampled independently by the native GPU scheduler.';
+            ? 'Waiting for a settled telemetry snapshot from the active engine.'
+            : 'Each group is sampled independently by the active engine telemetry scheduler.';
         if (this.freshnessEl.title !== title) this.freshnessEl.title = title;
     }
 
@@ -427,6 +482,11 @@ export class DiagnosticsTable {
         for (const stats of this.stats.values()) stats.reset();
         this.sampleStamps.clear();
         for (const row of this.section.rows) this.renderStats(row.id);
+    }
+
+    invalidateHistoryWindow() {
+        for (const rowId of this.trendBuffers.keys()) this.sampleStamps.delete(rowId);
+        for (const entry of this.sparkEntries) entry.stamp = '';
     }
 
     updateStats(rowId, sample) {
@@ -438,6 +498,10 @@ export class DiagnosticsTable {
 
     renderStats(rowId) {
         const stats = this.stats.get(rowId);
+        this.renderStatsSnapshot(rowId, stats);
+    }
+
+    renderStatsSnapshot(rowId, stats) {
         const minCell = this.cells.get(`${rowId}:min`);
         const maxCell = this.cells.get(`${rowId}:max`);
         const avgCell = this.cells.get(`${rowId}:avg`);
@@ -448,9 +512,9 @@ export class DiagnosticsTable {
             setTextIfChanged(avgCell, DASH);
             return;
         }
-        setTextIfChanged(minCell, formatValue(stats.min, { kind: 'scalar' }));
-        setTextIfChanged(maxCell, formatValue(stats.max, { kind: 'scalar' }));
-        setTextIfChanged(avgCell, formatValue(stats.avg, { kind: 'scalar' }));
+        setTextIfChanged(minCell, formatStatValue(stats.min), stats.min);
+        setTextIfChanged(maxCell, formatStatValue(stats.max), stats.max);
+        setTextIfChanged(avgCell, formatStatValue(stats.avg), stats.avg);
     }
 
     destroy() {
@@ -459,6 +523,8 @@ export class DiagnosticsTable {
         this.sparkEntries.length = 0;
         this.sparkEntriesByHost.clear();
         this.cells.clear();
+        this.rowEls.clear();
+        this.rowCurrent.clear();
         this.stats.clear();
         this.trendBuffers.clear();
         this.sampleStamps.clear();

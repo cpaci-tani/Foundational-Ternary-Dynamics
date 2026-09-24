@@ -31,6 +31,7 @@
 #include "ftd/render_bridge.h"
 #include "ftd/field_operators.h"
 #include "ftd/lagrangian.h"
+#include "ftd/parallel.h"
 #include "ftd/constants.h"
 #include "ftd/knot_telemetry.h"  // full KnotTracker definition (PIMPL fwd-decl in render_bridge.h)
 #include "ftd/visual_sample_grid.h"  // shared center-anchored sample grid (CPU/GPU/WASM)
@@ -40,6 +41,36 @@
 using namespace emscripten;
 
 namespace ftd_wasm_internal {
+
+namespace {
+
+constexpr int OBSERVATION_CHUNK_SIZE = 2048;
+
+double max_flux_rho(const std::vector<ftd::Voxel>& voxels) {
+    const int total = static_cast<int>(voxels.size());
+    const int chunk_count = (total + OBSERVATION_CHUNK_SIZE - 1) / OBSERVATION_CHUNK_SIZE;
+    std::vector<double> chunk_max(static_cast<std::size_t>(chunk_count), 0.0);
+    ftd::parallel_for(0, chunk_count, [&](int chunk_lo, int chunk_hi) {
+        for (int chunk = chunk_lo; chunk < chunk_hi; ++chunk) {
+            const int begin = chunk * OBSERVATION_CHUNK_SIZE;
+            const int end = std::min(total, begin + OBSERVATION_CHUNK_SIZE);
+            double local_max = 0.0;
+            for (int i = begin; i < end; ++i) {
+                const auto& flux = voxels[static_cast<std::size_t>(i)].flux;
+                const double x = flux.x;
+                const double y = flux.y;
+                const double z = flux.z;
+                local_max = std::max(local_max, x * x + y * y + z * z);
+            }
+            chunk_max[static_cast<std::size_t>(chunk)] = local_max;
+        }
+    });
+    double result = 0.0;
+    for (double value : chunk_max) result = std::max(result, value);
+    return result;
+}
+
+} // namespace
 
 // ── Particle Data Extraction ─────────────────────────────────────────
 // Returns a JS object with Float32Array views for direct BufferAttribute upload.
@@ -517,7 +548,10 @@ val get_flux_volume(ftd::RenderBridge& rb) {
     static std::vector<double> cache;
     const int N = rb.lattice().size();
     const int total = N * N * N;
-    const auto& fields = rb.fields();
+    // WASM owns a CPU-resident AoS lattice. Read it through the const accessor
+    // so this visual export neither marks state dirty nor rebuilds the primary
+    // FieldSoA after every completed tick.
+    const auto& voxels = static_cast<const ftd::RenderBridge&>(rb).voxels();
 
     if (static_cast<int>(cache.size()) != total) cache.resize(total);
 
@@ -527,15 +561,17 @@ val get_flux_volume(ftd::RenderBridge& rb) {
     // (idx = z*N² + y*N + x). Without this transpose, photons injected
     // at C++ x=N/4 render at world z=N/4 (X⇄Z swap visible in every
     // photon / gluon / wavepacket scenario on the WasmBridge path).
-    for (int z = 0; z < N; ++z) {
+    ftd::parallel_for(0, N, [&](int z_lo, int z_hi) {
+      for (int z = z_lo; z < z_hi; ++z) {
         for (int y = 0; y < N; ++y) {
             for (int x = 0; x < N; ++x) {
                 const int js_idx  = z * N * N + y * N + x;
                 const int cpp_idx = rb.lattice().index(x, y, z);
-                cache[js_idx] = fields.density_at(static_cast<std::size_t>(cpp_idx));
+                cache[js_idx] = voxels[static_cast<std::size_t>(cpp_idx)].density();
             }
         }
-    }
+      }
+    });
     return val(typed_memory_view(total, cache.data()));
 }
 
@@ -800,8 +836,7 @@ val get_force_field_sampled(ftd::RenderBridge& rb, int stride) {
 // M_INERTIAL·C_SPEED^2·L·delta_2L.  Periodic wrap matches lattice().index().
 val get_gravity_field_sampled(ftd::RenderBridge& rb, int stride) {
     const auto& lat = rb.lattice();
-    const auto& fields = rb.fields();
-    const auto& voxels = rb.voxels();
+    const auto& voxels = static_cast<const ftd::RenderBridge&>(rb).voxels();
     return sample_vector_overlay(rb, stride, /*interior=*/false,
         [&](int x, int y, int z, int idx) -> std::optional<std::array<double, 3>> {
             const int xp = lat.index(x + 2, y, z), xm = lat.index(x - 2, y, z);
@@ -822,14 +857,14 @@ val get_gravity_field_sampled(ftd::RenderBridge& rb, int stride) {
                     - voxels[static_cast<std::size_t>(zm)].latency);
             } else {
                 fx = ftd::G_N * ftd::GRAD_TIER2_SCALE
-                   * (fields.density_at(static_cast<std::size_t>(xp))
-                    - fields.density_at(static_cast<std::size_t>(xm)));
+                   * (voxels[static_cast<std::size_t>(xp)].density()
+                    - voxels[static_cast<std::size_t>(xm)].density());
                 fy = ftd::G_N * ftd::GRAD_TIER2_SCALE
-                   * (fields.density_at(static_cast<std::size_t>(yp))
-                    - fields.density_at(static_cast<std::size_t>(ym)));
+                   * (voxels[static_cast<std::size_t>(yp)].density()
+                    - voxels[static_cast<std::size_t>(ym)].density());
                 fz = ftd::G_N * ftd::GRAD_TIER2_SCALE
-                   * (fields.density_at(static_cast<std::size_t>(zp))
-                    - fields.density_at(static_cast<std::size_t>(zm)));
+                   * (voxels[static_cast<std::size_t>(zp)].density()
+                    - voxels[static_cast<std::size_t>(zm)].density());
             }
             if (std::sqrt(fx * fx + fy * fy + fz * fz) < 1e-15) return std::nullopt;
             return std::array<double, 3>{fx, fy, fz};
@@ -1237,15 +1272,11 @@ val get_fisher_sampled(ftd::RenderBridge& rb, int stride) {
 // Per-voxel latency proxy L(x) = √(|J|²/|J|²_max), clamped by
 // LATENCY_HORIZON_CLAMP. Event-horizon overlay thresholds this at L ≥ 0.95.
 val get_latency_sampled(ftd::RenderBridge& rb, int stride) {
-    const auto& fields = rb.fields();
-    const int NNN = rb.lattice().size() * rb.lattice().size() * rb.lattice().size();
+    const auto& voxels = static_cast<const ftd::RenderBridge&>(rb).voxels();
     auto rho_at = [&](int i) {
-        return fields.flux_x[i] * fields.flux_x[i] +
-               fields.flux_y[i] * fields.flux_y[i] +
-               fields.flux_z[i] * fields.flux_z[i];
+        return voxels[static_cast<std::size_t>(i)].flux.mag2();
     };
-    double max_rho = 0.0;
-    for (int i = 0; i < NNN; ++i) max_rho = std::max(max_rho, rho_at(i));
+    const double max_rho = max_flux_rho(voxels);
     // Degenerate (empty) field ⇒ inv = 0 ⇒ every L = 0 falls below the floor ⇒
     // the driver returns an empty result. No special-case branch needed.
     const double inv = (max_rho < 1e-30) ? 0.0 : 1.0 / max_rho;
@@ -1277,35 +1308,43 @@ val get_poisson_latency_sampled(ftd::RenderBridge& rb, int stride) {
 val get_kretschmann_sampled(ftd::RenderBridge& rb, int stride) {
     static std::vector<float> Lgrid;
     const auto& lat = rb.lattice();
-    const auto& fields = rb.fields();
+    const auto& voxels = static_cast<const ftd::RenderBridge&>(rb).voxels();
     const int NNN = lat.size() * lat.size() * lat.size();
-    if (static_cast<int>(Lgrid.size()) < NNN) Lgrid.resize(NNN);
     auto rho_at = [&](int i) {
-        return fields.flux_x[i] * fields.flux_x[i] +
-               fields.flux_y[i] * fields.flux_y[i] +
-               fields.flux_z[i] * fields.flux_z[i];
+        return voxels[static_cast<std::size_t>(i)].flux.mag2();
     };
-    double max_rho = 0.0;
-    for (int i = 0; i < NNN; ++i) max_rho = std::max(max_rho, rho_at(i));
+    const double max_rho = max_flux_rho(voxels);
     const double inv = (max_rho < 1e-30) ? 0.0 : 1.0 / max_rho;  // empty field ⇒ all L = 0
-    for (int i = 0; i < NNN; ++i) {
-        Lgrid[i] = static_cast<float>(std::sqrt(std::min(
-            rho_at(i) * inv, ftd::LATENCY_HORIZON_CLAMP)));
+    const ftd::VisualSampleGrid grid = ftd::visual_sample_grid(lat.size(), stride, true);
+    const bool dense = grid.stride == 1;
+    if (dense) {
+        if (static_cast<int>(Lgrid.size()) < NNN) Lgrid.resize(NNN);
+        ftd::parallel_for(0, NNN, [&](int begin, int end) {
+            for (int i = begin; i < end; ++i) {
+                Lgrid[i] = static_cast<float>(std::sqrt(std::min(
+                    rho_at(i) * inv, ftd::LATENCY_HORIZON_CLAMP)));
+            }
+        });
     }
+    const auto latency_at = [&](int idx) -> float {
+        if (dense) return Lgrid[static_cast<std::size_t>(idx)];
+        return static_cast<float>(std::sqrt(std::min(
+            rho_at(idx) * inv, ftd::LATENCY_HORIZON_CLAMP)));
+    };
 
     constexpr double INV3 = 1.0 / 3.0, INV6 = 1.0 / 6.0;
     return sample_scalar_overlay(rb, stride, /*interior=*/true,
         [&](int x, int y, int z, int) -> std::optional<double> {
-            const double self = Lgrid[lat.index(x, y, z)];
-            const double faceSum = Lgrid[lat.index(x + 1, y, z)] + Lgrid[lat.index(x - 1, y, z)]
-                + Lgrid[lat.index(x, y + 1, z)] + Lgrid[lat.index(x, y - 1, z)]
-                + Lgrid[lat.index(x, y, z + 1)] + Lgrid[lat.index(x, y, z - 1)];
-            const double edgeSum = Lgrid[lat.index(x + 1, y + 1, z)] + Lgrid[lat.index(x + 1, y - 1, z)]
-                + Lgrid[lat.index(x - 1, y + 1, z)] + Lgrid[lat.index(x - 1, y - 1, z)]
-                + Lgrid[lat.index(x + 1, y, z + 1)] + Lgrid[lat.index(x + 1, y, z - 1)]
-                + Lgrid[lat.index(x - 1, y, z + 1)] + Lgrid[lat.index(x - 1, y, z - 1)]
-                + Lgrid[lat.index(x, y + 1, z + 1)] + Lgrid[lat.index(x, y + 1, z - 1)]
-                + Lgrid[lat.index(x, y - 1, z + 1)] + Lgrid[lat.index(x, y - 1, z - 1)];
+            const double self = latency_at(lat.index(x, y, z));
+            const double faceSum = latency_at(lat.index(x + 1, y, z)) + latency_at(lat.index(x - 1, y, z))
+                + latency_at(lat.index(x, y + 1, z)) + latency_at(lat.index(x, y - 1, z))
+                + latency_at(lat.index(x, y, z + 1)) + latency_at(lat.index(x, y, z - 1));
+            const double edgeSum = latency_at(lat.index(x + 1, y + 1, z)) + latency_at(lat.index(x + 1, y - 1, z))
+                + latency_at(lat.index(x - 1, y + 1, z)) + latency_at(lat.index(x - 1, y - 1, z))
+                + latency_at(lat.index(x + 1, y, z + 1)) + latency_at(lat.index(x + 1, y, z - 1))
+                + latency_at(lat.index(x - 1, y, z + 1)) + latency_at(lat.index(x - 1, y, z - 1))
+                + latency_at(lat.index(x, y + 1, z + 1)) + latency_at(lat.index(x, y + 1, z - 1))
+                + latency_at(lat.index(x, y - 1, z + 1)) + latency_at(lat.index(x, y - 1, z - 1));
             const double lap = INV3 * faceSum + INV6 * edgeSum - 4.0 * self;
             const double K = lap * lap;
             if (K < 1e-18) return std::nullopt;

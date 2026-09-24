@@ -1,39 +1,8 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-import { gotoAndReady, switchMode, attachConsoleWatcher, realErrors } from './_helpers.js';
+import { runScaleScenario, openDockPanel as openPanel, attachConsoleWatcher, realErrors } from './_helpers.js';
 
-async function openPanel(page, panel) {
-    await page.evaluate((panelId) => {
-        const tab = document.querySelector(`#tab-bar .tab[data-panel="${panelId}"]`);
-        if (!tab) throw new Error(`missing tab: ${panelId}`);
-        tab.click();
-    }, panel);
-    await page.waitForTimeout(500);
-}
-
-async function selectAEScenario(page, id) {
-    await page.evaluate((scenarioId) => {
-        const sel = document.getElementById('ae-scenario-select');
-        if (!sel) throw new Error('ae-scenario-select not found');
-        sel.value = scenarioId;
-        sel.dispatchEvent(new Event('change', { bubbles: true }));
-    }, id);
-}
-
-async function runScale2(page, scenario = 'ae-h2-form') {
-    await gotoAndReady(page);
-    await switchMode(page, 'atoms');
-    await selectAEScenario(page, scenario);
-    await expect.poll(
-        () => page.evaluate(() => window._ftdBridge?.aeGetAtomData?.()?.count || 0),
-        { timeout: 10_000, message: `${scenario} did not seed Scale 2 atoms` },
-    ).toBeGreaterThan(1);
-    await page.evaluate(() => {
-        const btn = document.getElementById('btn-play');
-        if (btn && btn.getAttribute('data-paused') === 'true') btn.click();
-    });
-    await page.waitForTimeout(1200);
-}
+const runScale2 = (page, scenario = 'ae-h2-form') => runScaleScenario(page, { mode: 'atoms', scenario });
 
 test.describe('Scale 2 side panels', () => {
     test.beforeEach(async ({ page }) => {
@@ -131,12 +100,12 @@ test.describe('Scale 2 side panels', () => {
 
         const diag = await page.evaluate(() => {
             const value = (row) => document
-                .querySelector(`#panel-diagnostics .diag-ae-root [data-row="${row}"] .diag-value`)
+                .querySelector(`#panel-diagnostics .diag-scale2-root [data-row="${row}"] .diag-value`)
                 ?.textContent?.trim();
             return {
-                sectionTitles: Array.from(document.querySelectorAll('#panel-diagnostics .diag-ae-root .diag-section-title'))
+                sectionTitles: Array.from(document.querySelectorAll('#panel-diagnostics .diag-scale2-root .diag-section-title'))
                     .map((el) => el.textContent?.trim()),
-                rootDisplay: getComputedStyle(document.querySelector('#panel-diagnostics .diag-ae-root')).display,
+                rootDisplay: getComputedStyle(document.querySelector('#panel-diagnostics .diag-scale2-root')).display,
                 scenario: value('scenario'),
                 hbonds: value('hbonds-on'),
                 angle: value('angle-on'),

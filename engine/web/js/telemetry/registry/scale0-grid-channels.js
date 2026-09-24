@@ -5,12 +5,12 @@
  */
 
 export const SCALE0_GRID_CHANNELS = [
-    { key: 'flux',       title: 'Total Flux',        buffer: 'flux',            telemetryGroup: 'diagnostics', color: 'var(--chart-flux, #fb8c00)',   unit: 'J' },
-    { key: 'energy',     title: 'Total Energy',      buffer: 'aud.dynamicEnergy', telemetryGroup: 'audit', color: 'var(--chart-energy, #42a5f5)', unit: 'E*' },
+    { key: 'flux',       title: 'Total Flux',        buffer: 'flux',            telemetryGroup: 'diagnostics', color: 'var(--chart-flux, #fb8c00)',   unit: '|J|' },
+    { key: 'energy',     title: 'Dynamic Energy',    buffer: 'energy', telemetryGroup: 'diagnostics', color: 'var(--chart-energy, #42a5f5)', unit: 'E*' },
     { key: 'manifested', title: 'Particle Count',    buffer: 'manifested',      telemetryGroup: 'diagnostics', color: 'var(--chart-eb, #a78bfa)',     unit: 'ct' },
-    { key: 'charges',    title: 'Net Charge',        buffer: 'charges',         telemetryGroup: 'diagnostics', color: 'var(--chart-charge, #4ade80)', unit: 'e' },
-    { key: 'positive',   title: 'Positive Charges',  buffer: 'positive',        telemetryGroup: 'diagnostics', color: 'var(--chart-positive, #4ade80)', unit: 'e' },
-    { key: 'negative',   title: 'Negative Charges',  buffer: 'negative',        telemetryGroup: 'diagnostics', color: 'var(--chart-negative, #f87171)', unit: 'e' },
+    { key: 'charges',    title: 'Net Charge',        buffer: 'charges',         telemetryGroup: 'diagnostics', color: 'var(--chart-charge, #4ade80)', unit: 'ct' },
+    { key: 'positive',   title: 'Positive Charges',  buffer: 'positive',        telemetryGroup: 'diagnostics', color: 'var(--chart-positive, #4ade80)', unit: 'ct' },
+    { key: 'negative',   title: 'Negative Charges',  buffer: 'negative',        telemetryGroup: 'diagnostics', color: 'var(--chart-negative, #f87171)', unit: 'ct' },
     { key: 'entropy',    title: 'Entropy',           buffer: 'entropy',         telemetryGroup: 'diagnostics', color: 'var(--chart-entropy, #60a5fa)', unit: 'nat' },
     { key: 'gauss',      title: 'Gauss Violation',   buffer: 'gauss',           telemetryGroup: 'audit', color: 'var(--chart-gauss, #fbbf24)',   unit: 'E*²' },
     { key: 'drift',      title: 'Energy Drift',      buffer: 'aud.energyDrift', telemetryGroup: 'audit', color: 'var(--chart-eb, #a78bfa)', unit: '%' },
@@ -19,8 +19,8 @@ export const SCALE0_GRID_CHANNELS = [
     { key: 'waveE',      title: 'Wave Energy',       buffer: 'aud.waveEnergy',  telemetryGroup: 'audit', color: 'var(--chart-flux, #fb8c00)', unit: 'E*' },
     { key: 'eField',     title: 'E-Field Energy',    buffer: 'aud.eFieldEnergy',telemetryGroup: 'audit', color: 'var(--chart-positive, #4ade80)', unit: 'E*' },
     { key: 'bField',     title: 'B-Field Energy',    buffer: 'aud.bFieldEnergy',telemetryGroup: 'audit', color: 'var(--chart-negative, #f87171)', unit: 'E*' },
-    { key: 'poynting',   title: 'Poynting Mag',      buffer: 'aud.poyntingMag', telemetryGroup: 'audit', color: 'var(--chart-gauss, #fbbf24)', unit: 'S' },
-    { key: 'chirality',  title: 'Chirality',         buffer: 'aud.chirality',   telemetryGroup: 'audit', color: 'var(--chart-entropy, #60a5fa)', unit: 'χ' },
+    { key: 'poynting',   title: 'Poynting Mag',      buffer: 'aud.poyntingMag', telemetryGroup: 'audit', color: 'var(--chart-gauss, #fbbf24)', unit: '|S|' },
+    { key: 'chirality',  title: 'Chirality',         buffer: 'aud.chirality',   telemetryGroup: 'audit', color: 'var(--chart-entropy, #60a5fa)', unit: '' },
     { key: 'partKE',     title: 'Particle KE',       buffer: 'aud.particleKE',  telemetryGroup: 'audit', color: 'var(--chart-positive, #4ade80)', unit: 'E*' },
     { key: 'coulombPE',  title: 'Coulomb PE',        buffer: 'aud.coulombPE',   telemetryGroup: 'audit', color: 'var(--chart-negative, #f87171)', unit: 'E*' },
     { key: 'lagTotal',   title: 'Lagrangian (L)',    buffer: 'lag.total',       telemetryGroup: 'lagrangian', color: 'var(--chart-eb, #a78bfa)', unit: 'L' },
@@ -28,17 +28,14 @@ export const SCALE0_GRID_CHANNELS = [
     { key: 'lagHam',     title: 'Hamiltonian (H)',   buffer: 'lag.hamiltonian', telemetryGroup: 'lagrangian', color: 'var(--chart-energy, #42a5f5)', unit: 'H' },
     { key: 'lagKinetic', title: 'Field Kinetic (T)', buffer: 'lag.fieldKinetic',telemetryGroup: 'lagrangian', color: 'var(--chart-flux, #fb8c00)', unit: 'T' },
     { key: 'lagGrad',    title: 'Field Gradient (V)',buffer: 'lag.fieldGradient',telemetryGroup: 'lagrangian', color: 'var(--chart-negative, #f87171)', unit: 'V' },
-    // Proper time / lapse / de Broglie phase (2026-09-03) — field-sampler
-    // aggregates published by publishScale0ProperTimeMetrics (telemetry-hub.js),
-    // NOT part of the engine Diagnostics struct, so no `telemetryGroup` is set:
-    // these are always presented as plain live/unavailable numeric channels
-    // (chart-card.js / telemetry-grid component.js both treat a missing
-    // telemetryGroup as "no staleness badge", not an error) rather than joining
-    // the diagnostics/audit/lagrangian group-staleness system. WASM-only; live
-    // only while latency_field and/or de_broglie_clock is ON (time-panel.js).
-    { key: 'properTimeMean',   title: 'Proper Time τ (mean)',   buffer: 'ptime.properTimeMean',   color: 'var(--chart-flux, #fb8c00)',   unit: 'τ' },
-    { key: 'properTimeSpread', title: 'Proper Time τ (spread)', buffer: 'ptime.properTimeSpread', color: 'var(--chart-eb, #a78bfa)',      unit: 'τ' },
-    { key: 'lapseMean',        title: 'Lapse dτ/dt (mean)',     buffer: 'ptime.lapseMean',        color: 'var(--chart-positive, #4ade80)', unit: 'dτ/dt' },
-    { key: 'dbPhaseMean',      title: 'dB Phase φ (mean)',      buffer: 'ptime.dbPhaseMean',      color: 'var(--chart-charge, #4ade80)', unit: 'rad' },
-    { key: 'dbPhaseCircVar',   title: 'dB Phase φ (circ. var.)',buffer: 'ptime.dbPhaseCircVar',   color: 'var(--chart-negative, #f87171)', unit: '1' },
+    // Proper time / lapse / de Broglie phase are canonical field-sampler
+    // aggregates owned by the shared proper-time collector. Keep their group
+    // metadata attached: a retained finite history row must never look current
+    // after source turnover, disabled sampling, or an unsupported zero-particle
+    // observation.
+    { key: 'properTimeMean',   title: 'Proper Time τ (mean)',   buffer: 'ptime.properTimeMean',   telemetryGroup: 'properTime', color: 'var(--chart-flux, #fb8c00)',   unit: 'τ' },
+    { key: 'properTimeSpread', title: 'Proper Time τ (spread)', buffer: 'ptime.properTimeSpread', telemetryGroup: 'properTime', color: 'var(--chart-eb, #a78bfa)',      unit: 'τ' },
+    { key: 'lapseMean',        title: 'Lapse dτ/dt (mean)',     buffer: 'ptime.lapseMean',        telemetryGroup: 'properTime', color: 'var(--chart-positive, #4ade80)', unit: 'dτ/dt' },
+    { key: 'dbPhaseMean',      title: 'dB Phase φ (mean)',      buffer: 'ptime.dbPhaseMean',      telemetryGroup: 'properTime', color: 'var(--chart-charge, #4ade80)', unit: 'rad' },
+    { key: 'dbPhaseCircVar',   title: 'dB Phase φ (circ. var.)',buffer: 'ptime.dbPhaseCircVar',   telemetryGroup: 'properTime', color: 'var(--chart-negative, #f87171)', unit: '1' },
 ];

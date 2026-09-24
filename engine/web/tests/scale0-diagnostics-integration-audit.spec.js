@@ -73,13 +73,13 @@ test.describe('Scale 0 Diagnostics sidepanel integration gate', () => {
             fixtureFirst.cleanup();
             const afterCleanup = {
                 tables: fixtureFirst.tables.length,
-                roots: fixture.querySelectorAll('.diag-scale0-root, .diag-scale1-root, .diag-ae-root').length,
+                roots: fixture.querySelectorAll('[class^="scale"][class*="diag-scale"][class$="-root"]').length,
                 marker: fixture.dataset.panelRedesignMounted || null,
             };
             const fixtureSecond = new componentModule.DiagnosticsPanelComponent(fixture).init();
             const afterRemount = {
                 tables: fixtureSecond.tables.length,
-                roots: fixture.querySelectorAll('.diag-scale0-root, .diag-scale1-root, .diag-ae-root').length,
+                roots: fixture.querySelectorAll('[class^="scale"][class*="diag-scale"][class$="-root"]').length,
             };
             fixtureSecond.cleanup();
             fixture.remove();
@@ -90,7 +90,10 @@ test.describe('Scale 0 Diagnostics sidepanel integration gate', () => {
                 roots: {
                     scale0: document.querySelectorAll('#panel-diagnostics > .diag-scale0-root').length,
                     scale1: document.querySelectorAll('#panel-diagnostics > .diag-scale1-root').length,
-                    ae: document.querySelectorAll('#panel-diagnostics > .diag-ae-root').length,
+                    scale2: document.querySelectorAll('#panel-diagnostics > .diag-scale2-root').length,
+                    scale3: document.querySelectorAll('#panel-diagnostics > .diag-scale3-root').length,
+                    scale4: document.querySelectorAll('#panel-diagnostics > .diag-scale4-root').length,
+                    scale5: document.querySelectorAll('#panel-diagnostics > .diag-scale5-root').length,
                 },
                 expectedRows,
                 actualRows,
@@ -102,21 +105,21 @@ test.describe('Scale 0 Diagnostics sidepanel integration gate', () => {
 
         expect(result.singleton).toBe(true);
         expect(result.retainedIdentity).toBe(true);
-        expect(result.roots).toEqual({ scale0: 1, scale1: 1, ae: 1 });
+        expect(result.roots).toEqual({ scale0: 1, scale1: 1, scale2: 1, scale3: 1, scale4: 1, scale5: 1 });
         expect(result.actualRows).toEqual(result.expectedRows);
-        expect(result.tableCount).toBe(5);
+        expect(result.tableCount).toBe(6);
         expect(result.calls).toEqual({
-            activeCalls: 5,
-            floatedCalls: 5,
+            activeCalls: 6,
+            floatedCalls: 6,
             collapsedCalls: 0,
-            restoredCalls: 5,
+            restoredCalls: 6,
             hiddenCalls: 0,
         });
         expect(result.fixture.fixtureTables).toBeGreaterThan(5);
         expect(result.fixture.afterCleanup).toEqual({ tables: 0, roots: 0, marker: null });
         expect(result.fixture.afterRemount).toEqual({
             tables: result.fixture.fixtureTables,
-            roots: 3,
+            roots: 6,
         });
         expect(realErrors(consoleErrors)).toEqual([]);
     });

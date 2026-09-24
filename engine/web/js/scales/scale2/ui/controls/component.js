@@ -28,6 +28,7 @@ export class Scale2ControlsComponent {
       gridContainer.id = 'panel-controls-grid';
       this.panel.appendChild(gridContainer);
     }
+    gridContainer.dataset.panelGrid = '3';
 
     gridContainer.appendChild(createAeForcesCard());
     gridContainer.appendChild(createAeAdvancedCard());

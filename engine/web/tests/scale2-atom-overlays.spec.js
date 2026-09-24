@@ -425,7 +425,7 @@ test.describe('Scale 2 atom scenarios and overlays', () => {
         expect(overlay.hasHeader).toBe(true);
         expect(overlay.cloudsInToolbar).toBe(false);
         expect(overlay.toolbarForcesVisible).toBeNull();
-        expect(overlay.footnote).toContain('substrate-QM recovery');
+        expect(overlay.footnote).toContain('none is substrate-QM or ab-initio chemistry recovery');
         expect(overlay.title).toContain('Atom');
         expect(overlay.missingTooltips).toEqual([]);
         expect(overlay.buttonsWithoutAria).toEqual([]);

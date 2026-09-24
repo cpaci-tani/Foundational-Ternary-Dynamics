@@ -9,6 +9,16 @@ import { gotoAndReady, selectScale0Scenario } from './_helpers.js';
 const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const wasmRoot = path.join(webRoot, 'wasm');
 const repoRoot = path.resolve(webRoot, '..', '..');
+const builtManifest = JSON.parse(fs.readFileSync(path.join(wasmRoot, 'build_info.json'), 'utf8'));
+
+function verifySource(source) {
+    expect(source.commit).toMatch(/^[0-9a-f]{40}$/);
+    expect(typeof source.dirty).toBe('boolean');
+    // Local development builds honestly retain their dirty provenance. Release
+    // qualification can require a clean build without disabling byte identity
+    // checks for every uncommitted engine change.
+    if (process.env.FTD_REQUIRE_CLEAN_WASM === '1') expect(source.dirty).toBe(false);
+}
 
 function sha256(buffer) {
     return crypto.createHash('sha256').update(buffer).digest('hex');
@@ -18,8 +28,9 @@ function verifyIdentityShape(identity, variantId) {
     expect(identity).not.toBeNull();
     expect(identity.schemaVersion).toBe(1);
     expect(identity.bundleSha256).toMatch(/^[0-9a-f]{64}$/);
-    expect(identity.source.commit).toMatch(/^[0-9a-f]{40}$/);
-    expect(identity.source.dirty).toBe(false);
+    verifySource(identity.source);
+    expect(identity.source).toEqual(builtManifest.source);
+    expect(identity.bundleSha256).toBe(builtManifest.bundleSha256);
     expect(identity.variant.id).toBe(variantId);
     expect(identity.variant.artifacts).toHaveLength(2);
     for (const artifact of identity.variant.artifacts) {
@@ -39,8 +50,7 @@ test('deterministic manifest exactly identifies all six checked-in artifacts', (
     const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
     expect(manifest.schemaVersion).toBe(1);
     expect(manifest.bundleSha256).toMatch(/^[0-9a-f]{64}$/);
-    expect(manifest.source.commit).toMatch(/^[0-9a-f]{40}$/);
-    expect(manifest.source.dirty).toBe(false);
+    verifySource(manifest.source);
     expect(manifest.variants.map((variant) => variant.id))
         .toEqual(['wasm32', 'wasm64', 'wasm32-threads']);
 

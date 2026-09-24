@@ -559,6 +559,13 @@ bool GpuBackend::capture_dynamical_state_digest(
     return true;
 }
 
+bool GpuBackend::capture_flux_sectors(FluxSectors& out) {
+    if (!engine_) return false;
+    flush_host_mutations();
+    out = engine_->flux_sectors();
+    return true;
+}
+
 bool GpuBackend::begin_telemetry_snapshot(
     const TelemetrySnapshotRequest& request) {
     if (!engine_ || !bridge_.interactive_gpu_mode_) return false;

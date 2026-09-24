@@ -70,7 +70,8 @@ test.describe('Scale 0 playback controls audit gate', () => {
         const consoleErrors = attachConsoleWatcher(page);
         const result = await page.evaluate(async () => {
             const ctx = window.__ftdCtx;
-            const scale0 = await import('/js/scales/scale0/controller.js');
+            // Import the live coordinator, not a second query-distinct singleton.
+            const scale0 = await import('/js/scales/scale0/controller.js?v=44');
             let active = scale0.getActivePhysicsOwner(ctx);
             for (let i = 0; i < 100 && typeof active?.setTicksPerFrame !== 'function'; i += 1) {
                 await new Promise((resolve) => setTimeout(resolve, 50));
@@ -125,7 +126,7 @@ test.describe('Scale 0 playback controls audit gate', () => {
         const consoleErrors = attachConsoleWatcher(page);
         const result = await page.evaluate(async () => {
             const ctx = window.__ftdCtx;
-            const scale0 = await import('/js/scales/scale0/controller.js');
+            const scale0 = await import('/js/scales/scale0/controller.js?v=44');
             const active = scale0.getActivePhysicsOwner(ctx);
             if (!active?.setRunning || !active?.tickOnce) throw new Error('Worker playback owner unavailable');
             const originalRun = active.setRunning;
@@ -193,7 +194,7 @@ test.describe('Scale 0 playback controls audit gate', () => {
     test('ten remount and settings cycles retain one playback owner and stable resources', async ({ page }) => {
         const consoleErrors = attachConsoleWatcher(page);
         const result = await page.evaluate(async () => {
-            const scale0 = await import('/js/scales/scale0/controller.js');
+            const scale0 = await import('/js/scales/scale0/controller.js?v=44');
             const { rafCoordinator } = await import('/js/lib/raf-coordinator.js');
             const before = {
                 bars: document.querySelectorAll('#play-bar').length,

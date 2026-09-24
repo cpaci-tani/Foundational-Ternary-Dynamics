@@ -19,8 +19,8 @@
 // worker's onerror, and not reliably in every browser.)
 const FTD_WASM_BASE_URL = new URL('../../wasm/', self.location.href).href;
 importScripts(new URL('./sampler-registry.classic.js', self.location.href).href);
-importScripts(new URL('./sampler-cadence.classic.js?v=2', self.location.href).href);
-importScripts(new URL('./flux-publication.classic.js', self.location.href).href);
+importScripts(new URL('./sampler-cadence.classic.js?v=6', self.location.href).href);
+importScripts(new URL('./flux-publication.classic.js?v=2', self.location.href).href);
 // The threaded glue is intentionally NOT imported here. initModule() first
 // verifies the manifest, glue, and module bytes, then executes the verified
 // glue from a Blob URL and supplies the verified module through `wasmBinary`.
@@ -44,12 +44,13 @@ let poolThreads = 8;       // MUST equal -sPTHREAD_POOL_SIZE in engine/wasm/CMak
                            // (pre-spawned pthread pool; proxy may clamp below this).
 let ctrlSab = null, ctrl = null;
 let timer = 0, tickAcc = 0;
+let backgroundSuspended = false;
 let initInFlight = false;
 let pendingCreate = null;
 let lastFluxHeap = null, lastFluxPtr = -1, lastFluxLen = -1;
 let fluxPubSab = null, fluxPubN = 0;
 
-function publishFlux(vol) {
+function publishFlux(vol, sampleTick = null) {
   if (!vol || !vol.length) return false;
   const n = vol.length;
   try {
@@ -62,13 +63,116 @@ function publishFlux(vol) {
         configurationToken: activeConfigurationToken,
       });
     }
-    self.FTD_FLUX_PUBLICATION.publish(fluxPubSab, vol);
+    self.FTD_FLUX_PUBLICATION.publish(fluxPubSab, vol, sampleTick);
     return true;
   } catch (e) {
     fluxPubSab = null;
     fluxPubN = 0;
     return false;
   }
+}
+
+const GRAVITY_OBSERVATION_TOGGLE_KEYS = Object.freeze([
+  'forces', 'gravity', 'geometric_gravity', 'latency_field', 'field_energy_gravity',
+]);
+
+function gravityObservationToggles() {
+  const snapshot = {};
+  for (const key of GRAVITY_OBSERVATION_TOGGLE_KEYS) {
+    try {
+      // This is deliberately a same-turn engine read, rather than the cached
+      // UI toggle packet: a retained gravity observation must describe the
+      // force law which produced its selected field.
+      snapshot[key] = typeof mod?.getToggle === 'function' ? !!mod.getToggle(bridge, key) : null;
+    } catch { snapshot[key] = null; }
+  }
+  return snapshot;
+}
+
+function completeGravitySamplerBatch(samplers) {
+  // A panel can request a different bounded support stride as the lattice
+  // grows. Bundle every complete common-stride trio that this one sampler
+  // batch actually produced; an incomplete or mixed-stride trio is absent.
+  const strides = new Set();
+  for (const key of Object.keys(samplers)) {
+    const match = /^(?:latency|kretschmann|gravity)@(\d+)$/.exec(key);
+    if (match) strides.add(Number(match[1]));
+  }
+  const samples = [];
+  for (const stride of strides) {
+    const latency = samplers[`latency@${stride}`];
+    const kretschmann = samplers[`kretschmann@${stride}`];
+    const gravity = samplers[`gravity@${stride}`];
+    if (!latency || !kretschmann || !gravity) continue;
+    samples.push({ stride, latency, kretschmann, gravity });
+  }
+  const gravityMetricAgg = samplers['gravityMetricAgg@0'];
+  return samples.length && gravityMetricAgg ? { samples, gravityMetricAgg } : null;
+}
+
+function captureGravityVisual(vol, tick) {
+  const sampleTick = Number.isSafeInteger(tick) && tick >= 0 ? tick : null;
+  if (sampleTick === null || !vol || !self.FTD_FLUX_PUBLICATION?.copySlabsWithMaxRho) return null;
+
+  // getFluxVolume is a heap view. Capture its bounded plane copies before
+  // another Embind call can reuse or grow that storage.  The result is owned
+  // storage; only a later complete same-turn sampler batch may commit it.
+  let visual;
+  try {
+    const mid = N >> 1;
+    visual = self.FTD_FLUX_PUBLICATION.copySlabsWithMaxRho(vol, N,
+      [{ axis: 0, index: mid }, { axis: 1, index: mid }, { axis: 2, index: mid }]);
+  } catch { return null; }
+  if (!visual || visual.slabs.length !== 3) return null;
+  return { N, sampleTick, maxRho: visual.maxRho, slabs: visual.slabs };
+}
+
+function finishGravityObservation(visual, batch, dataVersion, frameTransfer) {
+  if (!visual || !batch) return null;
+  const { N: visualN, sampleTick, maxRho, slabs } = visual;
+  const { samples, gravityMetricAgg } = batch;
+  const metadata = {
+    sampleTick, source: 'wasm-worker', sourceEpoch: activeConfigurationToken,
+    configurationToken: activeConfigurationToken, loadGeneration: renderBridgeGeneration,
+    dataVersion, latticeSize: visualN, representation: 'reference-flux-magnitude',
+  };
+  for (const slab of slabs) {
+    slab.maxRho = maxRho;
+    slab.metadata = metadata;
+  }
+  for (const slab of slabs) frameTransfer.push(slab.data.buffer);
+  return {
+    N: visualN,
+    sampleTick,
+    source: 'wasm-worker',
+    sourceEpoch: activeConfigurationToken,
+    configurationToken: activeConfigurationToken,
+    loadGeneration: renderBridgeGeneration,
+    dataVersion,
+    maxRho,
+    slabs,
+    samples,
+    gravityMetricAgg,
+    engineToggles: gravityObservationToggles(),
+  };
+}
+
+function captureGravityObservation(vol, batch, dataVersion, frameTransfer, tick) {
+  return finishGravityObservation(captureGravityVisual(vol, tick), batch, dataVersion, frameTransfer);
+}
+
+function completeGravitySamplerWantSignature(wants) {
+  if (!wants || typeof wants.has !== 'function') return '';
+  const strides = [];
+  for (const key of wants.keys()) {
+    const match = /^(?:latency|kretschmann|gravity)@(\d+)$/.exec(key);
+    if (!match) continue;
+    const stride = match[1];
+    if (wants.has(`latency@${stride}`)
+        && wants.has(`kretschmann@${stride}`)
+        && wants.has(`gravity@${stride}`)) strides.push(Number(stride));
+  }
+  return strides.sort((a, b) => a - b).join(',');
 }
 let lastInspect = null, lastForceAt = null;
 let lastDynamicalStateDigest = null;
@@ -87,9 +191,19 @@ const {
   isBoundedInstrumentSamplerWant,
   createBoundedSamplerCadence,
   advanceDemandFrameCadence,
+  createBoundedReductionCadence,
   visitScheduledSamplers,
 } = self.FTD_SAMPLER_CADENCE;
 const gravitySamplerCadence = createBoundedSamplerCadence(GRAVITY_SAMPLER_INTERVAL_MS);
+// A visible Gravity panel is a coherent per-state observation, unlike the
+// bounded Time instrument.  Successes commit once per exact state identity;
+// this separate cadence only prevents unavailable batches from retrying on
+// every following worker publication.
+const gravityObservationRetryCadence = createBoundedReductionCadence();
+// Full Lagrangian extraction is O(L^3). Successful observations follow every
+// distinct completed state; this cadence only bounds retries after an ABI/error
+// outcome so an unavailable getter cannot tax every worker publication.
+const lagrangianCadence = createBoundedReductionCadence();
 
 // Knot telemetry/event payloads are WASM heap VIEWS (zero-copy). They are
 // invalidated by the next WASM call, so copy every typed array out before the
@@ -129,6 +243,23 @@ function cloneAudit(a) {
     }
   }
   return out;
+}
+
+// The compact view executes the identical C++ reduction as getLagrangian(),
+// but avoids an Embind object and seventeen property writes per worker sample.
+// Read every scalar before a later WASM call can invalidate the heap view.
+function readLagrangian() {
+  if (typeof mod.getLagrangianView !== 'function') return mod.getLagrangian(bridge);
+  const values = mod.getLagrangianView(bridge);
+  if (!values || values.length < 17) return null;
+  return {
+    fieldKinetic: values[0], fieldGradient: values[1], bornInfeld: values[2],
+    coupling: values[3], velocity: values[4], gauss: values[5],
+    dissipation: values[6], total: values[7], hamiltonian: values[8],
+    totalAction: values[9], gaussViolation: values[10], maxGaussError: values[11],
+    totalFluxMag: values[12], totalWaveEnergy: values[13], manifested: values[14],
+    locked: values[15], cellVolume: values[16],
+  };
 }
 
 function applyCommand(method, args = []) {
@@ -383,11 +514,48 @@ let engineTogglesDirty = true;
 // Telemetry demand mask (see telemetry/demand.js). O(N^3) audit and Gravity
 // reductions default OFF because neither has an always-on consumer. The proxy
 // publishes visible-panel demand and hydrates immediately when one opens.
-// Lagrangian retains its compatibility default and existing gate behavior.
 let wantAudit = false;
-let wantLag = true;
+let wantLag = false;
 let wantGravity = false;
+let wantProperTime = false;
 let gravityMetricAggVersion = null;
+let gravityObservationRevision = 0;
+let lastGravityObservationIdentity = null;
+let gravityObservationSupportSignature = '';
+let telemetryTimingEnabled = false;
+const telemetryTiming = {
+  lagrangianAttempts: 0, lagrangianCompleted: 0, lagrangianLastMs: null,
+  lagrangianTotalMs: 0, lagrangianMaxMs: 0,
+  tickCompleted: 0, tickLastMs: null, tickTotalMs: 0, tickMaxMs: 0,
+};
+
+function resetTelemetryTiming() {
+  telemetryTiming.lagrangianAttempts = 0; telemetryTiming.lagrangianCompleted = 0;
+  telemetryTiming.lagrangianLastMs = null; telemetryTiming.lagrangianTotalMs = 0;
+  telemetryTiming.lagrangianMaxMs = 0;
+  telemetryTiming.tickCompleted = 0; telemetryTiming.tickLastMs = null;
+  telemetryTiming.tickTotalMs = 0; telemetryTiming.tickMaxMs = 0;
+}
+
+function telemetryTimingSnapshot() {
+  return {
+    lagrangian: {
+      attempts: telemetryTiming.lagrangianAttempts,
+      completed: telemetryTiming.lagrangianCompleted,
+      lastMs: telemetryTiming.lagrangianLastMs,
+      averageMs: telemetryTiming.lagrangianCompleted
+        ? telemetryTiming.lagrangianTotalMs / telemetryTiming.lagrangianCompleted : null,
+      maxMs: telemetryTiming.lagrangianMaxMs,
+    },
+    tick: {
+      completed: telemetryTiming.tickCompleted,
+      lastMs: telemetryTiming.tickLastMs,
+      averageMs: telemetryTiming.tickCompleted
+        ? telemetryTiming.tickTotalMs / telemetryTiming.tickCompleted : null,
+      maxMs: telemetryTiming.tickMaxMs,
+    },
+  };
+}
 
 // Energy-audit cadence cache — see postFrame(). getEnergyAudit is a full O(N^3)
 // pass, so large lattices sample it less often. The cached audit is published
@@ -396,6 +564,7 @@ let gravityMetricAggVersion = null;
 // new scenario/lattice never reuses a stale-N audit.
 let lastAudit = null;
 let auditFrameCounter = 0;
+let lastLagrangian = null;
 let diagnosticsStateVersion = 0;
 let auditStateVersion = 0;
 let lagrangianStateVersion = 0;
@@ -454,6 +623,10 @@ function buildBridge(n, scen, configurationToken = 0, seedOverrides = null) {
   lastInspect = null;
   lastForceAt = null;
   gravitySamplerCadence.reset();
+  gravityObservationRetryCadence.reset();
+  gravityObservationRevision = 0;
+  lastGravityObservationIdentity = null;
+  gravityObservationSupportSignature = '';
   gravityMetricAggVersion = null;
   if (bridge) { try { bridge.delete(); } catch (e) { /* ignore */ } bridge = null; }
   N = n | 0;
@@ -462,9 +635,13 @@ function buildBridge(n, scen, configurationToken = 0, seedOverrides = null) {
   const setupOk = true, setupError = null;
   enforceToggleInvariants();
   engineTogglesDirty = true;   // the C++ body just replaced the whole profile
-  lastAudit = null; auditFrameCounter = 0;   // force a fresh audit for the new N/profile
+  // New state belongs to no prior reduction.  The first demanded frame below
+  // samples immediately; hidden panels stay reduction-free.
+  lastAudit = null; auditFrameCounter = 0;
+  lastLagrangian = null; lagrangianCadence.reset();
   lastAuditMeta = null;
   lastLagrangianMeta = null;
+  resetTelemetryTiming();
   scenarioId = scen;
   // O(N^3), so capture once per newly built scenario and thereafter only on
   // an explicit `captureDigest` request. Never put digest work in the 60 Hz
@@ -473,6 +650,7 @@ function buildBridge(n, scen, configurationToken = 0, seedOverrides = null) {
   lastDynamicalStateDigest = captureDynamicalStateDigest();
   publishDynamicalStateDigest = true;
   // Flux-volume cache pointer is stable for a fixed N; publish the heap + offset.
+  const initialTick = typeof bridge.currentTick === 'function' ? bridge.currentTick() : null;
   const vol = mod.getFluxVolume(bridge);
   if (!ctrlSab) { ctrlSab = new SharedArrayBuffer(CTRL.LEN * 4); ctrl = new Int32Array(ctrlSab); }
   Atomics.store(ctrl, CTRL.N, N);
@@ -480,7 +658,7 @@ function buildBridge(n, scen, configurationToken = 0, seedOverrides = null) {
   lastFluxHeap = vol.buffer;
   lastFluxPtr = vol.byteOffset;
   lastFluxLen = vol.length;
-  const doubled = publishFlux(vol);
+  const doubled = publishFlux(vol, initialTick);
   self.postMessage({
     type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
     setupOk, setupError, artifactIdentity, configurationToken, seedDescription,
@@ -500,9 +678,13 @@ function postFrame(
   allowUndemandedBoundedInstrument = false,
 ) {
   const frameTransfer = [];  // freshly copied sampler buffers, moved (not cloned) with the frame
-  if (!bridge) return;
+  if (!bridge || backgroundSuspended) return;
+  // Capture the engine clock before taking the synchronous flux view. That
+  // tick is the publication's identity; never substitute the later CTRL tick.
+  const rawTick = bridge.currentTick ? bridge.currentTick() : null;
+  const tick = Number.isSafeInteger(rawTick) && rawTick >= 0 ? rawTick : null;
   const vol = mod.getFluxVolume(bridge);            // refresh the flux cache in the shared heap
-  const doubled = publishFlux(vol);
+  const doubled = publishFlux(vol, tick);
   if (!doubled && vol && (vol.buffer !== lastFluxHeap || vol.byteOffset !== lastFluxPtr || vol.length !== lastFluxLen)) {
     lastFluxHeap = vol.buffer;
     lastFluxPtr = vol.byteOffset;
@@ -512,7 +694,33 @@ function postFrame(
       configurationToken: activeConfigurationToken,
     });
   }
-  const tick = bridge.currentTick ? bridge.currentTick() : 0;
+  // A tick can remain unchanged across a user mutation (toggle, injection,
+  // reset command).  Track that transition separately so a visible Gravity
+  // panel receives one replacement observation for the mutated same-tick
+  // state, while passive paused readbacks remain zero-work.
+  if (fieldChanged) gravityObservationRevision++;
+  const gravitySupportSignature = wantGravity
+    ? completeGravitySamplerWantSignature(wantedSamplers) : '';
+  if (gravitySupportSignature !== gravityObservationSupportSignature) {
+    // The complete support set is part of the atomic observation contract.
+    // Adding a stride while paused must create a replacement bundle, rather
+    // than leave the proxy with a same-tick subset from an earlier demand.
+    gravityObservationSupportSignature = gravitySupportSignature;
+    lastGravityObservationIdentity = null;
+    gravityObservationRetryCadence.reset();
+  }
+  const gravityIdentity = tick === null ? null
+    : `${activeConfigurationToken}:${gravityObservationRevision}:${tick}:${gravitySupportSignature}`;
+  const gravityWantsCompleteBatch = wantGravity && gravitySupportSignature !== '';
+  const gravityNeedsObservation = gravityWantsCompleteBatch
+    && gravityIdentity !== lastGravityObservationIdentity;
+  const gravityObservationDue = gravityNeedsObservation
+    && gravityObservationRetryCadence.shouldRun(true, false, performance.now(), gravityObservationRevision);
+  // `vol` is a live WASM heap view.  Make owned slices now, before any sampler
+  // Embind call can reuse or grow the heap; a later complete sampler batch is
+  // the only condition that commits this candidate to the proxy.
+  const gravityVisualCandidate = gravityObservationDue
+    ? captureGravityVisual(vol, tick) : null;
   let diag = null, parts = null, audit = null, lag = null;
   let diagMeta = null;
   try {
@@ -592,29 +800,60 @@ function postFrame(
     }
   }
   audit = wantAudit ? lastAudit : null;
-  // The Lagrangian genuinely has no consumer beyond its panels, so it IS gated.
-  if (wantLag) {
+  // The Lagrangian is a full all-site reduction.  Preserve its own sample
+  // identity between reductions, just as audit does: a visible panel gets an
+  // immediate sample and later receives exactly one fresh observation for each
+  // distinct completed simulation state. Never retimestamp a retained sample.
+  const lagStartedAt = performance.now();
+  const priorLagTick = lastLagrangianMeta?.sampleTick ?? lastLagrangianMeta?.tick ?? null;
+  const retryAfterFailure = lastLagrangianMeta != null
+    && lastLagrangianMeta.status !== 'available';
+  const lagDue = wantLag && (retryAfterFailure
+    ? lagrangianCadence.shouldRun(true, false, lagStartedAt, tick)
+    : priorLagTick !== tick);
+  if (lagDue) {
+    if (telemetryTimingEnabled) telemetryTiming.lagrangianAttempts++;
     try {
-      lag = mod.getLagrangian(bridge);
+      const sampledLag = readLagrangian();
+      lastLagrangian = sampledLag || null;
       lastLagrangianMeta = telemetryGroupMeta({
         stateVersion: ++lagrangianStateVersion, tick,
-        stale: !lag,
-        status: lag ? 'available' : 'unavailable',
+        stale: !lastLagrangian,
+        status: lastLagrangian ? 'available' : 'unavailable',
       });
     } catch (e) {
+      lastLagrangian = null;
       lastLagrangianMeta = telemetryGroupMeta({
         stateVersion: ++lagrangianStateVersion, tick, stale: true, status: 'error',
       });
+    } finally {
+      // Only failed/unavailable attempts use cooldown. Successful reads above
+      // are intentionally sampled once for every completed worker state.
+      const lagFinishedAt = performance.now();
+      const lagElapsedMs = Math.max(0, lagFinishedAt - lagStartedAt);
+      if (lastLagrangianMeta?.status === 'available') lagrangianCadence.reset();
+      else lagrangianCadence.complete(lagFinishedAt, tick, lagElapsedMs, { retry: true });
+      if (telemetryTimingEnabled) {
+        telemetryTiming.lagrangianCompleted++;
+        telemetryTiming.lagrangianLastMs = lagElapsedMs;
+        telemetryTiming.lagrangianTotalMs += lagElapsedMs;
+        telemetryTiming.lagrangianMaxMs = Math.max(telemetryTiming.lagrangianMaxMs, lagElapsedMs);
+        lastLagrangianMeta.reductionMs = lagElapsedMs;
+      }
     }
-  } else if (!lastLagrangianMeta || lastLagrangianMeta.status !== 'inactive'
-      || lastLagrangianMeta.sourceEpoch !== activeConfigurationToken) {
+  } else if (!wantLag && (!lastLagrangianMeta || lastLagrangianMeta.status !== 'inactive'
+      || lastLagrangianMeta.sourceEpoch !== activeConfigurationToken)) {
     // Inactivity is an explicit observation boundary, including before the
     // first sample and after configuration replacement. Repeated inactive
     // frames retain this identity instead of fabricating new observations.
     lastLagrangianMeta = telemetryGroupMeta({
       stateVersion: ++lagrangianStateVersion, tick, stale: true, status: 'inactive',
     });
+    lagrangianCadence.reset();
+  } else if (!wantLag) {
+    lagrangianCadence.reset();
   }
+  lag = wantLag ? lastLagrangian : null;
 
   // Audit-derived decomposition is valid only when both observations describe
   // this exact tick. Reused/staggered audit samples remain separate telemetry
@@ -660,17 +899,20 @@ function postFrame(
     }
   } catch (e) { /* tracking off or not built */ }
   // Overlay samplers — ordinary/direct/viewport owners follow publication
-  // cadence. Only Time/Gravity instrument-owned readbacks share the bounded
-  // 4 Hz decision; a realtime co-owner wins in sampler-want-set. The helper
-  // also injects gravityMetricAgg@0 when Time alone owns telemetry demand.
+  // cadence. A visible Gravity panel forces its coherent L/K/F/aggregate
+  // batch once per new state; Time-only proper-time collection remains
+  // independently bounded by the shared cadence helper.
   const samplers = {};
   let gravityMetricAggSampled = false;
-  if (wantedSamplers.size > 0 || wantGravity) {
+  if (wantedSamplers.size > 0 || wantGravity || wantProperTime) {
     visitScheduledSamplers(wantedSamplers, {
       wantGravity,
+      wantProperTime,
       cadence: gravitySamplerCadence,
       nowMs: performance.now(),
-      forceGravityBatch: forceGravitySamplerBatch,
+      forceGravityBatch: gravityObservationDue || (!wantGravity && forceGravitySamplerBatch),
+      gravityPerState: wantGravity,
+      forceProperTimeBatch: !gravityObservationDue && forceGravitySamplerBatch,
       allowUndemandedBoundedInstrument,
     }, (key, { kind, stride }) => {
       const spec = SAMPLER_METHODS[kind];
@@ -718,29 +960,58 @@ function postFrame(
   }
 
   if (ctrl) {
-    Atomics.store(ctrl, CTRL.TICK, tick | 0);
+    // Retain the last valid control tick when this worker cannot establish an
+    // exact clock. Writing zero would fabricate a physics observation.
+    if (tick !== null) Atomics.store(ctrl, CTRL.TICK, tick);
     Atomics.store(ctrl, CTRL.PCOUNT, parts ? parts.count : 0);
     if (fieldChanged) Atomics.add(ctrl, CTRL.DATA_VERSION, 1);
     Atomics.add(ctrl, CTRL.FRAME, 1);
   }
   const dataVersion = ctrl ? Atomics.load(ctrl, CTRL.DATA_VERSION) : 0;
   if (gravityMetricAggSampled) gravityMetricAggVersion = dataVersion;
+  // Never derive a visual tick from a later publication.  The candidate was
+  // copied before samplers from this exact heap view and is committed only
+  // with a complete scalar batch from this same worker turn.
+  let gravityObservation = null;
+  const gravityBatch = gravityObservationDue && gravityVisualCandidate && gravityMetricAggSampled
+    ? completeGravitySamplerBatch(samplers) : null;
+  if (gravityObservationDue) {
+    try {
+      gravityObservation = finishGravityObservation(
+        gravityVisualCandidate, gravityBatch, dataVersion, frameTransfer,
+      );
+    } catch {
+      gravityObservation = null;
+    }
+    if (gravityObservation) {
+      lastGravityObservationIdentity = gravityIdentity;
+      gravityObservationRetryCadence.reset();
+    } else {
+      // Failure is an honest absence, not a retimestamped retained bundle.
+      // It may retry only after the bounded cadence observes a later state.
+      gravityObservationRetryCadence.complete(
+        performance.now(), gravityObservationRevision, 0, { retry: true },
+      );
+    }
+  }
   const engineTogglesMsg = engineTogglesDirty ? readEngineToggles() : null;
   const digestMsg = publishDynamicalStateDigest ? lastDynamicalStateDigest : undefined;
   publishDynamicalStateDigest = false;
   self.postMessage({ type: 'frame', configurationToken: activeConfigurationToken,
-                     tick: tick | 0, diag, diagMeta, parts,
+                     tick, diag, diagMeta, parts,
                      dataVersion,
                      audit, auditMeta: lastAuditMeta,
                      lag, lagMeta: lastLagrangianMeta,
-                     samplers, knot, knotEvents, knotAgg,
+                     samplers, gravityObservation, knot, knotEvents, knotAgg,
                      inspect: lastInspect, forceAt: lastForceAt,
+                     ...(telemetryTimingEnabled ? { telemetryTiming: telemetryTimingSnapshot() } : {}),
                      ...(digestMsg !== undefined ? { dynamicalStateDigest: digestMsg } : {}),
                      ...(engineTogglesMsg ? { engineToggles: engineTogglesMsg } : {}) }, frameTransfer);
 }
 
 function loop() {
   timer = 0;
+  if (backgroundSuspended) return;
   if (!bridge) { timer = setTimeout(loop, TARGET_DT); return; }
   const t0 = performance.now();
   if (ctrl && Atomics.load(ctrl, CTRL.RUNNING)) {
@@ -751,7 +1022,16 @@ function loop() {
     const maxTicks = N > 96 ? 1 : (N > 48 ? 1 : (N > 32 ? 2 : whole));
     const toRun = Math.min(whole, maxTicks);
     try {
+      const tickStartedAt = performance.now();
       for (let i = 0; i < toRun; i++) bridge.tick();
+      const tickElapsedMs = Math.max(0, performance.now() - tickStartedAt);
+      if (telemetryTimingEnabled && toRun > 0) {
+        const perTickMs = tickElapsedMs / toRun;
+        telemetryTiming.tickCompleted += toRun;
+        telemetryTiming.tickLastMs = perTickMs;
+        telemetryTiming.tickTotalMs += tickElapsedMs;
+        telemetryTiming.tickMaxMs = Math.max(telemetryTiming.tickMaxMs, perTickMs);
+      }
       if (toRun > 0) postFrame(true);
     } catch (e) {
       Atomics.store(ctrl, CTRL.RUNNING, 0);
@@ -760,13 +1040,25 @@ function loop() {
     }
   }
   const elapsed = performance.now() - t0;
-  timer = setTimeout(loop, Math.max(0, TARGET_DT - elapsed));
+  if (ctrl && Atomics.load(ctrl, CTRL.RUNNING)) {
+    timer = setTimeout(loop, Math.max(0, TARGET_DT - elapsed));
+  }
 }
 
 self.onmessage = (e) => {
   const msg = e.data;
   try {
+    if (backgroundSuspended && !['setBackgroundSuspended', 'captureDigest', 'dispose', 'acknowledgedControl'].includes(msg.type)) return;
     switch (msg.type) {
+      case 'setBackgroundSuspended':
+        backgroundSuspended = msg.value === true;
+        if (backgroundSuspended) {
+          if (timer) { clearTimeout(timer); timer = 0; }
+          if (ctrl) Atomics.store(ctrl, CTRL.RUNNING, 0);
+        }
+        self.postMessage({ type: 'backgroundSuspended', value: backgroundSuspended,
+          seq: msg.seq, configurationToken: activeConfigurationToken });
+        break;
       case 'create':
         toggles = msg.toggles || {};
         toggleNames = Array.isArray(msg.toggleNames) && msg.toggleNames.length
@@ -794,10 +1086,54 @@ self.onmessage = (e) => {
           buildBridge(msg.N, msg.scenarioId || scenarioId, msg.configurationToken, msg.seedOverrides ?? null);
         }
         break;
+      case 'acknowledgedControl': {
+        const reply = { type: 'controlComplete', requestId: msg.requestId,
+          configurationToken: msg.configurationToken, ok: false, status: 'rejected' };
+        let dispatched = false;
+        try {
+          if (!mod || !bridge || Number(msg.configurationToken) !== activeConfigurationToken || backgroundSuspended)
+            throw new Error('Lattice owner is unavailable or superseded');
+          const command = msg.command || {};
+          if (!['barrier', 'step', 'setToggle'].includes(command.type)) throw new Error('Unsupported lattice control');
+          if (command.type === 'step' && (!Number.isSafeInteger(command.count) || command.count < 1 || command.count > 64))
+            throw new Error('Invalid lattice step count');
+          if (command.type === 'setToggle' && (!toggleNames.includes(command.name) || typeof command.value !== 'boolean'))
+            throw new Error('Invalid lattice toggle');
+          reply.beforeTick = bridge.currentTick();
+          if (command.type === 'step') {
+            if (ctrl && Atomics.load(ctrl, CTRL.RUNNING)) throw new Error('Pause before exact stepping');
+            for (let i = 0; i < command.count; i++) {
+              dispatched = true;
+              const result = applyCommand('tickScale0', []);
+              if (!result.ok) throw new Error(result.error);
+            }
+          } else if (command.type === 'setToggle') {
+            dispatched = true;
+            const result = applyCommand('setToggle', [command.name, command.value]);
+            if (!result.ok) throw new Error(result.error);
+            enforceToggleInvariants();
+            if (!!mod.getToggle(bridge, command.name) !== command.value) throw new Error('Toggle readback did not match the request');
+          }
+          if (command.type !== 'barrier') {
+            lastAudit = null; lastAuditMeta = null; auditFrameCounter = 0;
+            lastLagrangian = null; lastLagrangianMeta = null; lagrangianCadence.reset();
+            engineTogglesDirty = true;
+          }
+          postFrame(true);
+          reply.tick = bridge.currentTick(); reply.ok = true; reply.status = 'applied';
+        } catch (error) {
+          reply.error = String(error.message || error);
+          reply.status = dispatched ? 'unknown' : 'rejected';
+          if (dispatched && ctrl) Atomics.store(ctrl, CTRL.RUNNING, 0);
+        }
+        self.postMessage(reply);
+        break;
+      }
       case 'command': {
         if (!mod || !bridge
             || Number(msg.configurationToken) !== activeConfigurationToken) break;
         lastAudit = null; lastAuditMeta = null; auditFrameCounter = 0;
+        lastLagrangian = null; lastLagrangianMeta = null; lagrangianCadence.reset();
         const result = applyCommand(msg.method, msg.args || []);
         if (!result.ok) {
           if (msg.method === 'tickScale0' && ctrl) Atomics.store(ctrl, CTRL.RUNNING, 0);
@@ -813,6 +1149,7 @@ self.onmessage = (e) => {
         if (!mod || !bridge
             || Number(msg.configurationToken) !== activeConfigurationToken) break;
         lastAudit = null; lastAuditMeta = null; auditFrameCounter = 0;
+        lastLagrangian = null; lastLagrangianMeta = null; lagrangianCadence.reset();
         const errors = [];
         const expectedToggles = new Map();
         for (const entry of (msg.entries || [])) {
@@ -849,6 +1186,7 @@ self.onmessage = (e) => {
         if (!mod || !bridge
             || Number(msg.configurationToken) !== activeConfigurationToken) break;
         lastAudit = null; lastAuditMeta = null; auditFrameCounter = 0;
+        lastLagrangian = null; lastLagrangianMeta = null; lagrangianCadence.reset();
         const errors = [];
         const expectedToggles = new Map();
         let expectedFluxBoundaryMode = null;
@@ -1004,16 +1342,26 @@ self.onmessage = (e) => {
         }
         break;
       }
+      case 'setTelemetryTiming': {
+        if (Number(msg.configurationToken) !== activeConfigurationToken) break;
+        telemetryTimingEnabled = msg.enabled === true;
+        resetTelemetryTiming();
+        break;
+      }
       case 'setTelemetryMask': {
-        const nextWantAudit = msg.wantAudit !== false;
+        const nextWantAudit = msg.wantAudit === true;
         const auditChanged = nextWantAudit !== wantAudit;
-        const nextWantLag = msg.wantLag !== false;
+        const nextWantLag = msg.wantLag === true;
         const lagChanged = nextWantLag !== wantLag;
         const nextWantGravity = msg.wantGravity === true;
         const gravityBecameWanted = nextWantGravity && !wantGravity;
+        const gravityChanged = nextWantGravity !== wantGravity;
+        const nextWantProperTime = msg.wantProperTime === true;
+        const properTimeBecameWanted = nextWantProperTime && !wantProperTime;
         wantAudit = nextWantAudit;
         wantLag = nextWantLag;
         wantGravity = nextWantGravity;
+        wantProperTime = nextWantProperTime;
         if (auditChanged) {
           // Never reuse an observation across an inactive boundary. The next
           // demanded postFrame samples current state; the inactive path emits
@@ -1021,10 +1369,24 @@ self.onmessage = (e) => {
           lastAudit = null;
           auditFrameCounter = 0;
         }
+        if (lagChanged) {
+          // An inactive boundary cannot retain a prior visible observation.
+          // Reopening samples current state immediately through the reset
+          // wall-time cadence.
+          lastLagrangian = null;
+          lagrangianCadence.reset();
+        }
+        if (gravityChanged) {
+          // A hidden panel has no retained observation contract. Reopening it
+          // samples the current state once, even when the ordinal tick paused.
+          lastGravityObservationIdentity = null;
+          gravityObservationSupportSignature = '';
+          gravityObservationRetryCadence.reset();
+        }
         // A paused Lagrangian-only transition must publish even when audit is
         // already demanded. This is a readback, not a physics-data advance.
         let publishPausedMaskChange = auditChanged || lagChanged;
-        if (gravityBecameWanted) {
+        if (gravityBecameWanted || properTimeBecameWanted) {
           gravitySamplerCadence.reset();
           const dataVersion = ctrl ? Atomics.load(ctrl, CTRL.DATA_VERSION) : 0;
           // Time may be opened while playback is paused and owns no direct
@@ -1034,7 +1396,7 @@ self.onmessage = (e) => {
         }
         if (publishPausedMaskChange && bridge && ctrl
             && !Atomics.load(ctrl, CTRL.RUNNING)) {
-          postFrame(false, gravityBecameWanted);
+          postFrame(false, gravityBecameWanted || properTimeBecameWanted);
         }
         break;
       }
@@ -1048,6 +1410,8 @@ self.onmessage = (e) => {
           type: 'runningState', running: !!msg.value, seq: msg.seq | 0,
           configurationToken: activeConfigurationToken,
         });
+        if (msg.value && !timer) loop();
+        else if (!msg.value && timer) { clearTimeout(timer); timer = 0; }
         break;
       case 'dispose':
         if (timer) { clearTimeout(timer); timer = 0; }

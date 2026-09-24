@@ -15,8 +15,16 @@
  * the underlying bridge instance via closure capture.
  */
 
+const EMPTY_PROPER_TIME_SAMPLE = Object.freeze({
+    values: new Float32Array(0), count: 0, sampleTick: null,
+    sourceEpoch: null, epoch: null, source: 'unavailable',
+});
+
 export function createScale0Capabilities(bridge) {
     return {
+        ...(typeof bridge.executeScale0Control === 'function' ? {
+            executeScale0Control: (command, options) => bridge.executeScale0Control(command, options),
+        } : {}),
         tickScale0: () => bridge.tick(),
         getScale0ParticleFrame: () => bridge.getParticleData(),
         getScale0FluxVolume: () => bridge.getFluxVolume(),
@@ -29,6 +37,12 @@ export function createScale0Capabilities(bridge) {
         ...(typeof bridge.getFluxSlabsWithMaxRho === 'function' ? {
             getScale0FluxSlabsWithMaxRho: requests => bridge.getFluxSlabsWithMaxRho(requests),
         } : {}),
+        // Optional immutable worker-turn bundle for the Gravity panel. It is
+        // intentionally absent on transports that cannot establish one exact
+        // common tick for slabs and scalar samples.
+        ...(typeof bridge.getGravityObservation === 'function' ? {
+            getScale0GravityObservation: (stride = 2) => bridge.getGravityObservation(stride),
+        } : {}),
         // Single kind-dispatched chokepoint (bridge.getSamplerOr, defined once in
         // bridge-contract.js): maps `kind` → the bridge's concrete sampler, keeps
         // the empty-sample fallback (CONTRACTS.md §2.3 — the optional pattern is
@@ -36,6 +50,20 @@ export function createScale0Capabilities(bridge) {
         // if a bridge has DROPPED a sampler (§2.4 surface drift) instead of blanking
         // the overlay silently. Consolidation only; behavior is unchanged.
         getScale0FieldSamples: ({ kind, stride = 2 } = {}) => bridge.getSamplerOr(kind, stride),
+        // Cache-only surface used by canonical proper-time telemetry. The
+        // worker collector owns sampler demand, so reading a row cannot add a
+        // competing realtime direct-sampler owner.
+        getScale0ProperTimeSamples: ({ kind, stride = 2 } = {}) => {
+            if (typeof bridge.getProperTimeSamplerSnapshot === 'function') {
+                return bridge.getProperTimeSamplerSnapshot(kind, stride);
+            }
+            // Native/WebSocket samplers can enqueue an RPC through getSamplerOr.
+            // The canonical collector must remain cache-only, so publish an
+            // explicit unavailable observation until the native snapshot protocol
+            // grows a proper-time group rather than silently creating a panel RPC.
+            if (typeof bridge.getTelemetrySnapshot === 'function') return EMPTY_PROPER_TIME_SAMPLE;
+            return bridge.getSamplerOr(kind, stride);
+        },
         hasScale0SamplerSnapshot: (kind, stride = 2) => (
             typeof bridge.hasSamplerSnapshot === 'function'
                 ? bridge.hasSamplerSnapshot(kind, stride)
