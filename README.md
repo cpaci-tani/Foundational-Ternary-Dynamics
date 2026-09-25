@@ -22,94 +22,155 @@ C++/CUDA simulation engine, and a browser workspace. The
 [repository map](REPOSITORY_MAP.md) shows module ownership; the
 [dated resume](docs/WHERE_WE_LEFT_OFF.md) records the current working state.
 
-## The selected model
+## G* in exact mathematics
+
+The constant used to organize one strand of FTD's mathematical work is
+
+$$
+G^* := \frac{\Gamma(1/4)}{\Gamma(3/4)}
+     = \frac{\Gamma(1/4)^2}{\pi\sqrt{2}}
+     = 2.958675119\ldots .
+$$
+
+The second form follows at once from Euler's [reflection
+formula](https://dlmf.nist.gov/5.5#E3). Its exact formulas connect quartic
+periods, modular values, a lattice Green function, and L-functions. These
+are classical relations among mathematical objects, not separate physical
+measurements.
+
+### Quartic and elliptic periods
+
+Let
+
+$$
+\varpi := 2\int_0^1 \frac{dt}{\sqrt{1-t^4}}
+        = \frac{\Gamma(1/4)^2}{2\sqrt{2\pi}}.
+$$
+
+This is the lemniscatic period constant; it is **not** $G^*$. Their exact
+relation is $G^*=2\varpi/\sqrt\pi$. The quartic integral is also a period
+integral of the elliptic curve $E:y^2=x^3-x$: the substitution $x=t^{-2}$
+transforms its invariant differential $dx/(2y)$ into
+$-dt/\sqrt{1-t^4}$. The order-four automorphism
+$(x,y)\mapsto(-x,iy)$ over $\mathbb C$ exhibits its square-lattice complex
+multiplication.
+
+Write $K(k)=\int_0^{\pi/2}(1-k^2\sin^2 u)^{-1/2}du$ for the complete
+elliptic integral and $\operatorname{AGM}$ for Gauss's arithmetic-geometric
+mean. At the self-complementary modulus $k=1/\sqrt2$, the same period gives
+
+$$
+G^* = \frac{2\sqrt2}{\sqrt\pi}K(1/\sqrt2)
+    = \frac{2\sqrt\pi}{\operatorname{AGM}(1,\sqrt2)}.
+$$
+
+The second equality uses the [elliptic-integral/AGM
+identity](https://dlmf.nist.gov/19.8#E5), with its modulus normalization
+stated explicitly.
+
+### A modular value and a lattice return sum
+
+For $\vartheta_3(q)=\sum_{n\in\mathbb Z}q^{n^2}$, the square-lattice nome
+$q=e^{-\pi}$ gives another exact value:
+
+$$
+G^* = \sqrt{2\pi}\,\vartheta_3(e^{-\pi})^2
+    = \sqrt{2\pi}\sum_{(m,n)\in\mathbb Z^2}e^{-\pi(m^2+n^2)}.
+$$
+
+This is the [theta/elliptic-integral identity](https://dlmf.nist.gov/20.9#E2)
+at the square-lattice parameter.
+
+The three-dimensional body-centred-cubic (BCC) walk supplies a different
+kind of representation. Its normalized return Green function is
+
+$$
+\begin{aligned}
+W_{\mathrm{BCC}}
+&= \frac{1}{\pi^3}\int_{[0,\pi]^3}
+   \frac{du\,dv\,dw}{1-\cos u\cos v\cos w} \\
+&= \sum_{m=0}^{\infty}\left(\frac{\binom{2m}{m}}{4^m}\right)^3
+ = \frac{\Gamma(1/4)^4}{4\pi^3}
+ = \frac{(G^*)^2}{2\pi}.
+\end{aligned}
+$$
+
+$W_{\mathrm{BCC}}$ is the **sum** of return probabilities, not the
+probability of one return. The product-cosine denominator identifies the BCC
+walk; a simple-cubic or face-centred-cubic Watson integral is a different
+object. See the [normalized lattice derivation](docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md)
+and [Watson's evaluation](https://academic.oup.com/qjmath/article-abstract/os-10/1/266/1520070).
+
+### Arithmetic special values
+
+A Dirichlet L-derivative and a fixed elliptic-curve L-value give two
+arithmetic expressions for $G^*$. For the Dirichlet beta function
+$\beta(s)=L(s,\chi_{-4})$, the [Hurwitz-zeta
+derivative](https://dlmf.nist.gov/25.11#E18) at zero gives
+
+$$
+\log G^* = \beta'(0)+\log 2.
+$$
+
+For the **specified** curve $E:y^2=x^3-x$, of conductor 32, its central
+value is
+
+$$
+L(E,1)=\frac{\varpi}{4}=\frac{G^*\sqrt\pi}{8}.
+$$
+
+The first equality follows from the associated level-32 newform's
+Mellin/Beta integral; it is not a statement about all CM curves or their
+twists. See [Li, Long and Tu, Lemma
+3.1](https://sigma-journal.com/2018/090/) and
+the [curve record](https://www.lmfdb.org/EllipticCurve/Q/32/a/3). The
+[identity manuscript](docs/papers/src/PAPER_GSTAR_IDENTITIES.tex) collects
+further forms and their normalizations; equivalent rearrangements are not
+independent proofs.
+
+## The FTD question
+
+The equalities above hold whether or not FTD describes nature. They do not
+show that $G^*$ is selected by the finite dynamics, nor that it equals a
+measured coupling. In particular, the BCC formula evaluates an idealized
+lattice Green function, not a native observable of the selected v3 law.
 
 The [v3 constitution](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md)
-adopts five postulates. The dimension, carrier, and reference law are choices
-of this model; the postulates do not establish that nature uses them.
+adopts finite records on an oriented three-dimensional cubical complex,
+ordinal ticks, a ternary site readout of a larger record, radius-one Moore
+causality, and a homogeneous deterministic transition
+$X_{n+1}=\Phi(X_n)$. The [carrier](docs/theory/01_reference/SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md)
+and [reference law](docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md)
+are selected constructions. They have finite collision and expiry
+certificates and a bounded transverse-vacuum linearization at stated
+preparations; they are not uniquely forced by the postulates.
 
-| Element | Current v3 specification |
-|---|---|
-| Space | Oriented three-dimensional cubical cell complex with a global chart and undefined outer boundary. |
-| Time | One ordinal tick `n = 0, 1, ...`; records have births and may expire. Physical seconds are not primitive. |
-| State | Finite alphabets on cells. The site readout `m` returns `-1`, `0`, or `+1` and does not expose the complete site record. |
-| Causality | One update depends on at most a radius-one Moore neighborhood. This is a ceiling, not a requirement to use every neighbor. |
-| Law | One homogeneous deterministic update `X[n+1] = Phi(X[n])` with an explicit synchronous schedule and a non-injective expiry case. The reference `Phi` is selected, not forced by the preceding rows. |
+To connect the mathematics to physics, a target-blind readout of finite
+$\Phi$ histories would need a specified preparation, domain, and error or
+stability bound, followed by a separate operational identification. That
+chain is open for $G^*$, as are general recoveries of stable matter,
+charged electromagnetism, Born frequencies, a common relativistic cone, and
+tensor gravity. Substituting a framework value into an established physics
+formula is a [parametric insertion](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md),
+not a recovery of that formula.
 
-The [selected carrier](docs/theory/01_reference/SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md)
-makes the finite-state cost explicit:
+The [C++ engine](engine/SPEC_ENGINE.md) implements a different, legacy
+continuous-flux law with optional extensions. Its measurements are not runs
+of the selected v3 $\Phi$. The browser workspace also includes separate
+effective engines and visualizations; the [scale ownership
+audit](docs/reference/REF_SCALE_OWNERSHIP_AND_RECOVERY.md) records their
+current relationship to the finite model.
 
-| Cell | Alphabet | Number of states |
-|---|---|---:|
-| Site | Ternary value, three-state collision layer, and 384 binary channel slots | `9 x 2^384` |
-| Bond | Two nine-state relation slots | `81` |
-| Plaquette | Four nine-state relation slots | `6,561` |
-| Cube | Singleton | `1` |
+## Reading the project
 
-The 384 site bits are exclusion slots for distinct field-channel labels. A
-ternary site value is therefore a many-to-one readout of a much larger
-microscopic record, not the whole state.
-
-## Results at their stated scope
-
-The [selected law](docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md)
-and its certificates support the following statements. All are conditional
-on the chosen carrier, collision, and preparation.
-
-| Result | Exact scope | Not established by it |
-|---|---|---|
-| Finite collision | The frozen three-layer table has **55,008 pair rows**. Its parent certificate checks **128,499** exact cases; the integrated verifier currently reports **31/31** checks passing. | A unique law or a measured interaction. |
-| Expiry | Eight distinct frame presentations map to one bound reserve while named phase, polarity, token/work, and carrier records survive. | A general heat law or complete physical energy account. |
-| Minimum dynamic witnesses | The same `Phi` has finite propagation, reciprocal manifestation/expiry, a localized recurrent clock or proto-body, and a source/current ledger. | Stable matter or charged Maxwell dynamics. |
-| Transverse vacuum sector | The exact three-tick linearization has two divergence-free transverse real field pairs with speed **1/6** in model units. For wavevectors of norm at most `kappa`, its normalized tangent differs from the slow generator by at most `(9/2) kappa^2 exp(3 kappa)`. | The charged sector, action normalization, a physical light speed, or nonlinear stability. |
-| Input/dataflow check | The [firewall verifier](scripts/proofs/proof_v3_target_firewall.py) currently passes **26/26** rule and preparation dataflow checks, including checks that active inputs omit named physical target values. | Uniqueness, physical sufficiency, or independence of the historical design choices. |
-
-R1-R6 are closed only at the scopes recorded in the constitution. The counts
-above are finite certificate and software-verification counts, not numbers of
-independently confirmed physical predictions.
-
-## Physical status
-
-The following remain open as general recoveries from the selected v3 law:
-
-- stable matter and a particle spectrum;
-- charged electromagnetism and a normalized physical coupling;
-- prepared trials, detector events, and Born-rule frequencies;
-- a common relativistic causal cone and material proper time;
-- tensor gravity, lensing, and nonlinear gravitational dynamics.
-
-A physical quantity must have a defined readout from finite `Phi` histories,
-a domain of use, and an error or stability statement. A mathematical theorem
-about the selected rule does not by itself identify its variables with
-measurements. Values obtained by placing framework parameters into standard
-physics formulas remain [parametric insertions](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md),
-not recoveries of those formulas.
-
-The [C++ engine](engine/SPEC_ENGINE.md) is a simulation of a different,
-legacy continuous-flux law with optional extensions. Its output measures that
-engine at a specified configuration; it is not a run of the selected v3
-`Phi`. The browser workspace also contains separate effective scale engines
-and visualizations. Their current owners and the missing cross-scale links
-are recorded in the [scale ownership audit](docs/reference/REF_SCALE_OWNERSHIP_AND_RECOVERY.md).
-
-## Find the source of a claim
-
-Claim status is controlled by the
-[ledger](docs/theory/07_assessment/core_ledgers/LEDGER.md), followed by the
-active v3 constitution, branch constitutions, and other prose. The
-[dated resume](docs/WHERE_WE_LEFT_OFF.md) summarizes the current working
-state; the [open-items tracker](docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md)
+The [ledger](docs/theory/07_assessment/core_ledgers/LEDGER.md) controls
+claim status, followed by the active v3 constitution, branch constitutions,
+and other prose. The [dated resume](docs/WHERE_WE_LEFT_OFF.md) gives the
+current state; the [open-items tracker](docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md)
 and [resolved-items tracker](docs/theory/07_assessment/core_ledgers/TRACKER_RESOLVED_ITEMS.md)
-separate live work from provenance. Historical and retracted routes remain in
-the [theory archive](docs/theory/archive/) so their status is visible.
-
-| Area | Entry point |
-|---|---|
-| Theory and document navigation | [Curated index](docs/theory/META_INDEX.md) |
-| v3 definitions and scope | [Constitution](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md), [carrier](docs/theory/01_reference/SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md), [law](docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md) |
-| Repository and module ownership | [Repository map](REPOSITORY_MAP.md) |
-| Engine and browser | [Engine specification](engine/SPEC_ENGINE.md), [web entry point](engine/web/index.html) |
-| Contributions | [Contributing guide](CONTRIBUTING.md) |
+separate live work from provenance. The [curated theory index](docs/theory/META_INDEX.md),
+[repository map](REPOSITORY_MAP.md), and [contributing guide](CONTRIBUTING.md)
+are the shortest routes into the corpus and code.
 
 ## Run and check
 
