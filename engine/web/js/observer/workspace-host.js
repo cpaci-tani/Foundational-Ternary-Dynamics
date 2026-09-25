@@ -80,6 +80,10 @@ export class ObserverWorkspaceHost {
             this.isolatePresentation();
             deps.button.setAttribute('aria-pressed', 'true');
             await this.workspace.enter();
+            if (this.disposed || generation !== this.generation) {
+                if (!this.workspace.disposed) await this.workspace.suspend();
+                return;
+            }
             document.dispatchEvent(new CustomEvent('ftd:workspace-change', { bubbles: true, detail: { workspace: 'observer' } }));
         } catch (error) {
             this.restoreDashboard();

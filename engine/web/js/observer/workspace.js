@@ -358,7 +358,6 @@ export class ObserverWorkspace {
     async action(action, payload) {
         if (action === 'exit') { this.deps.onExit(); return; }
         if (action === 'assistant') {
-            this.releaseAssistantInput(true);
             document.dispatchEvent(new CustomEvent('ftd:assistant-toggle', { bubbles: true, detail: { workspace: 'observer' } }));
             return;
         }

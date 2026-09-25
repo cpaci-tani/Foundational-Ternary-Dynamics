@@ -1,6 +1,6 @@
 /** Passive observations only. No effective-field units or closure assumptions. */
 export const RECORD_PANEL_CONTRACTS = Object.freeze({
-    controls: 'existing', inspector: 'existing', scene: 'existing', seeding: 'existing',
+    controls: 'existing', inspector: 'existing', scene: 'existing', seeding: 'existing', jev: 'existing',
     diagnostics: 'counts', 'telemetry-grid': 'counts', charts: 'history',
     time: 'clock', thermo: 'occupancy', 'flux-slice': 'slice', 'scale-context': 'geometry',
     transactions: 'No transaction journal is exported by this runtime. Observed counts cannot reconstruct intermediate events or lifetimes.',

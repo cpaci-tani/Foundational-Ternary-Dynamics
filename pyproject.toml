@@ -14,14 +14,29 @@ exclude = [
     "engine",
     "media",
     "node_modules",
-    # Research / exploration code (not production)
+    # Research / legacy scripts remain outside the incremental Ruff gate.
+    # scripts/constants.py, scripts/theory/, and scripts/assistant/ are linted.
     "dissemination/manuscript",
     "dissemination/whitepaper",
     "dissemination/notebooks",
     "dissemination/visuals",
     "dissemination/papers/*/figures",
     "docs/internal/explorations",
-    "scripts",
+    "scripts/audit",
+    "scripts/benchmarks",
+    "scripts/common",
+    "scripts/experiments",
+    "scripts/exploration",
+    "scripts/maintenance",
+    "scripts/phi_v2_lattice",
+    "scripts/proofs",
+    "scripts/retired",
+    "scripts/runners",
+    "scripts/tests",
+    "scripts/verification",
+    "scripts/visualization",
+    "scripts/build_paper_inventory.py",
+    "scripts/discrete_operators.py",
     "simulations",
     "special_projects",
     # Agent scratch files
@@ -40,6 +55,11 @@ ignore = [
     "E741",   # ambiguous variable name
     "W605",   # invalid escape sequence (common in LaTeX strings)
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# Existing one-line statement style in the Pages staging helpers; other
+# selected rules remain active until this debt is formatted away.
+"scripts/assistant/*.py" = ["E701", "E702"]
 
 [tool.black]
 line-length = 120

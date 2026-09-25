@@ -16,9 +16,6 @@
  *   applyScaleGridAxesDefaults - Per-scale default grid/axes visibility
  */
 
-import { AE_PHYSICS_SPECS } from './scale2/scenario-registry.js';
-
-
 // ── formatNumber ────────────────────────────────────────────────────
 /**
  * Format a numeric value for display in diagnostics / status bars.
@@ -174,33 +171,6 @@ export function hideScale0Overlays(viewport) {
     viewport.toggleFluxSlice(false);
     syncUniversalGridAxes(viewport, false);
     if (viewport.particles) viewport.particles.visible = false;
-}
-
-/**
- * Sync all AE toggle checkboxes and sliders to the bridge.
- */
-export function syncAEParamsFromUI(bridge) {
-    const dtEl = document.getElementById('ae-dt-slider');
-    if (dtEl) bridge.aeSetDt(parseFloat(dtEl.value));
-    const softEl = document.getElementById('ae-soft-slider');
-    if (softEl) bridge.aeSetSoftening(parseFloat(softEl.value));
-    const thermostatEl = document.getElementById('ae-thermostat-slider');
-    if (thermostatEl) bridge.aeSetThermostatTemp(parseFloat(thermostatEl.value));
-    for (const spec of AE_PHYSICS_SPECS) {
-        const el = document.getElementById(spec.elementId);
-        if (el && bridge[spec.setter]) bridge[spec.setter](el.checked);
-    }
-}
-
-/**
- * Reset all AE toggle checkboxes to their default values and push them to the bridge.
- */
-export function resetAETogglesToDefaults(bridge) {
-    for (const spec of AE_PHYSICS_SPECS) {
-        const el = document.getElementById(spec.elementId);
-        if (el) el.checked = spec.defaultValue;
-        if (bridge[spec.setter]) bridge[spec.setter](spec.defaultValue);
-    }
 }
 
 /**

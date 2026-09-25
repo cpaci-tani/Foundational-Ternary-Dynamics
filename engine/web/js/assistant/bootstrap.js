@@ -10,8 +10,9 @@ import {createObserverControl} from './observer-control.js';
 import {assertObservation,validateValue} from './contracts.js';
 import {McpBridge} from './mcp-bridge.js';
 import {getRecordCatalogStatus} from '../scales/scale0/ui/controls/record-observation.js';
+import {floatingWindowManager} from '../ui/components/floating-window/component.js';
 
-/** @param {{getCtx:()=>any,isLattice:()=>boolean,loadLatticeScenario?:any,host:any,registry:any,app:HTMLElement}} deps */
+/** @param {{getCtx:()=>any,isLattice:()=>boolean,loadLatticeScenario?:any,host:any,registry:any,app:HTMLElement,activatePanel:(panel:string)=>void}} deps */
 export async function createAssistant(deps){
     const scope=new LifetimeScope();
     const response=await fetch(new URL('./config.json',import.meta.url));
@@ -41,15 +42,26 @@ export async function createAssistant(deps){
                 if(receipt.after){assertObservation(router.observe(),receipt.after);receipt.after={...receipt.after,actions:[...(receipt.after.actions || []),switchDescriptor],capabilities:[...receipt.after.capabilities,'workspace.switch']};}
                 return receipt;
             }
-            validateValue(action.args,switchDescriptor.args);const before=router.observe();transitioning=true;
-            try{if(action.args.workspace==='observer')await deps.host.enter();else await deps.host.exit();options.assertActive?.();
+            validateValue(action.args,switchDescriptor.args);options.signal?.throwIfAborted();const before=router.observe();transitioning=true;
+            const switching=before?.workspace!==action.args.workspace;
+            const abort=()=>{if(switching && action.args.workspace==='observer')void deps.host.exit();};
+            options.signal?.addEventListener('abort',abort,{once:true});
+            try{if(action.args.workspace==='observer')await deps.host.enter();else await deps.host.exit();options.assertActive?.();options.signal?.throwIfAborted();
                 const after=router.observe();
                 if(!after?.ownerId || after.workspace!==action.args.workspace)return {status:'superseded',action,before,after,error:'Workspace transition was superseded before the destination became ready.'};
                 return {status:'applied',action,before,after};
-            }finally{transitioning=false;}
+            }catch(error){
+                if(options.signal?.aborted && switching){
+                    if(before?.workspace==='observer')await deps.host.enter();
+                    else if(before?.workspace==='lattice')await deps.host.exit();
+                }
+                throw error;
+            }finally{options.signal?.removeEventListener('abort',abort);transitioning=false;}
         },
     };
-    const view=new AssistantConsole({getMount:()=>deps.host.active?deps.registry.get('observerWorkspace').getAssistantMount():deps.app,
+    const view=new AssistantConsole({getMount:()=>deps.host.active?deps.registry.get('observerWorkspace').getAssistantMount():/** @type {HTMLElement} */(deps.app.querySelector('#panel-jev')),
+        activatePanel:deps.activatePanel,
+        dockFloat:()=>floatingWindowManager.getWindow('jev')?.dock(),
         onVisibility:open=>{deps.registry.get('observerWorkspace')?.releaseAssistantInput(open && deps.host.active);if(open){const observation=router.observe();if(observation)view.event({type:'observation',observation});}}});
     const model=new BrowserModel({modelBase:config.modelBase,onStatus:status=>view.modelStatus(status),
         onActivity:busy=>deps.registry.get('observerWorkspace')?.renderer?.setExternalGpuLoad(busy)});
@@ -60,12 +72,43 @@ export async function createAssistant(deps){
     view.bind({service,model,jev,knowledge,mcp});
     const catalogStatus=()=>view.event({type:'scenario-catalog',status:getRecordCatalogStatus()});
     scope.on(document,'ftd:record-catalog-status',catalogStatus);catalogStatus();
-    scope.on(document,'ftd:assistant-toggle',()=>view.setOpen(!view.open));
-    scope.on(document,'click',event=>{if(event.target instanceof Element && event.target.closest('#btn-ftd-assistant'))view.setOpen(!view.open);});
-    scope.on(document,'ftd:workspace-change',()=>{if(!transitioning)service.stop('Workspace changed');view.relocate();const o=router.observe();if(o)view.event({type:'observation',observation:o});});
+    const mobile=window.matchMedia('(max-width: 767px)');
+    scope.on(document,'ftd:assistant-toggle',()=>{if(!mobile.matches)view.setOpen(!view.open);});
+    scope.on(window,'ftd:panel-visibility-change',event=>{
+        const detail=/** @type {CustomEvent} */(event).detail;
+        if(!deps.host.active && detail?.reason==='floating-mount' && detail.panelId==='jev' && !mobile.matches){
+            view.setOpen(true,{fromDock:true});
+            return;
+        }
+        if(!deps.host.active && detail?.activePanel){
+            if(deps.app.querySelector('.tab[data-panel="jev"].is-floated') && !mobile.matches)return;
+            view.setOpen(detail.activePanel==='jev' && !detail.collapsed,{fromDock:true});
+        }
+    });
+    if(!deps.host.active && deps.app.querySelector('#panel-jev.active') && !deps.app.classList.contains('panels-collapsed')){
+        view.setOpen(true,{fromDock:true});
+    }
+    scope.on(document,'ftd:workspace-change',()=>{
+        if(!transitioning)service.stop('Workspace changed');
+        view.relocate();
+        if(!deps.host.active){
+            const floated=!!deps.app.querySelector('.tab[data-panel="jev"].is-floated');
+            const selected=!!deps.app.querySelector('.tab[data-panel="jev"].active');
+            view.setOpen(!mobile.matches && (floated || selected && !deps.app.classList.contains('panels-collapsed')),{fromDock:true});
+        }
+        const o=router.observe();if(o)view.event({type:'observation',observation:o});
+    });
+    scope.on(mobile,'change',()=>{
+        if(!mobile.matches)return;
+        service.stop('JEV unavailable on mobile');
+        void mcp.disconnect();
+        floatingWindowManager.getWindow('jev')?.dock();
+        view.setOpen(false,{fromDock:true});
+        deps.activatePanel('controls');
+    });
     scope.on(document,'visibilitychange',()=>{if(document.hidden){service.stop('Tab hidden');void mcp.disconnect();}});
-    scope.on(window,'pagehide',()=>mcp.dispose());
-    const api={service,view,model,jev,knowledge,mcp,control:router,dispose(){scope.dispose();mcp.dispose();view.dispose();service.dispose();lattice.dispose?.();observer.dispose?.();deps.registry.unregister('assistant');}};
+    scope.on(window,'pagehide',()=>{void mcp.disconnect();});
+    const api={service,view,model,jev,knowledge,mcp,control:router,dispose(){scope.dispose();mcp.dispose();service.dispose();view.dispose();lattice.dispose?.();observer.dispose?.();deps.registry.unregister('assistant');}};
     deps.registry.register('assistant',api);
     return api;
 }

@@ -21,8 +21,6 @@ Threading + allow_reuse_address are enabled so the server survives
 parent-process detachment (the common case under preview managers
 on Windows) and binds cleanly after a hot-restart.
 
-H-4 cleanup ticket; pairs with the punch list in
-`C:\\Users\\cpaci\\.claude\\plans\\i-want-to-try-crispy-charm.md`.
 """
 
 import http.server

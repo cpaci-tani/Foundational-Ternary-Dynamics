@@ -79,8 +79,8 @@ export function getScaleControlsBlocksTemplate() {
                 <div class="card">
                     <div class="card-title">Cosmology (FTD)</div>
                     <div class="scale-info-copy">
-                        <div title="Engine [CONJECTURE], not a derived dark-energy density: Ω_Λ = 2/3 does NOT match the observed Ω_Λ ≈ 0.685. FTD natively predicts Λ = 0 (FC-1 declines ℏ); any nonzero value is a [BOUNDARY] needing a horizon length L_H. See FAQ 'dark-energy'.">&Omega;<sub>m</sub> = 1/3 &nbsp; &Omega;<sub>&Lambda;</sub> = 2/3 <span style="opacity:0.6">[CONJECTURE]</span></div>
-                        <div title="Moore-shell [SELECTION]; does NOT match Planck 2018 observed Ω_DM/Ω_m ≈ 84%. See FAQ 'dark-matter'.">DM frac = 17/27 &asymp; 63% <span style="opacity:0.6">[SELECTION]</span></div>
+                        <div title="Engine [CONJECTURE], not a derived dark-energy density: Ω_Λ = 2/3 does NOT match the observed Ω_Λ ≈ 0.685. FTD natively predicts Λ = 0 (FC-1 declines ℏ); any nonzero value is a [BOUNDARY] needing a horizon length L_H.">&Omega;<sub>m</sub> = 1/3 &nbsp; &Omega;<sub>&Lambda;</sub> = 2/3 <span style="opacity:0.6">[CONJECTURE]</span></div>
+                        <div title="Moore-shell [SELECTION]; does NOT match Planck 2018 observed Ω_DM/Ω_m ≈ 84%.">DM frac = 17/27 &asymp; 63% <span style="opacity:0.6">[SELECTION]</span></div>
                         <div title="G_N = ${G_N_LABEL} is the lattice-natural simulation constant [IMPOSED]. The 1/(b₃+N_c)² identification with the physical Newton constant is RETIRED — FTD-0131 [CLOSED NEGATIVE].">G<sub>N</sub> = ${G_N_LABEL} <span style="opacity:0.6">[IMPOSED]</span></div>
                         <div>&gamma; = (D+2)/D = 5/3</div>
                         <div>c = 1/&radic;3</div>
@@ -784,7 +784,7 @@ export function getCosmicInfoPanelTemplate() {
                     <tr>
                         <td class="panel-resource-key">&Omega;<sub>&Lambda;</sub></td>
                         <td>= 2/3</td>
-                        <td class="panel-resource-note" title="Engine [CONJECTURE], not a derived dark-energy density: 2/3 does NOT match the observed Ω_Λ ≈ 0.685. FTD natively predicts Λ = 0 (FC-1 declines ℏ); any nonzero value is a [BOUNDARY] needing a horizon length L_H. See FAQ 'dark-energy'.">Dark energy [CONJECTURE]</td>
+                        <td class="panel-resource-note" title="Engine [CONJECTURE], not a derived dark-energy density: 2/3 does NOT match the observed Ω_Λ ≈ 0.685. FTD natively predicts Λ = 0 (FC-1 declines ℏ); any nonzero value is a [BOUNDARY] needing a horizon length L_H.">Dark energy [CONJECTURE]</td>
                     </tr>
                     <tr>
                         <td class="panel-resource-key">&Omega;<sub>m</sub></td>
@@ -794,7 +794,7 @@ export function getCosmicInfoPanelTemplate() {
                     <tr>
                         <td class="panel-resource-key">DM frac</td>
                         <td>= 17/27 &asymp; 63%</td>
-                        <td class="panel-resource-note" title="Moore-shell selection; does NOT match Planck 2018 observed Ω_DM/Ω_m ≈ 84%. See FAQ 'dark-matter-17-27'.">Moore-shell [SELECTION]</td>
+                        <td class="panel-resource-note" title="Moore-shell selection; does NOT match Planck 2018 observed Ω_DM/Ω_m ≈ 84%.">Moore-shell [SELECTION]</td>
                     </tr>
                     <tr>
                         <td class="panel-resource-key">&gamma;</td>

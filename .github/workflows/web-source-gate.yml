@@ -1,0 +1,74 @@
+name: Web Source Gate
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - '.github/workflows/web-source-gate.yml'
+      - '.dependency-cruiser.json'
+      - '.stylelintrc.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig*.json'
+      - 'engine/web/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/web-source-gate.yml'
+      - '.dependency-cruiser.json'
+      - '.stylelintrc.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig*.json'
+      - 'engine/web/**'
+
+permissions:
+  contents: read
+
+jobs:
+  source-and-shell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install web dependencies
+        run: npm ci
+
+      - name: Install browser test dependencies
+        run: npm ci --prefix engine/web/tests
+
+      - name: Lint JavaScript, CSS, and module boundaries
+        run: |
+          npm run lint
+          npm run lint:css
+          npm run depcruise
+
+      - name: Check JavaScript graphs and Observer types
+        run: |
+          npm run check:js-graph
+          npm run check:assistant-graph
+          npm run typecheck:observer
+
+      - name: Run focused Node suites
+        run: |
+          npm run test:observer
+          npm run test:assistant
+          node --test engine/web/tests/scale3-liquid-labs.node.test.mjs
+
+      - name: Build dashboard assets
+        run: npm run build
+
+      - name: Install Chromium and host libraries
+        working-directory: engine/web/tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke-test dashboard shell and built assets
+        run: npm --prefix engine/web/tests test -- -c playwright.config.js panel-mount.spec.js dashboard-asset-coverage.spec.js --workers=1

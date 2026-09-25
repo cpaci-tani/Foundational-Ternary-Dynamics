@@ -120,11 +120,13 @@ test('Scale 0 module contract and scenario registry are wired', async ({ page })
         const moduleShapeOk = requiredFns.every((name) => typeof controller[name] === 'function');
         const validation = registry.validateScale0ScenarioRegistry();
         const select = document.getElementById('scenario-select');
+        const optionIds = new Set(Array.from(select?.options || [], (option) => option.value));
         return {
             moduleShapeOk,
             validation,
             optionCount: select?.options.length || 0,
             scenarioCount: registry.SCALE0_SCENARIOS.length,
+            missingScenarioIds: registry.SCALE0_SCENARIOS.filter((scenario) => !optionIds.has(scenario.id)).map((scenario) => scenario.id),
             firstScenario: registry.SCALE0_SCENARIOS[0]?.id,
             firstOption: select?.options[0]?.value || null,
         };
@@ -132,7 +134,8 @@ test('Scale 0 module contract and scenario registry are wired', async ({ page })
 
     expect(result.moduleShapeOk).toBe(true);
     expect(result.validation.ok, `Registry errors: ${result.validation.errors.join(', ')}`).toBe(true);
-    expect(result.optionCount).toBe(result.scenarioCount);
+    expect(result.optionCount).toBeGreaterThanOrEqual(result.scenarioCount);
+    expect(result.missingScenarioIds).toEqual([]);
     expect(result.firstOption).toBe(result.firstScenario);
 });
 
@@ -157,11 +160,13 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
             },
             ui: {
                 mobileTabSelect: !!document.getElementById('tab-select-mobile'),
-                assistantButton: !!document.getElementById('btn-ftd-assistant'),
-                assistantSidebar: !!document.getElementById('assistant-sidebar'),
-                knowledgeBaseButton: !!document.getElementById('btn-knowledge-base'),
-                faqButton: !!document.getElementById('btn-faq'),
-                knowledgeBaseLibrary: !!document.getElementById('kb-sidebar'),
+                assistantTab: !!document.querySelector('.tab[data-panel="jev"]'),
+                assistantPanel: !!document.getElementById('panel-jev'),
+                assistantTopbarAbsent: !document.getElementById('btn-ftd-assistant'),
+                knowledgeBaseButtonAbsent: !document.getElementById('btn-knowledge-base'),
+                faqButtonAbsent: !document.getElementById('btn-faq'),
+                faqSidebarAbsent: !document.getElementById('faq-sidebar'),
+                knowledgeBaseLibraryAbsent: !document.getElementById('kb-sidebar'),
                 scale0ScenarioSelect: !!document.getElementById('scenario-select'),
                 scale0LatticeSize: !!document.getElementById('lattice-size'),
                 scale1ScenarioSelect: !!document.getElementById('pe-scenario-select'),
@@ -212,11 +217,13 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
     expect(shell.regions.tabs).toBe('tabs');
     expect(shell.regions.panels).toBe('panels');
     expect(shell.ui.mobileTabSelect).toBe(true);
-    expect(shell.ui.assistantButton).toBe(true);
-    expect(shell.ui.assistantSidebar).toBe(true);
-    expect(shell.ui.knowledgeBaseButton).toBe(true);
-    expect(shell.ui.faqButton).toBe(true);
-    expect(shell.ui.knowledgeBaseLibrary).toBe(true);
+    expect(shell.ui.assistantTab).toBe(true);
+    expect(shell.ui.assistantPanel).toBe(true);
+    expect(shell.ui.assistantTopbarAbsent).toBe(true);
+    expect(shell.ui.knowledgeBaseButtonAbsent).toBe(true);
+    expect(shell.ui.faqButtonAbsent).toBe(true);
+    expect(shell.ui.faqSidebarAbsent).toBe(true);
+    expect(shell.ui.knowledgeBaseLibraryAbsent).toBe(true);
     expect(shell.ui.scale0ScenarioSelect).toBe(true);
     expect(shell.ui.scale0LatticeSize).toBe(true);
     expect(shell.ui.scale1ScenarioSelect).toBe(true);
@@ -639,78 +646,4 @@ test('Tooltip palette follows theme switches', async ({ page }) => {
     expect(parchment.border).not.toBe(light.border);
     expect(light.color).not.toBe(defaults.color);
     expect(parchment.shadow).not.toBe(defaults.shadow);
-});
-
-test('Knowledge base opens as a single responsive library with shared content', async ({ page }) => {
-    await gotoAndReady(page, { path: '/index.html' });
-    await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
-        { timeout: 15_000 }).toBe(true);
-
-    await page.click('#btn-knowledge-base');
-
-    const libraryState = await page.evaluate(() => ({
-        libraryOpen: document.getElementById('app')?.classList.contains('knowledge-base-open') || false,
-        libraryVisible: document.getElementById('kb-sidebar')?.getAttribute('aria-hidden') === 'false',
-        listCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
-        title: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
-        hasFormulaTokens: !!document.querySelector('#kb-sidebar-reader .kb-token-formula'),
-    }));
-
-    expect(libraryState.libraryOpen).toBe(true);
-    expect(libraryState.libraryVisible).toBe(true);
-    expect(libraryState.listCount).toBeGreaterThan(5);
-    expect(libraryState.title.length).toBeGreaterThan(0);
-    expect(libraryState.hasFormulaTokens).toBe(true);
-
-    await page.fill('#kb-sidebar-search', 'nabla');
-
-    const searchState = await page.evaluate(() => ({
-        resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
-        readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
-        readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
-        resultsLabel: document.getElementById('kb-results-label')?.textContent?.trim() || '',
-    }));
-
-    expect(searchState.resultCount).toBeGreaterThan(0);
-    expect(searchState.resultsLabel.length).toBeGreaterThan(0);
-    expect(searchState.readerText.toLowerCase()).toContain('nabla');
-
-    await page.fill('#kb-sidebar-search', 'natural units');
-
-    const unitsState = await page.evaluate(() => ({
-        resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
-        readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
-        readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
-    }));
-
-    expect(unitsState.resultCount).toBeGreaterThan(0);
-    expect(unitsState.readerTitle).toContain('Natural Units');
-    expect(unitsState.readerText).toContain('c = 1');
-
-    await page.fill('#kb-sidebar-search', 'born rule');
-
-    const scenarioState = await page.evaluate(() => ({
-        resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
-        readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
-        readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
-    }));
-
-    expect(scenarioState.resultCount).toBeGreaterThan(0);
-    expect(scenarioState.readerTitle).toContain('State Creation from a Polarized Gaussian');
-    expect(scenarioState.readerText).toContain('not a Born-law measurement');
-    expect(scenarioState.readerText).toContain('P proportional to |J| squared');
-
-    await page.fill('#kb-sidebar-search', 'TRAPPIST-1');
-
-    const planetaryScenarioState = await page.evaluate(() => ({
-        resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
-        readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
-        readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
-    }));
-
-    expect(planetaryScenarioState.resultCount).toBeGreaterThan(0);
-    expect(planetaryScenarioState.readerTitle).toContain('TRAPPIST-1');
-    expect(planetaryScenarioState.readerText.toLowerCase()).toContain('resonance');
-
-
 });

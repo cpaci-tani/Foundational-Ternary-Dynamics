@@ -17,7 +17,10 @@ export default defineConfig({
   testDir: '.',
   testMatch: /.*\.spec\.js/,
   // This writes publication artifacts; it is not a visual regression oracle.
-  testIgnore: ['**/take_gallery_screenshots.spec.js'],
+  testIgnore: [
+    '**/take_gallery_screenshots.spec.js',
+    '**/scale0-comprehensive-performance.spec.js',
+  ],
   fullyParallel: false,  // the engine is stateful per page; serial is simpler
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

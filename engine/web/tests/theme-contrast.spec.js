@@ -6,7 +6,6 @@ const AA_RATIO = 4.5;
 
 async function renderedContrastFailures(page) {
     return page.evaluate(async () => {
-        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
         const canvas = document.createElement('canvas');
         canvas.width = 1;
         canvas.height = 1;
@@ -70,18 +69,7 @@ async function renderedContrastFailures(page) {
                 + ` ${(element.outerHTML || '').replace(/\s+/g, ' ').slice(0, 120)}`];
         });
 
-        document.getElementById('btn-kb-sidebar-close')?.click();
-        document.getElementById('btn-faq-sidebar-close')?.click();
-        const failures = scan('dashboard');
-        document.getElementById('btn-knowledge-base')?.click();
-        await sleep(50);
-        failures.push(...scan('knowledge-base'));
-        document.getElementById('btn-kb-sidebar-close')?.click();
-        document.getElementById('btn-faq')?.click();
-        await sleep(50);
-        failures.push(...scan('faq'));
-        document.getElementById('btn-faq-sidebar-close')?.click();
-        return [...new Set(failures)];
+        return [...new Set(scan('dashboard'))];
     });
 }
 

@@ -2,10 +2,10 @@
 /**
  * Absolute Scale-0 Scenario 1 (`empty`) side-panel performance campaign.
  *
- * Scope: the supported browser WasmBridgeProxy path at L=97. Every Scale-0
- * panel that is visible in the canonical panel registry is warmed, measured
- * for at least 600 foreground rAF intervals, then measured again after the
- * shared dock is collapsed. Native GPU and WebSocket backends are not
+ * Scope: the supported browser WasmBridgeProxy path at L=97. Each selected
+ * Scale-0 instrument panel is warmed, measured for at least 600 foreground
+ * rAF intervals, then measured again after the shared dock is collapsed.
+ * Native GPU and WebSocket backends are not
  * connected by this harness and are not represented as parity evidence.
  */
 import { test, expect } from '@playwright/test';
@@ -23,6 +23,12 @@ test.use({ trace: 'off' });
 
 const EMPTY = 'empty';
 const LATTICE_SIZE = 97;
+const REGISTRY_PANELS = Object.freeze([
+    'controls', 'jev', 'seeding', 'diagnostics', 'telemetry-grid', 'charts',
+    'lagrangian', 'inspector', 'scene', 'flux-slice', 'wave-lab', 'p1-observables',
+    'spectrum', 'dispersion', 'knots', 'transactions', 'gravity', 'fluid',
+    'time', 'thermo', 'scale-context',
+]);
 const PANELS = Object.freeze([
     'controls',
     'diagnostics',
@@ -1514,7 +1520,7 @@ test('Gravity live sidepanel sustains 60 Hz at the qualified backend limit and r
     expect(realErrors(consoleErrors)).toEqual([]);
 });
 
-test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when collapsed', async ({ page }, testInfo) => {
+test('17 instrument panels sustain 60 Hz at empty L=97 and stop panel work when collapsed', async ({ page }, testInfo) => {
     test.setTimeout(600_000);
     const consoleErrors = attachConsoleWatcher(page);
     await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
@@ -1913,9 +1919,9 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
         contentType: 'application/json',
     });
 
-    expect(campaign.registryIds, 'canonical Scale-0 panel registry').toEqual(PANELS);
-    expect(campaign.visibleTabIds, 'all and only the 17 canonical Scale-0 tabs are visible')
-        .toEqual(PANELS);
+    expect(campaign.registryIds, 'canonical Scale-0 panel registry').toEqual(REGISTRY_PANELS);
+    expect(campaign.visibleTabIds, 'all canonical Scale-0 tabs are visible')
+        .toEqual(REGISTRY_PANELS);
     expect(CAMPAIGN_PANELS.every((panel) => PANELS.includes(panel)),
         `unknown FTD_PANEL_PERF_ONLY panel: ${CAMPAIGN_PANELS.join(',')}`).toBe(true);
     expect(campaign.results).toHaveLength(CAMPAIGN_PANELS.length);

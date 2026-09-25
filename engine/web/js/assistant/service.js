@@ -71,7 +71,7 @@ export class AssistantService {
         if (!text || text.length>LIMITS.inputChars) { this.emit({type:'error',text:'Enter a request of at most 4,000 characters.'}); return; }
         const request=normalizeRequest(text);
         if (/^(stop (?:the )?ai|cancel(?: (?:the )?ai)?|stop)[.!]?$/i.test(request.text)) { this.stop(); this.deps.onUserStop?.(); this.emit({type:'notice',text:'AI stopped. Simulation playback is unchanged.'}); return; }
-        this.stop('Superseded by a new request');
+        if(this.run)this.stop('Superseded by a new request');
         if(request.kind==='help'){
             this.emit({type:'user',text});
             const observation=this.deps.getControl()?.observe();

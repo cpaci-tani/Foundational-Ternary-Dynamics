@@ -3,7 +3,7 @@
 import { BaseLifecycleController } from '../../lifecycle.js';
 import { getMolecule } from '../../molecules.js';
 import { telemetryHub } from '../../telemetry-hub.js';
-import { resetAETogglesToDefaults, syncAEParamsFromUI } from '../scale-utils.js';
+import { resetAETogglesToDefaults, syncAEParamsFromUI } from '../scale2/ui-bindings.js';
 import { applyAEScenarioPhysics, applyAEVisualPreset } from '../scale2/controller.js';
 import { resetAEExperiment, startAEExperiment } from '../scale2/experiment-runtime.js';
 import { Scale3ControlsComponent } from './ui/controls/component.js';

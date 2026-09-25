@@ -66,7 +66,10 @@ def classify(path: str) -> tuple[str, bool]:
     """Return (subsystem, is_primary). is_primary=False for archive/vendor/test."""
     p = path.replace("\\", "/")
     # vendored / third-party
-    if "VISUAL_GUIDE_files" in p or "/lib/" in p or "/libs/" in p or p.endswith("/lib.js"):
+    if (p.startswith("engine/thirdparty/")
+            or p.startswith("engine/web/js/vendor/")
+            or "VISUAL_GUIDE_files" in p
+            or "/lib/" in p or "/libs/" in p or p.endswith("/lib.js")):
         return "vendor", False
     if p.startswith("engine/src/render_bridge_phases/"):
         return "src/phases", True

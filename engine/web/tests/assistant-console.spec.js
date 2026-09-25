@@ -2,6 +2,10 @@ import {test,expect} from '@playwright/test';
 import {gotoAndReady,openObserverWorkspace} from './_helpers.js';
 
 async function ready(page){
+    await page.addInitScript(()=>{
+        localStorage.setItem('ftd-gpu-card-dismissed','1');
+        localStorage.setItem('ftd-theme','abyss');
+    });
     await gotoAndReady(page,{path:'/?engine=wasm&lattice=9'});
     await page.waitForFunction(()=>window.__FTD_DEV__.registry.get('assistant'));
 }
@@ -22,7 +26,7 @@ test('JEV instructions use native browser fetch and handle approval or authentic
         ai.knowledge.search=async()=>[];
         ai.model.plan=async()=>({kind:'actions',message:'Pause and advance two ticks',actions:[{type:'lattice.pause',args:{}},{type:'lattice.step',args:{count:2}}]});
     });
-    await page.getByRole('button',{name:'Open the JEV console',exact:true}).click();
+    await page.getByRole('tab',{name:'JEV',exact:true}).click();
     await page.getByText('Connection & local model',{exact:true}).click();
     await page.getByLabel('JEV API key').fill('http-fixture-key');
     await page.getByRole('button',{name:'Connect key',exact:true}).click();
@@ -55,8 +59,8 @@ test('JEV instructions use native browser fetch and handle approval or authentic
 test('shared console moves with workspace, releases input, restores focus and never starts a second owner',async({page},testInfo)=>{
     await ready(page);
     const owner=await page.evaluate(()=>{window.__assistantOwner=window.__FTD_DEV__.registry.get('assistant').control.observe().ownerId;return window.__assistantOwner;});
-    await page.getByRole('button',{name:'Open the JEV console',exact:true}).click();
-    await expect(page.getByRole('dialog',{name:'JEV console'})).toBeVisible();
+    await page.getByRole('tab',{name:'JEV',exact:true}).click();
+    await expect(page.getByRole('region',{name:'JEV console'})).toBeVisible();
     await expect(page.locator('#jev-input')).toBeFocused();
     await expect(page.getByLabel('Live experiment (5 min / 50 actions)')).not.toBeChecked();
     await page.getByRole('button',{name:'Compare live observations',exact:true}).click();
@@ -74,6 +78,30 @@ test('shared console moves with workspace, releases input, restores focus and ne
     await page.getByRole('button',{name:/Lattice Sim/}).click();
     await expect.poll(()=>page.evaluate(()=>window.__FTD_DEV__.registry.get('assistant').control.observe().ownerId)).toBe(owner);
     expect(await page.locator('.jev-console').count()).toBe(1);
+});
+test('JEV stays in the left dock, preserves drafts, and is unavailable on mobile',async({page},testInfo)=>{
+    await ready(page);
+    await expect(page.locator('#btn-ftd-assistant')).toHaveCount(0);
+    await page.getByRole('tab',{name:'JEV',exact:true}).click();
+    await expect(page.locator('#panel-jev')).toHaveClass(/active/);
+    await expect(page.locator('#panel-jev .jev-console')).toBeVisible();
+    const desktopDock=await page.locator('#panel-area').boundingBox();
+    expect(desktopDock.x+desktopDock.width).toBeLessThan(page.viewportSize().width/2);
+    if(process.env.FTD_LAYOUT_SCREENSHOTS==='1')await page.screenshot({path:testInfo.outputPath('jev-dock-desktop.png')});
+    await page.locator('#jev-input').fill('Keep this draft');
+    await page.getByRole('tab',{name:'Controls',exact:true}).click();
+    await expect(page.locator('.jev-console')).toBeHidden();
+    await page.getByRole('tab',{name:'JEV',exact:true}).click();
+    await expect(page.locator('#jev-input')).toHaveValue('Keep this draft');
+
+    await page.setViewportSize({width:390,height:844});
+    await expect(page.locator('#tab-select-mobile option[value="jev"]')).toHaveJSProperty('disabled',true);
+    await expect(page.locator('#tab-select-mobile option[value="jev"]')).toHaveJSProperty('hidden',true);
+    await page.evaluate(()=>document.dispatchEvent(new CustomEvent('ftd:assistant-toggle')));
+    await expect(page.locator('.jev-console')).toBeHidden();
+    await page.setViewportSize({width:1440,height:900});
+    await page.getByRole('tab',{name:'JEV',exact:true}).click();
+    await expect(page.locator('#jev-input')).toHaveValue('Keep this draft');
 });
 test('service executes crosshair object changes through real worker receipts and rejects stale proposals',async({page})=>{
     await ready(page);await openObserverWorkspace(page);
@@ -95,7 +123,7 @@ test('service executes crosshair object changes through real worker receipts and
     expect(result.transcript.some(t=>t.type==='error'&&/changed/.test(t.text))).toBe(true);
 });
 test('public key is not written to browser storage or exported conversation',async({page})=>{
-    await ready(page);await page.getByRole('button',{name:'Open the JEV console',exact:true}).click();
+    await ready(page);await page.getByRole('tab',{name:'JEV',exact:true}).click();
     await page.getByText('Connection & local model',{exact:true}).click();
     await page.getByLabel('JEV API key').fill('test-private-key');await page.getByRole('button',{name:'Connect key',exact:true}).click();
     await expect(page.getByLabel('JEV API key')).toHaveValue('');
@@ -104,10 +132,12 @@ test('public key is not written to browser storage or exported conversation',asy
 });
 
 test('conversational requests bypass the command filter and questions cannot pause playback',async({page})=>{
-    await ready(page);await page.getByRole('button',{name:'Open the JEV console',exact:true}).click();
+    await ready(page);await page.getByRole('tab',{name:'JEV',exact:true}).click();
     await page.locator('#jev-input').fill('Hello');await page.getByRole('button',{name:'Send',exact:true}).click();
     const bounds=await page.locator('.jev-console').boundingBox();
-    expect(bounds.y+bounds.height).toBeLessThanOrEqual(page.viewportSize().height);
+    const dock=await page.locator('#panel-area').boundingBox();
+    expect(bounds.x).toBeGreaterThanOrEqual(dock.x-1);
+    expect(bounds.x+bounds.width).toBeLessThanOrEqual(dock.x+dock.width+1);
     await expect(page.locator('.jev-messages')).toContainText('You can ask a question, give a command, or request a live experiment.');
     await expect(page.locator('.jev-messages')).toContainText('Download / load model');
     const result=await page.evaluate(async()=>{
@@ -124,4 +154,32 @@ test('conversational requests bypass the command filter and questions cannot pau
     expect(result.after.ownerId).toBe(result.before.ownerId);
     expect(result.after.preparationVersion).toBe(result.before.preparationVersion);
     expect(result.after.facts.running).toBe(result.before.facts.running);
+});
+
+test('aborting an in-flight workspace switch restores the source workspace',async({page})=>{
+    await ready(page);
+    const result=await page.evaluate(async()=>{
+        const registry=window.__FTD_DEV__.registry;
+        const ai=registry.get('assistant'),host=registry.get('observerHost');
+        const before=ai.control.observe();
+        const suspend=host.deps.suspendDashboard;
+        let release;
+        host.deps.suspendDashboard=()=>new Promise(resolve=>{release=()=>{void suspend().then(resolve);};});
+        const controller=new AbortController();
+        const pending=ai.control.execute({type:'workspace.switch',args:{workspace:'observer'}},{
+            expected:before,signal:controller.signal,assertActive:()=>controller.signal.throwIfAborted(),
+        }).then(receipt=>({receipt}),error=>({error:error.name}));
+        await new Promise(resolve=>setTimeout(resolve,0));
+        controller.abort();
+        release();
+        const outcome=await pending;
+        await host.exiting;
+        host.deps.suspendDashboard=suspend;
+        return {before:before.ownerId,after:ai.control.observe()?.ownerId,active:host.active,suspended:host.suspended,outcome};
+    });
+    expect(result.outcome.receipt).toBeUndefined();
+    expect(result.outcome.error).toBe('AbortError');
+    expect(result.after).toBe(result.before);
+    expect(result.active).toBe(false);
+    expect(result.suspended).toBe(false);
 });

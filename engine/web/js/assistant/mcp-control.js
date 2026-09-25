@@ -86,7 +86,7 @@ export class McpControl {
         /** @type {import('./contracts.js').ObservationEnvelope} */let expected=initial;
         const plan=validatePlan({kind:'actions',message:args.intent,actions:args.actions},expected);
         if(plan.actions.some(action=>action.type==='workspace.switch') && plan.actions.length!==1)throw new Error('Switch workspace in a separate call, then acquire its new capabilities.');
-        service.stop('Starting external MCP plan');
+        if(service.run)throw new Error('Another assistant operation is active. Wait for its receipt or stop it first.');
         const run={controller:new AbortController(),generation:service.generation,deadline:service.now()+55000,count:0,max:LIMITS.actions,autonomous:false};
         service.run=run;this.ownedRun=run;
         const abort=()=>run.controller.abort(signal.reason);signal.addEventListener('abort',abort,{once:true});

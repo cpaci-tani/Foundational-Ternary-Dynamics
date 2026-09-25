@@ -1,6 +1,7 @@
 /**
- * FAQ sidebar data — 16 canonical hard problems framed through the FTD lens.
- * See docs/superpowers/specs/2026-04-18-faq-panel-design.md.
+ * Retained FAQ reference data: 16 hard problems framed through the FTD lens.
+ * This is not mounted in the dashboard; static epistemic contracts still use it.
+ * Historical UI design: docs/superpowers/specs/2026-04-18-faq-panel-design.md.
  *
  * Tag vocabulary for ftdAngle bullets:
  *   THEOREM     rigorously proven from FTD axioms

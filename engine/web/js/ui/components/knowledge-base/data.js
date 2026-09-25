@@ -1,3 +1,5 @@
+// Unmounted reference catalog retained for scenario-inventory and epistemic-copy checks.
+// The dashboard no longer exposes a Knowledge Base sidebar.
 import { QUANTUM_SCENARIO_DESCRIPTIONS, S0_SEED_SCENARIO_METADATA } from '../../../config/scenarios.js';
 import { getAllMolecules } from '../../../molecules.js';
 import { SCALE0_SCENARIOS } from '../../../scales/scale0/scenario-registry.js';

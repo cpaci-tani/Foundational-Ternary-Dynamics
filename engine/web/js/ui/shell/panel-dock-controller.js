@@ -106,6 +106,7 @@ export class PanelDockController {
 
     activate(panelName, { emit = true, autoExpand = true } = {}) {
         if (!panelName) return;
+        if (panelName === 'jev' && this._isMobile()) panelName = 'controls';
 
         // If the panel is floated, focus its floating window and do not mount in dock
         if (floatingWindowManager.has(panelName)) {
@@ -135,7 +136,7 @@ export class PanelDockController {
             const isActive = tab === nextTab;
             tab.classList.toggle('active', isActive);
             tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
-            tab.setAttribute('tabindex', isActive ? '0' : '-1');
+            tab.setAttribute('tabindex', isActive && !this.app?.classList?.contains('panels-collapsed') ? '0' : '-1');
         });
 
         panels.forEach((panel) => {
@@ -179,6 +180,16 @@ export class PanelDockController {
         if (this.app.dataset) {
             this.app.dataset.panelsCollapsed = collapsed ? 'true' : 'false';
         }
+        this.panelArea?.toggleAttribute('inert', !!collapsed);
+        this.panelArea?.setAttribute('aria-hidden', collapsed ? 'true' : 'false');
+        this._getTabs().forEach((tab) => {
+            tab.setAttribute('tabindex', !collapsed && tab.classList.contains('active') ? '0' : '-1');
+        });
+        const mobileOpenButton = document.getElementById('btn-panel-open-mobile');
+        mobileOpenButton?.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        if (collapsed && this.panelArea?.contains(document.activeElement)) {
+            (this._isMobile() ? mobileOpenButton : this.toggleButton)?.focus({ preventScroll: true });
+        }
         
         const btn = document.getElementById('btn-panel-toggle');
         if (btn) {
@@ -202,6 +213,13 @@ export class PanelDockController {
     setCompactMode(isCompact) {
         if (isCompact && this._drag.active) this._handleResizePointerUp();
         this._compactMode = !!isCompact;
+        if (this._isMobile()) {
+            floatingWindowManager.getWindow('jev')?.dock();
+            if (this._getTabs().some((tab) => tab.dataset.panel === 'jev' && tab.classList.contains('active'))) {
+                this.activate('controls', { autoExpand: false });
+            }
+        }
+        this._syncCompactOptions();
         if (this.resizeHandle) {
             this.resizeHandle.toggleAttribute('hidden', this._compactMode);
             this.resizeHandle.setAttribute('aria-hidden', this._compactMode ? 'true' : 'false');
@@ -221,6 +239,9 @@ export class PanelDockController {
 
     _bindTabs() {
         this._getTabs().forEach((tab) => {
+            const panel = this.panelArea?.querySelector(`#panel-${tab.dataset.panel}`);
+            panel?.setAttribute('role', 'tabpanel');
+            panel?.setAttribute('aria-labelledby', tab.id);
             let startX = 0;
             let startY = 0;
             let startScrollTop = 0;
@@ -300,10 +321,32 @@ export class PanelDockController {
                     this.activate(tab.dataset.panel);
                 }
             });
+
+            this._scope.on(tab, 'keydown', (event) => {
+                const step = ['ArrowRight', 'ArrowDown'].includes(event.key) ? 1
+                    : ['ArrowLeft', 'ArrowUp'].includes(event.key) ? -1 : 0;
+                if (step || event.key === 'Home' || event.key === 'End') {
+                    event.preventDefault();
+                    const tabs = this._getTabs().filter((candidate) => candidate.style.display !== 'none'
+                        && !(this._isMobile() && candidate.dataset.panel === 'jev'));
+                    if (!tabs.length) return;
+                    const index = tabs.indexOf(tab);
+                    const next = event.key === 'Home' ? tabs[0]
+                        : event.key === 'End' ? tabs[tabs.length - 1]
+                            : tabs[(index + step + tabs.length) % tabs.length];
+                    tabs.forEach((candidate) => candidate.setAttribute('tabindex', candidate === next ? '0' : '-1'));
+                    next.focus({ preventScroll: true });
+                    next.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+                } else if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    this.activate(tab.dataset.panel);
+                }
+            });
         });
     }
 
     floatPanel(panelId, x, y) {
+        if (panelId === 'jev' && this._isMobile()) return null;
         const tab = this.tabBar.querySelector(`.tab[data-panel="${panelId}"]`);
         const panelEl = this.panelArea.querySelector(`#panel-${panelId}`);
         if (!tab || !panelEl) return null;
@@ -650,6 +693,12 @@ export class PanelDockController {
         return Array.from(this.tabBar?.querySelectorAll('.tab') || []);
     }
 
+    _isMobile() {
+        return typeof window.matchMedia === 'function'
+            ? window.matchMedia('(max-width: 767px)').matches
+            : window.innerWidth <= 767;
+    }
+
     _getPanels() {
         return Array.from(this.panelArea?.querySelectorAll('.panel') || []);
     }
@@ -658,7 +707,7 @@ export class PanelDockController {
         if (!this.compactSelect) return;
         const visiblePanels = new Set(
             this._getTabs()
-                .filter((tab) => tab.style.display !== 'none')
+                .filter((tab) => tab.style.display !== 'none' && !(this._isMobile() && tab.dataset.panel === 'jev'))
                 .map((tab) => tab.dataset.panel)
         );
         Array.from(this.compactSelect.options).forEach((option) => {

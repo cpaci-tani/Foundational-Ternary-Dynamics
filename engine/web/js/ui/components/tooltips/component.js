@@ -46,6 +46,7 @@ export class TooltipComponent {
         this._observer = null;
         this._scope = null;
         this._ownsTooltipElement = false;
+        this._addedDescription = false;
     }
 
     init() {
@@ -82,10 +83,12 @@ export class TooltipComponent {
 
     _bindEvents() {
         this._scope.on(document, 'pointerover', (event) => {
+            if (event.pointerType === 'touch') return;
             const target = event.target instanceof Element ? event.target.closest('[data-ui-tooltip]') : null;
             if (!(target instanceof HTMLElement)) return;
             this.pointerX = event.clientX;
             this.pointerY = event.clientY;
+            if (this.activeMode === 'focus' && this.activeTarget === target) return;
             this.show(target, 'pointer');
         });
 
@@ -97,19 +100,31 @@ export class TooltipComponent {
         });
 
         this._scope.on(document, 'pointerout', (event) => {
-            if (!this.activeTarget) return;
+            if (event.pointerType === 'touch' || this.activeMode !== 'pointer' || !this.activeTarget) return;
             const next = event.relatedTarget instanceof Node ? event.relatedTarget : null;
             if (next && this.activeTarget.contains(next)) return;
-            if (event.target instanceof Node && this.activeTarget.contains(event.target)) this.hide();
+            if (event.target instanceof Node && this.activeTarget.contains(event.target)) {
+                if (this.activeTarget.contains(document.activeElement)) this.show(this.activeTarget, 'focus');
+                else this.hide();
+            }
+        });
+
+        this._scope.on(document, 'pointerdown', (event) => {
+            if (event.pointerType !== 'touch') return;
+            const target = event.target instanceof Element ? event.target.closest('[data-ui-tooltip]') : null;
+            if (target instanceof HTMLElement) this.show(target, 'touch');
+            else if (this.activeMode === 'touch') this.hide();
         });
 
         this._scope.on(document, 'focusin', (event) => {
             const target = event.target instanceof Element ? event.target.closest('[data-ui-tooltip]') : null;
-            if (target instanceof HTMLElement) this.show(target, 'focus');
+            if (target instanceof HTMLElement && !(this.activeMode === 'touch' && this.activeTarget === target)) {
+                this.show(target, 'focus');
+            }
         });
 
         this._scope.on(document, 'focusout', (event) => {
-            if (!this.activeTarget) return;
+            if (this.activeMode !== 'focus' || !this.activeTarget) return;
             const next = event.relatedTarget instanceof Node ? event.relatedTarget : null;
             if (next && this.activeTarget.contains(next)) return;
             if (event.target instanceof Node && this.activeTarget.contains(event.target)) this.hide();
@@ -121,6 +136,12 @@ export class TooltipComponent {
 
         this._scope.on(window, 'scroll', () => this._position(), true);
         this._scope.on(window, 'resize', () => this._position());
+
+        const preferenceObserver = new MutationObserver(() => {
+            if (document.documentElement.dataset.tooltips === 'off') this.hide();
+        });
+        preferenceObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-tooltips'] });
+        this._scope.defer(() => preferenceObserver.disconnect());
     }
 
     _watchMutations() {
@@ -133,26 +154,44 @@ export class TooltipComponent {
                     }
                 });
             }
+            if (this.activeTarget && !this.activeTarget.isConnected) this.hide();
         });
         this._observer.observe(this.app, { childList: true, subtree: true });
         this._scope.defer(() => this._observer?.disconnect());
     }
 
     show(target, mode = 'pointer') {
-        if (document.documentElement.dataset.tooltips === 'off') return;
+        if (document.documentElement.dataset.tooltips === 'off') {
+            this.hide();
+            return;
+        }
         const text = target?.dataset?.uiTooltip?.trim();
         if (!text || !this.tooltipEl) return;
+        if (this.activeTarget && this.activeTarget !== target) this._removeDescription();
         this.activeTarget = target;
         this.activeMode = mode;
         this.tooltipEl.innerHTML = renderMathInHtml(escapeHtml(text));
         this.tooltipEl.hidden = false;
         this.tooltipEl.dataset.visible = 'true';
-        target.setAttribute('aria-describedby', 'ui-tooltip');
+        const descriptionIds = (target.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+        if (!descriptionIds.includes('ui-tooltip')) {
+            target.setAttribute('aria-describedby', [...descriptionIds, 'ui-tooltip'].join(' '));
+            this._addedDescription = true;
+        }
         this._position();
     }
 
+    _removeDescription() {
+        if (!this.activeTarget || !this._addedDescription) return;
+        const remaining = (this.activeTarget.getAttribute('aria-describedby') || '')
+            .split(/\s+/).filter((id) => id && id !== 'ui-tooltip');
+        if (remaining.length) this.activeTarget.setAttribute('aria-describedby', remaining.join(' '));
+        else this.activeTarget.removeAttribute('aria-describedby');
+        this._addedDescription = false;
+    }
+
     hide() {
-        if (this.activeTarget) this.activeTarget.removeAttribute('aria-describedby');
+        this._removeDescription();
         this.activeTarget = null;
         this.activeMode = null;
         if (!this.tooltipEl) return;
@@ -162,6 +201,10 @@ export class TooltipComponent {
 
     _position() {
         if (!this.activeTarget || !this.tooltipEl || this.tooltipEl.hidden) return;
+        if (!this.activeTarget.isConnected) {
+            this.hide();
+            return;
+        }
         const margin = 12;
         const offset = 10;
         const tooltipRect = this.tooltipEl.getBoundingClientRect();

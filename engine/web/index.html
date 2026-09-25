@@ -36,7 +36,6 @@
     <link rel="stylesheet" href="css/observer.css?v=1">
     <link rel="stylesheet" href="css/ui/components/viewport-overlays.css?v=4">
     <link rel="stylesheet" href="css/ui/components/play-bar.css?v=5">
-    <link rel="stylesheet" href="css/ui/components/sidebar-library.css?v=2">
     <link rel="stylesheet" href="css/ui/components/status-bar.css?v=4">
     <link rel="stylesheet" href="css/ui/scales/toolbar-groups.css?v=3">
     <link rel="stylesheet" href="css/ui/scales/scale0/toolbar.css?v=6">
@@ -62,13 +61,10 @@
         window.FTD_DEFER_CSS = [
             { href: 'https://fonts.googleapis.com/css2?family=Outfit:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap', crossOrigin: 'anonymous' },
             { href: 'css/ui/components/panel-resources.css' },
-            { href: 'css/ui/components/knowledge-base.css?v=2' },
-            { href: 'css/ui/components/faq.css?v=3' },
             { href: 'css/ui/components/tooltips.css?v=2' },
             { href: 'css/ui/components/p1-observables-panel.css?v=2' },
             { href: 'css/ui/components/conservation-micropanel.css?v=2' },
             { href: 'css/ui/components/spectrum-panel.css?v=2' },
-            { href: 'css/ui/components/assistant-sidebar.css?v=2' },
             { href: 'css/ui/components/settings-modal.css?v=2' },
             { href: 'css/ui/components/keyboard-help.css?v=2' },
             { href: 'css/ui/scales/scale1/telemetry.css?v=10' },
@@ -227,38 +223,85 @@
 
 <body>
     <script>
-        // Pre-paint hydration of html[data-panel-mount] to avoid FOUC.
-        // Mirrors js/ui/shell/panel-mount-state.js: default 'left', one-time
-        // version reset, and width-aware so phones start as a bottom-sheet (a
-        // side mount needs >= 1024px) without a left-dock flash on first paint.
+        // Blocking pre-paint owner for the mount preference; panel-mount-state.js
+        // exposes this same API to runtime modules after the document starts.
         (function () {
-            try {
-                var MOUNT_KEY = 'ftd.panel.mount', VKEY = 'ftd.panel.mount.version', VER = '2';
-                if (localStorage.getItem(VKEY) !== VER) {
-                    localStorage.removeItem(MOUNT_KEY); // force the new default once
-                    localStorage.setItem(VKEY, VER);
+            const validMounts = Object.freeze(['left', 'bottom', 'right']);
+            const storageKey = 'ftd.panel.mount';
+            const versionKey = 'ftd.panel.mount.version';
+            const preferenceVersion = '2';
+            const defaultMount = 'left';
+            const sideMountMinWidth = 1024;
+
+            function isValidMount(value) {
+                return typeof value === 'string' && validMounts.includes(value);
+            }
+
+            function migratePanelMount() {
+                try {
+                    if (localStorage.getItem(versionKey) !== preferenceVersion) {
+                        localStorage.removeItem(storageKey);
+                        localStorage.setItem(versionKey, preferenceVersion);
+                    }
+                } catch (_err) {
+                    // The in-memory default remains usable when storage is denied.
                 }
-                var stored = localStorage.getItem(MOUNT_KEY);
-                var valid = stored === 'left' || stored === 'bottom' || stored === 'right';
-                var pref = valid ? stored : 'left'; // new default
-                var isSide = pref === 'left' || pref === 'right';
-                var effective = (isSide && window.innerWidth < 1024) ? 'bottom' : pref;
-                document.documentElement.dataset.panelMount = effective;
-                var theme = localStorage.getItem('ftd-theme');
+            }
+
+            function readPanelMount() {
+                migratePanelMount();
+                try {
+                    const stored = localStorage.getItem(storageKey);
+                    return isValidMount(stored) ? stored : defaultMount;
+                } catch (_err) {
+                    return defaultMount;
+                }
+            }
+
+            function resolveEffectiveMount(storedMount, viewportWidth) {
+                const mount = isValidMount(storedMount) ? storedMount : defaultMount;
+                return mount !== 'bottom' && viewportWidth < sideMountMinWidth ? 'bottom' : mount;
+            }
+
+            function writePanelMount(value) {
+                const next = isValidMount(value) ? value : defaultMount;
+                document.documentElement.dataset.panelMount = next;
+                try {
+                    localStorage.setItem(storageKey, next);
+                } catch (_err) {
+                    // The attribute still owns this session's visible state.
+                }
+                return next;
+            }
+
+            window.FTDPanelMountState = Object.freeze({
+                isValidMount,
+                migratePanelMount,
+                readPanelMount,
+                writePanelMount,
+                getValidMounts: () => validMounts.slice(),
+                getDefaultMount: () => defaultMount,
+                getSideMountMinWidth: () => sideMountMinWidth,
+                resolveEffectiveMount,
+            });
+
+            document.documentElement.dataset.panelMount = resolveEffectiveMount(readPanelMount(), window.innerWidth);
+
+            try {
+                const theme = localStorage.getItem('ftd-theme');
                 if (theme && theme !== 'default') {
                     document.documentElement.setAttribute('data-theme', theme);
                 }
-                var glass = localStorage.getItem('ftd-glassmorphism');
+                const glass = localStorage.getItem('ftd-glassmorphism');
                 document.documentElement.dataset.glass = glass === 'on' ? 'on' : 'off';
-                var storedThickness = Number(localStorage.getItem('ftd-glass-thickness'));
-                var thickness = Number.isFinite(storedThickness) && storedThickness > 0
+                const storedThickness = Number(localStorage.getItem('ftd-glass-thickness'));
+                const thickness = Number.isFinite(storedThickness) && storedThickness > 0
                     ? Math.min(32, Math.max(4, storedThickness)) : 16;
                 document.documentElement.style.setProperty('--glass-thickness', thickness + 'px');
                 document.documentElement.style.setProperty('--glass-blur-low', (thickness / 2) + 'px');
                 document.documentElement.style.setProperty('--glass-blur-mid', thickness + 'px');
                 document.documentElement.style.setProperty('--glass-blur-high', (thickness * 1.5) + 'px');
-            } catch (_e) {
-                document.documentElement.dataset.panelMount = 'bottom';
+            } catch (_err) {
                 document.documentElement.dataset.glass = 'off';
             }
         })();
@@ -358,7 +401,7 @@
         <main id="viewport"></main>
 
         <!-- Tab bar is rendered by js/ui/components/workspace-tabs -->
-        <div id="tab-bar" role="tablist" aria-label="Dashboard panels"></div>
+        <div id="tab-bar" role="tablist" aria-label="Simulation panels"></div>
 
         <!-- ── Panel Area ───────────────────────────── -->
         <div id="panel-area">
@@ -376,6 +419,8 @@
                 <!-- Scale control cards are rendered by each scale's ControlsComponent (via controller.bindUI) -->
                 <div class="panel-grid panel-grid-3" id="panel-controls-grid"></div>
             </div>
+
+            <div class="panel" id="panel-jev" role="tabpanel" aria-label="JEV"></div>
 
             <!-- Charts panel is rendered by js/ui/panels/charts-panel -->
             <div class="panel scale0-only" id="panel-seeding"></div>

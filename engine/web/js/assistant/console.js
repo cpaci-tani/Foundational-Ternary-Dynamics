@@ -35,15 +35,14 @@ const MARKUP=`
 <footer class="jev-buttons"><button type="button" data-jev="clear">Clear conversation</button><button type="button" data-jev="export">Export conversation</button></footer>`;
 
 export class AssistantConsole {
-    /** @param {{getMount:()=>HTMLElement,onVisibility:(open:boolean)=>void}} deps */
+    /** @param {{getMount:()=>HTMLElement,onVisibility:(open:boolean)=>void,activatePanel:(panel:string)=>void,dockFloat?:()=>void}} deps */
     constructor(deps) {
         this.deps=deps;this.scope=new LifetimeScope();this.open=false;
         /** @type {any} */this.service=null;/** @type {any} */this.model=null;/** @type {any} */this.jev=null;/** @type {any} */this.knowledge=null;/** @type {any} */this.mcp=null;
         /** @type {HTMLElement|null} */this.previousFocus=null;/** @type {HTMLElement|null} */this.streaming=null;
         /** @type {ScenarioExperimentPanel|null} */this.scenarios=null;
         this.element=document.createElement('aside');this.element.className='jev-console';this.element.hidden=true;
-        this.element.setAttribute('popover','manual');
-        this.element.setAttribute('role','dialog');this.element.setAttribute('aria-labelledby','jev-title');this.element.innerHTML=MARKUP;
+        this.element.setAttribute('role','region');this.element.setAttribute('aria-labelledby','jev-title');this.element.innerHTML=MARKUP;
         this.deps.getMount().append(this.element);
         this.input=/** @type {HTMLTextAreaElement} */(this.element.querySelector('#jev-input'));
         const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('../../css/ui/components/jev-console.css',import.meta.url).href;document.head.append(style);this.scope.defer(()=>style.remove());
@@ -96,18 +95,44 @@ export class AssistantConsole {
         this.node('mcp-config-label').hidden=!status.connected;
         /** @type {HTMLButtonElement} */(this.node('mcp-copy')).disabled=!status.connected;
     }
-    /** @param {boolean} value */
-    setOpen(value){
+    /** @param {boolean} value @param {{fromDock?:boolean}} [options] */
+    setOpen(value,{fromDock=false}={}){
+        if(value && window.matchMedia('(max-width: 767px)').matches)value=false;
+        if(this.deps.getMount().id==='panel-jev' && !fromDock){
+            if(!value && this.element.closest('.floating-window'))this.deps.dockFloat?.();
+            this.deps.activatePanel(value?'jev':'controls');
+            if(!value)/** @type {HTMLElement|null} */(document.querySelector('.tab[data-panel="controls"]'))?.focus({preventScroll:true});
+            return;
+        }
         if(value===this.open)return;
         this.open=value;
         if(!value && this.element.matches(':popover-open'))this.element.hidePopover();
         this.element.hidden=!value;
-        document.querySelector('#btn-ftd-assistant')?.setAttribute('aria-expanded',String(value));
         this.deps.onVisibility(value);
-        if(value){this.previousFocus=document.activeElement instanceof HTMLElement?document.activeElement:null;this.relocate();this.input.focus();}
-        else if(this.previousFocus?.isConnected && !this.previousFocus.closest('[inert]'))this.previousFocus.focus({preventScroll:true});
+        if(!value && !fromDock && this.deps.getMount().id!=='panel-jev')this.deps.activatePanel('controls');
+        if(value){this.previousFocus=document.activeElement instanceof HTMLElement?document.activeElement:null;this.relocate();}
+        else if((!fromDock || this.element.classList.contains('jev-console--overlay')) && this.previousFocus?.isConnected && !this.previousFocus.closest('[inert]'))this.previousFocus.focus({preventScroll:true});
     }
-    relocate(){this.deps.getMount().append(this.element);if(this.open){if(!this.element.matches(':popover-open'))this.element.showPopover();this.deps.onVisibility(true);this.input.focus();}}
+    relocate(){
+        const mount=this.deps.getMount(),docked=mount.id==='panel-jev',floated=!!mount.closest('.floating-window');
+        if(this.element.matches(':popover-open'))this.element.hidePopover();
+        if(docked)this.element.removeAttribute('popover');
+        else this.element.setAttribute('popover','manual');
+        this.element.classList.toggle('jev-console--overlay',!docked);
+        this.element.setAttribute('role',docked?'region':'dialog');
+        mount.append(this.element);
+        if(!docked){
+            const trigger=mount.querySelector('[data-observer-assistant]');
+            if(trigger instanceof HTMLElement)this.previousFocus=trigger;
+        }
+        if(this.open){
+            if(docked && !floated)this.deps.activatePanel('jev');
+            else if(!this.element.matches(':popover-open'))this.element.showPopover();
+            this.deps.onVisibility(true);
+            if(docked && window.innerWidth<=767)mount.closest('#panel-area')?.scrollTo({top:0,behavior:'instant'});
+            if(!docked || window.innerWidth>767)this.input.focus({preventScroll:true});
+        }
+    }
     /** @param {any} status */
     modelStatus(status){this.node('model').textContent=status.text || '';const progress=/** @type {HTMLProgressElement} */(this.node('progress'));progress.hidden=!status.loading;progress.value=status.progress || 0;this.scenarios?.updateAvailability();}
     /** @param {import('./search-client.js').Coverage} coverage */

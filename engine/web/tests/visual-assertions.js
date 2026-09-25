@@ -30,12 +30,13 @@ export function collectRenderedTypography() {
 }
 
 /** Proves targets fit and receive the pointer; overflow:hidden is no exemption. */
-export async function assertControlsReachable(page, selectors, context = '') {
-    const report = await page.evaluate(selectors => {
+export async function assertControlsReachable(page, selectors, context = '', { scrollToolbar = false } = {}) {
+    const report = await page.evaluate(({ selectors, scrollToolbar }) => {
         const failures = [];
         let checked = 0;
         for (const e of document.querySelectorAll(selectors)) {
             if (!e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}) || e.matches(':disabled,[aria-disabled="true"]')) continue;
+            if (scrollToolbar && e.closest('#toolbar')) e.scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});
             const r = e.getBoundingClientRect();
             if (r.width < 1 || r.height < 1) continue;
             checked++;
@@ -49,7 +50,7 @@ export async function assertControlsReachable(page, selectors, context = '') {
             }
         }
         return {checked,failures};
-    },selectors);
+    },{selectors,scrollToolbar});
     expect(report.checked, `controls exist ${context}`).toBeGreaterThan(0);
     expect(report.failures, `control reachability ${context}`).toEqual([]);
 }

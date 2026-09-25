@@ -4,11 +4,11 @@
 # research programs from silently becoming untracked build-system debt.
 include(${CMAKE_SOURCE_DIR}/cmake/FtdFrontierResearchSources.cmake)
 
-file(GLOB _ftd_test_cpp_sources CONFIGURE_DEPENDS
-     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/tests/*.cpp)
-# `_repro_*.cpp` is the gitignored local-diagnostic convention. These files
+file(GLOB _ftd_test_sources CONFIGURE_DEPENDS RELATIVE ${CMAKE_SOURCE_DIR}
+     ${CMAKE_SOURCE_DIR}/tests/*.cpp ${CMAKE_SOURCE_DIR}/tests/*.cu)
+# `_repro_*.cpp` and `_repro_*.cu` are gitignored local diagnostics. They
 # never ship to CI and therefore cannot be valid manifest or target sources.
-list(FILTER _ftd_test_cpp_sources EXCLUDE REGEX "^tests/_repro_.*\\.cpp$")
+list(FILTER _ftd_test_sources EXCLUDE REGEX "^tests/_repro_.*\\.(cpp|cu)$")
 get_property(_ftd_build_targets DIRECTORY PROPERTY BUILDSYSTEM_TARGETS)
 set(_ftd_owned_test_sources)
 foreach(_ftd_target IN LISTS _ftd_build_targets)
@@ -25,7 +25,7 @@ foreach(_ftd_target IN LISTS _ftd_build_targets)
         endif()
         string(REPLACE "\\" "/" _ftd_relative_source
                        "${_ftd_relative_source}")
-        if(_ftd_relative_source MATCHES "^tests/[^/]+\\.cpp$")
+        if(_ftd_relative_source MATCHES "^tests/[^/]+\\.(cpp|cu)$")
             list(APPEND _ftd_owned_test_sources "${_ftd_relative_source}")
         endif()
     endforeach()
@@ -74,7 +74,7 @@ foreach(_ftd_frontier_source IN LISTS FTD_FRONTIER_RESEARCH_SOURCES)
     endif()
 endforeach()
 
-foreach(_ftd_test_source IN LISTS _ftd_test_cpp_sources)
+foreach(_ftd_test_source IN LISTS _ftd_test_sources)
     if(NOT "${_ftd_test_source}" IN_LIST _ftd_owned_test_sources
        AND NOT "${_ftd_test_source}" IN_LIST FTD_FRONTIER_RESEARCH_SOURCES)
         message(FATAL_ERROR
@@ -83,7 +83,7 @@ foreach(_ftd_test_source IN LISTS _ftd_test_cpp_sources)
     endif()
 endforeach()
 
-list(LENGTH _ftd_test_cpp_sources _ftd_test_source_count)
+list(LENGTH _ftd_test_sources _ftd_test_source_count)
 list(LENGTH _ftd_conditional_test_sources _ftd_conditional_source_count)
 message(STATUS
     "Engine test-source ownership: ${_ftd_test_source_count} total, "
@@ -102,5 +102,5 @@ unset(_ftd_relative_source)
 unset(_ftd_source)
 unset(_ftd_target)
 unset(_ftd_target_sources)
-unset(_ftd_test_cpp_sources)
+unset(_ftd_test_sources)
 unset(_ftd_test_source)

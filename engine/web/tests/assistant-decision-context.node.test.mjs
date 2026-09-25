@@ -151,6 +151,39 @@ test('general compact observations mark their short scenario sample as incomplet
     assert.equal(received.actions,undefined);
 });
 
+function observerObservation(){
+    const entities=Array.from({length:12},(_,index)=>({id:`object-${index}`,alive:true,editRevision:index,
+        name:`Object ${index}`,mass:index+1,apiKey:'PRIVATE_ENTITY_KEY',internal:{password:'PRIVATE_ENTITY_PASSWORD'}}));
+    const actions=[{type:'observer.update',description:'Edit a current object.',args:{type:'object',properties:{id:{type:'string',maxLength:120},massFactor:{type:'number',minimum:0.001,maximum:1000}},required:[],additionalProperties:false}}];
+    return{workspace:'observer',ownerId:'observer-1',preparationVersion:'1:0:0',tick:32,
+        facts:{entities,crosshair:null},selected:null,actions,capabilities:actions.map(row=>row.type)};
+}
+
+test('Observer decisions include an explicit target beyond the eight-entity sample',()=>{
+    const source=observerObservation();
+    const request=buildDecisionRequest('Double the mass of object 10.',source,plan('observer.update',{id:'object-10',massFactor:2}));
+    assert.equal(request.observation.facts.entities.length,8);
+    assert.equal(request.observation.facts.entityCount,12);
+    assert.equal(request.observation.facts.entitiesTruncated,true);
+    assert.deepEqual(request.observation.facts.entityEvidence.targets,[{id:'object-10',present:true,
+        current:{id:'object-10',alive:true,editRevision:10,name:'Object 10',mass:11}}]);
+    assert.equal(JSON.stringify(request).includes('PRIVATE_ENTITY'),false);
+    assert.ok(bytes(request)<=DECISION_REQUEST_MAX_BYTES);
+    assert.equal(source.facts.entities.length,12);
+});
+
+test('Observer target evidence distinguishes absent IDs and resolved selections',()=>{
+    const source=observerObservation();
+    const missing=buildDecisionRequest('Edit a missing object.',source,plan('observer.update',{id:'not-present',massFactor:2}));
+    assert.deepEqual(missing.observation.facts.entityEvidence.targets,[{id:'not-present',present:false}]);
+    source.selected={id:'object-11'};
+    const selected=buildDecisionRequest('Double the selected mass.',source,plan('observer.update',{massFactor:2}));
+    assert.equal(selected.observation.facts.entityEvidence.targets[0].current.id,'object-11');
+    source.selected=null;source.facts.crosshair={entityId:'object-9'};
+    const crosshair=buildDecisionRequest('Double the captured mass.',source,plan('observer.update',{massFactor:2}));
+    assert.equal(crosshair.observation.facts.entityEvidence.targets[0].current.id,'object-9');
+});
+
 function serviceFixture(){
     let current=observation();const requests=[];const actions=[];
     const control={observe:()=>structuredClone(current),listScenarioTemplates:()=>catalog,
@@ -170,6 +203,17 @@ test('MCP execute_plan uses target evidence and preserves a rejecting JEV decisi
         actions:[{type:'lattice.scenario',args:{scenarioId:'flux-cascade'}}]},new AbortController().signal);
     assert.equal(result.status,'reject');assert.equal(f.requests.length,1);assert.equal(f.actions.length,0);
     assert.equal(f.requests[0].observation.facts.scenarioEvidence.targets.find(row=>row.scenarioId==='flux-cascade').registered,true);
+});
+
+test('MCP plan preflight does not cancel an independent model download',async()=>{
+    const f=serviceFixture(),mcp=new McpControl(f.service),source=f.control.observe();
+    let cancellations=0;f.service.deps.model.cancel=()=>{cancellations++;};
+    const result=await mcp.handle('execute_plan',{intent:'Advance exactly 32 ticks.',
+        expected:{workspace:source.workspace,ownerId:source.ownerId,preparationVersion:source.preparationVersion},
+        actions:[{type:'lattice.step',args:{count:32}}]},new AbortController().signal);
+    assert.equal(result.status,'applied');
+    assert.equal(cancellations,0);
+    assert.equal(f.actions.length,1);
 });
 
 test('ordinary assistant plans send the same authoritative step schema to JEV',async()=>{

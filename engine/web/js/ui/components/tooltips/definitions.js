@@ -31,7 +31,7 @@ const SELECTOR_TOOLTIPS = [
     ['label[for="ticks-per-frame"]', 'Simulation speed control.'],
     ['#tpf-display', 'Current simulation speed expressed as ticks per rendered frame.'],
     ['#btn-settings', 'Open theme, scale, and interface settings. Keyboard shortcut: Ctrl+,'],
-    ['#btn-ftd-assistant', 'Open the JEV console for plain-text simulation commands, measured observations, and project documentation.'],
+    ['.tab[data-panel="jev"]', 'Open JEV for simulation commands, measured observations, and project documentation.'],
     ['#btn-toolbar-menu', 'Open compact toolbar controls on smaller screens.'],
     ['#scenario-select', 'Choose the active Scale 0 lattice scenario.'],
     ['label[for="scenario-select"]', 'Scenario selector for the active Scale 0 lattice setup.'],

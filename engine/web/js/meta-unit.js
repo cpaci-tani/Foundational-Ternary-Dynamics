@@ -412,11 +412,9 @@ export class MetaUnit {
         // These are the physical READINGS of the shells above — theorem-shaped
         // combinatorial argument, physical identification is a [SELECTION]
         // (LEDGER FTD-0028: "theorem-shaped argument; physical reading is
-        // selection"). Deliberately a distinct color (--warning amber, the
-        // same token faq.css's .faq-tag--selection uses) from the bare
-        // theorem-grade integers above (gold). Tooltips quote the FAQ
-        // (ui/components/faq/data.js) verbatim — do not paraphrase; the
-        // wording carries the epistemic caveat.
+        // selection"). Deliberately a distinct color (--warning amber) from
+        // the bare theorem-grade integers above (gold). Keep tooltip wording
+        // aligned with the epistemic caveat in the retained FAQ data reference.
         const smLabels = [
             {
                 text: 'U(1)xSU(2)xSU(3) [SELECTION]',

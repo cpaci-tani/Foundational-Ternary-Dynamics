@@ -57,6 +57,10 @@ set_property(GLOBAL APPEND PROPERTY FTD_CONDITIONAL_TEST_SOURCES
     tests/test_ui_observer_neutrality_gpu.cpp
     tests/test_weak_transmutation_parity.cpp
     tests/test_wilson_dirac_cuda_parity.cpp
+    tests/benchmark_invariant_matrix_constant_memory.cu
+    tests/graviton_fft_cuda.cu
+    tests/benchmark_alpha_window_lean_gpu.cu
+    tests/benchmark_alpha_relaxation_lean_gpu.cu
 )
 
 # ============================================================================

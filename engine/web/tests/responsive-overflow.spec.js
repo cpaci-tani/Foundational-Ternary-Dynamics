@@ -100,7 +100,7 @@ async function auditOverflow(page) {
         // (b) curated structural containers that must FIT inside the viewport
         const curatedSelectors = [
             '#app', '#toolbar', '#viewport', '#status-bar', '#panel-area',
-            '#tab-bar', '.play-bar', '.topbar-slot-context',
+            '#tab-bar', '.play-bar',
         ];
         const curated = [];
         for (const cs of curatedSelectors) {

@@ -8,13 +8,16 @@ test('public toolbar actions receive the pointer at every audit breakpoint', asy
     test.setTimeout(120_000);
     await page.addInitScript(() => localStorage.setItem('ftd-gpu-card-dismissed','1'));
     await bootDashboard(page);
+    await expect(page.locator('#btn-fluid')).toHaveCount(0);
+    await expect(page.locator('.tab[data-panel="fluid"]')).toHaveCount(1);
     for (const mode of ['lattice','particles','atoms','molecules','planetary','cosmic']) {
         if (mode!=='lattice') await switchMode(page,mode);
         for(const [width,height] of SIZES) {
             await page.setViewportSize({width,height});
             await page.waitForTimeout(120);
             await assertControlsReachable(page,
-                '#btn-knowledge-base,#btn-faq,#btn-settings,#btn-fluid,#btn-toolbar-menu,.validity-status', `${mode} ${width}x${height}`);
+                '#btn-settings,#btn-toolbar-menu,.validity-status',
+                `${mode} ${width}x${height}`, {scrollToolbar:true});
         }
     }
 });

@@ -1,6 +1,6 @@
 """Loopback AI transport and allowlisted immutable local artifacts.
 
-Keys exist only in request memory or TYPESAFE_API_KEY. No request bodies,
+Keys exist only in request memory. No request bodies,
 authorization headers, upstream bodies or credentials are logged.
 """
 from __future__ import annotations
@@ -10,7 +10,6 @@ import hashlib
 import json
 import math
 import mimetypes
-import os
 from pathlib import Path
 import threading
 import time
@@ -118,7 +117,6 @@ def _jev(handler):
     key = header.removeprefix("Bearer ") if header.startswith("Bearer ") else ""
     if header and not key:
         return _send(handler, {"error": "Bearer key required"}, 401)
-    key = key or os.environ.get("TYPESAFE_API_KEY", "")
     if not key or len(key) > 4096 or any(ord(c) < 33 or ord(c) > 126 for c in key):
         return _send(handler, {"error": "Supply a TypeSafe API key"}, 401)
     with _rate_lock:
@@ -190,7 +188,7 @@ def handle(handler, route):
     if handler.command == "POST" and route == "/api/ai/jev":
         _jev(handler)
     elif handler.command == "GET" and route == "/api/ai/status":
-        _send(handler, {"available": True, "jevConfigured": bool(os.environ.get("TYPESAFE_API_KEY")), "byok": True,
+        _send(handler, {"available": True, "jevConfigured": False, "byok": True,
             "knowledgeManifest": "/api/ai/knowledge/manifest.json", "modelBase": "/api/ai/assets/",
             "knowledgeReady": (KNOWLEDGE_ROOT / "manifest.json").is_file()})
     elif handler.command == "GET" and route.startswith("/api/ai/assets/"):

@@ -1,0 +1,50 @@
+name: Engine CPU Source Gate
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - '.github/workflows/engine-source-gate.yml'
+      - 'engine/CMakeLists.txt'
+      - 'engine/cmake/**'
+      - 'engine/include/**'
+      - 'engine/src/**'
+      - 'engine/tests/*.cpp'
+      - 'engine/tests/*.h'
+      - 'engine/tests/**/*.cpp'
+      - 'engine/tests/**/*.h'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/engine-source-gate.yml'
+      - 'engine/CMakeLists.txt'
+      - 'engine/cmake/**'
+      - 'engine/include/**'
+      - 'engine/src/**'
+      - 'engine/tests/*.cpp'
+      - 'engine/tests/*.h'
+      - 'engine/tests/**/*.cpp'
+      - 'engine/tests/**/*.h'
+
+permissions:
+  contents: read
+
+jobs:
+  merge-gate:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      # Match the hash-canonical MSVC lane from ADR-0015. CUDA kernels, WASM,
+      # and native desktop targets are not compiled here and remain separate
+      # local or deployment-specific validation responsibilities.
+      - name: Configure focused CPU gate
+        run: cmake -S engine -B engine/build -DFTD_ENABLE_CUDA=OFF
+
+      - name: Build focused merge gate
+        run: cmake --build engine/build --target ftd_merge_gate_build --config Release --parallel 4
+
+      - name: Run merge gate
+        working-directory: engine/build
+        run: ctest -L merge_gate -j 32 -C Release --output-on-failure

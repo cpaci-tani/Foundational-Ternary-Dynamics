@@ -3,8 +3,11 @@ export function getWorkspaceTabsTemplate(panelDefs) {
         const attrs = [
             `class="tab${index === 0 ? ' active' : ''}"`,
             'role="tab"',
+            `id="tab-${tab.id}"`,
+            `aria-controls="panel-${tab.id}"`,
             `tabindex="${index === 0 ? '0' : '-1'}"`,
             `aria-selected="${index === 0 ? 'true' : 'false'}"`,
+            `aria-label="${tab.label}"`,
             `data-panel="${tab.id}"`,
             `title="${tab.label}"`,
         ];
@@ -18,7 +21,7 @@ export function getWorkspaceTabsTemplate(panelDefs) {
     return `
         <label class="workspace-tabs-mobile" for="tab-select-mobile">
             <span class="workspace-tabs-mobile-label">Panel</span>
-            <select id="tab-select-mobile" class="workspace-tabs-select" aria-label="Select dashboard panel">
+            <select id="tab-select-mobile" class="workspace-tabs-select" aria-label="Select simulation panel">
                 ${options}
             </select>
         </label>
