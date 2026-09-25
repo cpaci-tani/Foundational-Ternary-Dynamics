@@ -1,0 +1,147 @@
+.live-rulers {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    color: #d7dde6;
+    font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+.live-rulers[hidden] {
+    display: none;
+}
+
+.live-ruler-view {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    right: 12px;
+    height: 56px;
+}
+
+.live-ruler-view .live-ruler-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    color: #e8eef5;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+}
+
+.live-ruler-outer {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -140%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.live-ruler-outer[hidden] {
+    display: none;
+}
+
+.live-ruler-outer .live-ruler-cap,
+.live-ruler-outer .live-ruler-bar {
+    background: #ff4d4d;
+    border-color: #ff4d4d;
+    box-shadow: none;
+}
+
+.live-ruler-outer .live-ruler-label {
+    font-size: 22px;
+    color: #ff8a8a;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+    white-space: nowrap;
+}
+
+.live-ruler-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 28px;
+    height: 1px;
+    background: rgba(232, 238, 245, 0.85);
+}
+
+.live-ruler-ticks {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 24px;
+    height: 28px;
+}
+
+.live-ruler-tick {
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 7px;
+    background: rgba(232, 238, 245, 0.9);
+}
+
+.live-ruler-tick span {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    transform: translateX(-50%);
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+    color: #c5ced8;
+    white-space: nowrap;
+}
+
+.live-ruler-tick:first-child span {
+    transform: none;
+}
+
+.live-ruler-tick:last-child span {
+    left: auto;
+    right: 0;
+    transform: none;
+}
+
+.live-ruler-lattice[hidden] {
+    display: none;
+}
+
+.live-ruler-lattice {
+    position: absolute;
+    top: 28%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.live-ruler-bracket {
+    display: flex;
+    align-items: stretch;
+    height: 14px;
+}
+
+.live-ruler-cap {
+    width: 1px;
+    background: #e8eef5;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+.live-ruler-bar {
+    flex: 1;
+    border-top: 1px solid #e8eef5;
+    margin-top: 6px;
+}
+
+.live-ruler-lattice .live-ruler-label {
+    font-size: 22px;
+    color: #f0c7c7;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+    white-space: nowrap;
+}

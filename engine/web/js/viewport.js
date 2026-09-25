@@ -1,4 +1,5 @@
 import { DEFAULT_FLUX_THRESHOLD } from './viewport/flux-threshold.js';
+import { mountLiveRulers } from './ui/components/live-rulers/mount.js';
 /**
  * @file viewport.js
  * @brief Three.js 3D Viewport — renders particles and fields from the simulation bridge.
@@ -142,6 +143,8 @@ export class Viewport {
         this.controls.dampingFactor = 0.12;
         this.controls.rotateSpeed = 0.6;
         this.controls.zoomSpeed = 1.2;
+        this.controls.panSpeed = 1;
+        this._orbitBase = { rotate: 0.6, zoom: 1.2, pan: 1, damp: 0.12 };
         this.controls.minDistance = 0.01;
         this.controls.maxDistance = 100000000;
 
@@ -296,6 +299,7 @@ export class Viewport {
         this._onResize();
         this._resizeObserver = new ResizeObserver(() => this._onResize());
         this._resizeObserver.observe(container);
+        this._liveRulers = mountLiveRulers(container);
 
         // One-time shader preparation belongs to boot, not the first user
         // interaction. The flux-slice mesh remains hidden after compilation.
@@ -1147,10 +1151,40 @@ export class Viewport {
         this._fluxRenderer?.setPresentationSuspended(suspended);
     }
 
+    /**
+     * Pan and orbit deltas are sized for the current camera distance. Far from
+     * the subject a small drag flings the target, and that leftover motion is
+     * still applied after dollying back in. Scale the speeds with distance and
+     * shrink any queued delta as the camera closes.
+     */
+    _tuneOrbitSensitivity(distance) {
+        const controls = this.controls;
+        const base = this._orbitBase;
+        if (!controls || !base || !(distance > 0)) return;
+        const ref = Math.max(this.getReferenceDistance(), 1);
+        const ratio = distance / ref;
+        const gain = Math.min(1, Math.max(0.12, 1 / Math.sqrt(Math.max(ratio, 1))));
+        const zoomGain = Math.min(1.15, Math.max(0.4, 1 / Math.sqrt(Math.max(ratio, 0.35))));
+        controls.panSpeed = base.pan * gain;
+        controls.rotateSpeed = base.rotate * gain;
+        controls.zoomSpeed = base.zoom * zoomGain;
+        const far = 1 + Math.log2(Math.max(ratio, 1));
+        controls.dampingFactor = base.damp / Math.min(far, 4);
+        const previous = this._lastOrbitDist;
+        if (previous > distance) {
+            const shrink = distance / previous;
+            controls._panOffset.multiplyScalar(shrink);
+            controls._sphericalDelta.theta *= shrink;
+            controls._sphericalDelta.phi *= shrink;
+        }
+        this._lastOrbitDist = distance;
+    }
+
     render() {
         if (this.presentationSuspended) return;
         // Dynamically adjust camera.far to prevent culling at extreme zoom out
         const dist = this.camera.position.distanceTo(this.controls.target);
+        this._tuneOrbitSensitivity(dist);
         const desiredFar = Math.max(this._baseFar || 2000, dist * 5);
         if (this._actualFar !== desiredFar) {
             this._actualFar = desiredFar;
@@ -1178,6 +1212,116 @@ export class Viewport {
         }
         // SceneCore decides composer-vs-renderer based on _usePostProcessing.
         this._sceneCore?.render(this.scene, this.camera);
+        this._updateLiveRulers();
+    }
+
+    _updateLiveRulers() {
+        if (!this._liveRulers) return;
+        const rect = this.container.getBoundingClientRect();
+        const distance = this.camera.position.distanceTo(this.controls.target);
+        this._liveRulers.update({
+            fovDeg: this.camera.fov,
+            distance,
+            viewWidth: rect.width,
+            viewHeight: rect.height,
+            scenarioScale: this.scene.scale.x || this._scenarioScale || 1,
+            latticeSize: this.latticeSize || this._latticeSize || 1,
+            engineMode: this._engineMode,
+            projectUnits: (units) => this._projectUnits(units, rect.width, rect.height),
+            projectDiameter: (units) => this._projectDiameter(units, rect.width, rect.height),
+            shellDiameter: this._shellDiameterUnits(),
+        });
+    }
+
+    /** Lattice-unit diameter of the environment background sphere. */
+    _shellDiameterUnits() {
+        return this._environmentShell().diameter;
+    }
+
+    /** Bounding diameter of the active environment background, in scene-local units. */
+    _environmentShell() {
+        const group = this.scene.children.find((child) => typeof child.name === 'string' && child.name.startsWith('bg-'));
+        const scale = this.scene.scale.x || 1;
+        const origin = this.scene.position;
+        if (!group) return { diameter: 1000, center: new THREE.Vector3() };
+        if (this._envShell && this._envShellId === group.uuid) {
+            return this._envShell;
+        }
+        const box = this._envBox || (this._envBox = new THREE.Box3());
+        box.setFromObject(group);
+        if (box.isEmpty()) return { diameter: 1000, center: new THREE.Vector3() };
+        const size = this._envSize || (this._envSize = new THREE.Vector3());
+        const center = this._envCenter || (this._envCenter = new THREE.Vector3());
+        box.getSize(size);
+        box.getCenter(center);
+        center.sub(origin).divideScalar(scale);
+        this._envShellId = group.uuid;
+        this._envShell = { diameter: Math.max(size.x, size.y, size.z) / scale, center: center.clone() };
+        return this._envShell;
+    }
+
+    /** Screen span of a diameter through the environment center, perpendicular to the view. */
+    _projectDiameter(diameterUnits, viewWidth, viewHeight) {
+        const shell = this._environmentShell();
+        const scale = this.scene.scale.x || 1;
+        const origin = this.scene.position;
+        const local = shell.center;
+        const center = this._rulerCenter || (this._rulerCenter = new THREE.Vector3());
+        center.set(origin.x + scale * local.x, origin.y + scale * local.y, origin.z + scale * local.z);
+        this.camera.updateMatrixWorld();
+        const right = this._rulerRight || (this._rulerRight = new THREE.Vector3());
+        right.set(1, 0, 0).applyQuaternion(this.camera.quaternion).multiplyScalar((diameterUnits * scale) / 2);
+        const up = this._rulerUp || (this._rulerUp = new THREE.Vector3());
+        up.set(0, 1, 0).applyQuaternion(this.camera.quaternion).multiplyScalar((diameterUnits * scale) / 2);
+        const edge = center.clone().sub(right);
+        const other = center.clone().add(right);
+        const crown = center.clone().add(up);
+        const toScreen = (point) => {
+            const v = point.project(this.camera);
+            return {
+                x: (v.x * 0.5 + 0.5) * viewWidth,
+                y: (-v.y * 0.5 + 0.5) * viewHeight,
+                ok: v.z >= -1 && v.z <= 1,
+            };
+        };
+        const a = toScreen(edge);
+        const b = toScreen(other);
+        const top = toScreen(crown);
+        if (!a.ok || !b.ok) return null;
+        const left = Math.min(a.x, b.x);
+        return { left, top: top.ok ? top.y : Math.min(a.y, b.y), width: Math.abs(a.x - b.x), height: Math.abs(a.y - b.y) };
+    }
+
+    /** Screen box of a cube `units` across, in the lattice's own coordinates. */
+    _projectUnits(units, viewWidth, viewHeight) {
+        const span = Math.max(0, units);
+        const lattice = !this._engineMode || this._engineMode === 'lattice';
+        const N = this.latticeSize || this._latticeSize || span;
+        const scale = this.scene.scale.x || 1;
+        const origin = this.scene.position;
+        const center = lattice ? N / 2 : 0;
+        const min = lattice && Math.abs(span - N) < 0.5 ? 0 : center - span / 2;
+        const max = lattice && Math.abs(span - N) < 0.5 ? N : center + span / 2;
+        this.camera.updateMatrixWorld();
+        const v = this._rulerCorner || (this._rulerCorner = new THREE.Vector3());
+        let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
+        for (const x of [min, max]) {
+            for (const y of [min, max]) {
+                for (const z of [min, max]) {
+                    v.set(origin.x + scale * x, origin.y + scale * y, origin.z + scale * z);
+                    v.project(this.camera);
+                    if (v.z < -1 || v.z > 1) continue;
+                    const sx = (v.x * 0.5 + 0.5) * viewWidth;
+                    const sy = (-v.y * 0.5 + 0.5) * viewHeight;
+                    left = Math.min(left, sx);
+                    right = Math.max(right, sx);
+                    top = Math.min(top, sy);
+                    bottom = Math.max(bottom, sy);
+                }
+            }
+        }
+        if (!Number.isFinite(left) || right <= left) return null;
+        return { left, top, width: right - left, height: bottom - top };
     }
 
     _onResize() {
@@ -1198,6 +1342,8 @@ export class Viewport {
         this._scalarVolumes?.clear();
         if (this._disposed) return;
         this._disposed = true;
+        this._liveRulers?.dispose();
+        this._liveRulers = null;
         this._resizeObserver.disconnect();
         this.controls.dispose();
 

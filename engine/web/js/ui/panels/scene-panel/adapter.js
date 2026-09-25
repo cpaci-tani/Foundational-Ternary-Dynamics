@@ -67,11 +67,15 @@ export class SceneAdapter {
     }
 
     setOrbitRotateSpeed(value) {
-        if (this.viewport.controls) this.viewport.controls.rotateSpeed = value;
+        if (!this.viewport.controls) return;
+        if (this.viewport._orbitBase) this.viewport._orbitBase.rotate = value;
+        this.viewport.controls.rotateSpeed = value;
     }
 
     setOrbitZoomSpeed(value) {
-        if (this.viewport.controls) this.viewport.controls.zoomSpeed = value;
+        if (!this.viewport.controls) return;
+        if (this.viewport._orbitBase) this.viewport._orbitBase.zoom = value;
+        this.viewport.controls.zoomSpeed = value;
     }
 
     // ── Lighting ────────────────────────────────────────────────────
