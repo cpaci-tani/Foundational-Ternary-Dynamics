@@ -299,5 +299,5 @@ docs/theory/**/AUDIT_*.md
 !docs/theory/archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md
 !docs/theory/archive/DERIV_GAP_EQUATION_FORM_RETRACTED.md
 
-# Pause new dissemination additions; tracked publication files are unaffected.
+# dissemination/ is local-only: untracked 2026-09-24. Files stay on disk; earlier revisions remain in Git history.
 /dissemination/

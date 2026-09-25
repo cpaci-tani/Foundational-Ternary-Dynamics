@@ -1,15 +1,15 @@
 # Repository Map
 
-This is the short entry point for a tracked checkout of Foundational Ternary Dynamics. `git ls-files` is the exhaustive file inventory; this map groups those files so an agent can open the smallest relevant area. Counts are a 2026-09-24 index snapshot (8,385 paths), not a test-pass claim; rerun `git ls-files` after later commits.
+This is the short entry point for a tracked checkout of Foundational Ternary Dynamics. `git ls-files` is the exhaustive file inventory; this map groups those files so an agent can open the smallest relevant area. Counts are a 2026-09-24 index snapshot (7,876 paths, taken after `dissemination/` was untracked), not a test-pass claim; rerun `git ls-files` after later commits.
 
 The [2026-09-24 repository audit](docs/reference/REF_REPOSITORY_AUDIT_2026_09_24.md) records measured verification, public-checkout gaps, and cleanup still requiring a policy decision.
 
 | Area | Tracked files | Scope | Start here |
 | --- | ---: | --- | --- |
-| `engine/` | 4,184 | C++ engine, CUDA, native UI, browser dashboard, tests, and recorded campaigns | `engine/SPEC_ENGINE.md`, `engine/CMakeLists.txt`, `engine/web/index.html` |
-| `docs/` | 1,948 | Specifications, theory, references, papers, and assessment records | `docs/SPEC_FTD.md`, `docs/WHERE_WE_LEFT_OFF.md`, `docs/theory/META_INDEX.md` |
-| `scripts/` | 1,680 | Constants, proofs, verification, experiments, exploration, visualization, and tests | `scripts/constants.py`, `scripts/tests/` |
-| `dissemination/` | 487 | Manuscripts, papers, notebooks, and interactive publications | `dissemination/manuscript_v2/`, `dissemination/interactive/` |
+| `engine/` | 4,181 | C++ engine, CUDA, native UI, browser dashboard, tests, and recorded campaigns | `engine/SPEC_ENGINE.md`, `engine/CMakeLists.txt`, `engine/web/index.html` |
+| `docs/` | 1,935 | Specifications, theory, references, papers, and assessment records | `docs/SPEC_FTD.md`, `docs/WHERE_WE_LEFT_OFF.md`, `docs/theory/META_INDEX.md` |
+| `scripts/` | 1,674 | Constants, proofs, verification, experiments, exploration, visualization, and tests | `scripts/constants.py`, `scripts/tests/` |
+| `dissemination/` | 0 | Local-only (gitignored, untracked 2026-09-24): manuscripts, notebooks, and interactive publications; absent from a fresh clone | `dissemination/manuscript_v2/` (working tree only) |
 | `lean/` | 36 | Lean formalization | `lean/` |
 | `evaluation/` | 17 | Assessment inputs and reports | `evaluation/` |
 | `tools/`, `resources/`, `.github/`, and root files | 33 | Maintenance, shared assets, CI, and project policy | `CLAUDE.md`, `.github/workflows/` |
@@ -22,7 +22,7 @@ The [2026-09-24 repository audit](docs/reference/REF_REPOSITORY_AUDIT_2026_09_24
 - **Browser:** `engine/web/js/` holds runtime modules, `css/` styling, `assets/` media, `wasm/` generated deployment binaries, and `tests/` browser and Node checks. `scripts/assistant/stage_site.py` selects the public Pages artifact. Test source is part of the repository; test output is local.
 - **Cross-scale boundary:** [Scale ownership and recovery](docs/reference/REF_SCALE_OWNERSHIP_AND_RECOVERY.md) records the separate dashboard state owners and the evidence required for a v3 coarse-graining claim. A shared UI bridge is not a common microscopic law.
 - **Scripts:** `scripts/proofs/` (812) and `scripts/verification/` (75) check formal and numerical claims; `scripts/exploration/` (268) is exploratory work; `scripts/experiments/` (167) is experimental code; `scripts/visualization/` (55) generates figures; `scripts/tests/` (136) contains Python test files. Do not promote exploratory or parametric output to a theorem.
-- **Publications:** `dissemination/` and `docs/papers/` carry publication sources. Generated document renders and caches are ignored unless explicitly tracked.
+- **Publications:** `docs/papers/` carries the tracked publication sources. `dissemination/` is local-only and untracked; its earlier revisions remain in Git history. Generated document renders and caches are ignored unless explicitly tracked.
 
 ## Exact Inventory
 
