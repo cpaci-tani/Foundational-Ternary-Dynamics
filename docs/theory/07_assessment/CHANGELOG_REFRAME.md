@@ -455,6 +455,8 @@ Epistemic auditor found that LEDGER demotions of sin²θ_W, α_s, sin²θ_13, m_
 2. `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — document's purpose (promote x_+ = 1/α via L → ∞ continuum-limit route) is now obsolete under reframe. Inline header revised; needs full restatement.
 3. `AUDIT_WHAT_IS_GENUINELY_NEW.md` table rows 13-20 retain [DERIVED]; out of scope for back-prop pass; broader audit-table rebuild may be needed.
 
+**2026-09-24 FTD-0032 disposition:** The first flag was resolved by preserving the withdrawn argument at [`DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md`](../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md) and its [screened-form companion](../archive/DERIV_GAP_EQUATION_FORM_RETRACTED.md), not by rewriting either as a live derivation. The other flags are unchanged.
+
 ### Wave 2 — Verification (test-orch + docs-build)
 
 Status pending at this writing (in flight). Reports will land at `TEST_REPORT_SESSION4.md` and `DOCS_BUILD_REPORT_SESSION4.md`.
@@ -517,7 +519,7 @@ From scripts sweep:
 - `proof_von_neumann_type.py` Section 7 scaffold dependence
 
 From parametric back-prop:
-- `DERIV_MASTER_QUADRATIC_FROM_Z.md` full rewrite
+- `DERIV_MASTER_QUADRATIC_FROM_Z.md` full rewrite — closed by the 2026-09-24 provenance archive; no live derivation claimed
 - `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` full restatement
 - `AUDIT_WHAT_IS_GENUINELY_NEW.md` rows 13-20 broader rebuild
 

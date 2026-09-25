@@ -1,4 +1,10 @@
 """
+RETIRED HISTORICAL SOURCE - DO NOT COLLECT OR CITE AS CURRENT CLASSIFICATION.
+
+The assertions below were written against superseded epistemic tags and
+experimental references. They are preserved as provenance, not as active
+validation. Consult docs/theory/07_assessment/core_ledgers/LEDGER.md.
+
 test_epistemic_classification.py: Rigorous Classification of FTD Derivations
 =============================================================================
 

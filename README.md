@@ -8,7 +8,7 @@
 
 **Foundational Ternary Dynamics (FTD)** is a philosophy-of-mathematics project with a rigorous algebraic core and deliberately-bounded physics connections. It asks one question, as honestly as it can be asked:
 
-> Starting from a finite, local, deterministic, ternary substrate, what can be *built* — and exactly where, and why, does the building stop?
+> Starting from finite, local, deterministic records with a ternary manifestation readout, what can be *built* — and exactly where, and why, does the building stop?
 
 FTD is **not** an attempt to replace the Standard Model or general relativity. It is ordered **Ontology > Logic > Math > Physics**: the substrate fixes a small set of commitments, mathematics is built forward from them, and physics enters as a *constraint*, not the sole arbiter. The discipline that makes the project worth reading is that it labels every claim by exactly how far it has actually been carried — theorem, derivation, selection, conjecture, parametric insertion, imposed input, open problem, or closed-negative route — and refuses to let rhetoric promote one into another.
 
@@ -26,34 +26,29 @@ Marking the boundary — which types are *not* native — is as much a deliverab
 
 ## What is load-bearing, and what is not
 
-**The algebraic core is the load-bearing part, and it stands as mathematics independent of any physics reading.** The lemniscatic constant `G* = Γ(1/4)/Γ(3/4) ≈ 2.95868`, the master quadratic `x² − 16G*²x + 16G*³`, the Watson identity via Chowla–Selberg, the CM-curve unit-group uniqueness (`|μ_K| = |disc(K)|`, arithmetic), and `D = 3` from `|Aut(E)|² = 2^D(D−1)!` are theorem-grade results (conditional, where noted, on Chudnovsky 1976's algebraic independence of `π` and `Γ(1/4)`). Status authority for these lives in [`SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) and [`TRACKER_ONTIC_TRUTH.md`](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md).
+**The algebraic core is the load-bearing part, and its mathematical claims stand independently of a physics reading.** The lemniscatic constant `G* = Γ(1/4)/Γ(3/4) ≈ 2.95868`, the master quadratic `x² − 16G*²x + 16G*³`, the Watson identity, and the CM-curve unit-group result have theorem-grade statements at their specified scopes. The physical choice `D = 3` is a declared `[SELECTION]`, not forced by the arithmetic identity `|Aut(E)|² = 2^D(D−1)!`. Status authority and qualifications live in [`SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md), [`TRACKER_ONTIC_TRUTH.md`](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md), and the [`LEDGER.md`](docs/theory/07_assessment/core_ledgers/LEDGER.md).
 
-**The physics connections are suggestive, not derived, and are labeled as such.** The master quadratic's larger root matches `1/α` to 1.26 ppm, but the identification `x₊ = 1/α` is a `[STRONGLY MOTIVATED CONJECTURE]`, not a derivation — and the framework is explicit about why. The value of `α` is an *imported* type: a chosen orientation a deterministic substrate cannot fix for itself. That is the same status physics itself gives `α` — no theory derives it; it is measured and supplied. Mass formulas, gauge ratios, and similar results are `[PARAMETRIC]` or `[STRONGLY MOTIVATED CONJECTURE]` — standard physics filled with framework numbers, flagged plainly rather than dressed as derivations.
+**The physics connections are not established by the algebra alone.** The master quadratic's larger root matches `1/α` to 1.26 ppm, but `x₊ = 1/α` remains a `[STRONGLY MOTIVATED CONJECTURE]`, without a native dynamical readout or numerical-uniqueness support in the audited scan family (FTD-0791/0802). The branch-sensitive reading costs a declared bit (FTD-1026). Mass formulas, gauge ratios, and similar results must retain their individual ledger tags; inserting framework numbers into standard physics formulas is `[PARAMETRIC]`, not a substrate derivation.
 
-**The boundary is stated canonically** in [`FOUND_MODULUS_ARGUMENT_FRONTIER.md`](docs/theory/02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md): a finite, discrete, deterministic substrate natively sets the *forced / modulus* structure and must import the *chosen / argument* structure. `α` is the worked example of that boundary, not the project's goal.
+**One retained boundary argument** is developed in [`FOUND_MODULUS_ARGUMENT_FRONTIER.md`](docs/theory/02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md): the forced/modulus versus chosen/argument distinction. Its physical applications are subject to the v3 primitive/effective contract and ledger status; `α` is a worked example, not the project's goal.
 
 `G* / ℚ(G*)` functions as a **lever, not a discovery** — an acknowledged but underexploited mathematical structure (the lemniscatic CM point, Watson's body-centred-cubic integral, Gauss's AGM) that an ontology-first construction forces into a central role.
 
 ## The substrate
 
-FTD begins from five commitments — the types the dynamics presuppose:
+The active, owner-ratified v3 constitution (FTD-1023) adopts five postulates:
 
 | Commitment | Meaning |
 |---|---|
-| Discrete space | A cubic lattice with undefined boundary, not a completed-infinity object. |
-| Discrete time | Evolution proceeds in ticks. |
-| Ternary state | Each voxel resolves to `s ∈ {−1, 0, +1}`. |
-| Local causality | Updates are local to the 26-neighbour Moore neighbourhood. |
-| Determinism | The next state is fixed by the current state and the rules. |
+| P1: finite spatial records | One oriented 3D cubical record complex with undefined boundary; `D = 3` is selected here. |
+| P2: global order | One ordinal tick order and explicit record lifetimes; material clocks are not primitive. |
+| P3: finite alphabets | Finite cell records, with `s ∈ {−1, 0, +1}` a many-to-one manifestation readout, not the complete state. |
+| P4: local causality | Radius-one Moore support is a causal ceiling, not a claim that every neighbour is used. |
+| P5: one law | One state-complete homogeneous deterministic transition `Phi`, with an explicit schedule and named non-injective expiry. |
 
-On that lattice, two coupled fields:
+Continuous flux, phase space, action, Born weights, proper-time geometry, and particle fields are **effective recovery targets**, not v3 primitive fields. Their recovery is open at the scopes specified in the [v3 constitution](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md).
 
-| Layer | Role |
-|---|---|
-| Flux field `J ∈ ℝ³` | Dispositional content; the wave-sector carrier. |
-| State field `s ∈ {−1, 0, +1}` | The manifested ternary state. |
-
-Above the five postulates sit the **Framework Commitments** (FC-0…FC-W) — the imported types the substrate cannot set for itself (the `ℤ[i]` reading, the declined quantum measurement-map, the native arrow, scale-ratio covariance, and the chosen orientation behind `α`). Each is a declared `[AXIOM]`-class commitment with a stated falsification criterion. The canonical framework statement is [`SPEC_FTD_FRAMEWORK_V1.md`](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md).
+The continuous `J ∈ ℝ³` flux and ternary state used by the current [C++ engine](engine/SPEC_ENGINE.md) belong to a retained v1-style computational probe, not an implementation of v3's selected `Phi` (FTD-1028). V1's FC-0…FC-W commitments remain [provenance/reference](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md), not extra v3 postulates. Engine measurements describe that probe at the named toggle settings; they do not measure v3 until the laws are shown to coincide.
 
 ## Start here
 
@@ -63,15 +58,15 @@ Above the five postulates sit the **Framework Commitments** (FC-0…FC-W) — th
 | Skeptical mathematician | [`TRACKER_ONTIC_TRUTH.md`](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md), then [`SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) |
 | Foundations / philosophy of math | [`FOUND_TYPE_PRIORITY_PRINCIPLE.md`](docs/theory/02_foundations/FOUND_TYPE_PRIORITY_PRINCIPLE.md), then [`FOUND_MODULUS_ARGUMENT_FRONTIER.md`](docs/theory/02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md) |
 | Physicist | [`SPEC_DOCTRINE_LEDGER.md`](docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md), then [`SPEC_PHYSICS_BRIDGE.md`](docs/theory/01_reference/SPEC_PHYSICS_BRIDGE.md) |
-| Engine contributor | [`engine/SPEC_ENGINE.md`](engine/SPEC_ENGINE.md), then [`META_PROJECT_ATLAS.md`](META_PROJECT_ATLAS.md) |
-| Open-problem hunter | [`SPEC_OPEN_MATH_BY_SECTOR.md`](docs/theory/01_reference/SPEC_OPEN_MATH_BY_SECTOR.md), then [`AUDIT_BOUNDARY_MAP.md`](docs/theory/07_assessment/AUDIT_BOUNDARY_MAP.md) |
+| Engine contributor | [`engine/SPEC_ENGINE.md`](engine/SPEC_ENGINE.md), then the [engine ownership map](REPOSITORY_MAP.md#ownership) |
+| Open-problem hunter | [`SPEC_OPEN_MATH_BY_SECTOR.md`](docs/theory/01_reference/SPEC_OPEN_MATH_BY_SECTOR.md), then [`TRACKER_OPEN_ITEMS.md`](docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) |
 
 Status authority is intentionally centralized. If a downstream document disagrees with the canonical ledgers, the ledgers win:
 
 - Claim status: [`LEDGER.md`](docs/theory/07_assessment/core_ledgers/LEDGER.md)
 - Bedrock truth tiers: [`TRACKER_ONTIC_TRUTH.md`](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md)
 - Theorem statements: [`SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md)
-- The boundary (what is not derivable): [`AUDIT_BOUNDARY_MAP.md`](docs/theory/07_assessment/AUDIT_BOUNDARY_MAP.md)
+- The primitive/effective boundary: [`SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md)
 - Parametric insertions: [`CATALOG_PARAMETRIC_INSERTIONS.md`](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md)
 
 ## Repository map
@@ -79,7 +74,7 @@ Status authority is intentionally centralized. If a downstream document disagree
 ```text
 docs/
   SPEC_FTD.md                 readable framework spec; claim status defers to the ledgers
-  WHERE_WE_LEFT_OFF.md        latest session and scientific state
+  WHERE_WE_LEFT_OFF.md        short current-state resume, with ledger pointers
   theory/                     active theory corpus and provenance archives
 engine/                       C++17 simulation engine, CUDA path, WASM bridge, web dashboard
 scripts/                      proof scripts, verification, tests, experiments, visualization
@@ -87,7 +82,7 @@ evaluation/                   project-health, weaknesses, and assessment materia
 dissemination/                papers, whitepaper, manuscript/book assets, notebooks, demos
 ```
 
-Use [`docs/theory/META_INDEX.md`](docs/theory/META_INDEX.md) for the curated theory catalog and [`META_DOCUMENTATION_MAP.md`](META_DOCUMENTATION_MAP.md) for broader navigation. Archives are provenance, not trash: closed-negative routes, retractions, and superseded scaffolding are preserved so failed paths do not quietly reappear.
+Use [`docs/theory/META_INDEX.md`](docs/theory/META_INDEX.md) for the curated theory catalog and the [repository map](REPOSITORY_MAP.md) for broader navigation. Archives are provenance, not trash: closed-negative routes, retractions, and superseded scaffolding are preserved so failed paths do not quietly reappear.
 
 ## Build and verify
 
@@ -112,7 +107,7 @@ ctest --test-dir engine/build -j 24 --output-on-failure -C Release
 python engine/web/serve.py 8080
 ```
 
-Then open `http://localhost:8080`, or visit the published dashboard at [cpaci-tani.github.io/Foundational-Ternary-Dynamics](https://cpaci-tani.github.io/Foundational-Ternary-Dynamics/). GPU measurement campaigns run through WSL2 Ubuntu-22.04; the exact local convention is recorded in [`AGENTS.md`](AGENTS.md) and [`CLAUDE.md`](CLAUDE.md).
+Then open `http://localhost:8080`, or visit the published dashboard at [cpaci-tani.github.io/Foundational-Ternary-Dynamics](https://cpaci-tani.github.io/Foundational-Ternary-Dynamics/). GPU measurement campaigns run through WSL2 Ubuntu-22.04; the project build and GPU conventions are recorded in [`CLAUDE.md`](CLAUDE.md).
 
 ## Epistemic discipline
 

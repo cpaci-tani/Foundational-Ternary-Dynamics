@@ -353,7 +353,8 @@ print()
 # There must be an additional factor of 2*pi/G* somewhere.
 # Let me check what the actual gap equation proof says about this.
 
-# From DERIV_MASTER_QUADRATIC_FROM_Z.md:
+# From docs/theory/archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md
+# (historical route, retracted as FTD-0032):
 # "Self-consistency prescription F(x) = K(1 - G*/x)"
 # "G*/x is the screening correction from vacuum polarization"
 # "The lattice's only intrinsic dimensionful scale is G*"

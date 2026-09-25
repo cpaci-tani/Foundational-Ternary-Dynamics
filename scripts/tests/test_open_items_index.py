@@ -1,9 +1,4 @@
-"""Guards for TRACKER_OPEN_ITEMS_INDEX.md (2026-08-06).
-
-Mirrors test_ledger_index.py's core guards for LEDGER_INDEX.md: the index
-must stay a faithful, in-sync rebuild of TRACKER_OPEN_ITEMS.md, and must
-never silently drop an item heading.
-"""
+"""Guards for the working/resolved tracker split and generated working index."""
 
 from __future__ import annotations
 
@@ -17,16 +12,17 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from theory.build_open_items_index import parse_tracker  # noqa: E402
+from theory.build_open_items_index import gfm_slug, parse_tracker  # noqa: E402
 
 TRACKER = ROOT / "docs" / "theory" / "07_assessment" / "core_ledgers" / "TRACKER_OPEN_ITEMS.md"
+RESOLVED = ROOT / "docs" / "theory" / "07_assessment" / "core_ledgers" / "TRACKER_RESOLVED_ITEMS.md"
 INDEX = ROOT / "docs" / "theory" / "07_assessment" / "core_ledgers" / "TRACKER_OPEN_ITEMS_INDEX.md"
 BUILDER = ROOT / "scripts" / "theory" / "build_open_items_index.py"
 
 
 @pytest.fixture(scope="module")
-def tracker_text() -> str:
-    return TRACKER.read_text(encoding="utf-8")
+def tracker_texts() -> tuple[str, str]:
+    return (TRACKER.read_text(encoding="utf-8"), RESOLVED.read_text(encoding="utf-8"))
 
 
 def test_index_is_in_sync() -> None:
@@ -41,35 +37,51 @@ def test_index_is_in_sync() -> None:
     )
 
 
-def test_every_item_heading_is_parsed(tracker_text: str) -> None:
-    """No `### ` item heading may be silently skipped."""
-    raw_headings = re.findall(r"^### (.+)$", tracker_text, re.MULTILINE)
-    items = parse_tracker(tracker_text)
-    assert len(items) == len(raw_headings), (
-        f"parser found {len(items)} items but the tracker has "
-        f"{len(raw_headings)} '### ' headings"
-    )
+def test_every_item_heading_is_parsed(tracker_texts: tuple[str, str]) -> None:
+    """No `### ` heading in either tracker may be silently skipped."""
+    for tracker_text in tracker_texts:
+        raw_headings = re.findall(r"^### (.+)$", tracker_text, re.MULTILINE)
+        items = parse_tracker(tracker_text)
+        assert len(items) == len(raw_headings)
 
 
-def test_numbered_items_keep_their_number(tracker_text: str) -> None:
+def test_numbered_items_keep_their_number(tracker_texts: tuple[str, str]) -> None:
     """A heading like '### 1.9a Foo' must not be parsed as number='1.9a' Title='Foo'
     turning into a bare word -- regression guard for the §10 legacy-heading bug
     where any first word (e.g. 'G*', 'Prior') was mistaken for an item number."""
-    items = parse_tracker(tracker_text)
-    for it in items:
-        if it.number != "—":
-            assert re.fullmatch(r"\d+(\.\d+)?[a-z]?", it.number), (
-                f"suspicious parsed number {it.number!r} for item {it.title!r}"
-            )
+    for tracker_text in tracker_texts:
+        for it in parse_tracker(tracker_text):
+            if it.number != "—":
+                assert re.fullmatch(r"\d+(\.\d+)?[a-z]?", it.number), (
+                    f"suspicious parsed number {it.number!r} for item {it.title!r}"
+                )
 
 
-def test_index_open_closed_counts_are_consistent() -> None:
-    """The summary line's open/closed counts must match the per-section counts."""
+def test_index_counts_and_links_are_consistent(tracker_texts: tuple[str, str]) -> None:
+    """The index covers working headings and reports resolved provenance."""
     text = INDEX.read_text(encoding="utf-8")
-    total_open = int(re.search(r"\*\*(\d+) open, (\d+) closed", text).group(1))
-    total_closed = int(re.search(r"\*\*(\d+) open, (\d+) closed", text).group(2))
-    section_open = sum(int(m) for m in re.findall(r"\*\*(\d+) open / \d+ total\.\*\*", text))
-    assert total_open == section_open, (
-        f"top-line open count {total_open} != sum of per-section open counts {section_open}"
-    )
-    assert total_open + total_closed == len(parse_tracker(TRACKER.read_text(encoding="utf-8")))
+    working = parse_tracker(tracker_texts[0])
+    resolved = parse_tracker(tracker_texts[1])
+    summary = re.search(r"\*\*(\d+) working / (\d+) resolved or retired\*\*", text)
+    assert summary is not None
+    assert (int(summary.group(1)), int(summary.group(2))) == (len(working), len(resolved))
+    assert sum(map(int, re.findall(r"\*\*(\d+) working headings\.\*\*", text))) == len(working)
+    assert len(re.findall(r"\]\(TRACKER_OPEN_ITEMS\.md#", text)) == len(working)
+    for item in working:
+        assert f"TRACKER_OPEN_ITEMS.md#{gfm_slug(item.raw_heading)}" in text
+
+
+def test_mixed_open_and_pending_verification_stay_working(
+    tracker_texts: tuple[str, str],
+) -> None:
+    working_items = parse_tracker(tracker_texts[0])
+    resolved_items = parse_tracker(tracker_texts[1])
+    headings = [item.raw_heading for item in working_items + resolved_items]
+    assert len(headings) == len(set(headings))
+    working = {item.number for item in working_items}
+    resolved = {item.number for item in resolved_items}
+    assert {"1.9g", "1.12", "4.2", "7.7", "1.7"} <= working
+    assert {"1.9g", "1.12", "4.2", "7.7", "1.7"}.isdisjoint(resolved)
+    assert "7.4" in resolved and "7.4" not in working
+    assert "## §5 Theory" not in tracker_texts[0]
+    assert "## §5 Theory" in tracker_texts[1]

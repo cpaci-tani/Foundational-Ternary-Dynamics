@@ -2,8 +2,11 @@
 
 ## Why the Remaining Objections Are Answered by the Tick
 
-**Status:** Derivation closing the final three gaps
-**Dependencies:** FOUND_AXIOM_ZERO.md, DERIV_GAP_EQUATION_FORM.md, DERIV_ALPHA_FROM_PHASE_STRUCTURE.md, DERIV_QUADRATIC_NECESSITY.md, FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md
+**Status:** [HISTORICAL SYNTHESIS]; the one-loop/gap-equation closure in Resolution 3 is withdrawn with FTD-0032. The other two resolutions require separate adjudication.
+**Dependencies:** FOUND_AXIOM_ZERO.md, DERIV_ALPHA_FROM_PHASE_STRUCTURE.md, DERIV_QUADRATIC_NECESSITY.md, FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md. The former gap-equation source is [archived](../../archive/DERIV_GAP_EQUATION_FORM_RETRACTED.md) and is not load-bearing.
+
+> The original three-resolution argument is retained below for provenance. It
+> does not establish a native one-loop operator assembly or promote $x_+ = 1/\alpha$.
 
 ---
 
@@ -162,7 +165,7 @@ The three gaps were never independent objections. They were three faces of one q
 - Polyakov, A. M. *Gauge Fields and Strings*, Harwood Academic, 1987
 - FOUND_AXIOM_ZERO.md — State + position, nothing else (02_foundations)
 - DERIV_QUADRATIC_NECESSITY.md — Degree 2 from self-referential closure (03_derivations)
-- DERIV_GAP_EQUATION_FORM.md — One-loop self-consistency (03_derivations)
+- [DERIV_GAP_EQUATION_FORM_RETRACTED.md](../../archive/DERIV_GAP_EQUATION_FORM_RETRACTED.md) — historical one-loop self-consistency route (FTD-0032)
 - DERIV_ALPHA_FROM_PHASE_STRUCTURE.md — U(1) phase structure (03_derivations)
 - FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md — G*² = tick energy (02_foundations)
 - DERIV_LATTICE_QED_COMPLETE.md — Beta function from lattice (03_derivations)

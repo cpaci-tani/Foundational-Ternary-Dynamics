@@ -1,22 +1,14 @@
 #!/usr/bin/env python3
 """
-Render docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md ->
-TRACKER_OPEN_ITEMS_INDEX.md
+Render TRACKER_OPEN_ITEMS.md -> TRACKER_OPEN_ITEMS_INDEX.md.
 
-TRACKER_OPEN_ITEMS.md is 3,100+ lines of narrative physics prose -- multiple
-paragraphs of detail per item -- the same shape LEDGER.md had before
-LEDGER_INDEX.md existed to compress it. Nothing can read TRACKER_OPEN_ITEMS.md
-whole, so "has this item already been investigated" requires a compact
-companion. Same principle as LEDGER_INDEX.md, deliberately NOT applied to
-INDEX_FTD_NATIVE_EFT.md: that file is already 88% one-line table rows (a
-per-file catalog, not narrative), so a generated meta-index of it wouldn't
-compress anything -- its size is proportional to corpus size, not a
-structural inefficiency.
+TRACKER_OPEN_ITEMS.md contains long narrative entries, so this index is its
+compact navigation companion. Closed/retired entries are preserved separately
+in TRACKER_RESOLVED_ITEMS.md.
 
-TRACKER_OPEN_ITEMS.md remains canonical. This index is read-only with
-respect to it: no item text is rewritten, no status is reclassified, and
-open/closed counts are derived mechanically from each item's own heading
-text, not asserted independently.
+Both trackers remain canonical for their own entries. This index is read-only
+with respect to them: no item text or status is rewritten. File location,
+not a keyword search over mixed-status headings, determines the queue.
 
 Usage:
     python scripts/theory/build_open_items_index.py            # regenerate
@@ -24,7 +16,7 @@ Usage:
 
 Exit codes:
     0   regenerated successfully (or --check matched committed file)
-    2   --check found drift (index out of sync with TRACKER_OPEN_ITEMS.md)
+    2   --check found drift (index out of sync with either tracker)
 """
 from __future__ import annotations
 
@@ -36,6 +28,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 TRACKER = ROOT / "docs" / "theory" / "07_assessment" / "core_ledgers" / "TRACKER_OPEN_ITEMS.md"
+RESOLVED = ROOT / "docs" / "theory" / "07_assessment" / "core_ledgers" / "TRACKER_RESOLVED_ITEMS.md"
 INDEX = ROOT / "docs" / "theory" / "07_assessment" / "core_ledgers" / "TRACKER_OPEN_ITEMS_INDEX.md"
 
 SECTION_RE = re.compile(r"^## (§\S+.*)$", re.MULTILINE)
@@ -48,11 +41,6 @@ SECTION_RE = re.compile(r"^## (§\S+.*)$", re.MULTILINE)
 NUMBERED_ITEM_RE = re.compile(r"^### (\d+(?:\.\d+)?[a-z]?)\s+(.*)$", re.MULTILINE)
 UNNUMBERED_ITEM_RE = re.compile(r"^### (?!\d)(.+)$", re.MULTILINE)
 EM_DASH_SPLIT = re.compile(r"\s+—\s+")
-
-CLOSED_RE = re.compile(
-    r"CLOSED|RETRACTED|not counted (?:as )?open|not counted open", re.IGNORECASE
-)
-
 
 @dataclass
 class Item:
@@ -107,28 +95,21 @@ def parse_tracker(text: str) -> list[Item]:
     return items
 
 
-def is_closed(item: Item) -> bool:
-    return bool(CLOSED_RE.search(item.status)) or bool(CLOSED_RE.search(item.title))
-
-
-def render(items: list[Item]) -> str:
-    n_open = sum(1 for i in items if not is_closed(i))
-    n_closed = len(items) - n_open
-
+def render(items: list[Item], resolved_count: int) -> str:
     lines = [
         "# Open Items Tracker — Index",
         "",
-        f"Generated companion to `TRACKER_OPEN_ITEMS.md` ({len(items)} item "
-        f"headings). **Do not edit by hand** — regenerate with "
+        f"Generated companion to `TRACKER_OPEN_ITEMS.md` ({len(items)} active "
+        f"or pending-verification item headings). **Do not edit by hand** — regenerate with "
         "`python scripts/theory/build_open_items_index.py`.",
         "",
         "This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` "
-        "remains canonical; open/closed status here is read mechanically from "
-        "each item's own heading text (a `CLOSED`/`RETRACTED`/`not counted as "
-        "open` marker), not reclassified. Where this index and the tracker's "
-        "prose disagree, the tracker wins.",
+        "remains canonical for working items; "
+        "[`TRACKER_RESOLVED_ITEMS.md`](TRACKER_RESOLVED_ITEMS.md) preserves "
+        "closed and retired provenance. Where this index and either tracker's "
+        "prose disagree, the trackers win.",
         "",
-        f"**{n_open} open, {n_closed} closed/retired** (of {len(items)} item headings).",
+        f"**{len(items)} working / {resolved_count} resolved or retired** item headings.",
         "",
         "---",
         "",
@@ -139,21 +120,19 @@ def render(items: list[Item]) -> str:
         by_section.setdefault(it.section, []).append(it)
 
     for section, sec_items in by_section.items():
-        sec_open = sum(1 for i in sec_items if not is_closed(i))
         lines.append(f"## {section}")
         lines.append("")
-        lines.append(f"**{sec_open} open / {len(sec_items)} total.**")
+        lines.append(f"**{len(sec_items)} working headings.**")
         lines.append("")
-        lines.append("| # | Item | Status | Open? |")
-        lines.append("|---|---|---|---|")
+        lines.append("| # | Item | Status |")
+        lines.append("|---|---|---|")
         for it in sec_items:
             anchor = gfm_slug(it.raw_heading)
             title_cell = it.title.replace("|", "\\|")
             status_cell = (it.status or "—").replace("|", "\\|")
-            open_mark = "" if is_closed(it) else "**OPEN**"
             lines.append(
                 f"| {it.number} | [{title_cell}](TRACKER_OPEN_ITEMS.md#{anchor}) "
-                f"| {status_cell} | {open_mark} |"
+                f"| {status_cell} |"
             )
         lines.append("")
 
@@ -167,22 +146,31 @@ def main() -> int:
 
     text = TRACKER.read_text(encoding="utf-8")
     items = parse_tracker(text)
+    resolved_items = parse_tracker(RESOLVED.read_text(encoding="utf-8"))
     if not items:
         print("FAIL: no item headings parsed from TRACKER_OPEN_ITEMS.md", file=sys.stderr)
         return 1
+    if not resolved_items:
+        print("FAIL: no item headings parsed from TRACKER_RESOLVED_ITEMS.md", file=sys.stderr)
+        return 1
+    headings = [item.raw_heading for item in items + resolved_items]
+    if len(headings) != len(set(headings)):
+        print("FAIL: duplicate item headings across the trackers", file=sys.stderr)
+        return 1
 
-    rendered = render(items)
+    rendered = render(items, len(resolved_items))
 
     if args.check:
         if not INDEX.exists() or INDEX.read_text(encoding="utf-8") != rendered:
-            print(f"--check: drift detected. {INDEX} is out of sync with {TRACKER}. "
+            print(f"--check: drift detected. {INDEX} is out of sync with the trackers. "
                   f"Re-run `python scripts/theory/build_open_items_index.py` to regenerate.",
                   file=sys.stderr)
             return 2
-        print(f"OK: {INDEX.name} is in sync ({len(items)} items).")
+        print(f"OK: {INDEX.name} is in sync ({len(items)} working, "
+              f"{len(resolved_items)} resolved headings).")
         return 0
 
-    INDEX.write_text(rendered, encoding="utf-8")
+    INDEX.write_text(rendered, encoding="utf-8", newline="\n")
     print(f"Wrote {INDEX} ({len(items)} items, {len(rendered.splitlines())} lines).")
     return 0
 

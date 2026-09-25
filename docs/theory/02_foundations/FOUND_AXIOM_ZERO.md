@@ -598,19 +598,19 @@ Two places in the chain are [SELECTION] — structurally motivated but not uniqu
 
 | Selection | Statement | Why not forced | Status |
 |---|---|---|---|
-| **S1** | Master quadratic has form $x^2 - 16G^{*2} x + 16G^{*3} = 0$ | Chain gives coefficient $16$ and constant $G^*$ | **NARROWED to minimum-degree selection** via two-route unification (FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md) — coefficients are L-value [THEOREM]s, only remaining selection is "polynomial is minimum-degree FTD-meaningful object" |
+| **S1** | Master quadratic has form $x^2 - 16G^{*2} x + 16G^{*3} = 0$ | The CM L-value identities do not select this polynomial as the FTD operator | **[SELECTION]** for the operator assembly; the FTD-0081 two-route argument is archived after the FTD-0032 physics-route retraction |
 | **S2** | Ladder walk addends $\{4, 3, 3, 6\}$ in that specific order | Each addend is forced ($N_{\rm base} = 4$, $N_c = 3$, $N_f = 6$); the ordering is motivated by the physical reading electron-at-n-11 but not yet proven from first principles | Program A (O_h subgroup chain) is the closure path |
 
-**S1 has been substantially narrowed** by the L-value identification (DERIV_MASTER_QUADRATIC_CM_LVALUES.md) combined with the self-consistency derivation (DERIV_MASTER_QUADRATIC_FROM_Z.md). See FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md for the unified story: the master quadratic is derivable by two independent routes (physics + arithmetic) that converge to 100-digit precision, leaving only "minimum-degree polynomial" as residual selection. **Program E** (uniqueness-of-minimal-polynomial proof) would close S1 fully.
+**Current FTD-0032/0081 status:** The partition-function self-consistency route is [RETRACTED], so the historical [two-route synthesis](../archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md) does not narrow S1. The CM L-value identities and the polynomial algebra survive independently; neither forces the FTD operator assembly. The historical [partition-function argument](../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md) is retained for provenance.
 
-These two selections are the ONLY gaps between "$i$ exists" and the full FTD prediction set. Programs A + E would reduce the chain to zero selections.
+The S1/S2 table is a historical chain proposal, not an exhaustive current accounting of the gaps between "$i$ exists" and physical predictions.
 
-#### 7.2.3 Master outputs (forced by steps A–I + S1, S2)
+#### 7.2.3 Algebraic outputs and historical physical readings
 
 | Output | Derivation | Status |
 |---|---|---|
-| $1/\alpha = x_+ = 137.036...$ | Larger root of master quadratic | [THEOREM given S1] |
-| $N_c = x_- = 3.024$ | Smaller root | [THEOREM given S1] |
+| $x_+ \approx 137.036...$ | Larger root of master quadratic | [THEOREM] algebraically; $x_+ \leftrightarrow 1/\alpha$ remains [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
+| $x_- \approx 3.024$ | Smaller root | [THEOREM] algebraically; $x_- \leftrightarrow N_c$ is retired |
 | $m_\mu/m_e = 3 B_3(B_3 + N_c) - N_c = 207$ | Integer formula in framework constants | [IMPOSED] (0.11% match to experiment, parametric insertion) |
 | $m_\tau/m_e = 3477$ | Extended integer formula | [IMPOSED] (0.006% match, parametric insertion) |
 | $m_e = m_P \sqrt{2\pi} (16/3) \alpha^{11}$ | $m_P$ = UV scale, prefactor from $G^*$ chain, exponent from ladder | [SELECTION given S2] (0.19%) |

@@ -54,7 +54,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0032` | RETRACTED | Master quadratic as L → ∞ limit of finite-L gap equation | L251 |
 | `FTD-0050` | CLOSED_NEGATIVE | Master quadratic as characteristic polynomial of an RG step on the FTD engine | L269 |
 | `FTD-0080` | FOUNDATION | Cogito–axiom bridge + full reverse-engineering trace: initial justification formalized | L342 |
-| `FTD-0081` | THEOREM, SELECTION | Master quadratic unified motivation: two-route convergence (physics + L-values) narrows S1 to minimum-degree selection | L341 |
+| `FTD-0081` | RETRACTED, THEOREM | Historical two-route motivation for the master quadratic; partition-function route retracted as FTD-0032 | L341 |
 | `FTD-0082` | THEOREM | Master quadratic bare algebraic decomposition: $\alpha + 1/N_c = 1/G^*$ as single-line content | L340 |
 | `FTD-0083` | THEOREM | Program E closure: uniqueness of the master quadratic as minimal polynomial in the bounded $G^*$-integer class | L339 |
 | `FTD-0084` | THEOREM, SELECTION | Program A partial closure: ladder-walk step-size multiset $\{3,3,4,6\}$ from $O_h$ structure | L338 |
@@ -1264,7 +1264,7 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION`. A row carrying several tag
 | CLOSED_NEGATIVE | 247 |
 | OPEN | 244 |
 | MEASURED | 188 |
-| SELECTION | 111 |
+| SELECTION | 110 |
 | DERIVED | 102 |
 | SMC | 84 |
 | SYNTHESIS | 69 |
@@ -1279,8 +1279,8 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION`. A row carrying several tag
 | AXIOM | 29 |
 | SELECTED_DYNAMICS | 29 |
 | NO_GO | 24 |
+| RETRACTED | 21 |
 | PARAMETRIC | 20 |
-| RETRACTED | 20 |
 | PARTIAL | 18 |
 | POSITIVE | 17 |
 | CONDITIONAL | 16 |

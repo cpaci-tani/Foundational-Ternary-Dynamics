@@ -163,7 +163,7 @@ The Watson integral $W_D$ decreases with $D$ for $D \geq 3$ (higher-dimensional 
 ### $\S 5.6$. References Specific to the Watson Approach
 
 - `proof_d3_uniqueness.py` — Numerical verification (4/4 tests)
-- `DERIV_MASTER_QUADRATIC_FROM_Z.md` — Gap equation derivation
+- [DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md](../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md) — retracted gap-equation route (FTD-0032; historical)
 - Watson, G. N. "Three Triple Integrals," *Q. J. Math.* **10** (1939), 266-276
 
 ---

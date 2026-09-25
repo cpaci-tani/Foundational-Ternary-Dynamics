@@ -1,6 +1,6 @@
 # Gauge Group Structure from Moore Neighborhood and J² Orthogonality
 
-**Depends on:** SPEC_FTD.md, DERIV_MASTER_QUADRATIC_FROM_Z.md, DERIV_THREE_GENERATIONS.md, DERIV_CONFINEMENT_FROM_GAP_EQUATION.md
+**Depends on:** SPEC_FTD.md, DERIV_THREE_GENERATIONS.md, DERIV_CONFINEMENT_FROM_GAP_EQUATION.md. The former partition-function dependency is [retracted](../../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md) (FTD-0032) and is not load-bearing.
 **Proof script:** `scripts/proofs/proof_moore_gauge_structure.py` (32 tests, all pass)
 
 ---

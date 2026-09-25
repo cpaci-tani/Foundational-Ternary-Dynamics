@@ -125,7 +125,7 @@ Honest tag table after this audit:
 
 | Component | Tag |
 |---|---|
-| Prefactor $16 \sqrt{2\pi}/3$ | **[SELECTION]** (per FTD-0133; the √(2π) sub-factor would source to DERIV_MASTER_QUADRATIC_FROM_Z.md, which is RETRACTED as FTD-0032, and even that derivation produced a *cancelling* 2π. √(2π) is more honestly understood as inherited from HIGGS-4's `v = M_P·√(2π)·α^8` [SELECTION]; it cancels in the cleaner ratio `m_e/v = (16/3)·α³`. The 16 = |Aut(E)|² remains [THEOREM] individually; the 3 = D or N_c remains [THEOREM] or [SMC] individually; their *quotient appearing as a Yukawa coupling* is [SELECTION].) |
+| Prefactor $16 \sqrt{2\pi}/3$ | **[SELECTION]** (per FTD-0133; the √(2π) sub-factor was formerly sourced to the [archived partition-function route](../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md), RETRACTED as FTD-0032, and even that derivation produced a *cancelling* 2π. √(2π) is more honestly understood as inherited from HIGGS-4's `v = M_P·√(2π)·α^8` [SELECTION]; it cancels in the cleaner ratio `m_e/v = (16/3)·α³`. The 16 = |Aut(E)|² remains [THEOREM] individually; the 3 = D or N_c remains [THEOREM] or [SMC] individually; their *quotient appearing as a Yukawa coupling* is [SELECTION].) |
 | Combined with $\alpha^n$ for unknown $n$ | [IMPOSED template] |
 | Specific $n = 11$ | [SELECTION] (bottleneck) |
 | Therefore $m_e$ formula | [SELECTION] (bottleneck) |

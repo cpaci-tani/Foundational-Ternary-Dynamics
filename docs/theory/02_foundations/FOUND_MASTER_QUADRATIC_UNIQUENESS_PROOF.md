@@ -3,7 +3,7 @@
 **Tag:** [THEOREM] (Program E uniqueness result) + [THEOREM] (SP2 promoted)
 **Ledger row:** FTD-0083
 **Companions:**
-- [FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md](FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md) (FTD-0081) — proposed Program E
+- [FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md](../archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md) (FTD-0081) — historical Program E proposal; its physics route was retracted
 - [FOUND_MASTER_QUADRATIC_BARE_STRUCTURE.md](FOUND_MASTER_QUADRATIC_BARE_STRUCTURE.md) (FTD-0082) — algebraic decomposition
 - [test_master_quadratic_uniqueness.cpp](../../../engine/tests/test_master_quadratic_uniqueness.cpp) — constructive enumeration proof
 
@@ -44,7 +44,7 @@ selections remaining on the arithmetic side of the cogito-axiom ladder
 
 ### 1.1 What Program E claimed to do
 
-From [FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md §4.1](FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md):
+From the [archived FTD-0081 proposal §4.1](../archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md):
 
 > **Program E (new):** Write the uniqueness-of-minimal-polynomial proof
 > for SP2. Closes the master quadratic motivation fully. Estimated effort:
@@ -195,7 +195,7 @@ Either way, the minimum-degree choice $n = 2$ is unique.
 
 ### 3.1 The five SPs, final status
 
-From [FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md §5](FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md):
+From the [archived FTD-0081 proposal §5](../archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md):
 
 | SP | Content | Pre-Program-E | Post-Program-E |
 |---|---|---|---|
