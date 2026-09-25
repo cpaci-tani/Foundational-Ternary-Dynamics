@@ -1,5 +1,6 @@
 import { DEFAULT_FLUX_THRESHOLD } from './viewport/flux-threshold.js';
 import { mountLiveRulers } from './ui/components/live-rulers/mount.js';
+import { activationEnergyEv, LIVE_MEASURE_DEFAULTS, manifestedSiteName, pointAttributeSize, pointSpritePixels, spectrumColor, voxelClockPhase } from './ui/components/live-rulers/measure.js';
 /**
  * @file viewport.js
  * @brief Three.js 3D Viewport — renders particles and fields from the simulation bridge.
@@ -145,6 +146,7 @@ export class Viewport {
         this.controls.zoomSpeed = 1.2;
         this.controls.panSpeed = 1;
         this._orbitBase = { rotate: 0.6, zoom: 1.2, pan: 1, damp: 0.12 };
+        this._liveMeasure = { ...LIVE_MEASURE_DEFAULTS };
         this.controls.minDistance = 0.01;
         this.controls.maxDistance = 100000000;
 
@@ -462,6 +464,89 @@ export class Viewport {
         }
     }
 
+    /**
+     * Place the camera on a three-quarter view of a canned subject.
+     * Distances are chosen so the subject fills a set share of the view.
+     */
+    setFramedView(id) {
+        const frames = {
+            moore: { voxels: 3, fill: 0.5, focus: 'voxel' },
+            neighborhood: { voxels: 9, fill: 0.62, focus: 'voxel' },
+            detail: { voxels: null, fill: 1.35, focus: 'lattice', span: 'edge' },
+            lattice: { voxels: null, fill: 0.86, focus: 'lattice', span: 'diagonal' },
+            'lattice-out': { voxels: null, fill: 0.2, focus: 'lattice', span: 'diagonal' },
+            quasi: { voxels: null, fill: 0.74, focus: 'lattice', span: 'shell' },
+        };
+        const frame = frames[id];
+        if (!frame) return false;
+        const unit = this._worldPerLatticeUnit();
+        const n = Math.max(1, this.latticeSize || 32);
+        let subject = frame.voxels ? frame.voxels * unit : n * unit;
+        if (frame.span === 'diagonal') subject *= Math.sqrt(3);
+        if (frame.span === 'shell') {
+            const shell = this._shellDiameterUnits();
+            subject = (shell > 0 ? shell : n * 8) * unit;
+        }
+        const distance = this._distanceForWorldSize(subject, frame.fill);
+        const target = frame.focus === 'voxel'
+            ? this._attachedVoxelWorld()
+            : this._latticeCenterWorld();
+        const view = new THREE.Vector3(1, 0.62, 1.05).normalize();
+        this.controls.maxDistance = Math.max(this.controls.maxDistance || 0, distance * 4, 1e8);
+        this.controls.minDistance = Math.min(this.controls.minDistance || 0.01, 0.01);
+        this.camera.up.set(0, 1, 0);
+        this.controls.target.copy(target);
+        this.camera.position.copy(target).addScaledVector(view, distance);
+        this.controls.update();
+        this._updateLiveRulers();
+        return true;
+    }
+
+    _worldPerLatticeUnit() {
+        const flux = this._fluxRenderer?._fluxVolume;
+        if (flux) {
+            flux.updateMatrixWorld();
+            const e = flux.matrixWorld.elements;
+            const scale = Math.hypot(e[0], e[1], e[2]);
+            if (scale > 0) return scale;
+        }
+        this.scene.updateMatrixWorld();
+        return this.scene.scale.x || 1;
+    }
+
+    _latticeCenterWorld() {
+        const n = this.latticeSize || 32;
+        const point = new THREE.Vector3(n / 2, n / 2, n / 2);
+        const flux = this._fluxRenderer?._fluxVolume;
+        if (flux) {
+            flux.updateMatrixWorld();
+            return point.applyMatrix4(flux.matrixWorld);
+        }
+        this.scene.updateMatrixWorld();
+        return point.applyMatrix4(this.scene.matrixWorld);
+    }
+
+    _attachedVoxelWorld() {
+        const flux = this._fluxRenderer?._fluxVolume;
+        const position = flux?.geometry?.getAttribute('position');
+        const index = this._attachedPoint;
+        if (!position || index == null || index >= position.count) return this._latticeCenterWorld();
+        const arr = position.array;
+        const point = new THREE.Vector3(arr[index * 3], arr[index * 3 + 1], arr[index * 3 + 2]);
+        flux.updateMatrixWorld();
+        return point.applyMatrix4(flux.matrixWorld);
+    }
+
+    _distanceForWorldSize(worldSize, fill) {
+        const fov = (this.camera.fov || 50) * Math.PI / 180;
+        const view = this.container?.getBoundingClientRect?.() || { width: 1000, height: 600 };
+        const aspect = Math.max(0.2, view.width / Math.max(1, view.height));
+        const vertical = 2 * Math.tan(fov / 2);
+        const limit = Math.min(vertical, vertical * aspect);
+        const share = Math.max(0.05, fill);
+        return Math.max(worldSize, 1e-4) / (limit * share);
+    }
+
     setZoomMagnitude(factor) {
         if (!Number.isFinite(factor) || factor <= 0) return;
         const refDist = this.getReferenceDistance();
@@ -629,7 +714,16 @@ export class Viewport {
         this._fieldRenderer.updateFluxSlices(planes, latticeSize, index);
     }
 
-    toggleFluxVolume(on) { this._fluxRenderer.toggleFluxVolume(on); }
+    setLiveMeasure(patch) {
+        if (!patch || !this._liveMeasure) return;
+        Object.assign(this._liveMeasure, patch);
+        this._updateLiveRulers();
+    }
+
+    toggleFluxVolume(on) {
+        this._fluxRenderer.toggleFluxVolume(on);
+        this._updateLiveRulers();
+    }
 
     toggleFluxSlice(on) {
         this._fieldRenderer.toggleFluxSlice(on);
@@ -1160,7 +1254,7 @@ export class Viewport {
     _tuneOrbitSensitivity(distance) {
         const controls = this.controls;
         const base = this._orbitBase;
-        if (!controls || !base || !(distance > 0)) return;
+        if (!controls || !base || !(distance > 0) || this._liveMeasure?.smoothOrbit === false) return;
         const ref = Math.max(this.getReferenceDistance(), 1);
         const ratio = distance / ref;
         const gain = Math.min(1, Math.max(0.12, 1 / Math.sqrt(Math.max(ratio, 1))));
@@ -1230,7 +1324,244 @@ export class Viewport {
             projectUnits: (units) => this._projectUnits(units, rect.width, rect.height),
             projectDiameter: (units) => this._projectDiameter(units, rect.width, rect.height),
             shellDiameter: this._shellDiameterUnits(),
+            pointSprite: this._pointSprite(rect.width, rect.height),
+            voxelClocks: this._voxelClocks(rect.width, rect.height),
+            mooreNeighborhood: this._mooreNeighborhood(rect.width, rect.height),
+            fluxVisible: this.showFlux !== false,
+            measures: this._liveMeasure,
         });
+    }
+
+    /** Screen width of the flux point the view is attached to, updated from its live size. */
+    _pointSprite(viewWidth, viewHeight) {
+        const scale = this._fluxRenderer?._fluxPointScale ?? 1;
+        const ceiling = pointAttributeSize(scale);
+        const flux = this._fluxRenderer?._fluxVolume;
+        const hit = flux && this._attachedFluxPoint(flux, viewWidth, viewHeight);
+        const size = hit ? hit.size : ceiling;
+        const depth = hit ? hit.depth : Math.max(this.camera.position.distanceTo(this.controls.target), 0.1);
+        const px = pointSpritePixels(size, depth);
+        const t = (size - 1) / Math.max(ceiling - 1, 1e-6);
+        const screen = hit ? {
+            left: hit.x,
+            top: hit.y - px / 2 - 20,
+            width: px,
+            height: px,
+            placed: true,
+        } : null;
+        return {
+            px,
+            fill: spectrumColor(t),
+            screen,
+            name: hit?.name || '',
+            wave: hit ? hit.wave : { value: 0, min: 0, max: 0, samples: [] },
+        };
+    }
+
+    /** Clock faces for voxels near the one under the view. Farther faces fade out. */
+    _voxelClocks(viewWidth, viewHeight) {
+        const distance = this.camera.position.distanceTo(this.controls.target);
+        if (distance > Math.max(this.getReferenceDistance(), 1) * 0.35) return [];
+        const flux = this._fluxRenderer?._fluxVolume;
+        const geometry = flux?.geometry;
+        const position = geometry?.getAttribute('position');
+        if (!position) return [];
+        const count = geometry.drawRange ? geometry.drawRange.count : position.count;
+        if (count <= 0) return [];
+        flux.updateMatrixWorld();
+        this.camera.updateMatrixWorld();
+        const inverse = this._fluxInv || (this._fluxInv = new THREE.Matrix4());
+        inverse.copy(flux.matrixWorld).invert();
+        const local = this._pointLocal || (this._pointLocal = new THREE.Vector3());
+        local.copy(this.controls.target).applyMatrix4(inverse);
+        const arr = position.array;
+        const visibility = geometry.getAttribute('particleVisibility');
+        const radius = Math.max(0.5, this._liveMeasure?.clockRadius ?? 2.5);
+        const radius2 = radius * radius;
+        const found = [];
+        for (let i = 0; i < count; i++) {
+            if (visibility && visibility.getX(i) < 0.5) continue;
+            const d = this._pointDistance2(arr, i, local);
+            if (d > radius2) continue;
+            found.push({ index: i, d });
+        }
+        found.sort((a, b) => a.d - b.d);
+        const tick = this._fluxRenderer?._fluxClockTick || 0;
+        const clocks = [];
+        for (let n = 0; n < found.length && clocks.length < 24; n++) {
+            const index = found[n].index;
+            const i3 = index * 3;
+            const world = this._pointWorld || (this._pointWorld = new THREE.Vector3());
+            world.set(arr[i3], arr[i3 + 1], arr[i3 + 2]).applyMatrix4(flux.matrixWorld);
+            const ndc = this._pointNdc || (this._pointNdc = new THREE.Vector3());
+            ndc.copy(world).project(this.camera);
+            if (ndc.z < -1 || ndc.z > 1) continue;
+            const fade = 1 - Math.sqrt(found[n].d) / radius;
+            clocks.push({
+                x: (ndc.x * 0.5 + 0.5) * viewWidth,
+                y: (-ndc.y * 0.5 + 0.5) * viewHeight,
+                opacity: Math.max(0, Math.min(1, fade)),
+                phase: voxelClockPhase(tick, arr[i3], arr[i3 + 1], arr[i3 + 2]),
+            });
+        }
+        return clocks;
+    }
+
+    /** The 26 lattice sites around the attached voxel. Only the close Moore view, not a zoom-out. */
+    _mooreNeighborhood(viewWidth, viewHeight) {
+        const measures = this._liveMeasure || {};
+        if (measures.mooreBars === false && measures.mooreWaves === false && measures.mooreJoules === false) return [];
+        const distance = this.camera.position.distanceTo(this.controls.target);
+        if (distance > Math.max(this.getReferenceDistance(), 1) * 0.2) return [];
+        const flux = this._fluxRenderer?._fluxVolume;
+        const geometry = flux?.geometry;
+        const position = geometry?.getAttribute('position');
+        const sizes = geometry?.getAttribute('size');
+        if (!position || !sizes) return [];
+        const count = geometry.drawRange ? geometry.drawRange.count : position.count;
+        const focus = this._attachedPoint;
+        if (count <= 0 || focus == null || focus >= count) return [];
+        const arr = position.array;
+        const ax = arr[focus * 3];
+        const ay = arr[focus * 3 + 1];
+        const az = arr[focus * 3 + 2];
+        const visibility = geometry.getAttribute('particleVisibility');
+        const ceiling = pointAttributeSize(this._fluxRenderer?._fluxPointScale ?? 1);
+        const sites = [];
+        flux.updateMatrixWorld();
+        this.camera.updateMatrixWorld();
+        for (let i = 0; i < count && sites.length < 26; i++) {
+            if (i === focus) continue;
+            if (visibility && visibility.getX(i) < 0.5) continue;
+            const i3 = i * 3;
+            const span = Math.max(Math.abs(arr[i3] - ax), Math.abs(arr[i3 + 1] - ay), Math.abs(arr[i3 + 2] - az));
+            if (span < 0.25 || span > 1.25) continue;
+            const world = this._pointWorld || (this._pointWorld = new THREE.Vector3());
+            world.set(arr[i3], arr[i3 + 1], arr[i3 + 2]).applyMatrix4(flux.matrixWorld);
+            const view = this._pointView || (this._pointView = new THREE.Vector3());
+            view.copy(world).applyMatrix4(this.camera.matrixWorldInverse);
+            const ndc = this._pointNdc || (this._pointNdc = new THREE.Vector3());
+            ndc.copy(world).project(this.camera);
+            if (ndc.z < -1 || ndc.z > 1) continue;
+            const size = sizes.getX(i);
+            const depth = Math.max(-view.z, 0.1);
+            const px = pointSpritePixels(size, depth);
+            const activation = this._fluxRenderer?._fluxActivation?.[i];
+            const wave = this._neighborEnergy(i, activationEnergyEv(activation));
+            const t = (size - 1) / Math.max(ceiling - 1, 1e-6);
+            sites.push({
+                x: (ndc.x * 0.5 + 0.5) * viewWidth,
+                y: (-ndc.y * 0.5 + 0.5) * viewHeight - px / 2 - 8,
+                px,
+                fill: spectrumColor(t),
+                opacity: 0.9,
+                bar: measures.mooreBars !== false,
+                wave: measures.mooreWaves === false ? null : wave,
+                showJoule: measures.mooreJoules !== false,
+                joule: wave.value,
+            });
+        }
+        return sites;
+    }
+
+    _neighborEnergy(index, electronVolts) {
+        const ev = Number.isFinite(electronVolts) ? electronVolts : 0;
+        if (!this._neighborTraces) this._neighborTraces = new Map();
+        let trace = this._neighborTraces.get(index);
+        if (!trace) {
+            trace = { min: ev, max: ev, last: ev, samples: [ev] };
+            this._neighborTraces.set(index, trace);
+        } else if (ev !== trace.last) {
+            trace.samples.push(ev);
+            if (trace.samples.length > 24) trace.samples.shift();
+            trace.last = ev;
+            if (ev < trace.min) trace.min = ev;
+            if (ev > trace.max) trace.max = ev;
+        }
+        if (this._neighborTraces.size > 64) {
+            const first = this._neighborTraces.keys().next().value;
+            this._neighborTraces.delete(first);
+        }
+        return { value: ev, min: trace.min, max: trace.max, samples: trace.samples };
+    }
+
+    /** Recent energy of one voxel. The string spans that voxel's own min and max. */
+    _trackVoxelEnergy(index, electronVolts) {
+        const ev = Number.isFinite(electronVolts) ? electronVolts : 0;
+        let trace = this._voxelEnergyTrace;
+        if (!trace || trace.index !== index) {
+            trace = this._voxelEnergyTrace = { index, min: ev, max: ev, last: ev, samples: [ev] };
+        } else if (ev !== trace.last) {
+            trace.samples.push(ev);
+            if (trace.samples.length > 48) trace.samples.shift();
+            trace.last = ev;
+            if (ev < trace.min) trace.min = ev;
+            if (ev > trace.max) trace.max = ev;
+        }
+        return { value: ev, min: trace.min, max: trace.max, samples: trace.samples };
+    }
+
+    /** Lattice point nearest the orbit target. Holds that point while it stays under the view. */
+    _attachedFluxPoint(flux, viewWidth, viewHeight) {
+        const geometry = flux.geometry;
+        const position = geometry?.getAttribute('position');
+        const sizes = geometry?.getAttribute('size');
+        if (!position || !sizes) return null;
+        const count = geometry.drawRange ? geometry.drawRange.count : position.count;
+        if (count <= 0) return null;
+        flux.updateMatrixWorld();
+        this.camera.updateMatrixWorld();
+        const inverse = this._fluxInv || (this._fluxInv = new THREE.Matrix4());
+        inverse.copy(flux.matrixWorld).invert();
+        const local = this._pointLocal || (this._pointLocal = new THREE.Vector3());
+        local.copy(this.controls.target).applyMatrix4(inverse);
+        const arr = position.array;
+        const visibility = geometry.getAttribute('particleVisibility');
+        let index = this._attachedPoint;
+        const keep = index != null && index < count
+            && this._pointDistance2(arr, index, local) < 0.75
+            && (!visibility || visibility.getX(index) >= 0.5);
+        if (!keep) {
+            let best = -1;
+            let bestD = Infinity;
+            for (let i = 0; i < count; i++) {
+                if (visibility && visibility.getX(i) < 0.5) continue;
+                const d = this._pointDistance2(arr, i, local);
+                if (d < bestD) {
+                    bestD = d;
+                    best = i;
+                }
+            }
+            if (best < 0) return null;
+            index = best;
+            this._attachedPoint = index;
+        }
+        const i3 = index * 3;
+        const world = this._pointWorld || (this._pointWorld = new THREE.Vector3());
+        world.set(arr[i3], arr[i3 + 1], arr[i3 + 2]).applyMatrix4(flux.matrixWorld);
+        const view = this._pointView || (this._pointView = new THREE.Vector3());
+        view.copy(world).applyMatrix4(this.camera.matrixWorldInverse);
+        const ndc = this._pointNdc || (this._pointNdc = new THREE.Vector3());
+        ndc.copy(world).project(this.camera);
+        const width = viewWidth || this.container.clientWidth || 1;
+        const height = viewHeight || this.container.clientHeight || 1;
+        const activation = this._fluxRenderer?._fluxActivation?.[index];
+        return {
+            size: sizes.getX(index),
+            depth: Math.max(-view.z, 0.1),
+            x: (ndc.x * 0.5 + 0.5) * width,
+            y: (-ndc.y * 0.5 + 0.5) * height,
+            wave: this._trackVoxelEnergy(index, activationEnergyEv(activation)),
+            name: manifestedSiteName(this._fluxRenderer?._fluxSiteKind?.[index] || 0),
+        };
+    }
+
+    _pointDistance2(arr, index, local) {
+        const i3 = index * 3;
+        const dx = arr[i3] - local.x;
+        const dy = arr[i3 + 1] - local.y;
+        const dz = arr[i3 + 2] - local.z;
+        return dx * dx + dy * dy + dz * dz;
     }
 
     /** Lattice-unit diameter of the environment background sphere. */

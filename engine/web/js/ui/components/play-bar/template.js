@@ -44,6 +44,20 @@ export function getPlayBarTemplate() {
 
         <div class="play-bar-divider" aria-hidden="true"></div>
 
+        <div class="play-bar-section play-bar-zoom" aria-label="Camera zoom">
+            <select id="play-bar-zoom" class="play-bar-zoom-select" aria-label="Zoom level">
+                <option value="">Zoom</option>
+                <option value="moore">Moore neighborhood</option>
+                <option value="neighborhood">Neighborhood zoomed out</option>
+                <option value="detail">Detailed lattice</option>
+                <option value="lattice">Full lattice</option>
+                <option value="lattice-out">Zoomed out lattice</option>
+                <option value="quasi">Zoomed out quasi-domain</option>
+            </select>
+        </div>
+
+        <div class="play-bar-divider" aria-hidden="true"></div>
+
         <div class="play-bar-section play-bar-actions">
             <button class="play-bar-icon-btn play-bar-settings"
                 type="button" title="Playback settings" aria-label="Playback settings"

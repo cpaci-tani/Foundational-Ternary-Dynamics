@@ -6,6 +6,7 @@
 import { createPhysicsTogglesCard } from './physics-toggles.js?v=4';
 import { createSubstrateControlsCard } from './substrate-controls.js?v=2';
 import { createFluxVolumeCard, createParticleDisplayCard, createSelectionCard } from './flux-volume.js?v=2';
+import { createLiveMeasureCard } from './live-measure.js';
 import { createFlowLinesCard } from './flow-lines.js?v=1';
 
 export class Scale0ControlsComponent {
@@ -36,6 +37,7 @@ export class Scale0ControlsComponent {
       ['physics', createPhysicsTogglesCard],
       ['substrate', createSubstrateControlsCard],
       ['flux-volume', createFluxVolumeCard],
+      ['live-measure', createLiveMeasureCard],
       ['flow-lines', createFlowLinesCard],
       ['particle-display', createParticleDisplayCard],
       ['selection', createSelectionCard],

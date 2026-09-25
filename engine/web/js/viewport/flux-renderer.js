@@ -292,6 +292,7 @@ export class ViewportFluxRenderer {
     _ensureFluxActivationCapacity(count) {
         if (this._fluxActivation.length === count) return;
         this._fluxStateMask = new Uint8Array(count);
+        this._fluxSiteKind = new Int8Array(count);
         this._fluxActivation = new Float64Array(count);
         this._fluxActivationScratchA = new Float64Array(count);
         this._fluxActivationScratchB = new Float64Array(count);
@@ -302,7 +303,13 @@ export class ViewportFluxRenderer {
     _mapManifestedState(particleData, sourceN, compactSpacing, compactOrigin, compact) {
         const mask = this._fluxStateMask;
         mask.fill(0);
+        const kinds = this._fluxSiteKind?.length === mask.length
+            ? this._fluxSiteKind
+            : (this._fluxSiteKind = new Int8Array(mask.length));
+        kinds.fill(0);
         const positions = particleData?.positions;
+        const colors = particleData?.colors;
+        const locked = particleData?.locked;
         const particleCount = Math.min(
             Math.max(0, Math.trunc(Number(particleData?.count) || 0)),
             positions ? Math.floor(positions.length / 3) : 0,
@@ -323,7 +330,13 @@ export class ViewportFluxRenderer {
                 : pz;
             if (sx < 0 || sy < 0 || sz < 0
                 || sx >= sourceN || sy >= sourceN || sz >= sourceN) continue;
-            mask[(sz * sourceN + sy) * sourceN + sx] = 1;
+            const index = (sz * sourceN + sy) * sourceN + sx;
+            mask[index] = 1;
+            const green = colors ? colors[i * 3 + 1] : 0;
+            const red = colors ? colors[i * 3] : 0;
+            let kind = green > 0.7 ? 1 : red > 0.8 ? -1 : 1;
+            if (locked?.[i]) kind = kind < 0 ? -2 : 2;
+            kinds[index] = kind;
         }
     }
 
@@ -586,6 +599,7 @@ export class ViewportFluxRenderer {
             if (this._fluxVolume) this._fluxVolume.geometry.setDrawRange(0, 0);
             return;
         }
+        this._fluxClockTick = (this._fluxClockTick || 0) + 1;
 
         const thresholdFraction = clampFluxThreshold(
             this._fluxThreshold !== undefined ? this._fluxThreshold : DEFAULT_FLUX_THRESHOLD,
@@ -728,7 +742,13 @@ export class ViewportFluxRenderer {
         if (!this._fluxVolume) { if (!next) return; this._buildFluxVolume(this._latticeSize); }
         if (this._fluxVolume.visible === next) return;
         this._fluxVolume.visible = next;
-        if (!next) this._fluxVolume.geometry.setDrawRange(0, 0);
+        const geometry = this._fluxVolume.geometry;
+        if (!next) {
+            this._fluxHiddenDrawCount = geometry.drawRange?.count || 0;
+            geometry.setDrawRange(0, 0);
+        } else if (this._fluxHiddenDrawCount > 0) {
+            geometry.setDrawRange(0, this._fluxHiddenDrawCount);
+        }
     }
 
     // ── Flux Volume Controls ──────────────────────────────────────────

@@ -1,4 +1,4 @@
-import { FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M } from '../../../constants.js';
+import { E_REST, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M, J_PER_EV, K_B } from '../../../constants.js';
 
 /**
  * One voxel is the electron-primary lattice spacing a_phys = ℓ_P
@@ -6,8 +6,98 @@ import { FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M } from '../../../constants.js';
  */
 export const VOXEL_LENGTH_M = FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M;
 
+/** Presentation defaults for the live rulers, energy string, and voxel clocks. */
+export const LIVE_MEASURE_DEFAULTS = Object.freeze({
+    viewRuler: true,
+    latticeRuler: true,
+    energyString: true,
+    spectrum: true,
+    voxelClocks: true,
+    mooreBars: true,
+    mooreWaves: true,
+    mooreJoules: true,
+    smoothOrbit: true,
+    rulerScale: 1,
+    clockSize: 16,
+    stringWidth: 148,
+    clockRadius: 2.5,
+    valueSize: 16,
+    lineThickness: 1.5,
+    barThickness: 8,
+});
+
 /** The lattice mesh stops drawing once the whole cube is under this many pixels. */
 export const OUTER_WORLD_PX = 5;
+
+/** Flux point-size slider limits. Screen size follows the flux volume shader. */
+export const POINT_SCALE_MIN = 0.1;
+export const POINT_SCALE_MAX = 3;
+
+/** Attribute size at full energy for a point-scale slider value. Stride matches the flux writer. */
+export function pointAttributeSize(pointScale, stride = 1) {
+    const span = Math.min(Math.max(stride, 0), 1.5);
+    return 1 + Math.max(POINT_SCALE_MIN, pointScale) * 9 * span;
+}
+
+/** Display name for a manifested site. Empty when the voxel has no particle. */
+export function manifestedSiteName(kind) {
+    if (kind === 1) return 'positive';
+    if (kind === -1) return 'negative';
+    if (kind === 2) return 'locked positive';
+    if (kind === -2) return 'locked negative';
+    return '';
+}
+
+/** Per-voxel clock in turns, from the published tick and the voxel's own address. No extra field. */
+export function voxelClockPhase(tick, x, y, z) {
+    const turns = (Number(tick) || 0) / 12 + x * 0.173 + y * 0.317 + z * 0.519;
+    return turns - Math.floor(turns);
+}
+
+/** gl_PointSize for a flux dot: size * sqrt(60 / depth), clamped like the shader. */
+export function pointSpritePixels(size, depth) {
+    const d = Math.max(depth, 0.1);
+    return Math.min(512, Math.max(1, size * Math.sqrt(60 / d)));
+}
+
+/**
+ * Voxel activation is sqrt(2 epsilon). Lattice rest energy E_REST = K_B/3
+ * is the electron rest energy K_B MeV, so one lattice energy unit is 3 MeV.
+ */
+export function activationEnergyEv(activation) {
+    const amplitude = Number(activation);
+    if (!Number.isFinite(amplitude)) return 0;
+    const latticeEnergy = amplitude * amplitude * 0.5;
+    return latticeEnergy * (K_B / E_REST) * 1e6;
+}
+
+/** String path of one voxel's energy. The top of the string is that voxel's max, the bottom its min. */
+export function energyStringPath(samples, min, max) {
+    const count = samples?.length || 0;
+    if (count === 0) return '';
+    const span = max - min;
+    let path = '';
+    for (let i = 0; i < count; i++) {
+        const x = count === 1 ? 50 : (i / (count - 1)) * 100;
+        const t = span > 0 ? (samples[i] - min) / span : 0.5;
+        const y = 14 - Math.min(1, Math.max(0, t)) * 12;
+        path += `${i ? 'L' : 'M'}${x.toFixed(2)} ${y.toFixed(2)}`;
+    }
+    return path;
+}
+
+/** Spectrum color from the smallest point (blue) to the largest (red). `t` is 0..1. */
+export function spectrumColor(t) {
+    const u = Math.min(1, Math.max(0, t));
+    const hue = (1 - u) * 240;
+    return `hsl(${hue.toFixed(1)} 78% 58%)`;
+}
+
+/** Spectrum color from the smallest point scale (blue) to the largest (red). */
+export function pointSizeColor(pointScale) {
+    const t = (pointScale - POINT_SCALE_MIN) / (POINT_SCALE_MAX - POINT_SCALE_MIN);
+    return spectrumColor(t);
+}
 
 /** Circumscribed spherical shell: the outer shell around a cubic body of side `domain`. */
 export function shellDiameter(domainUnits) {
@@ -110,6 +200,16 @@ export function anchorRuler({ domainUnits, pixelsPerUnit, viewPx, subject = 'lat
         opacity,
         hidden: opacity <= 0.02,
     };
+}
+
+/** Voxel energy in joules, the SI unit paired with the metre labels. */
+export function formatEnergy(electronVolts) {
+    if (!Number.isFinite(electronVolts)) return '—';
+    const joules = electronVolts * J_PER_EV;
+    if (Math.abs(joules) < 1e-30) return '0 J';
+    const exp = Math.floor(Math.log10(Math.abs(joules)));
+    const mant = joules / 10 ** exp;
+    return `${mant.toFixed(3)}×10${superscript(exp)} J`;
 }
 
 /** Voxel count → metres in scientific notation. `step` is the tick spacing in voxels. */

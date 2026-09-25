@@ -1,8 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M } from '../js/constants.js';
+import { E_REST, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M, K_B } from '../js/constants.js';
 import {
     formatLength,
+    formatEnergy,
+    pointAttributeSize,
+    pointSpritePixels,
+    pointSizeColor,
+    activationEnergyEv,
+    energyStringPath,
+    voxelClockPhase,
+    manifestedSiteName,
     anchorRuler,
     lengthGauge,
     rulerInsets,
@@ -102,11 +110,37 @@ test('the bracket moves from the nearest voxel to the lattice to the quasi-domai
     assert.equal(lengthGauge('cosmic').subject, 'cosmic');
 });
 
+test('a voxel ruler matches the flux point sprite and colors by point scale', () => {
+    assert.equal(pointAttributeSize(1), 10);
+    assert.equal(pointAttributeSize(0.1), 1.9);
+    assert.equal(pointAttributeSize(3), 28);
+    const near = pointSpritePixels(10, 1);
+    const far = pointSpritePixels(10, 60);
+    assert.ok(near > far);
+    assert.equal(pointSpritePixels(100, 0.1), 512);
+    const restEv = activationEnergyEv(Math.sqrt(2 * E_REST));
+    assert.ok(Math.abs(restEv - K_B * 1e6) / (K_B * 1e6) < 1e-9);
+    assert.equal(manifestedSiteName(0), '');
+    assert.equal(manifestedSiteName(1), 'positive');
+    assert.equal(manifestedSiteName(-1), 'negative');
+    assert.equal(manifestedSiteName(2), 'locked positive');
+    assert.ok(voxelClockPhase(0, 0, 0, 0) !== voxelClockPhase(0, 1, 0, 0));
+    assert.ok(voxelClockPhase(3, 1, 2, 3) >= 0 && voxelClockPhase(3, 1, 2, 3) < 1);
+    assert.notEqual(voxelClockPhase(0, 1, 2, 3), voxelClockPhase(1, 1, 2, 3));
+    const path = energyStringPath([1, 3], 1, 3);
+    assert.match(path, /^M0\.00 14\.00L100\.00 2\.00$/);
+    assert.equal(pointSizeColor(0.1), 'hsl(240.0 78% 58%)');
+    assert.equal(pointSizeColor(3), 'hsl(0.0 78% 58%)');
+});
+
 test('one voxel is the electron-primary Planck length, written in scientific notation', () => {
     assert.equal(VOXEL_LENGTH_M, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M);
     assert.ok(Math.abs(VOXEL_LENGTH_M - 1.6131463e-35) / 1.6131463e-35 < 1e-6);
     assert.equal(formatLength(0), '0');
     assert.equal(formatLength(1), '1.613×10⁻³⁵ m');
+    assert.equal(formatEnergy(0), '0 J');
+    assert.equal(formatEnergy(K_B * 1e6), '8.187×10⁻¹⁴ J');
+    assert.equal(formatEnergy(0.4), '6.409×10⁻²⁰ J');
     assert.match(formatLength(33), /^5\.323×10⁻³⁴ m$/);
     assert.doesNotMatch(formatLength(1), /vx/);
     const fine = viewportScale(0.04);

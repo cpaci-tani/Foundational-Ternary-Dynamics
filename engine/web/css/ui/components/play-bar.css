@@ -219,6 +219,19 @@
     font-size: var(--fs-xs);
 }
 
+.play-bar-zoom-select {
+    height: calc(32px * var(--ui-scale, 1));
+    max-width: 168px;
+    padding: 0 8px;
+    border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+    border-radius: var(--radius-md, 8px);
+    background: color-mix(in oklch, var(--bg-card) 80%, transparent);
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: var(--fs-xs);
+    cursor: pointer;
+}
+
 /* Active-state styling for the gear while its popover is open. */
 .play-bar-settings.is-open {
     color: var(--accent-text);

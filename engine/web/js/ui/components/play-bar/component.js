@@ -38,6 +38,15 @@ export class PlayBarComponent extends BaseLifecycleController {
         this.popoverEl   = this.el.querySelector('.play-bar-settings-popover');
         this.speedNudgeBtns = this.el.querySelectorAll('[data-speed-nudge]');
 
+        const zoomSelect = this.el.querySelector('#play-bar-zoom');
+        if (zoomSelect) {
+            this.bindEvent(zoomSelect, 'change', () => {
+                const id = zoomSelect.value;
+                if (!id) return;
+                appRegistry.get('viewport')?.setFramedView?.(id);
+            });
+        }
+
         for (const btn of this.speedNudgeBtns) {
             this.bindEvent(btn, 'click', () => {
                 this._nudgeSpeed(parseFloat(btn.dataset.speedNudge) || 0);

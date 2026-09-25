@@ -45,6 +45,7 @@ import {
 } from '../../../../viewport/flux-threshold.js';
 import { wireFieldActionCard, wireReadOnlyParameterCard } from './substrate-card-binder.js';
 import { wireFluxVolumeCard } from './flux-volume-binder.js';
+import { wireLiveMeasureCard } from './live-measure.js';
 
 let _wired = false;
 
@@ -871,6 +872,7 @@ export function wireScale0Controls(ctx, api) {
         reasons: SCALE0_MUTATION_REASONS,
         sources: SCALE0_MUTATION_SOURCES,
     });
+    const disposeLiveMeasure = wireLiveMeasureCard(ctx);
     const disposeFluxVolume = wireFluxVolumeCard(ctx, api, {
         getEl,
         createLatestInputFrame,
@@ -882,6 +884,7 @@ export function wireScale0Controls(ctx, api) {
     ctx.disposeScale0Controls = () => {
         if (controlsDisposed) return;
         controlsDisposed = true;
+        disposeLiveMeasure();
         disposeFluxVolume();
         disposeFieldActions();
         disposeReadOnlyParameters();
