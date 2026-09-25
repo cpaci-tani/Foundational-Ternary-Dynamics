@@ -169,14 +169,6 @@ html[data-density="compact"] #panel-area {
     margin-bottom: 14px;
 }
 
-.panel-dock-kicker {
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
-
 .panel-dock-title {
     font-size: 16px;
     font-weight: 600;
@@ -198,6 +190,21 @@ html[data-density="compact"] #panel-area {
 }
 
 @media (max-width: 767px) {
+    .panel-dock-head {
+        flex-wrap: wrap;
+    }
+
+    .panel-dock-head > .workspace-tabs-mobile {
+        display: flex;
+        flex: 0 0 100%;
+    }
+
+    .panel-dock-head .workspace-tabs-select {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: none;
+    }
+
     .panel-dock-hide-btn {
         display: inline-flex;
         align-items: center;

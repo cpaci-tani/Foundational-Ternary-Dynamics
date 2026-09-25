@@ -1,5 +1,11 @@
 # Master Quadratic from the Partition Function
 
+> **Archived provenance (FTD-0032):** The partition-function route below was
+> retracted on 2026-04-19. It is not an active derivation of the master
+> quadratic. The polynomial's algebraic identity (FTD-0001) is unaffected;
+> the physical operator assembly and $x_+ \leftrightarrow 1/\alpha$ require
+> their separately recorded selection and conjecture statuses.
+
 ## The Gap Equation Derived from Z(x)
 
 **Status (per LEDGER):** The "L → ∞ gap-equation derivation" route described here is **RETRACTED (FTD-0032)**: Phase I numerical convergence does not hold; Phase J shows the L=2 partition function is ultralocal with no master-quadratic signature; under undefined-boundary ontology "L → ∞" is not a well-posed load-bearing step. The polynomial itself is preserved as **[THEOREM] (FTD-0001)** — pure algebra. The physical identification is $x_+ \leftrightarrow 1/\alpha$ ([STRONGLY MOTIVATED CONJECTURE] FTD-0013) resting on the empirical match (1.26 ppm) + CM-curve uniqueness.

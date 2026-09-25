@@ -9,8 +9,6 @@ import { PanelDockComponent } from '../components/panel-dock/component.js';
 import { ViewportFrameComponent } from '../components/viewport-frame/component.js';
 import { ViewportOverlaysComponent } from '../components/viewport-overlays/component.js?v=15';
 import { TooltipComponent } from '../components/tooltips/component.js?v=5';
-import { KnowledgeBaseComponent } from '../components/knowledge-base/component.js?v=3';
-import { FaqComponent } from '../components/faq/component.js';
 import { KeyboardHelpComponent } from '../components/keyboard-help/component.js';
 import { ensurePanelResources } from '../components/panel-resources/component.js?v=12';
 import { annotatePanelElements, getPanelLabel, getPanelRegistry, validatePanelRegistry } from '../scale-registry/panel-registry.js?v=5';
@@ -48,12 +46,11 @@ export class AppShell {
         this.viewportFrame = null;
         this.scaleUiRegistry = null;
         this.tooltips = null;
-        this.knowledgeBase = null;
-        this.faq = null;
         this.keyboardHelp = null;
         this.viewportOverlays = null;
         this._scope = null;
         this._visualViewportUpdate = null;
+        this.mobilePanelOpenButton = null;
     }
 
     init() {
@@ -73,6 +70,18 @@ export class AppShell {
         if (!validation.ok) console.warn('[ui-shell] Panel registry validation errors:', validation.errors);
         this.loadingOverlay = new LoadingOverlayComponent(document.getElementById('loading-overlay')).init();
         this.viewportFrame = new ViewportFrameComponent(this.getRegion('viewport')).init();
+        this.mobilePanelOpenButton = document.createElement('button');
+        this.mobilePanelOpenButton.id = 'btn-panel-open-mobile';
+        this.mobilePanelOpenButton.type = 'button';
+        this.mobilePanelOpenButton.textContent = 'Panels';
+        this.mobilePanelOpenButton.setAttribute('aria-label', 'Show simulation panels');
+        this.mobilePanelOpenButton.setAttribute('aria-controls', 'panel-area');
+        this.mobilePanelOpenButton.setAttribute('aria-expanded', 'false');
+        this.app.append(this.mobilePanelOpenButton);
+        this._scope.on(this.mobilePanelOpenButton, 'click', () => {
+            this.panelDock?.setCollapsed(false);
+            document.getElementById('tab-select-mobile')?.focus({ preventScroll: true });
+        });
         // Topbar must init before viewport overlays so the toolbar is measured
         // before overlays are inserted (see ViewportOverlaysComponent for details).
         this.topbar = new TopbarComponent({
@@ -80,17 +89,15 @@ export class AppShell {
             toolbar: this.getRegion('toolbar'),
             toolbarRegistry: this.scaleUiRegistry.toolbar,
         }).init();
-        this.knowledgeBase = new KnowledgeBaseComponent({
-            app: this.app,
-            getMutexPartners: () => [this.faq],
-        }).init();
-        this.faq = new FaqComponent({
-            app: this.app,
-            getMutexPartners: () => [this.knowledgeBase],
-        }).init();
         this.viewportOverlays = new ViewportOverlaysComponent(this.getRegion('viewport')).init();
         this.workspaceTabs = new WorkspaceTabsComponent(this.getRegion('tabs'), this.scaleUiRegistry.panels).init();
         this.panelDockView = new PanelDockComponent(this.getRegion('panels')).init();
+        const mobilePanelSelect = this.getRegion('tabs')?.querySelector('.workspace-tabs-mobile');
+        const panelHead = this.getRegion('panels')?.querySelector('.panel-dock-head');
+        if (mobilePanelSelect && panelHead) {
+            panelHead.querySelector('.workspace-tabs-mobile')?.remove();
+            panelHead.append(mobilePanelSelect);
+        }
         this.tooltips = new TooltipComponent({ app: this.app }).init();
         // Keyboard shortcuts overlay — mount last because it listens for
         // the `?` key globally and opens a modal over everything else.
@@ -245,11 +252,12 @@ export class AppShell {
         // teardown; pagehide must remain BFCache-safe.
         for (const component of [
             this.mobilePanel, this.panelDock, this.keyboardHelp, this.tooltips,
-            this.knowledgeBase, this.faq, this.viewportOverlays, this.workspaceTabs,
+            this.viewportOverlays, this.workspaceTabs,
             this.panelDockView, this.viewportFrame, this.topbar, this.loadingOverlay,
         ]) release(() => disposeComponent(component));
         release(() => this.breakpoints?.stop?.());
         release(() => this._scope.dispose());
+        this.mobilePanelOpenButton?.remove();
         document.documentElement.style.removeProperty('--visual-viewport-height');
         document.documentElement.style.removeProperty('--browser-nav-inset');
         delete this.app?.dataset.shellReady;
@@ -262,13 +270,12 @@ export class AppShell {
         this.viewportFrame = null;
         this.viewportOverlays = null;
         this.tooltips = null;
-        this.knowledgeBase = null;
-        this.faq = null;
         this.keyboardHelp = null;
         this.breakpoints = null;
         this.scaleUiRegistry = null;
         this.registry = null;
         this._visualViewportUpdate = null;
+        this.mobilePanelOpenButton = null;
         if (errors.length) throw new AggregateError(errors, 'AppShell cleanup failed');
     }
 }

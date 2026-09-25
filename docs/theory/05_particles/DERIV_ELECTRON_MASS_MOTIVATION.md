@@ -3,7 +3,7 @@
 ## Motivation for m_e = M_P · √(2π) · (16/3) · α¹¹
 
 **Status:** [SELECTION] — each factor is structurally motivated; the combination is not uniquely derived
-**Depends on:** FOUND_LADDER_GENERATING_RULE.md, DERIV_MASTER_QUADRATIC_FROM_Z.md, DERIV_PHI3_EXACT_EFT.md
+**Depends on:** FOUND_LADDER_GENERATING_RULE.md, DERIV_PHI3_EXACT_EFT.md. The former partition-function prefactor argument is [archived](../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md) and is not a dependency.
 
 ---
 
@@ -25,7 +25,7 @@ The lattice has a UV cutoff at the lattice spacing. The natural mass scale of th
 
 ### Factor 2: √(2π)
 
-The partition function Z(x) involves an exact Gaussian integral over the flux field J (see DERIV_MASTER_QUADRATIC_FROM_Z.md, Step 1). The Gaussian integral over a single real variable produces √(2π). This factor is the signature of the exact J-integration. [SELECTION] (not [THEOREM], per FTD-0133; the cited DERIV_MASTER_QUADRATIC_FROM_Z.md derivation route is retracted as FTD-0032, and even that chain produced a *cancelling* 2π rather than a surviving √(2π); the √(2π) factor in m_e is more honestly read as inherited from `v = M_P·√(2π)·α^8` in HIGGS-4, which is itself [SELECTION]. The √(2π) cancels in the ratio `m_e/v = (16/3)·α³`, but FTD-0397 shows that this exponent difference also depends on selected order-bearing ladder data.)
+The [archived partition-function route](../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md) used Gaussian integration to motivate √(2π), but that route was retracted as FTD-0032 and its own 2π factor cancels. The surviving √(2π) assignment is [SELECTION], more honestly inherited from `v = M_P·√(2π)·α^8` in HIGGS-4, itself [SELECTION]. It cancels in `m_e/v = (16/3)·α³`; FTD-0397 also makes that exponent difference depend on selected order-bearing ladder data.
 
 In the φ³ EFT (DERIV_PHI3_EXACT_EFT.md), the mass parameter m² = x₊ − x₋ = 134.012. The ratio √(2π)/m ≈ 0.217 sets the natural scale at which loop corrections become significant.
 
@@ -84,7 +84,7 @@ Each factor has a structural origin:
 | Component | Tag | Justification |
 |-----------|-----|---------------|
 | m_e = M_P · prefactor · α^n (dimensional form) | [IMPOSED] | Standard Planck-scale mass formula |
-| √(2π) from Gaussian J-integral | [SELECTION] | The DERIV_MASTER_QUADRATIC_FROM_Z.md Step 1 chain that would tag this [THEOREM] is RETRACTED (FTD-0032), and even that chain gave a *cancelling* 2π. The √(2π) factor is more honestly understood as inherited from `v = M_P·√(2π)·α^8` (HIGGS-4 [SELECTION]), per FTD-0133. |
+| √(2π) normalization | [SELECTION] | The [historical Gaussian route](../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md) is RETRACTED (FTD-0032) and gave a *cancelling* 2π. The factor is more honestly inherited from `v = M_P·√(2π)·α^8` (HIGGS-4 [SELECTION]), per FTD-0133. |
 | 16 = |Aut(Eᵢ)|² from Faddeev-Popov | [THEOREM] | O_h gauge fixing on minimal torus |
 | 3 = D from |Aut|² = 2^D·(D−1)! | [THEOREM] for the arithmetic uniqueness of the equation; [SELECTION — declared] (FTD-0355) for the dimension-forcing | Algebraic uniqueness is a [THEOREM]; but D=3 as the physical spatial dimension presupposes the RHS target 16 = |O_h|/3, a circularity named (bounded search) |
 | Exponent 11 from ladder position | [SELECTION] | Structural walk, not uniquely forced |
@@ -114,6 +114,6 @@ print(f"Error:      {error:.2f}%")                    # 0.19%
 ## Cross-References
 
 - **Ladder rule:** [FOUND_LADDER_GENERATING_RULE.md](../02_foundations/FOUND_LADDER_GENERATING_RULE.md) — why {1,2,3,4,8,11,14,20}
-- **16 from Faddeev-Popov:** [DERIV_MASTER_QUADRATIC_FROM_Z.md](../03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_FROM_Z.md) — gauge DOF counting
+- **Historical gauge-DOF proposal:** [DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md](../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md) — retracted partition-function route, not a current prefactor derivation
 - **D = 3:** [DERIV_D3_FROM_AUTOMORPHISM.md](../02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) — dimensional uniqueness
 - **Muon/tau ratios:** [DERIV_COMPLETE_PARTICLE_PHYSICS.md](DERIV_COMPLETE_PARTICLE_PHYSICS.md) — lepton mass hierarchy

@@ -9,14 +9,14 @@ export default defineConfig({
     fullyParallel: false, workers: 1, retries: 0, timeout: 90_000,
     reporter: [['list']], outputDir: '../test-results/strict-hydro-lab',
     use: {
-        baseURL: 'http://localhost:8093', trace: 'retain-on-failure',
+        baseURL: 'http://localhost:8097', trace: 'retain-on-failure',
         screenshot: 'only-on-failure', actionTimeout: 20_000,
         navigationTimeout: 30_000,
         launchOptions: hardware ? { args: ['--use-angle=default'] } : undefined,
     },
     projects: [{ name: 'strict-hydro-chromium', use: { ...devices['Desktop Chrome'] } }],
     webServer: {
-        command: 'python ../../strict/serve_lab.py --port 8093',
-        port: 8093, reuseExistingServer: false, timeout: 30_000,
+        command: 'python ../../strict/serve_lab.py --port 8097',
+        port: 8097, reuseExistingServer: false, timeout: 30_000,
     },
 });

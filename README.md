@@ -1,158 +1,167 @@
 # Foundational Ternary Dynamics
 
-[![CI](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/actions/workflows/ci.yml/badge.svg)](https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/actions/workflows/ci.yml)
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Engine v2.18.0](https://img.shields.io/badge/engine-v2.18.0-orange.svg)](REPOSITORY_MAP.md#ownership)
+**Foundational Ternary Dynamics (FTD)** is a philosophy-of-mathematics project
+with an explicit mathematical core and deliberately bounded physics
+connections. It asks one question, as honestly as it can be asked:
 
-**Foundational Ternary Dynamics (FTD)** is a philosophy-of-mathematics project with a rigorous algebraic core and deliberately-bounded physics connections. It asks one question, as honestly as it can be asked:
+> Starting from finite-alphabet, local, deterministic records with a ternary
+> manifestation readout, what can be *built*, and exactly where and why does
+> the building stop?
 
-> Starting from a finite, local, deterministic, ternary substrate, what can be *built* — and exactly where, and why, does the building stop?
+FTD is **not** an attempt to replace the Standard Model or general relativity.
+It is ordered **Ontology > Logic > Math > Physics**: the substrate fixes a small
+set of commitments, mathematics is built forward from them, and physics enters
+as a *constraint*, not the sole arbiter. The discipline that makes the project
+worth reading is that it labels every claim by exactly how far it has actually
+been carried: theorem, derivation, selection, conjecture, parametric insertion,
+imposed input, open problem, or closed-negative route. It does not let a label
+promote a claim beyond its evidence.
 
-FTD is **not** an attempt to replace the Standard Model or general relativity. It is ordered **Ontology > Logic > Math > Physics**: the substrate fixes a small set of commitments, mathematics is built forward from them, and physics enters as a *constraint*, not the sole arbiter. The discipline that makes the project worth reading is that it labels every claim by exactly how far it has actually been carried — theorem, derivation, selection, conjecture, parametric insertion, imposed input, open problem, or closed-negative route — and refuses to let rhetoric promote one into another.
+The repository combines a theory corpus, verification and proof scripts, a
+C++/CUDA simulation engine, and a browser workspace. The
+[repository map](REPOSITORY_MAP.md) shows module ownership; the
+[dated resume](docs/WHERE_WE_LEFT_OFF.md) records the current working state.
 
-The repository combines a theory corpus, verification and proof scripts, a C++/CUDA simulation engine, and a browser dashboard. Use the [repository map](REPOSITORY_MAP.md) to find the relevant area; for the latest working state, start with [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md).
+## The selected model
 
-## The organizing principle: context before content
+The [v3 constitution](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md)
+adopts five postulates. The dimension, carrier, and reference law are choices
+of this model; the postulates do not establish that nature uses them.
 
-One principle runs through the whole framework ([`FOUND_TYPE_PRIORITY_PRINCIPLE.md`](docs/theory/02_foundations/FOUND_TYPE_PRIORITY_PRINCIPLE.md)): a *context* — a **type** — is prior to, and the precondition for, the value of any *content* — a **token**. You cannot derive a context from its content. The elementary picture is `z = |z|·e^{iθ}`: the magnitude `|z|` (content) does not locate the number until the orientation `θ` (context) is supplied.
-
-So FTD proceeds in one order, and the goal is stated in that order:
-
-> **Set the smallest honest set of types from which a discrete ontology can speak; build the mathematics and physics forward, sector by sector, until every physical structure is either forced content or a rigorously marked and priced import; drive every priced line to retirement, to a theorem-grade no-go, or to a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price.**
-
-Marking the boundary — which types are *not* native — is as much a deliverable as any derivation, and every priced line is a standing work item, not a resting state (amendment of record 2026-07-12). (Type-priority is an adopted organizing commitment, not a theorem; it is offered for outside critique, not asserted as proven.)
-
-## What is load-bearing, and what is not
-
-**The algebraic core is the load-bearing part, and it stands as mathematics independent of any physics reading.** The lemniscatic constant `G* = Γ(1/4)/Γ(3/4) ≈ 2.95868`, the master quadratic `x² − 16G*²x + 16G*³`, the Watson identity via Chowla–Selberg, the CM-curve unit-group uniqueness (`|μ_K| = |disc(K)|`, arithmetic), and `D = 3` from `|Aut(E)|² = 2^D(D−1)!` are theorem-grade results (conditional, where noted, on Chudnovsky 1976's algebraic independence of `π` and `Γ(1/4)`). Status authority for these lives in [`SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) and [`TRACKER_ONTIC_TRUTH.md`](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md).
-
-**The physics connections are suggestive, not derived, and are labeled as such.** The master quadratic's larger root matches `1/α` to 1.26 ppm, but the identification `x₊ = 1/α` is a `[STRONGLY MOTIVATED CONJECTURE]`, not a derivation — and the framework is explicit about why. The value of `α` is an *imported* type: a chosen orientation a deterministic substrate cannot fix for itself. That is the same status physics itself gives `α` — no theory derives it; it is measured and supplied. Mass formulas, gauge ratios, and similar results are `[PARAMETRIC]` or `[STRONGLY MOTIVATED CONJECTURE]` — standard physics filled with framework numbers, flagged plainly rather than dressed as derivations.
-
-**The boundary is stated canonically** in [`FOUND_MODULUS_ARGUMENT_FRONTIER.md`](docs/theory/02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md): a finite, discrete, deterministic substrate natively sets the *forced / modulus* structure and must import the *chosen / argument* structure. `α` is the worked example of that boundary, not the project's goal.
-
-`G* / ℚ(G*)` functions as a **lever, not a discovery** — an acknowledged but underexploited mathematical structure (the lemniscatic CM point, Watson's body-centred-cubic integral, Gauss's AGM) that an ontology-first construction forces into a central role.
-
-## The substrate
-
-FTD begins from five commitments — the types the dynamics presuppose:
-
-| Commitment | Meaning |
+| Element | Current v3 specification |
 |---|---|
-| Discrete space | A cubic lattice with undefined boundary, not a completed-infinity object. |
-| Discrete time | Evolution proceeds in ticks. |
-| Ternary state | Each voxel resolves to `s ∈ {−1, 0, +1}`. |
-| Local causality | Updates are local to the 26-neighbour Moore neighbourhood. |
-| Determinism | The next state is fixed by the current state and the rules. |
+| Space | Oriented three-dimensional cubical cell complex with a global chart and undefined outer boundary. |
+| Time | One ordinal tick `n = 0, 1, ...`; records have births and may expire. Physical seconds are not primitive. |
+| State | Finite alphabets on cells. The site readout `m` returns `-1`, `0`, or `+1` and does not expose the complete site record. |
+| Causality | One update depends on at most a radius-one Moore neighborhood. This is a ceiling, not a requirement to use every neighbor. |
+| Law | One homogeneous deterministic update `X[n+1] = Phi(X[n])` with an explicit synchronous schedule and a non-injective expiry case. The reference `Phi` is selected, not forced by the preceding rows. |
 
-On that lattice, two coupled fields:
+The [selected carrier](docs/theory/01_reference/SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md)
+makes the finite-state cost explicit:
 
-| Layer | Role |
+| Cell | Alphabet | Number of states |
+|---|---|---:|
+| Site | Ternary value, three-state collision layer, and 384 binary channel slots | `9 x 2^384` |
+| Bond | Two nine-state relation slots | `81` |
+| Plaquette | Four nine-state relation slots | `6,561` |
+| Cube | Singleton | `1` |
+
+The 384 site bits are exclusion slots for distinct field-channel labels. A
+ternary site value is therefore a many-to-one readout of a much larger
+microscopic record, not the whole state.
+
+## Results at their stated scope
+
+The [selected law](docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md)
+and its certificates support the following statements. All are conditional
+on the chosen carrier, collision, and preparation.
+
+| Result | Exact scope | Not established by it |
+|---|---|---|
+| Finite collision | The frozen three-layer table has **55,008 pair rows**. Its parent certificate checks **128,499** exact cases; the integrated verifier currently reports **31/31** checks passing. | A unique law or a measured interaction. |
+| Expiry | Eight distinct frame presentations map to one bound reserve while named phase, polarity, token/work, and carrier records survive. | A general heat law or complete physical energy account. |
+| Minimum dynamic witnesses | The same `Phi` has finite propagation, reciprocal manifestation/expiry, a localized recurrent clock or proto-body, and a source/current ledger. | Stable matter or charged Maxwell dynamics. |
+| Transverse vacuum sector | The exact three-tick linearization has two divergence-free transverse real field pairs with speed **1/6** in model units. For wavevectors of norm at most `kappa`, its normalized tangent differs from the slow generator by at most `(9/2) kappa^2 exp(3 kappa)`. | The charged sector, action normalization, a physical light speed, or nonlinear stability. |
+| Input/dataflow check | The [firewall verifier](scripts/proofs/proof_v3_target_firewall.py) currently passes **26/26** rule and preparation dataflow checks, including checks that active inputs omit named physical target values. | Uniqueness, physical sufficiency, or independence of the historical design choices. |
+
+R1-R6 are closed only at the scopes recorded in the constitution. The counts
+above are finite certificate and software-verification counts, not numbers of
+independently confirmed physical predictions.
+
+## Physical status
+
+The following remain open as general recoveries from the selected v3 law:
+
+- stable matter and a particle spectrum;
+- charged electromagnetism and a normalized physical coupling;
+- prepared trials, detector events, and Born-rule frequencies;
+- a common relativistic causal cone and material proper time;
+- tensor gravity, lensing, and nonlinear gravitational dynamics.
+
+A physical quantity must have a defined readout from finite `Phi` histories,
+a domain of use, and an error or stability statement. A mathematical theorem
+about the selected rule does not by itself identify its variables with
+measurements. Values obtained by placing framework parameters into standard
+physics formulas remain [parametric insertions](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md),
+not recoveries of those formulas.
+
+The [C++ engine](engine/SPEC_ENGINE.md) is a simulation of a different,
+legacy continuous-flux law with optional extensions. Its output measures that
+engine at a specified configuration; it is not a run of the selected v3
+`Phi`. The browser workspace also contains separate effective scale engines
+and visualizations. Their current owners and the missing cross-scale links
+are recorded in the [scale ownership audit](docs/reference/REF_SCALE_OWNERSHIP_AND_RECOVERY.md).
+
+## Find the source of a claim
+
+Claim status is controlled by the
+[ledger](docs/theory/07_assessment/core_ledgers/LEDGER.md), followed by the
+active v3 constitution, branch constitutions, and other prose. The
+[dated resume](docs/WHERE_WE_LEFT_OFF.md) summarizes the current working
+state; the [open-items tracker](docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md)
+and [resolved-items tracker](docs/theory/07_assessment/core_ledgers/TRACKER_RESOLVED_ITEMS.md)
+separate live work from provenance. Historical and retracted routes remain in
+the [theory archive](docs/theory/archive/) so their status is visible.
+
+| Area | Entry point |
 |---|---|
-| Flux field `J ∈ ℝ³` | Dispositional content; the wave-sector carrier. |
-| State field `s ∈ {−1, 0, +1}` | The manifested ternary state. |
+| Theory and document navigation | [Curated index](docs/theory/META_INDEX.md) |
+| v3 definitions and scope | [Constitution](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md), [carrier](docs/theory/01_reference/SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md), [law](docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md) |
+| Repository and module ownership | [Repository map](REPOSITORY_MAP.md) |
+| Engine and browser | [Engine specification](engine/SPEC_ENGINE.md), [web entry point](engine/web/index.html) |
+| Contributions | [Contributing guide](CONTRIBUTING.md) |
 
-Above the five postulates sit the **Framework Commitments** (FC-0…FC-W) — the imported types the substrate cannot set for itself (the `ℤ[i]` reading, the declined quantum measurement-map, the native arrow, scale-ratio covariance, and the chosen orientation behind `α`). Each is a declared `[AXIOM]`-class commitment with a stated falsification criterion. The canonical framework statement is [`SPEC_FTD_FRAMEWORK_V1.md`](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md).
+## Run and check
 
-## Start here
-
-| Reader | First stop |
-|---|---|
-| New reviewer | [`WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md), then [`MONOGRAPH_FTD_CONSTRUCTION.md`](docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md) |
-| Skeptical mathematician | [`TRACKER_ONTIC_TRUTH.md`](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md), then [`SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) |
-| Foundations / philosophy of math | [`FOUND_TYPE_PRIORITY_PRINCIPLE.md`](docs/theory/02_foundations/FOUND_TYPE_PRIORITY_PRINCIPLE.md), then [`FOUND_MODULUS_ARGUMENT_FRONTIER.md`](docs/theory/02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md) |
-| Physicist | [`SPEC_DOCTRINE_LEDGER.md`](docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md), then [`SPEC_PHYSICS_BRIDGE.md`](docs/theory/01_reference/SPEC_PHYSICS_BRIDGE.md) |
-| Engine contributor | [`engine/SPEC_ENGINE.md`](engine/SPEC_ENGINE.md), then [`META_PROJECT_ATLAS.md`](META_PROJECT_ATLAS.md) |
-| Open-problem hunter | [`SPEC_OPEN_MATH_BY_SECTOR.md`](docs/theory/01_reference/SPEC_OPEN_MATH_BY_SECTOR.md), then [`AUDIT_BOUNDARY_MAP.md`](docs/theory/07_assessment/AUDIT_BOUNDARY_MAP.md) |
-
-Status authority is intentionally centralized. If a downstream document disagrees with the canonical ledgers, the ledgers win:
-
-- Claim status: [`LEDGER.md`](docs/theory/07_assessment/core_ledgers/LEDGER.md)
-- Bedrock truth tiers: [`TRACKER_ONTIC_TRUTH.md`](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md)
-- Theorem statements: [`SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md)
-- The boundary (what is not derivable): [`AUDIT_BOUNDARY_MAP.md`](docs/theory/07_assessment/AUDIT_BOUNDARY_MAP.md)
-- Parametric insertions: [`CATALOG_PARAMETRIC_INSERTIONS.md`](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md)
-
-## Repository map
-
-```text
-docs/
-  SPEC_FTD.md                 readable framework spec; claim status defers to the ledgers
-  WHERE_WE_LEFT_OFF.md        latest session and scientific state
-  theory/                     active theory corpus and provenance archives
-engine/                       C++17 simulation engine, CUDA path, WASM bridge, web dashboard
-scripts/                      proof scripts, verification, tests, experiments, visualization
-evaluation/                   project-health, weaknesses, and assessment material
-dissemination/                papers, whitepaper, manuscript/book assets, notebooks, demos
-```
-
-Use [`docs/theory/META_INDEX.md`](docs/theory/META_INDEX.md) for the curated theory catalog and [`META_DOCUMENTATION_MAP.md`](META_DOCUMENTATION_MAP.md) for broader navigation. Archives are provenance, not trash: closed-negative routes, retractions, and superseded scaffolding are preserved so failed paths do not quietly reappear.
-
-## Build and verify
-
-### Python
+These commands exercise documented code and finite checks. A passing test
+does not change a claim's physical status.
 
 ```bash
+python -m pip install -r requirements.txt -r requirements-dev.txt
 python -m pytest scripts/tests/
-python scripts/proofs/proof_master_verification.py
+python scripts/proofs/proof_v3_common_action_phi_v2.py
+python scripts/proofs/proof_v3_target_firewall.py
+python scripts/verification/verify_index_links.py --tracked
 ```
 
-### C++ engine
+For the CPU-only C++ merge gate:
 
 ```bash
-# Windows native (pins MSVC 14.44 -- VS 18's default toolset crashes CUDA 13's cudafe++)
-engine\build_native.bat
-ctest --test-dir engine/build -j 24 --output-on-failure -C Release
+cmake -S engine -B engine/build -DFTD_ENABLE_CUDA=OFF
+cmake --build engine/build --target ftd_merge_gate_build --config Release --parallel 24
+ctest --test-dir engine/build -L merge_gate -j 24 -C Release --output-on-failure
 ```
 
-### Web dashboard
+The full Windows native build uses `engine\build_native.bat`. Its toolchain
+and GPU requirements are recorded in [CLAUDE.md](CLAUDE.md).
+
+Build the browser assets:
+
+```bash
+npm ci
+npm run build
+```
+
+Run the source workspace with its local service:
 
 ```bash
 python engine/web/serve.py 8080
 ```
 
-Then open `http://localhost:8080`, or visit the published dashboard at [cpaci-tani.github.io/Foundational-Ternary-Dynamics](https://cpaci-tani.github.io/Foundational-Ternary-Dynamics/). GPU measurement campaigns run through WSL2 Ubuntu-22.04; the exact local convention is recorded in [`AGENTS.md`](AGENTS.md) and [`CLAUDE.md`](CLAUDE.md).
-
-## Epistemic discipline
-
-FTD uses explicit tags as a safety system. The tag *records* how far a claim has been carried; it does not, by itself, resolve the underlying question.
-
-| Tag | Meaning |
-|---|---|
-| `[AXIOM]` | A set type — a structural postulate or modeling commitment. |
-| `[THEOREM]` | Rigorously proven from axioms or named mathematical results. |
-| `[DERIVED]` | An explicit derivation chain exists, possibly with stated assumptions. |
-| `[NUMERICAL FACT]` | Verified over a stated finite domain. |
-| `[SELECTION]` | Chosen or argued by consistency, not uniquely forced. |
-| `[STRONGLY MOTIVATED CONJECTURE]` | Substantial evidence, but no derivation chain. |
-| `[PARAMETRIC]` | A standard physics formula filled with FTD constants. |
-| `[IMPOSED]` | A calibration or model input. |
-| `[CLOSED NEGATIVE]` | A tested route that failed, preserved for provenance. |
-| `[OPEN]` | An unresolved research obligation. |
-| `[SYNTHESIS]` | Consolidates existing claims without promoting them. |
-
-Three rules govern all scientific work:
-
-1. Do not run numerical searches for near-misses or coincidences.
-2. Do not call substitutions into standard formulas derivations.
-3. Do not promote a claim unless the canonical proof or readout chain actually exists.
-
-A worked instance of the discipline: pre-registered measurements hash-lock their instrument (a SHA256 and a git tag) *before* the run, so a frozen gate decides the verdict — no clean story can be cherry-picked from a compromised run. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
-
-## Data and reproducibility
-
-The repository tracks source, theory, proof scripts, and verification code. Regenerable campaign outputs are usually local-only; pre-registered measurements record the git tag, runner, and analysis-script hashes needed to reproduce them. See [`REF_PREREGISTER_MANIFEST.md`](docs/theory/10_eft_program/REF_PREREGISTER_MANIFEST.md).
+Open `http://localhost:8080`. Browser test dependencies and commands are in
+the [web test package](engine/web/tests/package.json).
 
 ## License and citation
 
-This repository is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (**CC BY-NC-SA 4.0**).
+The repository is distributed under [CC BY-NC-SA 4.0](LICENSE). Cite a
+versioned document or certificate for a specific result; a repository-level
+citation identifies the corpus, not the status of every historical claim.
 
 ```bibtex
 @misc{ftd2026,
-  title  = {Foundational Ternary Dynamics},
-  year   = {2026},
-  note   = {FTD research corpus and simulation engine},
-  url    = {https://github.com/cpaci-tani/Foundational-Ternary-Dynamics}
+  title = {Foundational Ternary Dynamics},
+  year = {2026},
+  note = {Research corpus and simulation software},
+  url = {https://github.com/cpaci-tani/Foundational-Ternary-Dynamics}
 }
 ```

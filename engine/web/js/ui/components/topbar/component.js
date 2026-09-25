@@ -26,13 +26,9 @@ export class TopbarComponent {
         this.toolbar = toolbar;
         this.toolbarRegistry = toolbarRegistry;
         this.detachedToolbarNodes = new Map();
-        this.assistantSidebar = null;
-        this.assistantBackdrop = null;
         this.toolbarMenuButton = null;
-        this.assistantButton = null;
         this.vtkButton = null;
         this.validity = null;
-        this.fluidButton = null;
     }
 
     init() {
@@ -44,21 +40,8 @@ export class TopbarComponent {
             { id: 'scale0-validity-status' });
         this.toolbar.dataset.topbar = 'enhanced';
         this._bindInteractions();
-        this._initFluidButton();
         return this;
     }
-
-    _initFluidButton() {
-        this.fluidButton = this.toolbar.querySelector('#btn-fluid');
-        if (!this.fluidButton || this.fluidButton.dataset.fluidBound === 'true') return;
-        this.fluidButton.dataset.fluidBound = 'true';
-        // Use the ordinary panel dock path, including collapse and mobile state.
-        this.fluidButton.addEventListener('click', () => {
-            this.app.querySelector('.tab[data-panel="fluid"]')?.click();
-        });
-    }
-
-
 
     _rebuildToolbar() {
         const existingChildren = Array.from(this.toolbar.children).filter((node) => !(node.classList?.contains('separator')));

@@ -32,9 +32,28 @@ export const AE_DEFAULT_TOGGLES = Object.freeze(AE_PHYSICS_SPECS.map((spec) =>
     Object.freeze([spec.elementId, spec.defaultValue, spec.setter])));
 
 
-import { syncAEParamsFromUI, resetAETogglesToDefaults } from '../scale-utils.js';
+/** Sync AE sliders and physics toggles from the controls into the bridge. */
+export function syncAEParamsFromUI(bridge) {
+    const dtEl = document.getElementById('ae-dt-slider');
+    if (dtEl) bridge.aeSetDt(parseFloat(dtEl.value));
+    const softEl = document.getElementById('ae-soft-slider');
+    if (softEl) bridge.aeSetSoftening(parseFloat(softEl.value));
+    const thermostatEl = document.getElementById('ae-thermostat-slider');
+    if (thermostatEl) bridge.aeSetThermostatTemp(parseFloat(thermostatEl.value));
+    for (const spec of AE_PHYSICS_SPECS) {
+        const el = document.getElementById(spec.elementId);
+        if (el && bridge[spec.setter]) bridge[spec.setter](el.checked);
+    }
+}
 
-export { syncAEParamsFromUI, resetAETogglesToDefaults };
+/** Reset AE physics toggles to registry defaults in both UI and bridge. */
+export function resetAETogglesToDefaults(bridge) {
+    for (const spec of AE_PHYSICS_SPECS) {
+        const el = document.getElementById(spec.elementId);
+        if (el) el.checked = spec.defaultValue;
+        if (bridge[spec.setter]) bridge[spec.setter](spec.defaultValue);
+    }
+}
 
 
 

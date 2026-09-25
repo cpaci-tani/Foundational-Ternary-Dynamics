@@ -26,7 +26,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 | ID | Theorem | Formula | Value | LEDGER |
 |---|---|---|---:|---|
 | `g_star_identity` | G* algebraic identity | G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) | 2.958675119 | [FTD-0002](../07_assessment/core_ledgers/LEDGER.md#ftd-0002) |
-| `master_quadratic` | Master quadratic polynomial + roots | P(x) = x² − 16·G*²·x + 16·G*³ = 0; roots x± = 8·G*² ± √(16·G*⁴ − 4·G*³) | x_plus = 137.03617145815542, x_minus = 3.023963916339028 | [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001), [FTD-0081](../07_assessment/core_ledgers/LEDGER.md#ftd-0081) |
+| `master_quadratic` | Master quadratic polynomial + roots | P(x) = x² − 16·G*²·x + 16·G*³ = 0; roots x± = 8·G*² ± √(16·G*⁴ − 4·G*³) | x_plus = 137.03617145815542, x_minus = 3.023963916339028 | [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001) |
 | `cm_curve_uniqueness` | CM curve uniqueness among class-number-1 fields | Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots whose larger root matches 1/α to permille precision. | unique_discriminant = -4, class_number = 1 | [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001) |
 | `coefficient_16_aut_e_squared` | Coefficient 16 = |Aut(E)|² | For E: y² = x³ − x, |Aut(E)| = 4 over ℚ̄, so |Aut(E)|² = 16 (the master-quadratic coefficient) | 16 | [FTD-0006](../07_assessment/core_ledgers/LEDGER.md#ftd-0006), [FTD-0007](../07_assessment/core_ledgers/LEDGER.md#ftd-0007) |
 | `watson_identity` | Watson identity W₃ = G*²/(2π) | W₃ := ∫_0^π dx ∫_0^π dy ∫_0^π dz [3 − cos x − cos y − cos z]⁻¹ / π³ = G*²/(2π) | 1.39320393 | [FTD-0002](../07_assessment/core_ledgers/LEDGER.md#ftd-0002) |
@@ -46,9 +46,9 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 - **Formula:** P(x) = x² − 16·G*²·x + 16·G*³ = 0; roots x± = 8·G*² ± √(16·G*⁴ − 4·G*³)
 - **Value:** x_plus = 137.03617145815542, x_minus = 3.023963916339028
 - **Depends on:** `g_star_identity`
-- **LEDGER:** [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001), [FTD-0081](../07_assessment/core_ledgers/LEDGER.md#ftd-0081)
-- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`; `docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md`; `scripts/proofs/proof_motivic_master_quadratic.py`
-- **Notes:** Two independent derivations (FTD-0081): Route A (physics — Gaussian J-integration of S_E) and Route B (arithmetic — Damerell–Shimura at CM curve E_i). Both produce the identical polynomial to 100 digits.
+- **LEDGER:** [FTD-0001](../07_assessment/core_ledgers/LEDGER.md#ftd-0001)
+- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`; `scripts/proofs/proof_motivic_master_quadratic.py`
+- **Notes:** The polynomial and roots are algebraic (FTD-0001). The FTD-0081 two-route physics claim depended on the FTD-0032 partition-function route, which is retracted; CM L-value identities remain separate mathematical results.
 
 ### CM curve uniqueness among class-number-1 fields (`cm_curve_uniqueness`)
 
@@ -223,7 +223,6 @@ LEDGER ids touched by this map, with the entries that reference them. Use this s
 | FTD-0030 | `a_phys_planck` |
 | FTD-0041 | `a_phys_planck`, `m_electron_dimensional`, `mass_unit_anchor`, `t_phys_lattice_tick` |
 | FTD-0059 | `a_phys_planck` |
-| FTD-0081 | `master_quadratic` |
 | FTD-0096 | `mass_unit_anchor` |
 
 ## §7 · Editing this map

@@ -136,6 +136,9 @@
     .observer-transport { bottom: 88px; }
     .observer-has-panel .observer-target, .observer-has-panel .observer-status { display: none; }
 }
+@media (max-width: 767px) {
+    .observer-head > [data-observer-assistant] { display: none; }
+}
 @media (max-width: 600px) {
     .observer-head { left: 14px; right: 14px; top: max(14px, env(safe-area-inset-top)); }
     .observer-title { font-size: 25px; margin-bottom: 9px; }

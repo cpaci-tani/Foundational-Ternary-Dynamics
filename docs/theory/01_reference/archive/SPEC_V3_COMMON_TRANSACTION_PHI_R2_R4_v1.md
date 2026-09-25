@@ -3,18 +3,18 @@
 **Date:** 2026-08-24  
 **Status:** **[SUPERSEDED DRAFT RULE — PROVENANCE RETAINED]**  
 **Successor:**
-[`SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md`](SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md)
+[`SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md`](../SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md)
 retains the exact relation/expiry/recurrence transactions but enlarges the
 field bank and composes the exact cotangent collision required by R5. The v1
 32/32 results remain valid for its narrower rule and are not v2 wave claims.  
 **Production status:** unchanged  
 **Ledger status:** no row minted  
 **Constitution:**
-[`SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`](SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md)  
+[`SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`](../SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md)\
 **Carrier:**
 [`SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v1.md`](SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v1.md)  
 **Executable reference and exact certificate:**
-[`proof_v3_common_transaction_phi.py`](../../../scripts/proofs/proof_v3_common_transaction_phi.py)
+[`proof_v3_common_transaction_phi.py`](../../../../scripts/proofs/proof_v3_common_transaction_phi.py)
 
 ---
 

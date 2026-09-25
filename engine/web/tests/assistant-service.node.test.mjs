@@ -79,6 +79,28 @@ test('greetings and capability help work before model loading or JEV connection'
     assert.match(answer,/Advance 10 ticks/);assert.match(answer,/Download \/ load model/);assert.match(answer,/Connect a JEV key/);f.service.dispose();
 });
 
+test('Help leaves an independent model download running, while explicit Stop cancels it',async()=>{
+    const f=fixture();let cancellations=0;
+    f.deps.model.cancel=()=>{cancellations++;};
+    await f.service.submit('What can you do?');
+    assert.equal(cancellations,0);
+    await f.service.submit('Stop AI');
+    assert.equal(cancellations,1);
+    f.service.dispose();
+});
+
+test('Help still cancels an active generation before answering',async()=>{
+    const f=fixture(),started=deferred(),finish=deferred();let cancellations=0;
+    f.deps.model.cancel=()=>{cancellations++;};
+    f.deps.model.plan=async()=>{started.resolve();await finish.promise;return f.plan;};
+    const pending=f.service.submit('Advance 100 ticks');await started.promise;
+    await f.service.submit('What can you do?');
+    assert.equal(cancellations,1);
+    finish.resolve();await pending;
+    assert.equal(f.writes.length,0);
+    f.service.dispose();
+});
+
 test('an explicit experiment request enters bounded experiment mode without a checkbox',async()=>{
     const f=fixture();let called=false;
     f.deps.model.experimentStep=async goal=>{called=true;assert.match(goal,/Run an experiment/);return{kind:'clarify',message:'Name the quantity to measure.',actions:[],experiment:{phase:'clarify',waitMs:0,reason:'A quantity is needed.'}};};

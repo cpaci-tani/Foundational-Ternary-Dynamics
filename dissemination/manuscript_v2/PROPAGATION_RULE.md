@@ -112,22 +112,11 @@ done
 
 ---
 
-## Known divergences (as of 2026-04-19)
+## Known divergences (measured 2026-09-24)
 
-A full audit of which chapters have diverged between `src/chapters/` and `vol1/`/`vol2/` has not been done. The single spot-check (`01-five-postulates.qmd`) showed divergence; the actual divergence count is unknown.
+Run `python scripts/verification/check_manuscript_v2_propagation.py` from the repository root for a report-only comparison. Add `--json` for structured output; `--strict` exits nonzero on any divergent or source-less volume copy and is **not** a current CI gate.
 
-**Recommended near-term action:** run a full diff sweep:
-
-```bash
-for f in dissemination/manuscript_v2/vol1/src/chapters/*.qmd; do
-  src="dissemination/manuscript_v2/src/chapters/$(basename "$f")"
-  if [ -f "$src" ]; then
-    diff -q "$src" "$f" 2>/dev/null
-  fi
-done
-```
-
-The output is the list of currently-diverged files. Decide for each: which version is canonical, then propagate.
+The current inventory has 83 consolidated chapters, 35 Volume 1 copies, 45 Volume 2 copies, and three consolidated-only chapters. Volume 1 has 26 byte-different copies; Volume 2 has none. These differences include volume-specific heading edits and some substantive text. Thus the mandatory copy rule above describes the intended future state, not the present state. Review each Volume 1 difference against the consolidated authority before propagating; do not run the blanket overwrite commands merely to clear the report.
 
 ---
 

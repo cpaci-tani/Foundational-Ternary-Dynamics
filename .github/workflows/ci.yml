@@ -1,7 +1,7 @@
 # FTD Continuous Integration Pipeline
-# Runs Python tests, linting, and physics validation. Engine builds/tests are
-# intentionally excluded; the Pages workflow owns its focused deploy gate and
-# full engine validation remains local (ADR-0015).
+# Runs Python tests, linting, and static repository-integrity checks. Native
+# source changes have a separate focused Windows gate; full engine validation
+# remains local (ADR-0015). These checks do not certify physics claims.
 # Quarto manuscript is built locally (not in CI).
 
 name: CI
@@ -67,9 +67,11 @@ jobs:
           pip install ruff
 
       - name: Run ruff linter
-        run: ruff check . --output-format=github
+        run: |
+          ruff check . --output-format=github
+          ruff check scripts/verification/verify_index_links.py scripts/verification/check_manuscript_v2_propagation.py --output-format=github
 
-  validate-physics:
+  repository-integrity:
     runs-on: ubuntu-latest
 
     steps:
@@ -80,7 +82,8 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+      - name: Verify tracked public index links
+        run: python scripts/verification/verify_index_links.py --tracked
+
+      - name: Verify open and resolved tracker index
+        run: python scripts/theory/build_open_items_index.py --check

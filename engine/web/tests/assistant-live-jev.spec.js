@@ -3,8 +3,8 @@ import { gotoAndReady, openObserverWorkspace } from './_helpers.js';
 
 // Deliberately separate from assistant-corpus.spec.js: that 76-case planner
 // evaluation does not call JEV or certify this live, paid-provider integration.
-// This gate uses only the local server's configured credential; it never reads
-// a key, injects a browser key, or mocks an inference/proxy/worker operation.
+// This opt-in gate passes its key to the browser's in-memory JEV client. It never
+// logs the key or mocks an inference/proxy/worker operation.
 test.use({ trace: 'off', screenshot: 'off', video: 'off' });
 test.describe.configure({ retries: 0 });
 
@@ -66,35 +66,26 @@ async function submit(page, text) {
 }
 
 test('live JEV authorizes exact worker edits and unsupported laws cause no mutations', async ({ page }, testInfo) => {
-    test.skip(process.env.FTD_HARDWARE_WEBGL !== '1' || process.env.FTD_LIVE_JEV !== '1',
-        'Requires explicit hardware and live-JEV opt-in; no provider calls by default.');
+    const liveKey = process.env.FTD_LIVE_JEV_KEY;
+    test.skip(process.env.FTD_HARDWARE_WEBGL !== '1' || process.env.FTD_LIVE_JEV !== '1' || !liveKey,
+        'Requires hardware, live-JEV opt-in and an explicit per-tab key; no provider calls by default.');
     test.setTimeout(420_000);
     const evidence = {
         schemaVersion: 1, scope: 'Three clear requests and one unsupported-law rejection through the production service',
         fullJevCorpusCertification: false,
         separatePlannerCorpus: 'assistant-corpus.spec.js evaluates 76 planner cases without JEV or action execution.',
-        credentialSource: 'Server environment only; the test does not access credentials',
+        credentialSource: 'Opt-in test environment to in-memory browser client; never persisted',
         captured: 'Whitelisted receipt measurements, outcome counts and worker flags only; traces/screenshots/video disabled',
         configured: false, modelReady: false, workerFlags: null, cases: [], passed: false, failureStage: null,
     };
     try {
         await gotoAndReady(page, { path: '/?engine=wasm&lattice=9' });
         await page.waitForFunction(() => window.__FTD_DEV__?.registry.get('assistant')?.control.observe()?.facts.controlReady === true);
-        evidence.configured = await page.evaluate(async () => {
-            try {
-                const response = await fetch('/api/ai/status', { cache: 'no-store', credentials: 'omit' });
-                if (!response.ok) return false;
-                const status = await response.json();
-                return status.jevConfigured === true;
-            } catch { return false; }
-        });
+        await page.evaluate(key => window.__FTD_DEV__.registry.get('assistant').jev.setKey(key), liveKey);
+        evidence.configured = true;
     } catch {
         // Do not propagate arbitrary application or upstream error strings.
-        throw new Error('Live JEV smoke gate could not initialize the dashboard and status check.');
-    }
-    if (!evidence.configured) {
-        await testInfo.attach('live-jev-sanitized-results.json', { body: JSON.stringify(evidence, null, 2), contentType: 'application/json' });
-        test.skip(true, 'The local status endpoint does not report a configured JEV credential. Live integration remains pending.');
+        throw new Error('Live JEV smoke gate could not initialize the dashboard and in-memory key.');
     }
 
     const network = proxyCounts(page);
@@ -105,8 +96,8 @@ test('live JEV authorizes exact worker edits and unsupported laws cause no mutat
             const { getActiveScale0Bridge } = await import('/js/scales/scale0/state/store.js');
             const owner = getActiveScale0Bridge(window.__ftdCtx);
             const workerFlags = { latticeWorker: owner?.isWorker === true, compiledWasm: owner?.isWasm === true,
-                serverCredentialConnection: ai.jev.localConfigured === true && ai.jev.connected === true };
-            if (!workerFlags.latticeWorker || !workerFlags.compiledWasm || !workerFlags.serverCredentialConnection) return { workerFlags, prepared: false };
+                browserKeyConnection: ai.jev.key.length > 0 && ai.jev.connected === true };
+            if (!workerFlags.latticeWorker || !workerFlags.compiledWasm || !workerFlags.browserKeyConnection) return { workerFlags, prepared: false };
             const receipt = await ai.control.execute({ type: 'lattice.pause', args: {} }, { expected: ai.control.observe() });
             if (receipt.status !== 'applied' || ai.control.observe()?.facts.running) return { workerFlags, prepared: false };
             await ai.model.load();

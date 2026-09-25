@@ -158,26 +158,3 @@ export function getScale2OverlayTemplate() {
     legendHtml: '<div id="ae-legend" class="ae-legend scale-overlay-legend" aria-live="polite"></div>',
   });
 }
-
-/** @deprecated Legend is embedded in getScale2OverlayTemplate(). */
-export function getScale2LegendTemplate() {
-  const container = document.createElement('div');
-  container.id = 'ae-legend-orphan';
-  container.hidden = true;
-  return container;
-}
-
-/** Scale 3 reuses the atom-engine overlay panel (scale-ae). */
-export function getScale3OverlayTemplate() {
-  const stub = document.createElement('div');
-  stub.id = 'mol-viewport-overlay-stub';
-  stub.hidden = true;
-  return stub;
-}
-
-export function getScale3LegendTemplate() {
-  const stub = document.createElement('div');
-  stub.id = 'mol-legend-stub';
-  stub.hidden = true;
-  return stub;
-}

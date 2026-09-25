@@ -22,7 +22,7 @@ REM      engine\build_native.bat configure [args] REM (re)configure via cmake --
 REM      engine\build_native.bat golden           REM serial golden battery (7 tests:
 REM                                               REM   ctest -C Release -R "golden|gauge_links")
 REM      engine\build_native.bat test [args]      REM ctest -C Release (default -j 32)
-REM      engine\build_native.bat clean            REM wipe engine/build, then full rebuild
+REM      engine\build_native.bat clean            REM clean CMake outputs, then rebuild
 REM      engine\build_native.bat shell <cmd...>   REM run any command inside the pinned env
 REM
 REM  Pin override: set FTD_VCVARS_VER before calling (default 14.44).
@@ -85,7 +85,8 @@ if exist "%BUILD_DIR%\CMakeCache.txt" (
     findstr /c:"CMAKE_GENERATOR:INTERNAL=Ninja Multi-Config" "%BUILD_DIR%\CMakeCache.txt" >nul
     if errorlevel 1 (
         echo [build_native] ERROR: engine\build was configured with a different generator.
-        echo     The pinned recipe is Ninja Multi-Config. Delete engine\build and re-run.
+        echo     The pinned recipe is Ninja Multi-Config. Review and preserve any
+        echo     evidence in engine\build, then rename that directory and re-run.
         exit /b 1
     )
 )
@@ -106,7 +107,12 @@ REM cmake/ctest --preset resolve engine/CMakePresets.json relative to cwd.
 cd /d "%ENGINE_DIR%"
 
 if /i "%CMD%"=="clean" (
-    if exist "%BUILD_DIR%" ( echo [build_native] Wiping %BUILD_DIR% & rmdir /s /q "%BUILD_DIR%" )
+    if exist "%BUILD_DIR%\CMakeCache.txt" (
+        echo === Clean Release build outputs ^(preserving engine/build evidence^) ===
+        cmake --build --preset native-release --target clean
+        if not errorlevel 0 ( echo [build_native] clean FAILED & exit /b 1 )
+        if errorlevel 1 ( echo [build_native] clean FAILED & exit /b 1 )
+    )
     set "CMD=build"
 )
 if /i "%CMD%"=="configure" goto do_configure

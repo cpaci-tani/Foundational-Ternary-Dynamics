@@ -53,7 +53,6 @@ if (typeof window !== 'undefined') {
     Object.defineProperty(window, '__FTD_DEV__', {
         value: Object.freeze({
             get registry() { return appRegistry; },
-            get store() { return appRegistry.get('store'); },
             get bridge() { return appRegistry.get('activeBridge'); },
             get viewport() { return appRegistry.get('viewport'); },
             get scale0Ctx() { return appRegistry.get('scale0Ctx'); },

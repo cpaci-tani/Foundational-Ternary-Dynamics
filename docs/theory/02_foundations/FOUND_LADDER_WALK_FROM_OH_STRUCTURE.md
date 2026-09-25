@@ -11,7 +11,7 @@
 
 ## Executive statement
 
-Program A, proposed in [FTD-0081](FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md), asked whether the ladder-walk ordering $\{4, 3, 3, 6\}$ can be derived from the $O_h$ subgroup chain. The honest answer is **partial closure**:
+Program A, proposed in the [historical FTD-0081 synthesis](../archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md), asked whether the ladder-walk ordering $\{4, 3, 3, 6\}$ can be derived from the $O_h$ subgroup chain. The honest answer is **partial closure**:
 
 - **Step-size multiset $\{3, 3, 4, 6\}$**: [THEOREM]
   Forced by the three structural integers $\{N_c, N_{\text{base}}, N_f\} = \{3, 4, 6\}$ of $O_h$, the $4$-parts / sum-$16$ constraints, and the requirement that all three features appear.
@@ -31,7 +31,7 @@ The chain from "$i$ exists" to $\alpha^{-1}$ now has one residual selection (the
 
 ## 1. What Program A was asked to do
 
-From [FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md §4.1](FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md) / FTD-0081:
+From the [archived FTD-0081 proposal §4.1](../archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md):
 
 > **Program A:** Close S2 via the $O_h$ subgroup chain. The four step-sizes $\{4, 3, 3, 6\}$ correspond to representation-branching multiplicities at each subgroup transition.
 

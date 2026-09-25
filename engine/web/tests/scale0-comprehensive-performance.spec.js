@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { gotoAndReady, selectScale0Scenario, attachConsoleWatcher, realErrors } from './_helpers.js';
 import { prepareDampingPerformanceProfile } from './scale0-damping-performance-preparation.js';
+import { hardwareRunId, reserveHardwareReport } from './scale0-hardware-output.js';
 
 // Fixed acceptance thresholds, registered before execution. A failed row is
 // retained and reported; the campaign continues so failures cannot hide scope.
@@ -19,6 +18,7 @@ if (profile === 'wave-v3' && sizes.join(',') !== '33,97') throw new Error('Wave 
 if (profile === 'time-gravity-v4' && !/^[a-f0-9]{64}$/.test(candidateIdentity || '')) throw new Error('Time/Gravity v4 requires its frozen candidate identity');
 if (profile === 'time-gravity-v4' && sizes.join(',') !== '33,97') throw new Error('Time/Gravity v4 requires the complete ordered L33/L97 matrix');
 const reportDate = ['wave-v3', 'time-gravity-v4'].includes(profile) ? '2026-09-08' : '2026-09-07';
+const runId = hardwareRunId();
 // Preregistered union of panels with baseline callback failures, including
 // unchanged comparison workloads. Thresholds, preparations and cadence match
 // the baseline. Separate files retain every failed baseline measurement.
@@ -69,11 +69,9 @@ for (const size of sizes) {
             : profile === 'repair-v1'
             ? 'Eight preregistered panels with baseline callback failures; four visibility states, same preparations and gates; distinct repair candidate. This followup does not replace baseline failures or establish universal performance.'
             : '36 registered toggles or 18 registered panels; selected applicable preparation per interface, two backend sizes. Interface callback timings include nested owner reads; standalone ownerRead timing rows are diagnostic and excluded from the callback gate. Full-frame gate includes all foreground work. repair-v2 covers the full matrix because shared Conservation and worker reads changed.', rows: [], errors: [] };
-        const output = resolve('../../docs/evidence', `scale0-hardware-${profile === 'baseline' ? '' : `${profile}-`}${kind}-L${size}-${reportDate}.json`);
-        mkdirSync(resolve('../../docs/evidence'), { recursive: true });
-        if (existsSync(output)) throw new Error(`Refusing to overwrite previous campaign evidence: ${output}`);
-        const save = () => writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
-        save();
+        const filename = `scale0-hardware-${profile === 'baseline' ? '' : `${profile}-`}${kind}-L${size}-${reportDate}.json`;
+        const { output: reportPath, save } = reserveHardwareReport({ runId, filename, report });
+        console.log(`Hardware audit scratch report: ${report.provenance.scratchPath}`);
         for (const row of plan) {
             if (!row.scenario) { report.rows.push({ ...row, failure: 'no registered applicable preparation' }); save(); continue; }
             try {
@@ -283,7 +281,7 @@ for (const size of sizes) {
         }
         report.errors = realErrors(errors);
         save();
-        await info.attach(`hardware-${kind}-L${size}`, { path: output, contentType: 'application/json' });
+        await info.attach(`hardware-${kind}-L${size}`, { path: reportPath, contentType: 'application/json' });
         expect(report.rows).toHaveLength(plan.length * (kind === 'panels' ? 4 : 2));
         const failedRows = report.rows.filter(r => r.failure || r.failures?.length);
         // Keep raw vectors in the report attachment; avoid dumping them into assertion output.

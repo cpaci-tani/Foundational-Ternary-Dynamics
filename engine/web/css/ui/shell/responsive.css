@@ -141,6 +141,10 @@
  *  - Body scroll lock is applied via .body-panel-open (set by mobile-panel.js)
  */
 /* ── Mobile bottom sheet (Default) ── */
+#btn-panel-open-mobile {
+    display: none;
+}
+
 @media (max-width: 767px) {
 /* The sheet floats over the full-bleed canvas (it is no longer a grid row — see
    app-shell.css). Fixed to the bottom edge, full width, fixed height (--m-sheet-h),
@@ -178,9 +182,43 @@
     pointer-events: none;
 }
 
+#app.panels-collapsed #btn-panel-open-mobile {
+    grid-area: viewport;
+    align-self: start;
+    justify-self: start;
+    z-index: var(--z-panel-toggle);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    min-height: 44px;
+    margin: 12px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    box-shadow: var(--dock-shadow);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#app.panels-collapsed #btn-panel-open-mobile:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+#panel-jev {
+    display: none !important;
+}
+
 /* Show the grip-handle pill on mobile */
 #panel-resizer {
     display: flex;
+}
+
+html.ui-hidden #btn-panel-open-mobile {
+    display: none !important;
 }
 
 /* ── Tab bar — full-width strip ── */

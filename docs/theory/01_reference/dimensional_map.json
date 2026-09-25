@@ -56,18 +56,17 @@
       "ftd_value_units": null,
       "depends_on": ["g_star_identity"],
       "epistemic_tag": "THEOREM",
-      "ledger_ids": ["FTD-0001", "FTD-0081"],
+      "ledger_ids": ["FTD-0001"],
       "source_files": [
         "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
         "docs/theory/03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md",
-        "docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md",
         "scripts/proofs/proof_motivic_master_quadratic.py"
       ],
       "constants_py_ref": null,
       "lab_measurement": null,
       "comparison": null,
       "calibration_note": null,
-      "notes": "Two independent derivations (FTD-0081): Route A (physics — Gaussian J-integration of S_E) and Route B (arithmetic — Damerell–Shimura at CM curve E_i). Both produce the identical polynomial to 100 digits."
+      "notes": "The polynomial and roots are algebraic (FTD-0001). The FTD-0081 two-route physics claim depended on the FTD-0032 partition-function route, which is retracted; CM L-value identities remain separate mathematical results."
     },
 
     {

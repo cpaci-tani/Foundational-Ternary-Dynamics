@@ -1,5 +1,10 @@
 # Why the Gap Equation Has the Form x² = K(x - G*)
 
+> **Archived provenance (FTD-0032):** The one-loop self-consistency and
+> partition-function physics route below does not establish the master
+> quadratic as a native gap equation. Its conditional algebra is retained,
+> but the claimed closure of the operator-assembly selection is withdrawn.
+
 ## The One-Loop Self-Consistency Structure Forces Linked Coefficients
 
 **Status:** [THEOREM given self-consistency prescription]

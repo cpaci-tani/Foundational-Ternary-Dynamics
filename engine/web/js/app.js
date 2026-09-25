@@ -652,6 +652,7 @@ async function init() {
     void import('./assistant/bootstrap.js').then(({ createAssistant }) => createAssistant({
         getCtx: _makeCtx, isLattice: () => engineMode === 'lattice', loadLatticeScenario: Scale0Controller.loadScenario,
         host: observerHost, registry: appRegistry, app: document.getElementById('app'),
+        activatePanel: panel => appShell?.activatePanel(panel),
     })).then(assistant => appBindings.defer(() => assistant.dispose()))
         .catch(error => console.warn('JEV console unavailable:', error.message));
 

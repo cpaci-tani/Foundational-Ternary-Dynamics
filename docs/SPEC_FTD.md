@@ -15,11 +15,11 @@
 > - **sin²θ_W, sin²θ_13, α_s, PMNS angles** are **[PARAMETRIC]** or **[STRUCTURALLY MOTIVATED PARAMETRIC]**.
 > - The **"< 0.001 ppt with 7-term expansion"** framing is retracted; the 7-term series is a post-hoc [CONJECTURE] fit to CODATA digits beyond experimental precision.
 > - **"Thermodynamic limit"** language throughout is superseded; the framework commits to undefined-boundary ontology, not completed-infinity ℤ³.
-> - **Cluster-mass identification (FTD-0110)**: the cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** from O_h representation theory (`mult(A_{1g}) = 4` in the 27-block; δ_center A_{1g}-pure; mean A_{1g}-mode energy fraction 1/4). See [`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The full nonlinear-engine cluster--mass identification across 5 SM particles to ~5% remains [STRONGLY MOTIVATED CONJECTURE] until the linear→nonlinear bridge is proved.
+> - **Cluster-mass identification (FTD-0110)**: the cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** from O_h representation theory (`mult(A_{1g}) = 4` in the 27-block; δ_center A_{1g}-pure; mean A_{1g}-mode energy fraction 1/4). See [`docs/theory/03_derivations/foundational_mechanics/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](theory/03_derivations/foundational_mechanics/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The full nonlinear-engine cluster--mass identification across 5 SM particles to ~5% remains [STRONGLY MOTIVATED CONJECTURE] until the linear→nonlinear bridge is proved.
 > - **D = 3 status:** [SELECTION — declared] (FTD-0355 permanent verdict) — the |Aut(E)|² arithmetic uniqueness is [THEOREM] but the dimension-forcing is not forced (circularity named). Body occurrences retagged 2026-07-05.
 >
 > **For current state, read first:** [`docs/WHERE_WE_LEFT_OFF.md`](WHERE_WE_LEFT_OFF.md).
-> **Full audit trail:** [`docs/theory/07_assessment/spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md`](theory/07_assessment/AUDIT_MASTER_QUADRATIC.md), [`AUDIT_RATIONAL_FIT_CLAIMS.md`](theory/07_assessment/AUDIT_RATIONAL_FIT_CLAIMS.md), [`AUDIT_INFINITY_REFRAME.md`](theory/07_assessment/AUDIT_INFINITY_REFRAME.md).
+> **Public status record:** [`LEDGER.md`](theory/07_assessment/core_ledgers/LEDGER.md). Local-only audit provenance: `docs/theory/07_assessment/spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md`, `docs/theory/07_assessment/sm_constants_mass_flavour/AUDIT_RATIONAL_FIT_CLAIMS.md`, and `docs/theory/07_assessment/framework_postulates_constitution/AUDIT_INFINITY_REFRAME.md`.
 
 > **This document is a readable framework overview, not a status authority.** For the epistemic status of any claim, the canonical sources are [`LEDGER.md`](theory/07_assessment/core_ledgers/LEDGER.md) (per-claim tags) and [`TRACKER_ONTIC_TRUTH.md`](theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) (truth tiers); the precedence of all status-bearing documents is fixed in [`theory/META_STRUCTURE.md`](theory/META_STRUCTURE.md) § Canonical Hierarchy. Where this document's body and a canonical source disagree, the canonical source wins and this document is the drift to fix. For the C++ engine implementation, see [engine/SPEC_ENGINE.md](../engine/SPEC_ENGINE.md). For the theory document library, see [theory/META_INDEX.md](theory/META_INDEX.md).
 
@@ -53,7 +53,7 @@
 > - **~50+ External Physics**: Standard Model mechanisms used without derivation (Fermi theory, HQET, ChPT)
 > - **~3-5 Explicit Inputs**: M_Planck, G_F, Λ_QCD, decay constants
 >
-> See [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) for honest breakdown.
+> See the tracked [LEDGER](theory/07_assessment/core_ledgers/LEDGER.md) and [parametric-insertions catalog](theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) for the current breakdown. The historical `docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md` remains local-only.
 
 ---
 
@@ -81,7 +81,7 @@ Key achievements within the framework (with several items representing proposed 
 - **phi³ exact EFT**: Cubic potential expansion terminates exactly; λ₃ = 1/3 = 1/D universal; UV-complete in field space
 - **One-loop lattice α**: Structure-1 SC scalar-EFT tadpole with a = 2/D gives x₊ = 137.036000 (9.6 ppb from NIST, 99.2% gap closure) within that scheme. GPU audits now mark this as scheme-conditional; a Ward-valid Structure-2 two-U(1) scalar gauge completion does not reproduce the ppb closure.
 - **Blind derivation**: 13 steps from "i exists" to α⁻¹ with only two selection principles
-- **Honest accounting**: ~35 genuine derivations, ~50 parametric insertions, ~50+ external physics adopted — see [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
+- **Honest accounting**: ~35 genuine derivations, ~50 parametric insertions, ~50+ external physics adopted (historical count; see the current [LEDGER](theory/07_assessment/core_ledgers/LEDGER.md) and [parametric-insertions catalog](theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md))
 - **Full SM gauge group**: U(1) × SU(2) × SU(3) derived from FTD axioms
 - **D = 3 status** [SELECTION — declared] (FTD-0355): the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] — the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). Atomic stability + gauge requirements stand as motivation, not a forcing proof.
 - **Reference frame structure layer** [CONJECTURE]: an exploratory interpretive reading via the same G* geometry (complex roots y = 2.19 ± 2.86i) — a proposed correspondence, **not a derivation**; see the reference frame structure-vocabulary reframe [REF_REFERENCE_FRAME_VOCABULARY.md](theory/01_reference/REF_REFERENCE_FRAME_VOCABULARY.md)
@@ -1104,7 +1104,7 @@ The lemniscatic constant G* has theorem-level mathematical provenance through th
 
 **BCC Watson integral:** The identity W₃ = G*²/(2π) has been confirmed as the **BCC** Watson integral specifically (not SC or FCC). The BCC eigenvalue's multiplicative cosine product is what produces Γ(1/4)⁴/(4π³), connecting G* directly to BCC lattice geometry. See [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md).
 
-The master quadratic (the degree-2 form is **[SELECTION]-backed** — motivated by self-referential closure of the ternary constraint and by the degree-2 CM field $\mathbb{Q}(i)$, see [DERIV_QUADRATIC_NECESSITY.md](theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md); the operator assembly is **not forced** — 0/4 native routes, FTD-0242 route-invariant boundary + FTD-0244 K-BIND theorem-negative):
+The master quadratic (the degree-2 form is **[SELECTION]-backed** — motivated by self-referential closure of the ternary constraint and by the degree-2 CM field $\mathbb{Q}(i)$, see [DERIV_QUADRATIC_NECESSITY.md](theory/03_derivations/foundational_mechanics/DERIV_QUADRATIC_NECESSITY.md); the operator assembly is **not forced** — 0/4 native routes, FTD-0242 route-invariant boundary + FTD-0244 K-BIND theorem-negative):
 
 $$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
 
@@ -2232,7 +2232,7 @@ Evaluation criteria and status (updated for v5.24):
 - **~3-5 Explicit Inputs**: M_Planck, G_F, Λ_QCD, decay constants — required but not derived
 - **"Zero free parameters" is FALSE**: The claim conflates derived parameters with zero inputs
 
-See [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) for complete breakdown.
+See the tracked [LEDGER](theory/07_assessment/core_ledgers/LEDGER.md) and [parametric-insertions catalog](theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) for the current breakdown. The historical `docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md` remains local-only.
 
 **Remaining work:**
 1. Characterize the substrate-to-aggregate transition (how QM statistics emerge from deterministic lattice)

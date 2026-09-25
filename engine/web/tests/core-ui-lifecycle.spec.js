@@ -109,7 +109,7 @@ test('AppShell completes every teardown when individual cleanup callbacks fail',
             calls.push('scope');
             throw new Error('scope cleanup');
         });
-        for (const name of ['mobilePanel', 'panelDock', 'keyboardHelp', 'tooltips', 'knowledgeBase', 'faq',
+        for (const name of ['mobilePanel', 'panelDock', 'keyboardHelp', 'tooltips',
             'viewportOverlays', 'workspaceTabs', 'panelDockView', 'viewportFrame', 'topbar', 'loadingOverlay']) {
             shell[name] = { destroy() { calls.push(name); } };
         }
@@ -120,7 +120,7 @@ test('AppShell completes every teardown when individual cleanup callbacks fail',
         return { calls, errors, scopeDisposed: shell._scope.disposed, onDestroyCleared: shell.onDestroy === null };
     });
     expect(result.calls).toEqual(expect.arrayContaining([
-        'app', 'mobilePanel', 'panelDock', 'keyboardHelp', 'tooltips', 'knowledgeBase', 'faq',
+        'app', 'mobilePanel', 'panelDock', 'keyboardHelp', 'tooltips',
         'viewportOverlays', 'workspaceTabs', 'panelDockView', 'viewportFrame', 'topbar',
         'loadingOverlay', 'breakpoints', 'scope',
     ]));

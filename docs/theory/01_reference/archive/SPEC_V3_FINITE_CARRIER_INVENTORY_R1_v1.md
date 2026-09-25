@@ -6,17 +6,17 @@ A9 pair; this removes the hidden diagonal-selection controller exposed by the
 first rule construction.  
 **Status:** **[SUPERSEDED DRAFT CARRIER — PROVENANCE RETAINED]**  
 **Successor:**
-[`SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md`](SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md)
+[`SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md`](../SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md)
 replaces the six single-occupancy ports by the finite exclusion-channel bank
 required by the exact cotangent collision and R5 wave recovery. The v1 counts
 remain correct for this narrower carrier, but it is no longer the selected v3
 inventory.  
 **Constitution:**
-[`SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`](SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md)  
+[`SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`](../SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md)\
 **Machine register:**
-[`strict_discrete_common_action_register_v3.json`](strict_discrete_common_action_register_v3.json)  
+[`strict_discrete_common_action_register_v3.json`](../strict_discrete_common_action_register_v3.json)\
 **Exact certificate:**
-[`proof_v3_finite_carrier_inventory.py`](../../../scripts/proofs/proof_v3_finite_carrier_inventory.py)
+[`proof_v3_finite_carrier_inventory.py`](../../../../scripts/proofs/proof_v3_finite_carrier_inventory.py)
 
 ---
 
@@ -72,7 +72,7 @@ For `z=(u,v)`, set
 
 Thus `n` is occupancy, `c` is available capacity, and `epsilon` is carried
 polarity. The exact phase readout `(U,V)` is the C4 readout in the
-[ternary-square carrier theorem](../10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_TERNARY_SQUARE_PHASE_POLARITY_CARRIER_AND_AUTONOMOUS_CROSSING_CLOCK_v1.md).
+[ternary-square carrier theorem](../../10_eft_program/derivations/common_action_mechanics_reciprocity/THEOREM_TERNARY_SQUARE_PHASE_POLARITY_CARRIER_AND_AUTONOMOUS_CROSSING_CLOCK_v1.md).
 One blank plus four phases and two polarities requires exactly nine states;
 `A9` is therefore the exact minimum for this declared payload.
 

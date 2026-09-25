@@ -71,7 +71,7 @@ export function assertObservation(now, expected) {
  */
 export function decisionObservation(observation,{actionTypes=[]}={}) {
     const facts=structuredClone(observation.facts);
-    if(Array.isArray(facts.entities)) {facts.entityCount=facts.entities.length;facts.entities=facts.entities.slice(0,8);}
+    if(Array.isArray(facts.entities)) {facts.entityCount=facts.entities.length;facts.entities=facts.entities.slice(0,8);facts.entitiesTruncated=facts.entityCount>facts.entities.length;}
     // Render settings and GPU internals are not needed to decide physical actions.
     if(facts.settings) facts.settings={fov:facts.settings.fov,moveSpeed:facts.settings.moveSpeed,overlays:facts.settings.overlays};
     if(facts.scenarios){facts.scenarios=facts.scenarios.slice(0,8);facts.scenariosTruncated=(facts.scenarioCount??observation.facts.scenarios.length)>facts.scenarios.length;}

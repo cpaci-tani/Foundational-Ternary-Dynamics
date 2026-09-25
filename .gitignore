@@ -67,6 +67,8 @@ node_modules/
 engine/.vs/
 engine/out/
 engine/build*/
+engine/web/wasm.next/
+engine/web/wasm.previous/
 engine/.cache/
 engine/output/
 engine/imgui.ini
@@ -123,6 +125,22 @@ build_log.txt
 *.pdb
 *.ilk
 *.exp
+*.dll
+*.lib
+*.a
+*.o
+*.pch
+*.gch
+*.idb
+*.tlog
+*.dylib
+CMakeFiles/
+CMakeCache.txt
+compile_commands.json
+cmake_install.cmake
+CTestTestfile.cmake
+.ninja_log
+.ninja_deps
 *.zip
 *.so
 .DS_Store
@@ -229,6 +247,11 @@ engine/thirdparty/*
 !/README.md
 !/CLAUDE.md
 !/REPOSITORY_MAP.md
+!/CONTRIBUTING.md
+!engine/SPEC_ENGINE.md
+!engine/thirdparty/freetype/VENDOR.md
+!engine/thirdparty/rmlui/VENDOR.md
+!scripts/retired/README.md
 !docs/SPEC_FTD.md
 !docs/WHERE_WE_LEFT_OFF.md
 !docs/theory/**
@@ -247,8 +270,6 @@ docs/theory/**/*.html
 # Markdown exceptions above (Git uses the last matching rule).
 .codex/
 .vscode/
-.dependency-cruiser.json
-.stylelintrc.json
 dissemination/**/.gitignore
 dissemination/.gitignore
 engine/web/.htaccess
@@ -271,3 +292,12 @@ docs/reference/archive/
 docs/theory/**/*_files/
 docs/theory/**/AUDIT_*.md
 !docs/papers/PAPER_GSTAR_INTRODUCTION.pdf
+
+# Canonical retraction provenance remains public despite the broad archive rule.
+!docs/theory/archive/
+!docs/theory/archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md
+!docs/theory/archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md
+!docs/theory/archive/DERIV_GAP_EQUATION_FORM_RETRACTED.md
+
+# Pause new dissemination additions; tracked publication files are unaffected.
+/dissemination/

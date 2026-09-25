@@ -4,7 +4,7 @@
 **Purpose:** Strip the master quadratic to its bare mathematical content. What does the underlying math actually say — without physics, without interpretation, just algebra?
 **Ledger row:** FTD-0082
 **Test:** `engine/tests/test_master_quadratic_identities.cpp` (ctest `master_quadratic_identities`, all identities verified to 1e-15)
-**Companion:** [FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md](FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md) — why the polynomial has this form
+**Historical companion:** [FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md](../archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md) — two-route motivation withdrawn after FTD-0032; the algebra here survives independently
 
 ---
 
@@ -153,9 +153,9 @@ Specifically, if $x$ is a root, then $16 G^{*3}/x$ is also a root (by Vieta prod
 
 The polynomial contains no physics. Specifically, it does not determine:
 
-- **Whether a root is a physical constant**: the identification $x_+ = 1/\alpha$ (FTD-0013) rests on numerical proximity, $x_+ \approx 137.036 \approx 1/\alpha$.
+- **Whether a root is a physical constant**: the identification $x_+ = 1/\alpha$ (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]) rests on numerical proximity, $x_+ \approx 137.036 \approx 1/\alpha$.
 - **Whether these are the "right" physical constants at all**: that's the identification step.
-- **Why the polynomial should exist at all**: that's the motivation chain (FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md).
+- **Why this polynomial should be the FTD operator:** the former [two-route motivation](../archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md) is withdrawn; the selection remains open.
 - **Any specific tick-dynamics, lattice stencil, or simulation rule**: those are Axiom Zero postulates, independent of the master quadratic.
 
 The polynomial is a **pure algebraic relation** between three objects: two roots and one parameter $G^*$. Its physical interpretation is a separate layer, and the present document is careful to keep them distinct.

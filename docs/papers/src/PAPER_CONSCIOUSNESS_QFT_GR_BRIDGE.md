@@ -186,7 +186,7 @@ The real root $x_+ = 137.036$ identifies the fine structure constant $\alpha = 1
 
 ### 3.2 The Integer Reduction Theorem [THEOREM]
 
-All four framework integers derive from $N_c = 3$ alone via the double identity (proved in [DERIV_PION_MASS_FROM_GSTAR.md](../../theory/03_derivations/DERIV_PION_MASS_FROM_GSTAR.md)):
+All four framework integers derive from $N_c = 3$ alone via the double identity (proved in [DERIV_PION_MASS_FROM_GSTAR.md](../../theory/03_derivations/standard_model/DERIV_PION_MASS_FROM_GSTAR.md)):
 
 $$b_3 = N_c + N_{\text{base}} = N_c^2 - 2$$
 
@@ -719,16 +719,16 @@ The bridge conjecture rests on one critical step: the Type III$_1$ assignment fo
 |----------|-------------------|
 | [MATH_MASTER_QUADRATIC.md](../../theory/01_reference/MATH_MASTER_QUADRATIC.md) | Pure mathematics of the quadratic |
 | [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) | Selection principles SP1-SP6 |
-| [FOUND_THE_EXISTENCE_FILTER.md](../../theory/06_reference frame context/FOUND_THE_EXISTENCE_FILTER.md) | Existence Filter, Born rule projection |
+| [FOUND_THE_EXISTENCE_FILTER.md](../../theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) | Existence Filter, Born rule projection |
 | [FOUND_ONTOLOGICAL_GENESIS.md](../../theory/02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) | 13-level hierarchy, three-domain structure |
 | [FOUND_META_PATTERNS.md](../../theory/02_foundations/FOUND_META_PATTERNS.md) | Tautological root, boundary inheritance |
-| [DERIV_QFT_GRT_BRIDGE.md](../../theory/03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Flux dual role (QFT + GRT) |
-| [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../../theory/03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) | Einstein equations from flux |
-| [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](../../theory/03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) | Native lattice path integral |
-| [DERIV_PION_MASS_FROM_GSTAR.md](../../theory/03_derivations/DERIV_PION_MASS_FROM_GSTAR.md) | G* to m_pi chain, integer reduction |
-| [DERIV_OBSERVER_BELL_MECHANISM.md](../../theory/03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) | Three-level Bell hierarchy |
-| [EXPLR_RELU_TYPE_TRANSITION.md](../../theory/09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) | Softplus/ReLU algebraic descent |
-| [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](../../theory/09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md) | Collapse-gravity duality |
+| [DERIV_QFT_GRT_BRIDGE.md](../../theory/03_derivations/foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | Flux dual role (QFT + GRT) |
+| [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../../theory/03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) | Einstein equations from flux |
+| [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](../../theory/03_derivations/quantum_mechanics/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) | Native lattice path integral |
+| [DERIV_PION_MASS_FROM_GSTAR.md](../../theory/03_derivations/standard_model/DERIV_PION_MASS_FROM_GSTAR.md) | G* to m_pi chain, integer reduction |
+| [DERIV_OBSERVER_BELL_MECHANISM.md](../../theory/03_derivations/quantum_mechanics/DERIV_OBSERVER_BELL_MECHANISM.md) | Three-level Bell hierarchy |
+| [EXPLR_RELU_TYPE_TRANSITION.md](../../theory/09_mathematical/general_math/EXPLR_RELU_TYPE_TRANSITION.md) | Softplus/ReLU algebraic descent |
+| [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](../../theory/09_mathematical/general_math/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md) | Collapse-gravity duality |
 | [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../../theory/01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | Full gap inventory, critical path |
 
 ---

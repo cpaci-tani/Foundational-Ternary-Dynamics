@@ -6,6 +6,8 @@ export const DECISION_REQUEST_MAX_BYTES=60*1024;
 const encoder=new TextEncoder();
 const SECRET_KEYS=new Set(['apikey','typesafeapikey','browsertoken','clienttoken','password','secret','accesstoken','refreshtoken','credentials']);
 const SCENARIO_KEYS=['id','scenarioId','label','name','title','category','backend','sizes','description','intent','qualification','epistemicStatus','admissionStatus','evidenceLevel'];
+const ENTITY_KEYS=['id','alive','editRevision','name','shape','position','size','rotation','velocity','color','emission','mass','bodyType','restitution','friction','damping','gravity','collisions','overlay','angularVelocity','properAcceleration'];
+const ENTITY_TARGET_ACTIONS=new Set(['observer.select','observer.update','observer.delete','observer.restore','observer.impulse','observer.overlay','observer.camera']);
 
 /** Clone bounded JSON data, never object internals or credential-bearing fields.
  * Protocol authorization is a data object; HTTP Authorization is a secret string.
@@ -118,6 +120,22 @@ export function buildDecisionRequest(intent,observation,plan,{scenarioCatalog,re
                 return{scenarioId:id,registered:row?true:Array.isArray(scenarioCatalog)?false:null,
                     ...(row?{descriptor:Object.fromEntries(SCENARIO_KEYS.filter(key=>Object.hasOwn(row,key)).map(key=>[key,row[key]]))}:{})};
             })};
+    }
+    if(observation.workspace==='observer'){
+        const targetIds=new Set();
+        for(const action of validated.actions){
+            if(!ENTITY_TARGET_ACTIONS.has(action.type))continue;
+            if(action.type==='observer.camera' && action.args.mode!=='lookAt')continue;
+            const id=action.args.id ?? (action.type==='observer.select'?null:observation.selected?.id??observation.facts.crosshair?.entityId);
+            if(typeof id==='string' && id.length)targetIds.add(id);
+        }
+        if(targetIds.size){
+            const entities=observation.facts.entities;
+            received.facts.entityEvidence={source:'active Observer owner',targets:[...targetIds].map(id=>{
+                const entity=Array.isArray(entities)?entities.find(item=>item?.id===id):undefined;
+                return{id,present:!!entity,...(entity?{current:Object.fromEntries(ENTITY_KEYS.filter(key=>Object.hasOwn(entity,key)).map(key=>[key,entity[key]]))}:{})};
+            })};
+        }
     }
     received.facts.decisionScope={kind:protocol?'fixed-scenario-protocol':validated.experiment?'live-experiment-step':'explicit-plan',
         proposedActions:validated.actions.length,actionSchemasSource:'current controller capabilities'};

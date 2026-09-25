@@ -16,7 +16,7 @@ def test_status_and_proxy_are_loopback_same_origin_and_do_not_return_key(local_s
     request = local_server[2]
     monkeypatch.setenv("TYPESAFE_API_KEY", "ENV_TEST_ONLY_KEY")
     status, _, body = request('/api/ai/status')
-    assert status == 200 and json.loads(body)['jevConfigured']
+    assert status == 200 and not json.loads(body)['jevConfigured']
     assert b'ENV_TEST_ONLY_KEY' not in body
     assert request('/api/ai/status', headers={'Host': 'attacker.example'})[0] == 403
     assert request('/api/ai/jev', 'POST', json.dumps(BODY), {**HEADERS, 'Origin': 'https://attacker.example'})[0] == 403
@@ -25,6 +25,8 @@ def test_status_and_proxy_are_loopback_same_origin_and_do_not_return_key(local_s
         received.append((value, key))
         return {'decision': 'clarify', 'confidence': .8, 'model': 'jev-test', 'usage': {}}
     monkeypatch.setattr(ai, '_upstream', upstream)
+    assert request('/api/ai/jev', 'POST', json.dumps(BODY), {'Content-Type': 'application/json'})[0] == 401
+    assert received == []
     assert request('/api/ai/jev', 'POST', json.dumps(BODY), HEADERS)[0] == 200
     assert received == [(BODY, 'TEST_ONLY_KEY')]
 

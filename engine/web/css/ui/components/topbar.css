@@ -122,21 +122,21 @@
 }
 
 /* ── Enhanced toolbar layout ── */
-/* The toolbar itself is the layout surface: brand, simulation controls,
-   session controls, actions, and contextual controls are direct children of
-   #toolbar with no extra wrapper container. */
+/* Keep the shell chrome to one row; narrow viewports scroll horizontally. */
 #toolbar[data-topbar="enhanced"] {
-    display: grid;
-    grid-template-columns: auto auto minmax(118px, 1fr) auto;
-    grid-template-areas:
-        "brand sim meta actions"
-        "session context context context";
+    display: flex;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 8px 10px;
-    padding-inline: 16px;
-    padding-block: 8px;
+    gap: 10px;
+    padding-inline: 12px;
+    padding-block: 6px;
     height: auto;
     min-height: calc(48px * var(--ui-scale));
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+#toolbar[data-topbar="enhanced"]:has(.scenario-picker[open], .lat-scenario-desc[open]) {
     overflow: visible;
 }
 
@@ -162,22 +162,23 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
     align-items: center;
     gap: 10px;
     min-width: 0;
-    flex-wrap: wrap;
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    white-space: nowrap;
 }
 
 .topbar-slot-brand {
-    grid-area: brand;
     flex: 0 0 auto;
 }
 
 .topbar-slot-sim {
-    grid-area: sim;
     flex: 0 0 auto;
 }
 
+.topbar-slot-sim:empty { display: none; }
+
 .topbar-slot-session {
-    grid-area: session;
-    flex: 0 1 auto;
+    flex: 0 0 auto;
     justify-content: flex-start;
 }
 
@@ -192,15 +193,18 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
 }
 
 .topbar-slot-actions {
-    grid-area: actions;
-    margin-left: 0;
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    margin-left: auto;
+    padding-left: 8px;
     justify-content: flex-end;
     flex: 0 0 auto;
     align-self: center;
+    background: var(--bg-deep);
 }
 
 .topbar-slot-context-meta {
-    grid-area: meta;
     flex: 0 0 auto;
     flex-direction: column;
     align-items: flex-start;
@@ -227,60 +231,15 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
 }
 
 .topbar-slot-context {
-    grid-area: context;
-    flex: 1 1 420px;
-    width: 100%;
-    min-width: 0;
+    flex: 0 0 auto;
+    width: auto;
     gap: 8px;
     justify-content: flex-start;
 }
 
-.topbar-slot-context > *,
-.topbar-slot-context .tb-group,
-.topbar-slot-context select,
-.topbar-slot-context input {
-    min-width: 0;
-    max-width: 100%;
-}
-
-.tb-btn-assistant,
-.tb-btn-vtk,
-.tb-btn-knowledge {
-    width: auto;
-    min-width: 46px;
-    padding-inline: 12px;
-    font-size: var(--fs-sm);
-    font-weight: 700;
-    letter-spacing: 0.06em;
-}
-
-.tb-btn.tb-btn-fluid {
-    width: auto;
-    min-width: max-content;
-    padding-inline: 12px;
-    font-size: var(--fs-sm);
-    font-weight: 700;
-    white-space: nowrap;
+#toolbar .topbar-slot-context .tb-group {
     flex: 0 0 auto;
-}
-
-[data-active-scale]:not([data-active-scale="0"]) #btn-fluid { display: none !important; }
-
-.tb-btn-vtk {
-    color: var(--positive-text);
-    border-color: color-mix(in srgb, var(--positive) 52%, var(--border));
-}
-
-.tb-btn-vtk:hover,
-.tb-btn-vtk[data-state="copied"] {
-    color: var(--on-positive);
-    background: var(--positive);
-    border-color: var(--positive);
-}
-
-.tb-btn-vtk[data-state="failed"] {
-    color: var(--warning-text);
-    border-color: var(--warning);
+    flex-wrap: nowrap;
 }
 
 /* Mobile menu button — hidden on desktop, shown on mobile. */
@@ -295,115 +254,65 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
 }
 #toolbar .tb-btn-mobile { display: none; }
 
-/* The full desktop row fits without wrapping at wide application widths. */
-@media (min-width: 768px) and (max-width: 1199px) {
-    #toolbar[data-topbar="enhanced"] {
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        grid-template-areas:
-            "brand sim actions"
-            "meta session session"
-            "context context context";
-    }
-
-    .topbar-slot,
-    .topbar-slot .tb-group {
-        min-width: 0;
-        max-width: calc(100vw - 32px);
-    }
-
-    .topbar-slot-session .tb-group,
-    .topbar-slot-context .tb-group {
-        flex-wrap: wrap;
-    }
+@media (max-width: 1599px) {
+    .topbar-slot-context-meta { display: none; }
 }
 
-@media (min-width: 1600px) {
-    #toolbar[data-topbar="enhanced"] {
-        grid-template-columns: auto auto auto minmax(118px, auto) minmax(0, 1fr) auto;
-        grid-template-areas: "brand sim session meta context actions";
-    }
-}
-
-/* assistant-sidebar extracted → css/ui/components/assistant-sidebar.css */
-
-/* ── Mobile: stack primary row with Menu trigger; secondary row
-      opens as a wrap-down panel anchored to the topbar. ── */
+/* Mobile keeps the primary controls on one scrollable row. */
 @media (max-width: 767px) {
-    /* Show the Menu button so users can reach the secondary controls */
     #toolbar .tb-btn-mobile { display: inline-flex; }
 
-    #toolbar {
-        gap: 16px;
-    }
-
-    #toolbar .tb-group {
-        gap: 12px;
-    }
-
     #toolbar[data-topbar="enhanced"] {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-areas:
-            "brand"
-            "actions"
-            "context";
+        flex-wrap: nowrap;
         gap: 8px;
         padding-inline: 8px;
-    }
-
-    .topbar-slot-context-meta {
-        display: none;
-    }
-
-    /* Hide the cramped Scale 0 dropdown group on mobile */
-    .topbar-slot-session {
-        display: none !important;
+        /* A fixed secondary panel must escape the toolbar scroll clip. */
+        backdrop-filter: none;
     }
 
     .topbar-slot-actions {
+        order: 1;
+        gap: 6px;
+        position: static;
         margin-left: 0;
-        gap: 8px;
-        width: 100%;
-        max-width: 100%;
-        justify-content: flex-start;
-        flex-wrap: wrap;
+        background: transparent;
     }
 
-    .topbar-slot-actions .tb-group {
-        width: 100%;
-        max-width: 100%;
-        flex-wrap: wrap;
+    .topbar-slot-session { order: 2; }
+    .topbar-slot-sim { order: 3; }
+    #toolbar .tb-btn-mobile { order: -1; }
+
+    .topbar-slot-actions .tb-group,
+    .topbar-slot-session .tb-group {
+        flex-wrap: nowrap;
     }
 
-    /* Contextual controls are hidden until Menu expands them. They open as a
-       full-width wrap-down row anchored under the primary toolbar controls.
-       flex-basis:100% (not 0 0 auto) makes the panel claim its own toolbar row
-       and stay bounded to the viewport — without it the panel content-sizes far
-       wider than the screen (e.g. an 895px panel on a 390px phone) and the
-       overflow is clipped/unreachable because body has overflow:hidden. */
+    /* The Menu panel floats over the canvas instead of adding a toolbar row. */
     .topbar-slot-context {
         display: none;
-        flex: 1 1 100%;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
+        position: fixed;
+        top: calc(48px * var(--ui-scale) + var(--shell-safe-top, 0px) + 16px);
+        left: 8px;
+        right: 8px;
+        width: auto;
+        max-height: min(60dvh, 420px);
         box-sizing: border-box;
         padding: 8px;
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        background: color-mix(in srgb, var(--bg-card) 82%, transparent);
+        background: var(--bg-surface);
+        box-shadow: var(--chrome-shadow);
+        overflow: auto;
+        z-index: var(--z-dropdown, 1000);
     }
 
-    /* Expanded state — JS toggles data-compact-menu="open" on #toolbar. */
     #toolbar[data-compact-menu="open"] .topbar-slot-context {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
     }
 
-    /* Intermediate control groups must wrap and never exceed the panel width,
-       so the width:100% selects/inputs inside them resolve against the viewport
-       rather than an already-overflowing ancestor. */
-    .topbar-slot-context .tb-group {
+    #toolbar .topbar-slot-context .tb-group {
         max-width: 100%;
         min-width: 0;
         flex-wrap: wrap;
@@ -416,47 +325,8 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
         min-width: 0;
     }
 
-    /* Each visible slot participates in the single-column toolbar grid. */
-    .topbar-slot-brand,
-    .topbar-slot-actions,
-    .topbar-slot-session,
-    .topbar-slot-sim {
-        width: 100%;
-    }
-
-    .topbar-slot-session .tb-group,
-    .topbar-slot-sim .tb-group {
-        padding: 2px 4px;
-    }
-
-    /* Finger-sized play controls on touch devices (32px desktop floor is
-       below the WCAG 44px touch minimum). The toolbar row grows to fit. */
     .tb-btn-global {
         min-height: var(--tap-min);
-    }
-}
-
-/* Landscape phones keep the primary row shallow and horizontally reachable.
-   The Menu-owned contextual controls still expand into their own grid row. */
-@media (max-width: 767px) and (max-height: 500px) {
-    #toolbar[data-topbar="enhanced"] {
-        grid-template-columns: auto max-content;
-        grid-template-areas:
-            "brand actions"
-            "context context";
-        overflow-x: auto;
-        overflow-y: hidden;
-    }
-
-    #toolbar[data-topbar="enhanced"][data-compact-menu="open"] {
-        overflow-y: visible;
-    }
-
-    .topbar-slot-brand,
-    .topbar-slot-actions,
-    .topbar-slot-actions .tb-group {
-        width: auto;
-        flex-wrap: nowrap;
     }
 }
 

@@ -9,7 +9,7 @@ test('external MCP relay controls the actual open lattice without loading an SLM
     await page.route('**/api/ai/jev',route=>route.fulfill({json:{decision:'execute',confidence:1,model:'browser-fixture'}}));
     await gotoAndReady(page,{path:'/?engine=wasm&lattice=9'});
     await page.waitForFunction(()=>window.__FTD_DEV__.registry.get('assistant'));
-    await page.getByRole('button',{name:'Open the JEV console',exact:true}).click();
+    await page.getByRole('tab',{name:'JEV',exact:true}).click();
     await page.locator('[data-jev="mcp-panel"] > summary').click();
     await page.getByRole('button',{name:'Enable MCP',exact:true}).click();
     await expect(page.locator('[data-jev="mcp-status"]')).toContainText('enabled');
@@ -17,7 +17,7 @@ test('external MCP relay controls the actual open lattice without loading an SLM
     const client=new Client({name:'ftd-browser-regression',version:'1.0.0'});
     await client.connect(new StdioClientTransport({command:process.execPath,args:[fileURLToPath(new URL('../../mcp/server.mjs',import.meta.url))],env:{...process.env,...config.env}}));
     try{
-    expect((await client.listTools()).tools).toHaveLength(8);
+    expect((await client.listTools()).tools).toHaveLength(9);
     const headers={Authorization:`Bearer ${config.env.FTD_MCP_TOKEN}`};
     const call=async(method,args={},id=randomUUID())=>{
         const response=await request.post('/api/mcp/call',{headers,data:{sessionId:config.env.FTD_MCP_SESSION,id,method,args}});
@@ -52,7 +52,7 @@ test('fixed MCP protocol reaches 20000 real WASM ticks with one JEV approval and
     await page.route('**/api/ai/jev',route=>{decisions.push(route.request().postDataJSON());return route.fulfill({json:{decision:'execute',confidence:1,model:'browser-fixture'}});});
     await gotoAndReady(page,{path:'/?engine=wasm&lattice=9'});
     await page.waitForFunction(()=>window.__FTD_DEV__.registry.get('assistant'));
-    await page.getByRole('button',{name:'Open the JEV console',exact:true}).click();
+    await page.getByRole('tab',{name:'JEV',exact:true}).click();
     await page.getByText('Connection & local model',{exact:true}).click();
     await page.getByLabel('JEV API key',{exact:true}).fill('synthetic-long-run-key');
     await page.getByRole('button',{name:'Connect key',exact:true}).click();
@@ -105,7 +105,7 @@ test('MCP supplied settings run an empty-lattice experiment and text Stop AI rev
     await page.route('**/api/ai/jev',route=>{decisions.push(route.request().postDataJSON());return route.fulfill({json:{decision:'execute',confidence:1,model:'browser-fixture'}});});
     await gotoAndReady(page,{path:'/?engine=wasm&lattice=9'});
     await page.waitForFunction(()=>window.__FTD_DEV__.registry.get('assistant'));
-    await page.getByRole('button',{name:'Open the JEV console',exact:true}).click();
+    await page.getByRole('tab',{name:'JEV',exact:true}).click();
     await page.locator('[data-jev="mcp-panel"] > summary').click();
     await page.getByRole('button',{name:'Enable MCP',exact:true}).click();
     await expect(page.locator('[data-jev="mcp-status"]')).toContainText('enabled');

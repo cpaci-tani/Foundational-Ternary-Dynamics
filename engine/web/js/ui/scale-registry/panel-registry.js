@@ -7,6 +7,7 @@
 
 export const PANEL_REGISTRY = Object.freeze([
     { id: 'controls',         label: 'Controls',        icon: '\u2699\uFE0E',  scales: null },
+    { id: 'jev',              label: 'JEV',             icon: '\u2727',        scales: null },
     { id: 'seeding',          label: 'Seeding',         icon: '\u2726',       scales: ['0'] },
     { id: 'diagnostics',      label: 'Diagnostics',     icon: '\u25A4',        scales: ['0', '1', '2', '3', '4', '5'] },
     { id: 'telemetry-grid',   label: 'Telemetry Grid',  icon: '📈',            scales: ['0', '1', '2', '3', '4', '5'] },

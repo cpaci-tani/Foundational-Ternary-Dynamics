@@ -9,7 +9,7 @@
 **Production status:** unchanged  
 **Ledger status:** adopted constitutionally through FTD-1023; no independent row minted  
 **Supersedes:**
-[`SPEC_V3_COMMON_TRANSACTION_PHI_R2_R4_v1.md`](SPEC_V3_COMMON_TRANSACTION_PHI_R2_R4_v1.md)  
+[`SPEC_V3_COMMON_TRANSACTION_PHI_R2_R4_v1.md`](archive/SPEC_V3_COMMON_TRANSACTION_PHI_R2_R4_v1.md)\
 **Carrier:**
 [`SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md`](SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md)  
 **Integrated verifier:**

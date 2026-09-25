@@ -1,5 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { switchMode } from './_helpers.js';
+import { bootDashboard, switchMode } from './_helpers.js';
+
+test('Fluid stays reachable from the mobile panel selector without a topbar shortcut', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await bootDashboard(page);
+    await expect(page.locator('#btn-fluid')).toHaveCount(0);
+    await page.locator('#tab-select-mobile').selectOption('fluid');
+    await expect(page.locator('#panel-fluid')).toHaveClass(/\bactive\b/);
+    await expect(page.locator('.fluid-panel')).toBeVisible();
+});
 
 test('ordinary lattice scenarios share their owner with volume overlays and passive field observations', async ({ page }) => {
     page.setDefaultTimeout(15000);
@@ -21,7 +30,7 @@ test('ordinary lattice scenarios share their owner with volume overlays and pass
         })); throw error;
     });
     await expect(page.locator('#scalar-render-row [data-scalar-mode="volume"]')).toHaveAttribute('aria-pressed', 'true');
-    await page.locator('#btn-fluid').click();
+    await page.locator('.tab[data-panel="fluid"]').click();
     await expect(page.locator('#fluid-load')).toHaveCount(0);
     await expect(page.locator('#fluid-size')).toHaveCount(0);
     await expect(page.locator('.fluid-panel')).toHaveAttribute('data-state', 'observed');
@@ -134,7 +143,7 @@ test('one warmed energy volume and the passive Fluid pane meet the bounded hardw
     await page.goto('/?engine=wasm', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => window.__ftdCtx?.bridge && window.__ftdFluidPanel);
     await page.locator('#scenario-select').selectOption('flux-thermalization');
-    await page.locator('#btn-fluid').click();
+    await page.locator('.tab[data-panel="fluid"]').click();
     await page.waitForFunction(() => window.__ftdCtx.viewport._scalarVolumes?.get('emEnergy')?.group.visible);
     await page.locator('#btn-play').click();
     await page.waitForFunction(() => {

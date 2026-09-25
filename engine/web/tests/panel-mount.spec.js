@@ -92,6 +92,51 @@ test('html[data-panel-mount] is set before first paint and defaults to left on d
     expect(state.version).toBe('2');
 });
 
+test('first mount stays responsive when panel preference storage is denied', async ({ browser }) => {
+    for (const [width, expected] of [[1280, 'left'], [390, 'bottom']]) {
+        const context = await browser.newContext({ viewport: { width, height: 720 } });
+        await context.addInitScript(() => {
+            const getItem = Storage.prototype.getItem;
+            Storage.prototype.getItem = function (key) {
+                if (String(key).startsWith('ftd.panel.mount')) {
+                    throw new DOMException('Storage denied', 'SecurityError');
+                }
+                return getItem.call(this, key);
+            };
+            window.__mountWrites = [];
+            new MutationObserver((records) => {
+                for (const record of records) {
+                    window.__mountWrites.push(record.target.getAttribute('data-panel-mount'));
+                }
+            }).observe(document, { attributes: true, subtree: true, attributeFilter: ['data-panel-mount'] });
+        });
+        const page = await context.newPage();
+        await page.goto('/', { waitUntil: 'domcontentloaded' });
+        const state = await page.evaluate(async () => {
+            const { readPanelMount } = await import('/js/ui/shell/panel-mount-state.js');
+            return {
+                firstMount: window.__mountWrites[0],
+                mount: document.documentElement.dataset.panelMount,
+                preference: readPanelMount(),
+            };
+        });
+        expect(state).toEqual({ firstMount: expected, mount: expected, preference: 'left' });
+        await context.close();
+    }
+});
+
+test('the default left dock owns JEV rather than the top bar', async ({ sharedPage: page }) => {
+    await gotoPanelMount(page);
+    await page.getByRole('tab', { name: 'JEV', exact: true }).click();
+    await expect(page.locator('#panel-jev.active .jev-console')).toBeVisible();
+    const state = await page.evaluate(() => ({
+        mount: document.documentElement.dataset.panelMount,
+        inPanelArea: document.getElementById('panel-area')?.contains(document.querySelector('#panel-jev .jev-console')),
+        inTopbar: document.getElementById('toolbar')?.contains(document.querySelector('#panel-jev .jev-console')),
+    }));
+    expect(state).toEqual({ mount: 'left', inPanelArea: true, inTopbar: false });
+});
+
 test('side-mount default falls back to bottom-sheet on a narrow viewport', async ({ sharedPage: page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await gotoPanelMount(page);

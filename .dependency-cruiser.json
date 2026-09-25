@@ -1,0 +1,107 @@
+{
+  "forbidden": [
+    {
+      "name": "assistant-execution-boundary",
+      "severity": "error",
+      "comment": "Only capability adapters may import simulation controllers; model, retrieval and console never mutate owners directly.",
+      "from": {
+          "path": "^engine/web/js/assistant/(service|console|model|mcp-.*|jev-client|search.*|experiment.*|scenario.*|request-router|capability-help|contracts)\\.js$"
+      },
+      "to": {
+        "path": "^engine/web/js/(scales/|bridge/|ws-bridge|observer/(session|workspace))"
+      }
+    },
+    {
+      "name": "observer-owner-isolation",
+      "severity": "error",
+      "comment": "Observer receives a passive lattice adapter; it cannot import scale runtimes or the application composition root.",
+      "from": {
+        "path": "^engine/web/js/observer/"
+      },
+      "to": {
+        "path": "^engine/web/js/(scales/|app\\.js$|bridge-init\\.js$)"
+      }
+    },
+    {
+      "name": "no-circular-dependencies",
+      "severity": "error",
+      "comment": "Circular dependencies are a major source of runtime leaks and instantiation failures.",
+      "from": {},
+      "to": {
+        "circular": true
+      }
+    },
+    {
+      "name": "scale-isolation-boundaries",
+      "severity": "error",
+      "comment": "Prevent scale-level logic leak (e.g. Scale 0 importing Scale 1).",
+      "from": {
+        "path": "^engine/web/js/scales/scale0/"
+      },
+      "to": {
+        "path": "^engine/web/js/scales/scale(1|2|3|4|5|6|11|12|23)/"
+      }
+    },
+    {
+      "name": "shared-scale-utilities-do-not-own-a-scale",
+      "severity": "error",
+      "comment": "Generic scale helpers must not pull in a concrete simulation owner.",
+      "from": { "path": "^engine/web/js/scales/[^/]+\\.js$" },
+      "to": { "path": "^engine/web/js/scales/scale[0-9]+/" }
+    },
+    {
+      "name": "scale1-owner-isolation",
+      "severity": "error",
+      "from": { "path": "^engine/web/js/scales/scale1/" },
+      "to": { "path": "^engine/web/js/scales/scale(0|2|3|4|5|6)/" }
+    },
+    {
+      "name": "ae-owner-isolation",
+      "severity": "error",
+      "comment": "Scales 2 and 3 share the Atom Engine; neither imports another scale owner.",
+      "from": { "path": "^engine/web/js/scales/scale(2|3)/" },
+      "to": { "path": "^engine/web/js/scales/scale(0|1|4|5|6)/" }
+    },
+    {
+      "name": "scale4-owner-isolation",
+      "severity": "error",
+      "from": { "path": "^engine/web/js/scales/scale4/" },
+      "to": { "path": "^engine/web/js/scales/scale(0|1|2|3|5|6)/" }
+    },
+    {
+      "name": "scale5-owner-isolation",
+      "severity": "error",
+      "from": { "path": "^engine/web/js/scales/scale5/" },
+      "to": { "path": "^engine/web/js/scales/scale(0|1|2|3|4|6)/" }
+    },
+    {
+      "name": "scale6-owner-isolation",
+      "severity": "error",
+      "from": { "path": "^engine/web/js/scales/scale6/" },
+      "to": { "path": "^engine/web/js/scales/scale(0|1|2|3|4|5)/" }
+    },
+    {
+      "name": "no-direct-bridge-access-from-ui",
+      "severity": "warn",
+      "comment": "UI modules should interact with simulation state through the controller or PhysicsHarness, not direct bridge calls.",
+      "from": {
+        "path": "^engine/web/js/ui/"
+      },
+      "to": {
+        "path": "^engine/web/js/bridge-init.js"
+      }
+    }
+  ],
+  "options": {
+    "doNotFollow": {
+      "path": "(^|/)node_modules/|^engine/web/js/vendor/"
+    },
+    "moduleSystems": [
+      "es6"
+    ],
+    "tsPreCompilationDeps": true,
+    "tsConfig": {
+      "fileName": "tsconfig.json"
+    }
+  }
+}

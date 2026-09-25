@@ -20,7 +20,7 @@ test('complete scenario dropdown and read-only template preview follow Scale 0 w
     expect(recordsResponse.ok(),await recordsResponse.text()).toBe(true);
     const records=await recordsResponse.json();
     await expect.poll(()=>page.evaluate(()=>window.__FTD_DEV__.registry.get('assistant').service.scenarioCatalog().filter(row=>row.backend==='finite-records').length)).toBe(records.scenarios.length);
-    await page.getByRole('button',{name:'Open the JEV console',exact:true}).click();
+    await page.getByRole('tab',{name:'JEV',exact:true}).click();
     await page.getByText('Scenario experiments · start from empty',{exact:true}).click();
     await expect(page.locator('[data-scenario="ticks"]')).toHaveValue('10000');
     await expect(page.locator('[data-scenario="ticks"]')).toHaveAttribute('max','100000');

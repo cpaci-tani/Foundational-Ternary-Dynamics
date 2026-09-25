@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 """
+RETIRED HISTORICAL SOURCE - DO NOT EXECUTE OR CITE AS CURRENT VERIFICATION.
+
+This preserved report predates the current LEDGER classifications. It calls
+physical identifications "DERIVED", treats a fit count as a statistical
+verdict, and uses superseded experimental references. The authoritative
+status is docs/theory/07_assessment/core_ledgers/LEDGER.md. This source is
+retained only to make the correction auditable.
+
 run_rigorous_verification.py: Master FTD Verification with Epistemic Classification
 ===================================================================================
 
@@ -23,6 +31,9 @@ A framework is meaningful if:
 Usage:
     python tests/run_rigorous_verification.py [--verbose] [--json]
 """
+
+if __name__ == "__main__":
+    raise SystemExit("Retired historical source; consult the current LEDGER.")
 
 import sys
 import os
@@ -403,7 +414,3 @@ def main():
     print("\n" + "=" * 80)
     print("VERIFICATION COMPLETE")
     print("=" * 80 + "\n")
-
-
-if __name__ == "__main__":
-    main()

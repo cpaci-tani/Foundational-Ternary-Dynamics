@@ -446,7 +446,7 @@ test('reduced-motion includes the loading overlay; GPU card uses tokens', () => 
     expect(gpu).not.toMatch(/color:\s*#e6ecf5/);
 });
 
-test('FAQ uses reference-frame-structure vocabulary; Scale 1 uses PROTON_RATIO', () => {
+test('retained FAQ reference data uses reference-frame-structure vocabulary; Scale 1 uses PROTON_RATIO', () => {
     const faq = fs.readFileSync(path.join(webRoot, 'js', 'ui', 'components', 'faq', 'data.js'), 'utf8');
     expect(faq).toMatch(/hard-problem-reference-frame-structure/);
     expect(faq).not.toMatch(/hard-problem-reference frame context/);

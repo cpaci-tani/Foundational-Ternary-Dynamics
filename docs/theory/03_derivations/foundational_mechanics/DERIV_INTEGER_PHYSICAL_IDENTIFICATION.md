@@ -4,7 +4,7 @@
 
 **Status:** [THEOREM] for all identifications given N_gen = N_c [SELECTION]
 **Proof script:** `scripts/proofs/proof_integer_identification.py`
-**Prior:** Depends on DERIV_D3_FROM_AUTOMORPHISM.md, AUDIT_SELF_CONSISTENCY.md, DERIV_MASTER_QUADRATIC_FROM_Z.md
+**Prior:** Depends on DERIV_D3_FROM_AUTOMORPHISM.md and AUDIT_SELF_CONSISTENCY.md. The former partition-function dependency is [retracted](../../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md) (FTD-0032) and is not load-bearing.
 
 ---
 
@@ -90,4 +90,4 @@ No free parameters remain once N_gen = N_c is assumed.
 - proof_integer_identification.py -- Physical identification (14/14 tests pass)
 - DERIV_D3_FROM_AUTOMORPHISM.md -- D = 3 self-referential identity
 - AUDIT_SELF_CONSISTENCY.md -- Exhaustive uniqueness search
-- DERIV_MASTER_QUADRATIC_FROM_Z.md -- Gap equation from partition function
+- [DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md](../../archive/DERIV_MASTER_QUADRATIC_FROM_Z_RETRACTED.md) -- historical gap-equation attempt (FTD-0032)

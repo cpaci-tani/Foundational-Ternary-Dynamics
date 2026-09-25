@@ -94,8 +94,17 @@
 
 .workspace-tabs-strip::-webkit-scrollbar { display: none; }
 
+#tab-bar .tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
 @media (max-width: 767px) {
     #tab-bar[data-workspace-tabs="true"] {
         display: none !important;
+    }
+
+    #tab-select-mobile option[value="jev"] {
+        display: none;
     }
 }

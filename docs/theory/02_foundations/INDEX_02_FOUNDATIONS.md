@@ -62,10 +62,11 @@
 | File | Tag | Purpose |
 |---|---|---|
 | [FOUND_MASTER_QUADRATIC_BARE_STRUCTURE.md](FOUND_MASTER_QUADRATIC_BARE_STRUCTURE.md) | [THEOREM] | The master quadratic stripped to bare algebra — what the math says without physics (FTD-0082). |
-| [FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md](FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md) | [THEOREM] + [SELECTION narrowed] | Two independent routes converge on the same polynomial; narrows the degree-2 selection (FTD-0081). |
 | [FOUND_LADDER_GENERATING_RULE.md](FOUND_LADDER_GENERATING_RULE.md) | [THEOREM] / [SELECTION] | Why the α-power ladder exponents are what they are — structural identity. |
 | [FOUND_LADDER_WALK_FROM_OH_STRUCTURE.md](FOUND_LADDER_WALK_FROM_OH_STRUCTURE.md) | [THEOREM] + [SELECTION narrowed] | Ladder-walk step sizes derived from O_h structure, Program A partial closure (FTD-0084). |
 | [FOUND_FORCE_STRUCTURE.md](FOUND_FORCE_STRUCTURE.md) | [THEOREM] / [SELECTION] / [CONJECTURE] | How the master quadratic generates all four forces — force genealogy. |
+
+Historical FTD-0081 two-route motivation is [archived](../archive/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION_RETRACTED.md): its partition-function route was retracted as FTD-0032. The CM identities remain separate mathematical results.
 
 ## Boundary theorem, decoupling & meta-structure
 

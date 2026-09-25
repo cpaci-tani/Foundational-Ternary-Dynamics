@@ -10,11 +10,6 @@ async function bootShell(page) {
     );
 }
 
-async function openPanel(page, buttonSelector, openClass) {
-    await page.evaluate((sel) => document.querySelector(sel)?.click(), buttonSelector);
-    await page.waitForFunction((cls) => document.getElementById('app')?.classList.contains(cls), openClass, { timeout: 3000 });
-}
-
 test.describe('Math formatting coverage', () => {
     test.beforeEach(async ({ page }) => {
         await bootShell(page);
@@ -25,28 +20,17 @@ test.describe('Math formatting coverage', () => {
         expect(hasKatex).toBe(true);
     });
 
-    test('FAQ renders .katex spans and leaks no raw delimiters', async ({ page }) => {
-        await openPanel(page, '#btn-faq', 'faq-open');
-        await page.waitForSelector('#faq-sidebar .faq-reader-section');
-        const katexCount = await page.locator('#faq-sidebar .katex').count();
-        expect(katexCount).toBeGreaterThan(0);
-        const body = await page.locator('#faq-sidebar').innerText();
-        expect(body, 'FAQ contains raw \\\\( — LaTeX was not rendered').not.toMatch(/\\\(/);
-        expect(body, 'FAQ contains raw \\\\[ — display LaTeX was not rendered').not.toMatch(/\\\[/);
-    });
-
-    test('KB renders .katex spans and leaks no raw delimiters', async ({ page }) => {
-        await openPanel(page, '#btn-knowledge-base', 'knowledge-base-open');
-        await page.waitForSelector('#kb-sidebar .sidelib-entry-chip, #kb-sidebar .sidelib-empty-list', { timeout: 5000 });
-        const katexCount = await page.locator('#kb-sidebar .katex').count();
-        expect(katexCount).toBeGreaterThan(0);
-        const body = await page.locator('#kb-sidebar').innerText();
-        expect(body, 'KB contains raw \\\\( — LaTeX was not rendered').not.toMatch(/\\\(/);
-        expect(body, 'KB contains raw \\\\[ — display LaTeX was not rendered').not.toMatch(/\\\[/);
+    test('shared formatter renders inline and display math', async ({ page }) => {
+        const html = await page.evaluate(async () => {
+            const { renderMathInHtml } = await import('/js/ui/math-format/render.js');
+            return renderMathInHtml('Inline \\(x^2\\) and display \\[y^2\\]');
+        });
+        expect(html.match(/class="katex/g)?.length).toBeGreaterThanOrEqual(2);
+        expect(html).not.toMatch(/\\\(|\\\[/);
     });
 
     test('tooltip system leaks no raw delimiters', async ({ page }) => {
-        await page.hover('#btn-knowledge-base');
+        await page.hover('#btn-settings');
         await page.waitForTimeout(400);
         const tip = await page.locator('#ui-tooltip').innerText().catch(() => '');
         expect(tip).not.toMatch(/\\\(/);
