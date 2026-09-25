@@ -102,20 +102,7 @@ Notation is generally consistent throughout the manuscript:
 
 The argument flow has significant structural issues:
 
-#### 4.1 Circular Dependencies
-
-The derivation chain forms a circular structure:
-
-```
-Fibonacci constraints --> {7, 3, 13, 4} --> Master quadratic --> alpha, N_c
-         ^                                                          |
-         +----------------------------------------------------------+
-                        (N_c determines constraints)
-```
-
-This circularity is acknowledged ("self-referential closure") but presented as a feature rather than a logical problem. In mathematics, self-consistent systems are interesting, but consistency does not establish uniqueness or physical relevance.
-
-#### 4.2 Conflation of Levels
+#### 4.1 Conflation of Levels
 
 The manuscript frequently conflates:
 
@@ -123,7 +110,7 @@ The manuscript frequently conflates:
 - **Selection** with **proof**: Many claims labeled [T] (Theorem) are actually [S] (Selection) at best.
 - **Precision** with **accuracy**: The "0.21 ppt" precision formula uses additional parameters whose physical justification is unclear.
 
-#### 4.3 Missing Falsifiability Analysis for Mathematical Claims
+#### 4.2 Missing Falsifiability Analysis for Mathematical Claims
 
 Physical predictions have falsification criteria, but mathematical claims do not. What would falsify the claim that $j = 1728$ is "derived" rather than coincidental? The manuscript does not address this.
 

@@ -1,7 +1,7 @@
 {
   "generated": "2026-08-16T14:52:50.532112+00:00",
   "reframe_date": "2026-04-19",
-  "n_papers": 127,
+  "n_papers": 125,
   "rows": [
     {
       "stem": "ARCH_GEOMETRIC_STANDARD_MODEL",
@@ -758,23 +758,6 @@
       "notes": ""
     },
     {
-      "stem": "PAPER_3A_PHYSICAL_IDENTIFICATION",
-      "title": "From Lattice Geometry to Coupling Constants: [0.3cm] Physical Identification of the Master Quadratic Roots",
-      "tex": "docs/papers/src/PAPER_3A_PHYSICAL_IDENTIFICATION.tex",
-      "md": null,
-      "pdf": null,
-      "location_class": "draft-src",
-      "post_reframe": false,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 15,
-      "last_modified": "2026-03-29T03:35:55.245187+00:00",
-      "epistemic_tier": 4,
-      "verdict": "RETIRE",
-      "notes": ""
-    },
-    {
       "stem": "PAPER_A_PI_FREE_GENERATOR",
       "title": null,
       "tex": "dissemination/papers/PAPER_A_PI_FREE_GENERATOR.tex",
@@ -889,23 +872,6 @@
       "has_source": true,
       "size_kb": 14,
       "last_modified": "2026-05-26T18:53:32.479090+00:00",
-      "epistemic_tier": 2,
-      "verdict": "KEEP",
-      "notes": ""
-    },
-    {
-      "stem": "PAPER_GSTAR_FTD_BRIDGE",
-      "title": "The master quadratic $P_$ as a math--physics bridge: $_-4$, the ternary substrate, and the FTD identification",
-      "tex": "docs/papers/PAPER_GSTAR_FTD_BRIDGE.tex",
-      "md": null,
-      "pdf": "docs/papers/PAPER_GSTAR_FTD_BRIDGE.pdf",
-      "location_class": "legacy",
-      "post_reframe": true,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 18,
-      "last_modified": "2026-05-26T18:53:32.480121+00:00",
       "epistemic_tier": 2,
       "verdict": "KEEP",
       "notes": ""

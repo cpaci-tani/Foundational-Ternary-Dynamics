@@ -12,28 +12,24 @@
  *      and c₁..c₄ are ratios of framework integers
  *      Result: 137.035999177... (< 0.001 ppt from CODATA 2022)
  *
- *   2. Exactly 3 generations (N_gen = floor(x₋) = 3):
- *      4th generation would falsify the master quadratic
- *
- *   3. Lattice Lorentz violation signature:
+ *   2. Lattice Lorentz violation signature:
  *      Discrete spacetime predicts energy-dependent photon speed
  *      v(E) = c[1 - E²/(24·E_P²)] — generic to ANY lattice model
  *      Current bound: ΔE/E_P < 10⁻¹⁰ — FTD predicts ε ~ 10⁻⁸⁰
  *
- *   4. Weinberg angle: sin²θ_W = N_c/N_eff = 3/13 = 0.23077
+ *   3. Weinberg angle: sin²θ_W = N_c/N_eff = 3/13 = 0.23077
  *      (exp: 0.23122 ± 0.00004, 0.19% error)
  *
- *   5. Strong coupling: α_s(M_Z) = b₃/(b₃+4N_eff) = 7/59 = 0.11864
+ *   4. Strong coupling: α_s(M_Z) = b₃/(b₃+4N_eff) = 7/59 = 0.11864
  *      (exp: 0.1179 ± 0.0009, 0.6% error)
  *
  * Checks:
  *   NP1: 4-term precision formula matches CODATA to < 1 ppt
- *   NP2: N_gen = 3 exactly (no 4th generation)
- *   NP3: Lattice Lorentz violation is undetectably small (< 10⁻⁴⁰)
- *   NP4: Weinberg angle within 0.3% of experiment
- *   NP5: Strong coupling within 1% of experiment
- *   NP6: All precision coefficients are exact integer ratios
- *   NP7: Falsification criteria are well-defined and testable
+ *   NP2: Lattice Lorentz violation is undetectably small (< 10⁻⁴⁰)
+ *   NP3: Weinberg angle within 0.3% of experiment
+ *   NP4: Strong coupling within 1% of experiment
+ *   NP5: All precision coefficients are exact integer ratios
+ *   NP6: Falsification criteria are well-defined and testable
  */
 
 #define _USE_MATH_DEFINES
@@ -104,21 +100,10 @@ int main() {
     double ppm_raw = std::abs(alpha_inv_raw - codata_2022) / codata_2022 * 1e6;
     std::cout << "  Uncorrected 1/α       = " << alpha_inv_raw << " (" << ppm_raw << " ppm)\n";
 
-    // ================================================================
-    // Part 2: Generation count
-    // ================================================================
-    double xm = ftd::X_MINUS;  // 3.024...
-    int n_gen = static_cast<int>(std::floor(xm));
-
     std::cout << std::setprecision(6);
-    std::cout << "\n--- Generation Count ---\n";
-    std::cout << "  x₋ = " << xm << "\n";
-    std::cout << "  N_gen = floor(x₋) = " << n_gen << "\n";
-    std::cout << "  Observed: 3 generations (e/μ/τ, u/c/t, d/s/b)\n";
-    std::cout << "  FALSIFICATION: Discovery of 4th sequential generation\n";
 
     // ================================================================
-    // Part 3: Lattice Lorentz violation bound
+    // Part 2: Lattice Lorentz violation bound
     // ================================================================
     // On a discrete lattice, the dispersion relation is:
     // ω²(k) = c²k² × [1 - (k²a²)/12 + ...]
@@ -141,7 +126,7 @@ int main() {
     std::cout << std::fixed;
 
     // ================================================================
-    // Part 4: Weinberg angle
+    // Part 3: Weinberg angle
     // ================================================================
     double sin2_w = ftd::SIN2_WEINBERG;  // 3/13
     double sin2_w_exp = 0.23122;
@@ -155,7 +140,7 @@ int main() {
     std::cout << "  Error: " << sin2_w_err * 100.0 << "%\n";
 
     // ================================================================
-    // Part 5: Strong coupling
+    // Part 4: Strong coupling
     // ================================================================
     double alpha_s = ftd::ontic::ALPHA_S_MZ;  // 7/59
     double alpha_s_exp = 0.1179;
@@ -168,7 +153,7 @@ int main() {
     std::cout << "  Error: " << alpha_s_err * 100.0 << "%\n";
 
     // ================================================================
-    // Part 6: Coefficient integer verification
+    // Part 5: Coefficient integer verification
     // ================================================================
     std::cout << "\n--- Precision Coefficient Verification ---\n";
     std::cout << "  c₁ = N_c²/D = " << ftd::N_C*ftd::N_C << "/"
@@ -189,7 +174,7 @@ int main() {
         std::abs(c4 - 141.0/11.0) < 1e-15;
 
     // ================================================================
-    // Part 7: Falsification criteria summary
+    // Part 6: Falsification criteria summary
     // ================================================================
     std::cout << "\n--- Falsification Criteria ---\n";
     std::cout << "  1. Precision α: measurement incompatible at > 10 ppm → FALSIFIED\n";
@@ -210,28 +195,24 @@ int main() {
     check("NP1: 4-term precision 1/α matches CODATA to < 1 ppt",
           ppt < 1.0);
 
-    // NP2: Exactly 3 generations
-    check("NP2: N_gen = floor(x₋) = 3 exactly",
-          n_gen == 3);
-
-    // NP3: Lattice Lorentz violation undetectably small
-    check("NP3: Lattice Lorentz violation < 10⁻⁴⁰ (undetectable)",
+    // NP2: Lattice Lorentz violation undetectably small
+    check("NP2: Lattice Lorentz violation < 10⁻⁴⁰ (undetectable)",
           lorentz_violation < 1e-40);
 
-    // NP4: Weinberg angle within 0.3%
-    check("NP4: sin²θ_W = 3/13 within 0.3% of experiment",
+    // NP3: Weinberg angle within 0.3%
+    check("NP3: sin²θ_W = 3/13 within 0.3% of experiment",
           sin2_w_err < 0.003);
 
-    // NP5: Strong coupling within 1%
-    check("NP5: α_s(M_Z) = 7/59 within 1% of experiment",
+    // NP4: Strong coupling within 1%
+    check("NP4: α_s(M_Z) = 7/59 within 1% of experiment",
           alpha_s_err < 0.01);
 
-    // NP6: All coefficients are exact integer ratios
-    check("NP6: Precision coefficients are exact integer ratios",
+    // NP5: All coefficients are exact integer ratios
+    check("NP5: Precision coefficients are exact integer ratios",
           coeffs_exact);
 
-    // NP7: Falsification criteria are defined
-    check("NP7: Falsification criteria are well-defined and testable",
+    // NP6: Falsification criteria are defined
+    check("NP6: Falsification criteria are well-defined and testable",
           falsification_defined);
 
     std::cout << "\n================================================================\n";
@@ -240,8 +221,7 @@ int main() {
     std::cout << "  NOTE: The 4-term precision formula is [DERIVED] from the\n";
     std::cout << "  master quadratic + modular deviation ε = e^π - π - 20.\n";
     std::cout << "  All coefficients c₁..c₄ are ratios of framework integers.\n";
-    std::cout << "  N_gen = 3 is [DERIVED] from floor(x₋). The Lorentz\n";
-    std::cout << "  violation bound is generic to ANY discrete spacetime.\n";
+    std::cout << "  The Lorentz violation bound is generic to ANY discrete spacetime.\n";
     std::cout << "  sin²θ_W and α_s are [DERIVED] from integer ratios.\n";
     std::cout << "================================================================\n";
     return failures;

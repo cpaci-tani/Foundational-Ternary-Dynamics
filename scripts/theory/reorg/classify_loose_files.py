@@ -50,8 +50,8 @@ CROSS_CUTTING_PROGRAMME_MIN = 6
 CROSS_CUTTING_SHARE_MAX = 0.35
 
 # A plurality computed from very few citations isn't trustworthy -- e.g. a
-# file citing just {FTD-0013, FTD-0014, FTD-0030} "wins" 2/3 for whichever
-# programme FTD-0013/0014 happen to sit in, even though the file itself
+# file citing just three ids, two of which sit in the same programme, "wins"
+# 2/3 for that programme, even though the file itself
 # (observed in practice: PARKING_LOT.md, REF_CLAIMS_MATRIX.md) is a
 # cross-cutting project/meta reference, not about that programme at all.
 # Below this many known-programme citations, route to LOW_CONFIDENCE instead

@@ -7,7 +7,7 @@ CLAIM [THEOREM + CONJECTURE]: The master quadratic
 produces x₊ = 137.036... and x₋ = 3.024....
 
 The algebra is [THEOREM]. The identification x₊ = 1/α is a conjectural
-physical match; the historical identification x₋→N_c is retired.
+physical match.
 """
 
 import math
@@ -103,27 +103,7 @@ def run() -> ProofSuite:
     )
 
     # =========================================================================
-    # Step 5: x₋ → N_c = 3
-    # =========================================================================
-    N_c_from_root = int(math.floor(xm))
-
-    s.assert_true(
-        "floor(x₋) = floor(3.024) = 3 (color charges)",
-        N_c_from_root == 3,
-        tag="[THEOREM]"
-    )
-
-    # Fractional excess: x₋ - 3 ≈ 0.024
-    excess = xm - 3.0
-
-    s.assert_true(
-        f"x₋ - N_c = {excess:.4f} (small fractional excess < 1%)",
-        0 < excess < 0.1,
-        tag="[THEOREM]"
-    )
-
-    # =========================================================================
-    # Step 6: Discriminant analysis — the Q_k family
+    # Step 5: Discriminant analysis — the Q_k family
     # =========================================================================
     # For the generalized quadratic x² - k·G*²·x + k·G*³ = 0:
     # Δ = k·G*³·(k·G* - 4)
@@ -183,7 +163,7 @@ def run() -> ProofSuite:
     )
 
     # =========================================================================
-    # Step 7: Selected-parameter mnemonic — not a derivation of dimension
+    # Step 6: Selected-parameter mnemonic — not a derivation of dimension
     # =========================================================================
     # log₂(16) + log₂(1/2) = 4 + (-1) = 3 = D
     D_from_k = math.log2(16) + math.log2(0.5)
@@ -195,7 +175,7 @@ def run() -> ProofSuite:
     )
 
     # =========================================================================
-    # Step 8: Sensitivity of x₊ to G*
+    # Step 7: Sensitivity of x₊ to G*
     # =========================================================================
     dG = 1e-9
     G_p = c + dG
@@ -214,7 +194,7 @@ def run() -> ProofSuite:
     )
 
     # =========================================================================
-    # Step 9: Harmonic mean identity
+    # Step 8: Harmonic mean identity
     # =========================================================================
     # G* = HM(x₊, x₋)/2 = x₊·x₋/(x₊+x₋)
     hm_half = xp * xm / (xp + xm)

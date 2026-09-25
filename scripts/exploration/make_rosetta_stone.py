@@ -141,7 +141,7 @@ c.setFillColor(CYAN)
 c.drawString(col1_x, y, 'x+ = 1/alpha = 137.036  (electromagnetism)')
 y -= 10
 c.setFillColor(RED_SOFT)
-c.drawString(col1_x, y, 'x- = 3.024              (color confinement)')
+c.drawString(col1_x, y, 'x- = 3.024')
 y -= 10
 c.setFillColor(GOLD)
 c.drawString(col1_x, y, 'x+*x- / (x++x-) = G*   (harmonic mean)')
@@ -156,9 +156,9 @@ ratios = [
     ('G*/8        = 0.3698', 'Visibility: 37% of reality is observable'),
     ('1 - G*/8    = 0.6302', 'Dark fraction: 63% structurally invisible'),
     ('x+/G*       = 46.32 ', 'EM is 46x the circle scale'),
-    ('x-/G*       = 1.022 ', 'Strong force IS the circle scale'),
+    ('x-/G*       = 1.022 ', 'Smaller root in units of G*'),
     ('x-/G* - 1   = 0.022 ', 'Confinement correction'),
-    ('(x+-x-)/(x++x-) = 0.957', 'EM-strong asymmetry'),
+    ('(x+-x-)/(x++x-) = 0.957', 'Normalized root difference'),
     ('K_C^2/x+x-  = 1/32  ', 'Reference frame context = 1/32 of physics (exact)'),
 ]
 for formula, meaning in ratios:

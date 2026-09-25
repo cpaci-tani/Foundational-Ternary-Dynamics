@@ -353,7 +353,7 @@ chain = [
     ("[AXIOM]  ", "Z^3 lattice with ternary states {-1, 0, +1}"),
     ("[THEOREM]", "Gap equation: x^2 - 16G*^2 x + 16G*^3 = 0"),
     ("[THEOREM]", "x+ = 137.036, alpha = 1/x+"),
-    ("[THEOREM]", "N_C = floor(x-) = 3, N_EFF = b_3 + 2*N_C = 13"),
+    ("[THEOREM]", "N_C = 3, N_EFF = b_3 + 2*N_C = 13"),
     ("[THEOREM]", "sin^2(theta_W) = N_C/N_EFF = 3/13"),
     ("[THEOREM]", "Ternary decomposition: 3 = 2 (active +-) + 1 (void 0)"),
     ("[THEOREM]", "Gauge weights: w_SU2 = 2, w_U1 = 1"),

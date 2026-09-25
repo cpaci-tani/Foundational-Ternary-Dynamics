@@ -4,11 +4,6 @@
   "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
   "date": "2026-07-12"
  },
- "preregister-adversarial-look-elsewhere-v1": {
-  "status": "arc2-disposition-pending",
-  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
-  "date": "2026-07-12"
- },
  "preregister-alpha-d3-forced-escape-v1": {
   "status": "executed-verdict-booked",
   "note": "tag exists; verdict doc(s): docs/theory/10_eft_program/alpha_readout_programme/ANALYSIS_ALPHA_D3_FORCED_ESCAPE_v1.md; manifest row owed via census addendum",
@@ -54,11 +49,6 @@
   "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
   "date": "2026-07-12"
  },
- "preregister-chowla-selberg-higher-h-scan-v1": {
-  "status": "arc2-disposition-pending",
-  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
-  "date": "2026-07-12"
- },
  "preregister-clock-hypothesis-derivation-v2": {
   "status": "historical-superseded",
   "note": "superseded by v3 [CLOSED NEGATIVE, AXIOM-LEVEL]; docs archived/retracted",
@@ -80,11 +70,6 @@
   "date": "2026-07-12"
  },
  "preregister-commutativity-independence-v1": {
-  "status": "anchored-late",
-  "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
-  "date": "2026-07-12"
- },
- "preregister-damerell-scan-v1": {
   "status": "anchored-late",
   "note": "tag cut 2026-07-12 at the registration commit (content verified where a SHA was recorded); declared at lock time but never cut - FTD-0384 reconciliation",
   "date": "2026-07-12"
@@ -197,11 +182,6 @@
  "preregister-phase-ii-wilson-dirac-g2-v1": {
   "status": "executed-verdict-booked",
   "note": "tag exists; verdict doc(s): docs/theory/02_foundations/FOUND_STRUCTURAL_DECOUPLING.md; manifest row owed via census addendum",
-  "date": "2026-07-12"
- },
- "preregister-polynomial-scan-extended-v1": {
-  "status": "arc2-disposition-pending",
-  "note": "tag exists, no non-archived verdict doc located mechanically; grandfather clause - Arc-2 disposition (run/retire/re-lock)",
   "date": "2026-07-12"
  },
  "preregister-qdyn-mass-gap-v1": {

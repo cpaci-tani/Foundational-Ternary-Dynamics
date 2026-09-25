@@ -2259,9 +2259,8 @@ quantity was derived from the substrate or independently confirmed.
 **Historical Phase-11 campaign assertions (2026-03-16):**
 - `test_falsifiability` (12 checks) -- Wrong parameters produce wrong physics
 - `campaign_integer_sweep` (7 checks) -- recorded one passing
-  `{3,4,7,13}` combination among 315 tested, but one of its five gates is
-  `floor(x_-)=N_C`; that physical identification was retired with FTD-0014.
-  The sweep therefore cannot support a current uniqueness claim or grade.
+  `{3,4,7,13}` combination among 315 tested. The sweep cannot support a
+  current uniqueness claim or grade.
 - `campaign_hydrogen_spectrum` (8 checks) -- classical Kepler/virial
   consistency for an imposed `1/r` force (including the recorded 0.0004%
   radius error); generic to classical `1/r` dynamics, not evidence for a
@@ -2857,9 +2856,8 @@ status comes from the LEDGER, not from this historical scorecard.
   therefore cannot evidence the master quadratic (FTD-0792). The master
   quadratic itself is `[THEOREM]` algebra; `x_+ = 1/alpha` remains
   `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013).
-- **Integer sweep:** the historical 315-combination result required
-  `floor(x_-)=N_C`. That identification (FTD-0014) is retired, so this sweep
-  cannot support a current uniqueness grade.
+- **Integer sweep:** the historical 315-combination result cannot support a
+  current uniqueness grade.
 
 ### Historical comparison values
 

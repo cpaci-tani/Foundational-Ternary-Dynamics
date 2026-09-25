@@ -144,7 +144,7 @@ def compute_ftd_values(nc=N_c, nb=N_base, b3=None, neff=None):
     if n_e != 0:
         results["n_s"] = 1 - 2.0 / n_e
 
-    # 15. x_minus (should be ~3 = N_c)
+    # 15. x_minus
     results["x_minus"] = x_minus
 
     return results

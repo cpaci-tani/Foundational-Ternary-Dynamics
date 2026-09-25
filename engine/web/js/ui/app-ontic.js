@@ -87,7 +87,7 @@ export function createOnticPanel(deps) {
             ['G*', G_STAR.toFixed(10), 'Universal render bridge'],
             ['ϖ', VARPI.toFixed(10), 'Lemniscate constant'],
             ['1/α', X_PLUS.toFixed(7), 'Fine structure inverse'],
-            ['x₋', X_MINUS.toFixed(7), 'Smaller master-quadratic root; identification ↔ N_c RETIRED (Cleanup Taxonomy v1.4 §5)'],
+            ['x₋', X_MINUS.toFixed(7), 'Smaller master-quadratic root'],
             ['α', ALPHA.toFixed(10), 'Fine structure constant'],
             ['K_B', K_B + ' MeV', 'Imposed electron-mass anchor (not the genesis threshold)'],
         ];

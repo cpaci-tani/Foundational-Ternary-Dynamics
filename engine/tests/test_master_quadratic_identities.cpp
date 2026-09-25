@@ -5,9 +5,9 @@
  * The master quadratic is x^2 - 16G*^2 x + 16G*^3 = 0 with roots x_+ = 137.036..., x_- = 3.024...
  *
  * This test verifies the algebraic identities that follow from Vieta's formulas,
- * specifically the cleanest single-line statement:
+ * specifically the harmonic identity:
  *
- *   α + 1/N_c = 1/G*   (when x_+ = 1/α and x_- = N_c)
+ *   1/x_+ + 1/x_- = 1/G*
  *
  * plus the three-means (AM, GM, HM) geometric-progression structure and the
  * normalized-form small-parameter content.
@@ -52,8 +52,8 @@ int main() {
     const double x_minus = 0.5 * (A - sqrt_disc);
 
     std::printf("\n  Roots (exact solution):\n");
-    std::printf("    x+ = %.12f    (identified with 1/α under SP4)\n", x_plus);
-    std::printf("    x- = %.12f    (identified with N_c under SP4)\n", x_minus);
+    std::printf("    x+ = %.12f\n", x_plus);
+    std::printf("    x- = %.12f\n", x_minus);
 
     // --- Vieta identities (should be exact to machine precision) ---
     std::printf("\n--- Vieta identities (all exact by construction) ---\n");
@@ -70,17 +70,17 @@ int main() {
     std::printf("                   1/G* = %.15f  (err %.2e)\n",
                 1.0/G_star, std::abs(recip - 1.0/G_star));
 
-    // --- The central physical identity (under SP4) ---
-    std::printf("\n--- The α + 1/N_c = 1/G* identity ---\n");
+    // --- The harmonic identity ---
+    std::printf("\n--- The harmonic identity 1/x+ + 1/x- = 1/G* ---\n");
 
-    const double alpha    = 1.0 / x_plus;          // under SP4
-    const double N_c_root = x_minus;               // under SP4 strict
-    const double lhs = alpha + 1.0 / N_c_root;
+    const double inv_x_plus  = 1.0 / x_plus;
+    const double inv_x_minus = 1.0 / x_minus;
+    const double lhs = inv_x_plus + inv_x_minus;
     const double rhs = 1.0 / G_star;
 
-    std::printf("  α = 1/x+     = %.15f\n", alpha);
-    std::printf("  1/x-         = %.15f  (= 1/N_c under SP4 strict)\n", 1.0/N_c_root);
-    std::printf("  α + 1/x-     = %.15f\n", lhs);
+    std::printf("  1/x+         = %.15f\n", inv_x_plus);
+    std::printf("  1/x-         = %.15f\n", inv_x_minus);
+    std::printf("  1/x+ + 1/x-  = %.15f\n", lhs);
     std::printf("  1/G*         = %.15f\n", rhs);
     std::printf("  |diff|       = %.2e   <-- EXACT by Vieta\n", std::abs(lhs - rhs));
 
@@ -131,7 +131,6 @@ int main() {
 
     std::printf("  x+ / x-          = %.8f\n", hierarchy);
     std::printf("  1/ε − 1 = 16G* − 1 = %.8f  (leading-order prediction)\n", pred_hier);
-    std::printf("  (= EM/QCD-like scale separation)\n");
 
     std::printf("\n================================================================\n");
     std::printf("  SUMMARY — what the master quadratic actually says:\n");
@@ -140,10 +139,6 @@ int main() {
     std::printf("  (2) Reciprocal sum 1/x+ + 1/x- = 1/G* exact (Vieta).\n");
     std::printf("  (3) In normalized units w = x/(16G*²): w² - w + ε = 0 with ε = 1/(16G*).\n");
     std::printf("  (4) Leading-order roots: w+ ≈ 1, w- ≈ ε.\n");
-    std::printf("  (5) THE central identity under SP4: α + 1/N_c = 1/G*.\n");
-    std::printf("\n  The whole polynomial is a Vieta-encoding of:\n");
-    std::printf("      α + 1/N_c = 1/G*    (reciprocal sum)\n");
-    std::printf("      α · N_c = 1/(16 G*³) (reciprocal product)\n");
     std::printf("================================================================\n");
 
     return 0;

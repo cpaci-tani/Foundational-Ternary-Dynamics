@@ -1,14 +1,14 @@
 # EXPLR — 3×3 Mixing Matrix Generalization: Honest Negative Result
 
 **Document type:** Exploratory brainstorm (negative result)
-**Status:** [STRUCTURAL OBSERVATION — NEGATIVE] — the 2×2 master-quadratic-as-mixing reading does NOT extend cleanly to 3×3; FTD's mode count for EM-color appears to be specifically 2
+**Status:** [STRUCTURAL OBSERVATION — NEGATIVE] — the 2×2 master-quadratic-as-mixing reading does NOT extend cleanly to 3×3; FTD's mode count appears to be specifically 2
 **Related:** `EXPLR_MASTER_QUADRATIC_STRUCTURAL_READINGS.md` (the 2×2 reading); `SPEC_PHYSICS_BRIDGE.md`
 
 ---
 
 ## 0 · Question and result
 
-**Question:** the 2×2 master quadratic gives `(1/α, N_c)` as symmetric/antisymmetric eigenmodes. Does a natural 3×3 generalization yield a triple of SM constants (e.g., lepton masses, gauge couplings)?
+**Question:** the 2×2 master quadratic gives the root pair `(x₊, x₋)` as symmetric/antisymmetric eigenmodes. Does a natural 3×3 generalization yield a triple of SM constants (e.g., lepton masses, gauge couplings)?
 
 **Result:** **No.** Within the natural FTD structures examined, no 3×3 mixing matrix produces a clean SM-matching triple. The 2×2 master quadratic appears to be **structurally specific to a 2-mode system**, not extensible to higher-rank mixings via the same template.
 
@@ -41,13 +41,13 @@ With diagonal `d = 8G*²` and off-diagonal `c = √(64G*⁴ − 16G*³)` (matchi
 
 ```
 eigenvalues = (3.024, 3.024, 204.04)
-              \____ degenerate ____/  (= N_c, doubled)
+              \____ degenerate ____/  (= x₋, doubled)
                                      (no SM match)
 ```
 
-The N_c eigenvalue appears twice (degenerate), and the third eigenvalue is 204.04 — not a recognized SM constant.
+The x₋ eigenvalue appears twice (degenerate), and the third eigenvalue is 204.04 — not a recognized SM constant.
 
-**Verdict:** the master-quadratic-style symmetric coupling, applied to a 3×3 system, gives a "1+2 splitting" with N_c doubled — not a 3-mode system mapping to 3 distinct SM constants.
+**Verdict:** the master-quadratic-style symmetric coupling, applied to a 3×3 system, gives a "1+2 splitting" with x₋ doubled — not a 3-mode system mapping to 3 distinct SM constants.
 
 ### 1.3 · Searches over off-diagonal value (varying c)
 
@@ -103,12 +103,6 @@ This is a 3-eigenvalue identity but doesn't have the same Kirchhoff parallel-equ
 
 FTD-0111's tower `M_k(x) = x² − 2^k·G*^(k−2)·x + 2^k·G*^(k−1) = 0` is **degree-2 at every level k**. Higher levels don't give higher-degree polynomials — they give different degree-2 polynomials. The tower doesn't naturally produce degree-3 or higher polynomials.
 
-### 2.3 · 2-mode systems are physically distinguished
-
-In physics, 2-state systems (qubits, two-level atoms, isospin doublets, etc.) are fundamentally simpler than N-state systems. The pair (1/α, N_c) being mapped to a 2-mode system is consistent with the SM's 2-sector (EM, color) decomposition at this level. Adding a 3rd sector (weak force) requires bringing in α_W which wasn't part of the master quadratic dual prediction.
-
-**Maybe the master quadratic specifically describes EM-color mixing**, not a higher-rank gauge structure. The 2-mode reading is then the correct one, and 3×3 generalizations are NOT structurally meaningful.
-
 ---
 
 ## 3 · What this NEGATIVE result tells us
@@ -117,20 +111,7 @@ In physics, 2-state systems (qubits, two-level atoms, isospin doublets, etc.) ar
 
 The harmonic-conjugacy reading of the master quadratic (commit `09a1569`) is a **structurally specific 2-mode interpretation**. Attempting to generalize to N-mode (e.g., 3×3, 4×4) doesn't yield clean structure within FTD's natural search space.
 
-This is itself a fact about FTD's structure: the dual-prediction is specifically a 2-component object, not a slice of a higher-rank system.
-
-### 3.2 · Open question: is there a 3-mode FTD constant pair?
-
-Maybe FTD has multiple INDEPENDENT 2-mode systems, each describing a different physical pairing. E.g.:
-- (1/α, N_c) — EM  color
-- Some other pair — weak  ?
-- Another pair — Higgs  ?
-
-If true, FTD's full structure is a collection of 2×2 mixing matrices, not a single higher-rank one. This would be consistent with the spine theorems but would require identifying additional master-quadratic-like polynomials for other physical pairings.
-
-This is a research direction, not a session-scale task. The (1+i)-tower's other levels (k=3, 5, 6, ...) give different polynomials with different roots; whether any of them maps to a physically meaningful pair is an open question.
-
-### 3.3 · Implication for Paper A
+### 3.2 · Implication for Paper A
 
 Paper A should present the master-quadratic-as-2×2-mixing reading **as specific to the 2-mode case**, not claim it as a template for higher-rank gauge structures. This honesty is important: overclaiming "FTD's master quadratic predicts all gauge couplings via a higher-rank mixing matrix" would be fishing.
 
@@ -169,7 +150,7 @@ The 3×3 generalization brainstorm yielded:
 3. **Various 3×3 forms**: no clean SM triple emerges
 4. **Lepton mass triple**: not naturally produced; post-hoc near-match flagged as fishing
 
-**The harmonic-conjugacy 2×2 reading is structurally specific to 2-mode systems and does not extend cleanly to higher rank.** This is itself a structural observation: FTD's master quadratic describes specifically EM-color mixing, not a slice of higher gauge structure.
+**The harmonic-conjugacy 2×2 reading is structurally specific to 2-mode systems and does not extend cleanly to higher rank.**
 
 For Paper A: present the 2×2 reading at its proper scope. Don't overclaim N-mode generalization.
 
@@ -185,7 +166,7 @@ The post-hoc lepton-mass observation `trace ≈ 48·G*⁴` is **explicitly NOT p
 
 ## 7 · Single-line summary
 
-**The 2×2 master-quadratic-as-mixing reading does NOT extend cleanly to 3×3 within natural FTD structures: sub-blocks of the 4×4 A_{1g} matrix don't match SM triples; fully-symmetric 3×3 forms can't give 3 distinct eigenvalues; specific SM triples (lepton masses, gauge couplings) don't emerge from natural FTD constructions. The harmonic-conjugacy 2-mode reading is structurally specific to (1/α, N_c) and does not template to higher-rank gauge structures. A post-hoc scan finds `m_e+m_μ+m_τ ≈ 48·G*⁴` at 0.2% but is explicitly flagged as fishing per CLAUDE.md anti-target discipline and not promoted. The negative result is itself informative: FTD's master quadratic describes specifically a 2-component pair, with the (1+i)-tower's harmonic invariant being a 2-eigenvalue identity that doesn't generalize to 3-mode systems via the same template.**
+**The 2×2 master-quadratic-as-mixing reading does NOT extend cleanly to 3×3 within natural FTD structures: sub-blocks of the 4×4 A_{1g} matrix don't match SM triples; fully-symmetric 3×3 forms can't give 3 distinct eigenvalues; specific SM triples (lepton masses, gauge couplings) don't emerge from natural FTD constructions. The harmonic-conjugacy 2-mode reading is structurally specific to the root pair (x₊, x₋) and does not template to higher-rank gauge structures. A post-hoc scan finds `m_e+m_μ+m_τ ≈ 48·G*⁴` at 0.2% but is explicitly flagged as fishing per CLAUDE.md anti-target discipline and not promoted. The negative result is itself informative: FTD's master quadratic describes specifically a 2-component pair, with the (1+i)-tower's harmonic invariant being a 2-eigenvalue identity that doesn't generalize to 3-mode systems via the same template.**
 
 ---
 

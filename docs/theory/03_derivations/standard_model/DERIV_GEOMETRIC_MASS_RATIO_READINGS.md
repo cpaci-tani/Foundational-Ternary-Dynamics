@@ -25,7 +25,7 @@
 > LEDGER FTD-0018/FTD-0020, having been missed by the 2026-07-01 sweep). All
 > three retractions found the same defect: the geometric reading is a
 > substitution identity chosen to land on an already-known integer, not a
-> forcing chain, and fails the FTD-0097/0189 look-elsewhere bar. The fourth
+> forcing chain, and fails the FTD-0097 look-elsewhere bar. The fourth
 > (`DERIV_DISCRETE_ATOMIC_SPECTRUM.md`, §4) was never promoted to `[THEOREM]`
 > — its header tag was always `[STRONGLY MOTIVATED CONJECTURE]` — but its
 > body prose carried the same unhedged, derivation-implying rhetoric and was
@@ -102,7 +102,7 @@ The original document's conclusion ("the parametric equations $3b_3(b_3+N_c)-N_c
 > **Correction notice.** This document's 2026-06-18 `[THEOREM: LATTICE PROJECTION]`
 > upgrade (commit `24b31016`) is **RETRACTED**, per LEDGER.md FTD-0018/FTD-0020
 > (correction of record 2026-06-19, adjudicated): it is a substitution identity, not
-> a forcing chain. It fails the FTD-0097/0189 look-elsewhere bar — a competitor
+> a forcing chain. It fails the FTD-0097 look-elsewhere bar — a competitor
 > ratio fits sin²θ_W better (2/9 at 0.31% vs this document's 3/13 at 3.5%) and
 > another fits α_s better (2/17 at 0.29% vs 7/59 at 0.63%) — and the standing
 > zero-promotion discipline. The document's own citation of "per FTD-0259" as
@@ -156,7 +156,7 @@ $$\alpha_s(M_Z) = \frac{b_3}{b_3 + 52} = \frac{7}{59}$$
 
 > **Epistemic note (adjudicated).** The `[THEOREM]` promotion (commit `fdc483d0`)
 > is **RETRACTED** — these are substitution identities, not forcing chains; they fail the
-> FTD-0097/0189 look-elsewhere bar and the standing zero-promotion discipline.
+> FTD-0097 look-elsewhere bar and the standing zero-promotion discipline.
 > **Honest tags:** the proton mass ratio is a `[STRONGLY MOTIVATED CONJECTURE]` via the
 > prior formula $m_p/m_e = N_{eff}/\alpha + N_{base}\cdot N_{eff} + N_c$ (≈173 ppm); the six
 > quark masses are `[PARAMETRIC]` (tuned integer recipes; $m_t$ imports $Z=118$/Oganesson
@@ -261,4 +261,4 @@ The standard model derives the capacities of the periodic table $(2, 8, 18, 32)$
 
 ## §5 · What this document is, as a whole
 
-Four independent applications of one reused technique (Moore-neighborhood boundary/shell counting by $O_h$ symmetry class, tuned post-hoc to a known target) to four unrelated physics targets. None is a forcing derivation. §1–§3 carry an explicit adjudicated retraction record; §4 carries an unaudited-but-unpromoted `[SMC]` tag with corrected rhetoric. Reading any section as evidence for the others is not warranted — the shared technique's repeated success at landing near known targets is itself the pattern the FTD-0097/0189 look-elsewhere discipline exists to catch, not independent confirmation.
+Four independent applications of one reused technique (Moore-neighborhood boundary/shell counting by $O_h$ symmetry class, tuned post-hoc to a known target) to four unrelated physics targets. None is a forcing derivation. §1–§3 carry an explicit adjudicated retraction record; §4 carries an unaudited-but-unpromoted `[SMC]` tag with corrected rhetoric. Reading any section as evidence for the others is not warranted — the shared technique's repeated success at landing near known targets is itself the pattern the FTD-0097 look-elsewhere discipline exists to catch, not independent confirmation.

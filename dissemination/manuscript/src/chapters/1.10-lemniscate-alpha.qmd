@@ -132,7 +132,7 @@ This matches the lemniscatic constant used in this book to within 0.0006%.
 
 ::: {.callout-warning}
 ## Selection Principle S3
-The quadratic form relating electromagnetic and color structure is **argued from consistency**, not uniquely proven. The specific form emerges from lattice DoF counting and self-consistency requirements.
+The quadratic form is **argued from consistency**, not uniquely proven. The specific form emerges from lattice DoF counting and self-consistency requirements.
 
 **Update**: @sec-fermat-encoding provides a deeper derivation of this quadratic form from Fermat's Last Theorem structure, showing that the degree 2, coefficient 16, and powers $G^{*2}$ and $G^{*3}$ are determined by number-theoretic boundary constraints.
 :::
@@ -148,9 +148,8 @@ $$x = 8(G^*)^2 \pm \sqrt{64(G^*)^4 - 16(G^*)^3}$$
 | Root | Value | Physical Meaning |
 |------|-------|------------------|
 | $x_+$ | **137.036** | $1/\alpha$ (electromagnetic coupling) |
-| $x_-$ | **3.024** | $N_c$ (number of color charges) |
 
-![The master quadratic and its roots: the electromagnetic coupling ($1/\alpha \approx 137$) and color charges ($N_c \approx 3$) emerge from the same geometric structure.](../../media/images/fig-master-quadratic-roots.png){#fig-quadratic-roots}
+![The master quadratic and its roots $x_+ \approx 137.036$ and $x_- \approx 3.024$.](../../media/images/fig-master-quadratic-roots.png){#fig-quadratic-roots}
 
 The larger root gives:
 
@@ -261,13 +260,6 @@ $$\alpha_s = \frac{b_3}{b_3^2 + b_3 + N_c} = \frac{7}{49 + 7 + 3} = \frac{7}{59}
 ::: {.callout-note}
 Note: This formula can also be written as $\alpha_s = b_3/(b_3 + 4n_{eff})$ since $b_3^2 + b_3 + N_c = 49 + 7 + 3 = 59 = 7 + 52 = b_3 + 4n_{eff}$. Both forms yield 7/59.
 :::
-
-### Number of Colors
-The smaller root of the master quadratic is $N_c = 3.024$
-
-Taking the integer part: $\lfloor N_c \rfloor = 3$
-
-This provides a route from the quadratic’s smaller root to the integer $N_c = 3$ used for color.
 
 ### Gravitational Coupling
 
@@ -386,19 +378,6 @@ The ratio of atmospheric to solar neutrino mass-squared differences:
 $$\frac{\Delta m_{32}^2}{\Delta m_{21}^2} = \frac{(b_3 + N_c)^2}{N_c} = \frac{100}{3} = 33.33$$
 **Experimental: 32.58** (2.3% error)
 
-## Why Three Generations?
-
-The number of fermion generations is not arbitrary: it equals the number of colors:
-
-$$N_{\text{generations}} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3$$
-
-This is the **same derivation** that determines three color charges. The master quadratic gives $N_c = 3.024$; taking the integer part determines both:
-- 3 quark colors (for color confinement)
-- 3 fermion generations (electron, muon, tau families)
-
-Each generation contains $N_{\text{base}} = 4$ fermions (2 quarks + 2 leptons), giving:
-$$\text{Total fermions} = N_c \times N_{\text{base}} = 3 \times 4 = 12 = n_{\text{eff}} - 1$$
-
 ## The Cosmological Constant
 
 The cosmological constant problem (why vacuum energy is $10^{120}$ times smaller than naive QFT predictions) has a geometric answer:
@@ -446,7 +425,7 @@ The appearance of Fibonacci numbers in the framework is not coincidental: it rev
 | Fibonacci | Value | Framework Role | Appearance |
 |-----------|-------|----------------|------------|
 | $F_3$ | 2 | Binary shadow of ternary | Only Fibonacci power of 2 |
-| $F_4$ | 3 | $N_c$ (colors) | Master quadratic root |
+| $F_4$ | 3 | $N_c$ (colors) | Moore Layer Theorem |
 | $F_5$ | 5 | $N_{\text{base}} + 1$ | Under the square root in $\phi$ |
 | $F_6$ | 8 | $2^{N_c}$ | Frequency mode; W boson denominator |
 | $F_7$ | 13 | $n_{\text{eff}}$ | Effective dimension |
@@ -651,7 +630,7 @@ This connects the quadratic iteration $z \to z^2 + c$ to the master quadratic th
 ::: {.callout-important}
 ## The Three-Regime Interpretation
 
-- **Physics regime** ($k = 16$): Deep inside the Mandelbrot set, where iterations converge. Corresponds to stable, real-valued physics with $\alpha$ and $N_c$ as real roots.
+- **Physics regime** ($k = 16$): Deep inside the Mandelbrot set, where iterations converge. Corresponds to stable, real-valued physics with $x_+$ and $x_-$ as real roots.
 
 - **Critical regime** ($k_c$): At the boundary, the cusp of the cardioid. The transition point.
 
@@ -738,7 +717,7 @@ $$\frac{\alpha_s}{\alpha} = \frac{G^*/(8\pi)}{1/137} \approx 16$$
 This is the **physics coefficient** $k = 16$ from the master quadratic!
 
 ### The Correlation Product
-$$\frac{1}{\alpha} \times N_c = 137.036 \times 3.024 \approx 414.4$$
+$$x_+ \times x_- = 137.036 \times 3.024 \approx 414.4$$
 
 And:
 $$16 \times (G^*)^3 = 16 \times (2.9587)^3 = 414.4$$
@@ -782,8 +761,8 @@ Individual terms: $8/20 = 2^{N_c}/20$ and $7/20 = b_3/20$
 
 **Step 3: G* is self-consistently determined.**
 
-From the master quadratic with roots $1/\alpha$ and $N_c$:
-$$G^* = \frac{\text{Product}}{\text{Sum}} = \frac{(1/\alpha) \times N_c}{(1/\alpha) + N_c}$$
+From the master quadratic with roots $x_+$ and $x_-$:
+$$G^* = \frac{\text{Product}}{\text{Sum}} = \frac{x_+ x_-}{x_+ + x_-}$$
 
 This harmonic-mean-like relation makes G* a *derived quantity*, not a choice.
 
@@ -835,7 +814,6 @@ No broader claim is made here about uniqueness outside the stated constraint cla
 | Category | Count | Best Accuracy | Status |
 |----------|-------|---------------|--------|
 | Coupling constant ($\alpha$): root matches $1/\alpha$ | 1 | 1.26 ppm | [SMC] (master quadratic [T]; identification not derived) |
-| $N_c$ from quadratic: root matches 3 | 1 | ~0.8% (integer 3) | [SMC] (identification not derived) |
 | Coefficient 16 | 1 | Exact | [T] THEOREM |
 
 **Companion Work Derivations** [†] (same framework, separate papers):
@@ -890,7 +868,7 @@ x_plus = (-b + np.sqrt(discriminant)) / (2*a)
 x_minus = (-b - np.sqrt(discriminant)) / (2*a)
 
 print(f"1/alpha = {x_plus:.3f}")   # Output: 137.036
-print(f"N_c = {x_minus:.3f}")  # Output: 3.024
+print(f"x_minus = {x_minus:.3f}")  # Output: 3.024
 ```
 
 ## Concepts

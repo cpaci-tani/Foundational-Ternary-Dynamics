@@ -77,7 +77,7 @@ All four framework integers derive from the dimensionality D = 3 (see [FOUND_SPA
 | Integer | Formula from D | Value | Physical meaning |
 |---------|---------------|-------|------------------|
 | N_base | $2^{D-1}$ | 4 | Faces of D-cube; base dimension of division algebra tower |
-| N_c | $2^{D-1} - 1$ | 3 | Color charges; master quadratic root $x_- \approx 3.024$ |
+| N_c | $2^{D-1} - 1$ | 3 | Color charges |
 | b₃ | $2^D - 1$ | 7 | QCD beta coefficient (N_f = 6); Mersenne number; octonion units |
 | N_eff | $F_7$ (Fibonacci) | 13 | Self-referential closure; $b_3 + 2N_c = 7 + 6 = 13$ |
 
@@ -421,7 +421,7 @@ The following identify integer factors with physical meanings:
 | Integer | Identification | Status |
 |---------|---------------|--------|
 | 16 = N_base² | Physical DOF on minimal lattice cell | [SELECTION] — argued from Gauss constraint counting |
-| 3 = N_c | Color charges | [STRONGLY MOTIVATED CONJECTURE] — from master quadratic $x_-$ |
+| 3 = N_c | Color charges | [STRONGLY MOTIVATED CONJECTURE] |
 | 15 = D_Σ | Division algebra tower sum | [SELECTION] — Hurwitz theorem gives 15, but its role in vacuum energy is argued |
 | 8 = 2^D | Lattice octants | [SELECTION] — geometric interpretation |
 | 7 = b₃ | QCD beta coefficient | [THEOREM] — standard QCD with N_f = 6 |

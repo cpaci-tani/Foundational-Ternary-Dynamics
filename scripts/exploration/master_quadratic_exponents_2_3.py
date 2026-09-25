@@ -109,15 +109,9 @@ print(f"  36 R_3^3 = {B_eq}")
 print(f"  y_+ = {y_plus}")
 print(f"  y_- = {y_minus}")
 print()
-print(f"  These values do not match any known physical constant pair.")
-print(f"  Test rank-0 prediction:")
-print(f"    If FTD's (alpha^-1, N_c) is intrinsic to R_4 = G*, then R_3 should")
-print(f"    produce a DIFFERENT pair -- which it does: ({float(y_plus):.2f}, {float(y_minus):.2f}) vs (137.036, 3.024)")
-print()
 print("  Conclusion (C6): rank-0 alone does NOT force exponent (2, 3); equianharmonic")
 print("  rank-0 curve would equally well admit a master quadratic with arbitrary")
-print("  exponents. The match to (alpha^-1, N_c) at R_4 specifically is what fixes")
-print("  the exponent pair to (2, 3).")
+print("  exponents.")
 print()
 
 # === (C7) (2, 3) from local invariants ===
@@ -184,9 +178,7 @@ OVERALL CONCLUSION:
 
   In the math->physics ontology chain, the chi_{-4} character generates 16 and G*,
   but the assembly into a quadratic of specific degree (with exponents 2 and 3 on G*)
-  is a SEPARATE LAYER OF STRUCTURE that does not arise from chi_{-4} alone. The most
-  parsimonious description of this layer is: "the polynomial form is chosen by
-  Vieta + dimensional matching to produce roots x_+ ~ alpha^-1 and x_- ~ N_c."
+  is a SEPARATE LAYER OF STRUCTURE that does not arise from chi_{-4} alone.
 
   This is a maximally-sharp statement of the math-physics conjecture: ONE bit of
   structural data (the exponent pair (2, 3) interpreted as 'rank-2 polynomial of

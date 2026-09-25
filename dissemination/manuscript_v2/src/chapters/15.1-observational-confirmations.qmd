@@ -130,9 +130,6 @@ If a disk-shaped starless halo is found, FTD's manifestation dynamics would be f
 
 **Status:** [CONSISTENT]
 
-The G* framework predicts:
-$$N_{\text{gen}} = \lfloor x_- \rfloor = \lfloor 3.024 \rfloor = 3$$
-
 Current LHC bounds exclude fourth-generation quarks up to ~1 TeV. This is **consistent** with FTD but does not uniquely support it (many theories predict 3 generations).
 
 ### Tensor-Only Gravitational Waves
@@ -401,7 +398,6 @@ The eEDM measurement **constrains** potential extensions to FTD. Any future FTD-
 | No 4th generation | Particle physics | ✅ Consistent (LHC) |
 | Tensor GW only | Gravity | ✅ Consistent (LIGO) |
 | $\alpha$ = 1/137.036 | Couplings | (matches to **1.26 ppm**; identification [SMC], not derived) |
-| $N_c \approx 3$ | QCD | (consistent) |
 
 ::: {.callout-note}
 ## The Epistemic Situation (Updated 2025)

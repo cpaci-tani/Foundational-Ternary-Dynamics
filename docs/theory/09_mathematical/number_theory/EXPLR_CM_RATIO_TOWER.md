@@ -80,7 +80,7 @@ Roots:
 | $d$ | $\rho_d$ | $16\rho_d^2$ | $16\rho_d^3$ | $x_+$ | $x_-$ | physics match? |
 |---:|---:|---:|---:|---:|---:|:---:|
 | −3 | 1.978 | 62.62 | 123.89 | 60.578 | 2.045 | no |
-| **−4** | **2.959** | **140.06** | **414.39** | **137.036** | **3.024** | **YES ← $1/\alpha$ + $N_c$** |
+| **−4** | **2.959** | **140.06** | **414.39** | **137.036** | **3.024** | **YES ← $1/\alpha$** |
 | −7 | 11.02 | 1942.06 | 21396.0 | 1930.98 | 11.080 | no |
 | −8 | 11.43 | 2088.49 | 23861.0 | 2077.00 | 11.488 | no |
 | −11 | 12.17 | 2371.34 | 28868.9 | 2359.10 | 12.237 | no |
@@ -89,7 +89,7 @@ Roots:
 | −67 | 5.79 | 537.03 | 3111.24 | 531.17 | 5.857 | no |
 | −163 | 1.28 | 26.21 | 33.54 | 24.860 | 1.349 | no |
 
-This is the explicit form of the **CM Uniqueness Theorem** (`SPEC_ALGEBRAIC_SPINE.md` Theorem 3): of the 9 class-number-1 fields, **only d = −4 produces a master-quadratic polynomial whose roots simultaneously match dimensionless physical constants** ($1/\alpha$ to 1.26 ppm; $N_c$ to 0.80%). The other 8 give mathematically valid polynomials with valid roots; those roots simply don't match any known physical constant.
+This is the explicit form of the **CM Uniqueness Theorem** (`SPEC_ALGEBRAIC_SPINE.md` Theorem 3): of the 9 class-number-1 fields, **only d = −4 gives a larger root that matches $1/\alpha$ to permille precision** ($1/\alpha$ to 1.26 ppm). The other 8 give mathematically valid polynomials with valid roots; those roots simply don't match any known physical constant.
 
 Notable structural features:
 
@@ -97,7 +97,6 @@ Notable structural features:
 - **The sum of roots equals $16\rho^2$**; this is the trace
 - **Both roots are real and positive** for all 9 (since $\rho_d > 1/4$ in all cases)
 - **The smaller root $x_-$ stays modest** (range 1.35 – 12.25) while the larger root $x_+$ varies wildly (24.9 to 2362) — a structural feature of the polynomial form, not a fit
-- **Only at d = −4 does the small root land in single digits AND the large root land near a physical scale**; the others either both stay modest (d = −3, −163) or both blow up (d = −7 onwards)
 
 ---
 

@@ -16,7 +16,6 @@ This test verifies:
 1. G* computation from mathematical constants
 2. Master quadratic solution
 3. Agreement with experimental 1/alpha to 1.26 ppm
-4. The smaller root x_- ~ 3.024 relates to N_c = 3
 """
 
 import unittest
@@ -117,7 +116,7 @@ class TestMasterQuadratic(unittest.TestCase):
 
         x^2 - 16*G*^2*x + 16*G*^3 = 0
         x_+ ~ 137.036 (identified with 1/alpha)
-        x_- ~ 3.024 (floor gives N_c = 3)
+        x_- ~ 3.024
         """
         c = self.g_star
 
@@ -221,22 +220,6 @@ class TestFineStructureConstant(unittest.TestCase):
         print(f"\n  FTD derived:   alpha = {alpha_derived:.12f}")
         print(f"  Experimental:  alpha = {alpha_exp:.12f}")
         print(f"  Error: {error_ppm:.2f} ppm [PASS]")
-
-    def test_x_minus_color_relation(self):
-        """
-        Verify x_- relates to N_c = 3.
-
-        x_- = 3.024... and floor(x_-) = 3 = number of colors.
-        This is used to derive N_gen = 3 (fermion generations).
-        """
-        x_minus = self.x_minus
-        floor_x_minus = int(np.floor(x_minus))
-
-        self.assertEqual(floor_x_minus, 3)
-        self.assertAlmostEqual(x_minus, 3.024, places=2)
-
-        print(f"\n  x_- = {x_minus:.10f}")
-        print(f"  floor(x_-) = {floor_x_minus} = N_c = N_gen [PASS]")
 
 
 class TestNapkinDerivation(unittest.TestCase):

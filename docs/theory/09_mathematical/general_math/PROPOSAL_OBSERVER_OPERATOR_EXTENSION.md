@@ -95,8 +95,6 @@ $$
 
 This is the **target slope** that any observer-operator extension must produce. Notably it is **not** $-2/(3\pi)$ directly: it differs by a factor $\delta/G^* \approx 0.323$, or equivalently ~$1/3$. The fermion-loop content in $R(t)$ must be normalized by this factor.
 
-(The factor-of-3 here is structurally suggestive: $G^*/\delta \approx 3.09$ is close to but not exactly $N_c \approx 3.024$. Whether this is structural or numerical coincidence is open.)
-
 ---
 
 ## §5 — Sketch of the operator extension

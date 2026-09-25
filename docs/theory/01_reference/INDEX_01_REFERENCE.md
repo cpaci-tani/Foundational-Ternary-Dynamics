@@ -58,7 +58,7 @@
 
 | File | Tag | Purpose |
 |---|---|---|
-| [SPEC_PHYSICS_BRIDGE.md](SPEC_PHYSICS_BRIDGE.md) | [SYNTHESIS] | What the algebraic spine says about α and N_c; structural-uniqueness synthesis (FTD-0121). |
+| [SPEC_PHYSICS_BRIDGE.md](SPEC_PHYSICS_BRIDGE.md) | [SYNTHESIS] | What the algebraic spine says about α (FTD-0121). |
 | [SPEC_ALPHA_READOUT_CONTRACT.md](SPEC_ALPHA_READOUT_CONTRACT.md) | [REFERENCE] / [OPEN PROGRAM] | MC-T4.3 closure criteria — what it would mean to "earn the map" from spine to physical α (FTD-0152). |
 | [SPEC_ALPHA_READOUT_PROGRAM.md](SPEC_ALPHA_READOUT_PROGRAM.md) | [OPEN PROGRAM — legacy operator route underdetermined; direct response open] | Preserves the canonical W_U extraction constraints and odd-G* obstruction. The direct route now fixes cotangent speed $1/6$ and one canonical source edge, while the exact action-scale obstruction leaves the blocked curvature $\chi_{\rm EM}=\Gamma/I_*$ and a charged massless pole open; comparison to $x_+$ remains afterward only. |
 | [DERIV_STOCHASTIC_OPERATOR_ESTIMATOR.md](DERIV_STOCHASTIC_OPERATOR_ESTIMATOR.md) | [OPEN PROGRAM] | Stochastic Transfer / Koopman Operator Estimator spec for the alpha readout over the Langevin-stabilized cloud ensemble. |
@@ -93,7 +93,7 @@
 | File | Tag | Purpose |
 |---|---|---|
 | [SPEC_FTD_REFERENCE.md](SPEC_FTD_REFERENCE.md) | historical framework reference | Retained for individually cited sections; its top-line claim counts and version framing are superseded. The framework-wide readable entry point is [docs/SPEC_FTD.md](../../SPEC_FTD.md). |
-| [SPEC_FTD_COMPLETE_FRAMEWORK.md](SPEC_FTD_COMPLETE_FRAMEWORK.md) | **the unified honest map (FTD-0311)** | What FTD derives, cannot derive (and why), predicts, externally-validates — and per claim family whether the match is scan-rigid / NULL / merely-tagged. **Supersedes** the earlier complete-chain (`archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md`). |
+| [SPEC_FTD_COMPLETE_FRAMEWORK.md](SPEC_FTD_COMPLETE_FRAMEWORK.md) | **the unified honest map (FTD-0311)** | What FTD derives, cannot derive (and why), predicts, externally-validates — and per claim family whether the match is scan-tested or merely tagged. **Supersedes** the earlier complete-chain (`archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md`). |
 | [SPEC_NOVEL_PREDICTIONS.md](SPEC_NOVEL_PREDICTIONS.md) | prediction specification | Catalog of every falsifiable prediction FTD makes that the SM does not; pre-diction vs post-diction flagged. |
 | [SPEC_PREDICTION_LEDGER_DEVIATIONS.md](SPEC_PREDICTION_LEDGER_DEVIATIONS.md) | [SYNTHESIS] registry | **The structural deviation spine (FTD-0258)**: six deviations from the QM/SR *formalism* (PL-1..PL-6) with protocols, scope caveats, kill conditions; PL-2 carries the mandatory lab-Bell honesty block. No row promoted by inclusion. |
 | [SPEC_PREDICTIONS_FORWARD_2026.md](SPEC_PREDICTIONS_FORWARD_2026.md) | [SYNTHESIS] registry | **Forward predictions on behalf of the framework (FTD-0268)**: lab-facing FP rows (first-order EWPT/GW, κ_λ = 1.0089, LV nulls, structural nulls) + engine-native blind EP rows (hash-locked L=257 time-dilation extension, N(A) interpolation bands, k⁴ extension to L=768) + the anti-overclaim guard and the honest Higgs-status digest. No row promoted by inclusion. |
@@ -106,7 +106,6 @@
 | [SPEC_ADOPTION_PRICING_RULES.md](SPEC_ADOPTION_PRICING_RULES.md) | [SCOPE / METHODOLOGY — DRAFT awaiting owner ratification at D5/D6/D7] | Unification Annex Stage U0: proposed rules for how a candidate axiom is priced and judged for adoption (currency, compression predicate, FC-W calibration). Ratifies nothing, adopts nothing until the owner rulings are booked (FTD-0387). |
 | [SPEC_LOCK_STANDARD.md](SPEC_LOCK_STANDARD.md) | [SPEC / DISCIPLINE] | LOCK-STD v1 — the eleven mandatory requirements every Consumption Program pre-registration lock must satisfy before any computation or proof-attempt output is observed. Constrains process, not verdicts; introduces no claim. |
 | [DRAFT_FC4_DELTA_ACT_DECLARATION.md](DRAFT_FC4_DELTA_ACT_DECLARATION.md) | [SYNTHESIS] | The δ-act — the act-of-intent reading of FC-W (the constitution's live FC-4, FTD-0315). An interpretive exposition of the same commitment, not a second declaration; mints and promotes nothing. |
-| [DRAFT_FCW_REPRICING_D7_v1.md](DRAFT_FCW_REPRICING_D7_v1.md) | [DRAFT — research act; decision-ready; rules NOTHING until the owner books it] | Structures the deferred D7 re-pricing of FC-W (`SPEC_ADOPTION_PRICING_RULES.md` §3) after FTD-0791/FTD-0802 withdrew the identification's numerical-uniqueness support. Analyses the question; adjudicates no axiom. |
 
 ## Construction narrative
 

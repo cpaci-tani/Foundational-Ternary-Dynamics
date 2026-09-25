@@ -37,7 +37,7 @@ import os
 import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from constants import G_STAR, N_c, GAMMA_QUARTER
+from constants import G_STAR, GAMMA_QUARTER
 
 # ============================================================================
 # Constants
@@ -218,7 +218,7 @@ def main():
     print(f"  W3 (SC)  = {W3_EXACT:.10f}")
     print(f"  K_exact  = 16*G*^2 = {K_EXACT:.10f}")
     print(f"  x+       = 1/alpha = {X_PLUS:.10f}")
-    print(f"  x-       = N_c     = {X_MINUS:.10f}")
+    print(f"  x-                 = {X_MINUS:.10f}")
     print()
 
     # ------------------------------------------------------------------
@@ -271,7 +271,7 @@ def main():
     print()
 
     print(f"  {'Sublattice':<16} {'W_S':>12} {'K=16*2pi*W':>14} {'Disc':>14} "
-          f"{'x+':>12} {'x-':>12} {'x+/alpha_inv':>14} {'x-/N_c':>10}")
+          f"{'x+':>12} {'x-':>12} {'x+/alpha_inv':>14} {'x-/x-_ref':>10}")
     print("-" * 108)
 
     for name in SUBLATTICE_CONFIGS:
@@ -281,7 +281,7 @@ def main():
 
         if not np.isnan(xp):
             ratio_p = xp / ALPHA_INV
-            ratio_m = xm / N_c
+            ratio_m = xm / X_MINUS
             print(f"  {cfg['label']:<16} {W_S:12.6f} {K:14.6f} {disc:14.4f} "
                   f"{xp:12.6f} {xm:12.6f} {ratio_p:14.6f} {ratio_m:10.6f}")
         else:
@@ -406,9 +406,9 @@ def main():
             match = "NO REAL ROOTS"
         else:
             err_alpha = abs(xp - ALPHA_INV) / ALPHA_INV
-            err_nc = abs(xm - X_MINUS) / X_MINUS
-            if err_alpha < 0.01 and err_nc < 0.01:
-                match = f"MATCH (alpha err: {err_alpha*1e6:.1f} ppm, N_c err: {err_nc*1e6:.1f} ppm)"
+            err_xm = abs(xm - X_MINUS) / X_MINUS
+            if err_alpha < 0.01 and err_xm < 0.01:
+                match = f"MATCH (alpha err: {err_alpha*1e6:.1f} ppm, x- err: {err_xm*1e6:.1f} ppm)"
             else:
                 match = f"NO MATCH (x+ = {xp:.4f}, x- = {xm:.4f})"
 

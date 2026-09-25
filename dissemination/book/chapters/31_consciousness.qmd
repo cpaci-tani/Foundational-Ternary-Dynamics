@@ -102,7 +102,7 @@ The framework offers a specific proposal: consciousness emerges from the same ma
 
 The quadratic f(x) = x² - 16G*²x + 16G*³ has two real roots:
 - x₊ = 137.036 (→ 1/α, the fine structure constant)
-- x₋ = 3.024 (→ N_c, the color charge number)
+- x₋ = 3.024
 
 But the same mathematics, applied differently, produces complex roots:
 - y = 2.19 ± 1.30i

@@ -204,7 +204,7 @@ Paper B line 226–227 promotes "$(2,3)$ unique over $(p,q) \in \Z^2$ with $|p|,
 
 ## What's clean
 
-Macros, bridge identity, master quadratic, Vieta, integer coefficient $16$, value-set identification, numerical roots ($x_+ \approx 137.036$ to 1.26 ppm, $x_- \approx 3.024$ to 0.8%), epistemic tags, bibitem author/title metadata, internal cross-references. All consistent.
+Macros, bridge identity, master quadratic, Vieta, integer coefficient $16$, value-set identification, numerical roots ($x_+ \approx 137.036$ to 1.26 ppm, $x_- \approx 3.024$), epistemic tags, bibitem author/title metadata, internal cross-references. All consistent.
 
 Five issues, all mechanical. **Under an hour to fix all.**
 

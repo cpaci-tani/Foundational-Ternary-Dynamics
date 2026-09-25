@@ -16,7 +16,7 @@
  * Layer 2b: Euler's Identity       (i emerges at k_crit=4/G*) → ontic/lemniscate.h
  * Layer 3:  Master Quadratic       (x₊ ↔ 1/α [SMC, FTD-0013]; x₋ = artifact) → ontic/master_quadratic.h
  * Layer 3b: Dual-Substrate         (E_SUM, E_PRODUCT, δ²)     → ontic/master_quadratic.h
- * Layer 3c: Charge-Space Duality   (E2_COLOR)                 → ontic/master_quadratic.h
+ * Layer 3c: Reciprocal Polynomial  (roots 1/x₊, 1/x₋)        → ontic/master_quadratic.h
  * Layer 4:  Framework Integers     (N_c, b₃, N_eff, D)        → ontic/master_quadratic.h
  * Layer 4b: Neutrino Mixing        (PMNS angles)              → ontic/master_quadratic.h
  * Layer 5:  Coupling Constants     (α, g_c, G_N, α_G)         → ontic/gauge_couplings.h

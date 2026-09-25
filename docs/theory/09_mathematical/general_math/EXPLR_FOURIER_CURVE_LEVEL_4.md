@@ -167,10 +167,7 @@ The exploratory significance for FTD is:
    appear in the algebraic core. The factor 3 is unexplained.
 
 3. **Triple-cusp Z/3Z resonance at `2^4` band** — provides a candidate
-   "appearance of N_c = 3" inside the dyadic ladder that is **not** the
-   master-quadratic root x_− = 3.024. If the two threes turn out to be
-   one three, that would be a structural connection. Currently they are
-   two unconnected appearances of 3.
+   "appearance of N_c = 3" inside the dyadic ladder.
 
 4. **Class-3 universal divisibility by 3** — a clean number-theoretic
    pattern that survives falsification of the modular-form reading.

@@ -2,58 +2,12 @@
 
 **Document type:** Reference specification (synthesis)
 **Status:** [SYNTHESIS] — crystallizes the bridge between FTD's mathematical spine and the Standard Model constant 1/α
-**Re-tag note:** The `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The single load-bearing physics identification is `x_+  1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). ~~The polynomial-template-uniqueness argument (FTD-0189) is independent of the target identification and remains intact.~~ **That sentence is FALSE as of 2026-08-03 — see the banner below.** `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
-**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the algebraic spine — nine numbered results: seven theorem-grade + two honestly-tiered, Theorem 3 at its arithmetic core only; see §0 count convention); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013 (the conjecture; FTD-0014 retired); FTD-0097 (look-elsewhere monomial); FTD-0319 (adversarial polynomial-template uniqueness, the canonical structural-uniqueness evidence; formerly cited as FTD-0189); FTD-0117 (G\* notational fix)
+**Re-tag note:** The single load-bearing physics identification is `x_+  1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]).
+**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the algebraic spine — nine numbered results: seven theorem-grade + two honestly-tiered, Theorem 3 at its arithmetic core only; see §0 count convention); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013 (the conjecture); FTD-0097 (look-elsewhere monomial); FTD-0117 (G\* notational fix)
 
 ---
 
-> # ⚠ THIS DOCUMENT'S CENTRAL ARGUMENT IS WITHDRAWN (FTD-0791, 2026-08-03)
->
-> **Read this before anything below.** This specification is built on three
-> legs: the algebraic spine, the 1.26 ppm empirical match, and a
-> **structural-uniqueness argument** (the FTD-0319 look-elsewhere scan)
-> that binds them. **The third leg does not hold.**
->
-> The FTD-0319 scan had never been audited. It has now been audited
-> refute-by-default and independently replicated to the digit:
->
-> - At the registered `2e-6` gate the null expects **1.42–1.67** matchers.
->   The scan found **1**. Monte Carlo: a random number near 137 is matched
->   to 2 ppm by this family **79% of the time**. *"Unique dual-matcher" is
->   what chance predicts here.*
-> - At the operative gate the **second leg eliminates nothing** (1 → 1), so
->   *dual-matcher* and *matcher* are the same predicate.
-> - All residual surprise (~190:1, not the retracted `4e5:1`) belongs to the
->   `x_- ↔ N_c` leg — **an identification this framework itself retired.**
-> - Both tolerances were set by the observed deviation, and the
->   preregistered outcome had probability **0.9942** under its own null.
->   The test had no power.
->
-> **FTD-0319 is retagged `[MEASURED]` → `[SELECTION]`. The designation
-> "the framework's single scan-rigid identification" is WITHDRAWN and the
-> scan-rigid count is ZERO.**
->
-> **EXTENDED 2026-08-04 (FTD-0802) — the OTHER scan fell too.** This banner
-> originally governed only the FTD-0319 2.65M adversarial scan. The 2,871,576
-> extended scan (OT-3.3) cited throughout this document has now failed its own
-> pre-registered base-rate control: `N_null = 0.0014` dual-matchers under
-> displaced targets (Outcome B), so its zero count discriminates nothing. Its
-> `x_-` leg eliminates zero candidates, and its published count was **wrong** —
-> the "0 genuinely-new cubic dual-matchers" line was a hardcoded literal that no
-> code tested, and the true figure is 4. **OT-3.3 is retagged `[SELECTION]`.**
-> Every "0 non-G* dual-matchers across 2,871,576" claim below is therefore also
-> governed by this banner, and the three-leg bridge this document is built on
-> now has **no surviving numerical-uniqueness leg**.
->
-> What is unaffected: the algebraic spine (Theorems 1, 2, 8, 9 below) and
-> the 1.26 ppm agreement itself, which remains `[NUMERICAL FACT]` — it is
-> arithmetic. What is affected: **every sentence in this document that
-> treats the scan as evidence.** Those sentences are marked in place, but
-> this banner governs; where the body and this banner disagree, this banner
-> wins. Separately (FTD-0792) the engine never ran on the derived root.
->
-> This document has **not** been rewritten around the new state — doing so
-> is a re-derivation, not a transcription fix, and is `[OPEN]`.
+> FTD-0792: the engine never ran on the derived root.
 
 ---
 
@@ -71,26 +25,17 @@ x_- ≈   3.023964
 
 These are forced by the spine theorems (no free parameters). The larger
 root `x_+` matches the QED fine-structure constant reciprocal `1/α` to
-**1.26 ppm**. The smaller root `x_- ≈ 3.024` is a mathematical artifact
-of the polynomial only; the historical identification `x_-  N_c` is
-**RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014
-removed in commit `ca7eb61`).
+**1.26 ppm**.
 
 The mathematical content (theorems + uniqueness) is established. The
 empirical match (the IDENTIFICATION `x_+  1/α`) is conjectural. The
 bridge between them is the structural rigidity of the math + the
-precision of the empirical match + the uniqueness of the master
-quadratic's polynomial template within the natural family (FTD-0319,
-formerly cited as FTD-0189, adversarial scan: 0 non-G\* dual-matchers
-across 2.65M degree-2 polynomials over an 18-constant basket FTD did
-not design).
+precision of the empirical match.
 
 This document crystallizes what's established, what's not, and what
 the bridge LOGICALLY SAYS.
 
-**Bridge-audit status.** The algebraic/uniqueness layer is strong
-(extended scan evidence; the "~4×10^5:1" Bayes figure is retracted to
-[NUMERICAL FACT] — not runner-computed, ~19× scan-size), while the
+**Bridge-audit status.** The algebraic layer is strong, while the
 physical mechanism problem is narrow. The missing
 object is not "more algebraic evidence"; it is a non-action readout
 rule that maps the algebraic root/eigenvalue to an operational
@@ -143,10 +88,7 @@ Setting `y = x/G*`, the master quadratic gives:
 ```
 
 This is a mathematical identity between the two roots `y_± = x_±/G*` of
-the rescaled polynomial. The physics-notation slogan "α + 1/N_c = 1/G*"
-that previously paired the two roots is **retired** along with the
-`x_-  N_c` identification (v1.4 §5); only `x_+  1/α` remains as a
-live physics identification.
+the rescaled polynomial.
 
 ### 1.4 · Closed-form for x_+ (Theorem 8 corollary)
 
@@ -175,37 +117,7 @@ with m ∈ {1, 2, 4, 5, 8, 9, 10, 13, 16, 17, 18, 20} (smallest distinct
 norms) and k ∈ {3, 4, 5, 6, 7}: **(m=2, k=4) is rank 1 in closeness to
 1/α with a 5-orders-of-magnitude gap to rank 2**.
 
-**Polynomial-scan uniqueness** (`EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md`,
-superseded by the FTD-0319 (formerly cited as FTD-0189) adversarial scan):
-the original 147,456-polynomial scan was extended to 2,871,576
-polynomials/multipliers in the natural master-quadratic family,
-including rational-coefficient, cubic-embedding, and Eisenstein/Gaussian
-integer multiplier checks. The family includes polynomials of the form
-
-```
-M_{n,p,m,q}(x) = x² − n · G*^p · x + m · G*^q
-```
-
-with n, m ∈ [1, 64] and p, q ∈ [0, 5]. **The original scan targeted
-polynomials whose roots match the pair (1/α, N_c) jointly at MQ
-precision** — a dual-matching framing from the pre-v1.4 state, when
-FTD-0014 was live. The polynomial-
-uniqueness fact (exactly one structure matches both targets at MQ
-precision — the master quadratic itself; the Eisenstein-integer
-family contributes 0 such matchers) is **independent of the target
-identification**: the structural rigidity of the master quadratic's
-polynomial template within the declared natural family is what the
-scan establishes, regardless of how its roots are physically read.
-
-FTD-0319 (adversarial look-elsewhere; formerly cited as
-FTD-0189) extends and generalises this: the master quadratic is the
-**unique dual-matcher** across 2.65 M degree-2 polynomials over an
-18-constant basket FTD did not design — 0 non-G\* dual-matchers, rank 1
-by ~130×. This is the canonical structural-uniqueness evidence going
-forward.
-
-These uniqueness results are theorems within their explicit search
-spaces. Their interpretation is structural significance — see §3.
+This uniqueness result is a theorem within its explicit search space.
 
 ---
 
@@ -217,98 +129,42 @@ spaces. Their interpretation is structural significance — see §3.
 CODATA 2022:           1/α = 137.035999177(21)        (~10-digit precision)
 
 FTD master quadratic:  x_+ = 137.036171...              (algebraic)
-                        x_- =   3.023964...              (algebraic, no physics ID)
+                        x_- =   3.023964...              (algebraic)
 
 |x_+ − 1/α| / (1/α)  = 1.26 × 10⁻⁶  (1.26 ppm)
 ```
-
-The smaller root `x_- ≈ 3.024` is a mathematical artifact of the
-polynomial only; the identification `x_-  N_c` is **RETIRED** per
-v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in
-FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four
-routes) and the Moore Layer Theorem.
 
 ### 2.2 · Status of the empirical match
 
 - **x_+ ≈ 1/α**: tagged FTD-0013 [STRONGLY MOTIVATED CONJECTURE]
   — the single load-bearing physics identification of the master
   quadratic.
-- ~~**x_- ≈ N_c**~~: **RETIRED** (v1.4 §5; LEDGER FTD-0014 removed
-  `ca7eb61`).
 
 ---
 
 ## 3 · The bridge — what the math + observation TOGETHER say
 
-### 3.1 · Bayesian strength estimate
+### 3.1 · What the bridge LOGICALLY says
 
-Combining the two uniqueness scans (commits `0074f92` +
-`f36b741`):
+**The disciplined statement:**
 
-| Search space | Scan result |
-|---|---|
-| Tower scan (1-parameter, 58 candidates) | rank 1, ~50× gap to rank 2 |
-| Extended polynomial/multiplier scan (2,871,576 candidates) | ~~0 non-G\* dual-matchers; rank 1 by ~130×~~ **CORRECTED 2026-08-04 (FTD-0802): 4 non-master dual-matchers, not 0; and `N_null = 0.0014` means zero would have been unsurprising anyway** |
+> *The polynomial form is fixed by the algebraic spine once G*,
+> coefficient 16, and degree 2 are accepted. The master quadratic's
+> larger root agrees with 1/α to 1.26 ppm; this is arithmetic.
+> `x_+ = 1/α` has no numerical-uniqueness support. The physics
+> identification `x_+ = 1/α` remains formally [STRONGLY MOTIVATED
+> CONJECTURE] because no derivation chain from FTD axioms to physical α
+> has been established despite multiple attempts.*
 
-> **The "~4×10^5:1 Bayes factor" figure is retracted to [NUMERICAL FACT]:
-> it is NOT computed by the runner — the runner
-> yields only a ~19× scan-size factor — and it is tolerance-conditioned.
-> ~~The measured, runner-backed result stands: 0 dual-matchers across
-> 2,871,576 polynomials, rank 1 by ~130×.~~ **The runner-backed result does NOT
-> stand (FTD-0802, 2026-08-04): the count is 4 non-master dual-matchers, the
-> "0 genuinely-new cubic" figure was a hardcoded literal no code tested, and
-> the base-rate control returns `N_null = 0.0014` — a zero count would have
-> carried no evidential weight even had it been correct.**
-
-The measured scan result is strong but is not a derivation. To establish
-decisive evidence, broader families or a non-statistical structural
-theorem would be needed.
-
-### 3.2 · What the bridge LOGICALLY says
-
-**The disciplined statement (post-v1.4 retirement of `x_-  N_c`):**
-
-> ⚠ **NO LONGER DISCIPLINED — do not quote the block below (FTD-0791).** It
-> asserts that the master quadratic "is structurally rigid" and "the unique
-> dual-matcher". Both readings are withdrawn: the scan's single hit is its
-> null's expected value. The disciplined statement as of 2026-08-03 is:
-> *"The master quadratic's larger root agrees with 1/α to 1.26 ppm. This is
-> arithmetic. The look-elsewhere scan that was offered as evidence of
-> structural specialness sits at the chance base rate and supports no such
-> claim."* The block is retained below for provenance only.
-
-> *Within FTD's natural polynomial complexity class (degree-2 polynomials
-> with coefficients in Z[1..64]·Q(G*)^[0..5]), the master quadratic is
-> structurally rigid: its polynomial template is the unique structure in
-> the declared natural family whose roots simultaneously match the
-> historical target pair (1/α, N_c) at master-quadratic precision (the
-> original scan target). The polynomial-uniqueness fact stands
-> independently of that target choice — the master quadratic is the
-> unique dual-matcher across 2.65 M degree-2 polynomials over an
-> 18-constant basket FTD did not design (FTD-0319, formerly cited as
-> FTD-0189, rank 1 by ~130×).
-> The polynomial form itself is fixed by the algebraic spine once G*,
-> coefficient 16, and degree 2 are accepted. The empirical match
-> `x_+  1/α` is at 1.26 ppm. (The previously-quoted "~4×10^5:1
-> Bayesian strength" figure is retracted to [NUMERICAL FACT] — not
-> runner-computed, ~19× scan-size.) The single
-> live physics identification `x_+ = 1/α`
-> remains formally [STRONGLY MOTIVATED CONJECTURE] because no derivation
-> chain from FTD axioms to physical α has been established despite
-> multiple attempts. The historical identification
-> `x_-  N_c` is retired (v1.4 §5).*
-
-### 3.3 · What the bridge does NOT say
+### 3.2 · What the bridge does NOT say
 
 - Does NOT say α is derived from FTD axioms.
 - Does NOT say the empirical match `x_+  1/α` is impossible to be
   coincidental.
-- Does NOT say `x_-  N_c` is a current physics identification
-  (retired v1.4 §5).
 - Does NOT say FTD's framework is empirically falsified or
   empirically validated as the unique correct theory.
 
-### 3.4 · What would CLOSE the bridge
+### 3.3 · What would CLOSE the bridge
 
 The bridge would close formally if any of the following were
 established:
@@ -321,13 +177,8 @@ established:
    - Algebraic combinations (`EXPLR_PATHS_TO_ALPHA.md` §2)
 
 2. **Decisive look-elsewhere argument.** A decisive structural-uniqueness
-   argument over a broad polynomial family. (The previously-quoted
-   "~4×10^5:1 Bayes factor" is retracted to [NUMERICAL FACT] — not
-   runner-computed, ~19× scan-size. The
-   runner-backed result is 0 dual-matchers across 2.65 M polynomials,
-   rank 1 by ~130×.) Broader polynomial families and tighter tolerances
-   would push this further. This route would strengthen the conjecture,
-   not convert it into a mechanism by itself.
+   argument over a broad polynomial family. This route would strengthen
+   the conjecture, not convert it into a mechanism by itself.
 
 3. **Independent FTD route.** A different derivation of α from FTD
    that converges on x_+. Engine measurements (Rutherford α ≈ 0.042)
@@ -347,7 +198,7 @@ established:
    the physical target.
 
 None of these is currently in hand. The bridge stays as crystallized
-in §3.2.
+in §3.1.
 
 ---
 
@@ -362,27 +213,14 @@ The paper can present:
 - **Theorem 8**: harmonic-invariant tower with anomaly transcendence.
 - **Theorem 9**: Q(G\*) field-theoretic characterization (conditional
   on Chudnovsky 1976).
-- ~~**Uniqueness scans**: the master quadratic is uniquely dual-selective
-  in two natural search spaces at master-quadratic precision.~~
-  **REMOVE FROM ANY PAPER (FTD-0791).** The scan result is at the chance
-  base rate and must not be presented as structural evidence.
 
 The paper does NOT need to claim α is derived. It can present the
 mathematics + the observed empirical regularity (with explicit
-[CONJECTURE] tag). ~~+ the Bayesian structural-uniqueness argument.~~
-**The structural-uniqueness argument is withdrawn and must not be
-included** — presenting it post-FTD-0791 would be an overclaim of record.
-
-⚠ **The claim that this is "enough for a Letters-in-Mathematical-Physics-
-grade contribution without overclaiming" was written when leg 3 was
-believed to hold, and is not re-endorsed here.** What a submission can
-carry on the spine alone is an owner decision, `[OPEN]`.
+[CONJECTURE] tag).
 
 ### 4.2 · For external falsification
 
 A reviewer or future researcher could falsify the conjecture by:
-- Finding an alternative polynomial in a broader natural family that
-  also dual-matches at MQ precision (would weaken structural-uniqueness)
 - Finding a derivation of α from QED or another framework that is
   inconsistent with x_+ (would refute the IDENTIFICATION at theory
   level)
@@ -399,17 +237,12 @@ strength.
 The "physics bridge" of FTD is:
 1. **A mathematical spine** (nine numbered results: seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention) producing a specific algebraic
    object whose roots are computable.
-2. **An empirical observation** that these roots match two unrelated
-   Standard Model constants at high precision.
-3. ~~**A structural-uniqueness argument** showing the master quadratic
-   is the unique dual-matcher in two natural search spaces.~~
-   **WITHDRAWN (FTD-0791) — the scan sits at its own null's expectation.
-   There is no structural-uniqueness argument.**
-4. **A conjectural identification** linking 1 and 2, ~~supported by 3~~
-   **now supported by nothing beyond the numerical agreement itself**,
-   and not formally derivable from current axioms.
+2. **An empirical observation** that the larger root matches 1/α at
+   high precision.
+3. **A conjectural identification** linking 1 and 2, not formally
+   derivable from current axioms.
 
-The bridge is **finished at the algebraic/structural-uniqueness layer**.
+The bridge is **finished at the algebraic layer**.
 Further closure is no longer a documentation problem. It requires a new
 theoretical mechanism, most plausibly MC-T4.3's non-action readout rule,
 or a discrete-native measurement program that bypasses imported
@@ -418,10 +251,7 @@ continuous-QFT machinery while still comparing to measured physics.
 The framework's standing is:
 - **Mathematical core**: established at theorem grade, internally
   consistent, structurally rigid.
-- **Empirical match**: precise (1.26 ppm + 0.80%) and uniquely
-  selective within the natural family (0 dual-matchers across 2.65 M
-  polynomials, rank 1 by ~130×; the "~4×10^5:1" Bayes figure is
-  retracted to [NUMERICAL FACT] — not runner-computed, ~19× scan-size).
+- **Empirical match**: precise (1.26 ppm).
 - **Physical bridge**: open at the IDENTIFICATION level; closed at
   the structural-rigidity level.
 
@@ -435,19 +265,16 @@ This document does NOT introduce a new LEDGER entry. It crystallizes
 the position synthesized from existing entries:
 
 - FTD-0001 (master quadratic): [THEOREM] — unchanged
-- FTD-0013 (x_+ = 1/α identification): [STRONGLY MOTIVATED CONJECTURE] — unchanged tag, **strengthened** by the uniqueness results and the FTD-0319 (formerly cited as FTD-0189) adversarial scan
-- ~~FTD-0014 (x_- = N_c identification)~~: **RETIRED** per v1.4 §5; LEDGER row removed in commit `ca7eb61`
-- FTD-0097 (look-elsewhere monomial): [MEASURED] — extended to polynomial level
+- FTD-0013 (x_+ = 1/α identification): [STRONGLY MOTIVATED CONJECTURE], unchanged tag
+- FTD-0097 (look-elsewhere monomial): [MEASURED]
 - FTD-0111 (harmonic invariant tower): [THEOREM] with Q1 progressed
 - FTD-0117 (G\* typo fix): [BUG RESOLVED]
-- FTD-0319 (adversarial polynomial-template uniqueness; formerly cited as FTD-0189): [MEASURED] — the canonical structural-uniqueness evidence; rank 1 by ~130× across 2.65 M polynomials over an 18-constant FTD-undesigned basket
 
 ---
 
 ## 7 · What this document does NOT claim
 
 - NOT a theorem of α-derivation.
-- NOT a theorem of N_c-derivation (N_c = 3 is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem).
 - NOT a falsification of any prior closed-negative route.
 - NOT a new spine theorem (spine count unchanged — nine numbered results: seven theorem-grade + two honestly-tiered, Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention).
 - NOT a promotion of FTD-0013 from [STRONGLY MOTIVATED CONJECTURE].
@@ -460,16 +287,11 @@ the position synthesized from existing entries:
 numbered results — seven theorem-grade + two honestly-tiered, Theorem 3
 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count
 convention — producing the master quadratic with
-computable roots ≈ 137.036 and ≈ 3.024), the empirical observation
-that the larger root matches 1/α at 1.26 ppm, and a polynomial-template
-structural-uniqueness argument (FTD-0319, formerly cited as FTD-0189:
-the master quadratic is the unique dual-matcher across 2.65 M degree-2
-polynomials over an 18-constant FTD-undesigned basket; rank 1 by ~130×).
-The single live
+computable roots ≈ 137.036 and ≈ 3.024) and the empirical observation
+that the larger root matches 1/α at 1.26 ppm. The single
 physics identification `x_+ = 1/α` remains [STRONGLY MOTIVATED
-CONJECTURE] absent a derivation chain from FTD axioms to physical α;
-the historical `x_-  N_c` identification is retired (v1.4 §5;
-LEDGER FTD-0014 removed in commit `ca7eb61`). This is the bridge as
+CONJECTURE] absent a derivation chain from FTD axioms to physical α.
+This is the bridge as
 currently finished at the algebraic layer — strong enough for external
 publication of the mathematical core (Paper A scope), not yet closed
 at the formal-derivation level. The next mathematical target is

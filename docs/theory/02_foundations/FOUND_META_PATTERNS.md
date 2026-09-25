@@ -243,7 +243,7 @@ Self-reference in FTD is not a single mechanism. It operates at four distinct le
 
 **Structure:** x = g(x) at polynomial degree 2
 **FTD instance:** Master quadratic x^2 - 16G*^2 x + 16G*^3 = 0
-**What it produces:** The physics constants alpha, N_c
+**What it produces:** The physics constant alpha
 **Mathematical depth:** Self-consistency requires the system's output (coupling) to equal its input (geometry)
 **Requires L0:** The coefficient 16 = k_phys is derived from k_cons = 1/2 via k_phys * k_cons = 2^D
 
@@ -253,7 +253,6 @@ Self-reference in FTD is not a single mechanism. It operates at four distinct le
 **FTD instance:** F_{b_3} = F_7 = 13 = N_eff; the index (7 = b_3) determines the value (13 = N_eff)
 **What it produces:** The framework integers {3, 4, 7, 13}
 **Mathematical depth:** Self-referential closure of the integer system (C6 in AUDIT_SELF_CONSISTENCY.md)
-**Requires L1:** The integers are constrained by the master quadratic's roots (C1: floor(x_-) = 3)
 
 ### Level L3: Observational Self-Reference
 
@@ -269,7 +268,7 @@ Self-reference in FTD is not a single mechanism. It operates at four distinct le
 L0: k_cons = 1/2
  |  (complementation)
  v
-L1: k_phys = 16, master quadratic, alpha, N_c
+L1: k_phys = 16, master quadratic, alpha
  |  (quadratic self-consistency)
  v
 L2: {3, 4, 7, 13} interlocking integers
@@ -454,12 +453,6 @@ The hierarchy IS a sequence of boundary crossings. This is consistent with MP-1.
 ### 7.2 The Alpha-Power Ladder as a Boundary Sequence
 
 The exponent ladder {1, 2, 3, 4, 8, 11, 14, 20} from FOUND_LADDER_GENERATING_RULE.md has gaps {1, 1, 1, 4, 3, 3, 6} = {1, 1, 1, N_base, N_c, N_c, 2*N_c}. Each gap represents a transition between physical regimes -- a boundary in the space of energy scales.
-
-### 7.3 Four Forces as Boundary Modes
-
-FOUND_FORCE_STRUCTURE.md derives four forces from the master quadratic's two roots. The roots themselves are boundaries (Section 1.1), and the forces are the physical manifestations of those boundaries:
-- x+ (larger root, boundary of EM domain) -> electromagnetism + weak + gravity
-- x- (smaller root, boundary of color domain) -> strong force
 
 ---
 

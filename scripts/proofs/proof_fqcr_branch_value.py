@@ -32,9 +32,8 @@ What is verified
 
 What is NOT verified
 --------------------
-- This script does not verify any FTD-side claim. The master quadratic's
-  algebraic rigidity (FTD-0014), the operator-theoretic provenance of G*
-  (FTD-0141), and the finite-N attractor (FTD-0142) are verified by their
+- This script does not verify any FTD-side claim. The operator-theoretic
+  provenance of G* (FTD-0141), and the finite-N attractor (FTD-0142) are verified by their
   own proof scripts. This file only verifies the trilogy's published
   numerical content as a methodological sanity check before integrating
   the trilogy's framework into FTD's documentation.

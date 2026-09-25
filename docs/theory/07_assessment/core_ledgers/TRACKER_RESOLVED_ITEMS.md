@@ -86,13 +86,6 @@ is exposed for reference/comparison.
 
 **Python side was already correct** (`scripts/constants.py` used `X_PLUS_PRECISION` pre-rollout).
 
-### 1.6 δ_c (colour excess) closed form —  CLOSED 2026-05-27
-**Location:** `engine/include/ftd/ontic.h` Layer 4, `DELTA_COLOR` comment.
-
-**Implementation:** Conducted a 100-digit precision arithmetic and PSLQ relation search over Lemniscatic, Transcendental, Mixed, and Hadronic baskets in `explore_color_excess.py`. The color excess $\delta_c = 16 G^{*3}\alpha - 3$ is proven to be highly transcendental over $\mathbb{Q}$, with no simple algebraic near-misses. Drafted canonical documentation `docs/theory/09_mathematical/EXPLR_COLOR_EXCESS_CLOSED_FORM.md` demonstrating that the excess represents the exact algebraic manifestation of geometric frustration between continuous flux ($G^*$) and discrete geometry ($N_c = 3$) under the Moore Layer Theorem, officially discrediting all post-hoc monomial fits.
-
-**Status:**  Closed under active campaign **FTD-0224**.
-
 ### 1.8 Moore-Laplacian anisotropy —  CLOSED 2026-04-17
 **Location:** `engine/src/render_bridge.cpp` `phase_read` header.
 

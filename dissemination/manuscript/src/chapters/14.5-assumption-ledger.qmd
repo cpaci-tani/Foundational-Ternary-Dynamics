@@ -93,7 +93,6 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 | Quantity | Formula/Value | Status | Accuracy |
 |----------|---------------|--------|----------|
 | Fine structure α | 1/137.036 | [SMC] STRONGLY MOTIVATED CONJECTURE (master quadratic [T]; identification $x_+=1/\alpha$ not derived) | 1.26 ppm match (the "0.21 ppt" ε-expansion is a post-hoc fit beyond CODATA precision) |
-| Number of colors N_c | 3.024 → 3 | [SMC] STRONGLY MOTIVATED CONJECTURE ($x_-$ match; $N_c=3$ independently derived) | 0.80% match |
 | Lemniscatic constant G* | 2.9587 | [T] THEOREM | 0.0006% |
 | Coefficient 16 | $2^3 / 0.5$ | [T] THEOREM | Exact |
 | **D = 3 uniqueness** | Topological necessity | [T] **THEOREM** | Derived |
@@ -166,7 +165,6 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 
 | Quantity | Formula | Status | Accuracy |
 |----------|---------|--------|----------|
-| N_generations | floor(N_c) = floor(3.024) = 3 | [†] COMPANION | Exact |
 | Fermions/generation | N_base = 4 | [†] COMPANION | Exact |
 | Total fermions | N_c × N_base = 12 = N_eff - 1 | [†] COMPANION | Exact |
 
@@ -260,7 +258,7 @@ The following items have been **verified in simulation**:
 |------|----------|--------|
 | **sLoop produces Bell violations** | RETIRED (corrected 2026-07-01, FTD-0347): the continuous-Bell sLoop target was CLOSED DECLINED under FC-1 on 2026-06-10 (`DERIV_OBSERVER_BELL_MECHANISM.md`). The substrate is local/classical — the engine measures S ≤ 2 [THEOREM]; S = 2√2 arises only under the imported complexification/measurement reading [SELECTION]; a native S > 2 would *falsify* FC-1, not confirm FTD | [R] **RETIRED** |
 | **Lorentz invariance is relational** | Wave isotropy, Coulomb isotropy, time dilation isotropy all confirmed in simulation | [V] **VERIFIED** |
-| **SU(3) from lattice geometry** | Derived via octonionic structure: Aut(𝕆) = G₂ ⊃ SU(3); Günaydin-Gürsey result (1973); N_c = 3 from master quadratic | [†] **DERIVED** |
+| **SU(3) from lattice geometry** | Derived via octonionic structure: Aut(𝕆) = G₂ ⊃ SU(3); Günaydin-Gürsey result (1973) | [†] **DERIVED** |
 | **SU(2) from ternary states** | Derived via spinor structure: π₁(SO(3)) = ℤ₂ gives spinors; ternary states form natural doublet | [†] **DERIVED** |
 | **U(1) gauge emergence** | Helmholtz decomposition: 2 transverse modes, longitudinal suppression < 3% | [V] **VERIFIED** |
 | **Born rule derivation** | 4 independent derivations (Gleason, frequency, conservation, max entropy): 13/13 tests pass | [T] **THEOREM** |
@@ -300,7 +298,7 @@ This yields the master quadratic as the self-consistent solution, with running c
 |-------------|-------------------|--------------|
 | U(1) | Helmholtz decomposition + Gauss constraint | 2 transverse modes (< 3% longitudinal leakage) |
 | SU(2) | Frame bundle topology: π₁(SO(3)) = ℤ₂ | 720° rotation test, Pauli algebra verification |
-| SU(3) | Günaydin-Gürsey (1973): G₂/U(1) ⊃ SU(3) | N_c = 3.024 → 3, Gell-Mann algebra, confinement |
+| SU(3) | Günaydin-Gürsey (1973): G₂/U(1) ⊃ SU(3) | N_c = 3, Gell-Mann algebra, confinement |
 
 All gauge groups are **derived from FTD structure**, not assumed.
 
@@ -325,7 +323,6 @@ The exponent 2 is uniquely selected by the convergence of four independent argum
 | Question | Status | Notes |
 |----------|--------|-------|
 | ~~Can GRAVITY_BIAS be derived?~~ | [V] RESOLVED | 1/(b₃+N_c)² = 0.01 exactly |
-| ~~Why 3 generations?~~ | [V] RESOLVED | floor(N_c) = 3 from master quadratic |
 | ~~Can Λ be derived?~~ | [V] RESOLVED | α^57 = 10^-121.8 (0.16% error) |
 | ~~Is the Lemniscate-Alpha unique?~~ | [V] **RESOLVED (scoped)** | Unique within the stated constraint class: structure fixed by self-reference, coefficients encode framework integers |
 | ~~What selects these 4 integers?~~ | [V] **RESOLVED** | Fibonacci skeleton: b₃=N_base+N_c, N_eff=F(b₃) |
@@ -363,7 +360,7 @@ The Lemniscate-Alpha curve is **unique within the stated construction**. The arg
    - Mode 16: $a_{16} = b_{16} = 1/16 = 1/N_{\text{base}}^2$
 
 3. **G* self-consistently determined**:
-   - $G^* = \frac{(1/\alpha) \times N_c}{(1/\alpha) + N_c}$ (harmonic-mean relation)
+   - $G^* = \frac{x_+ x_-}{x_+ + x_-}$ (harmonic-mean relation)
    - $G^* = 3 - \frac{17\alpha}{3}$ where 17 = $n_{\text{eff}} + N_{\text{base}}$
 
 4. **Framework integers unique** (by Fibonacci skeleton)
@@ -391,7 +388,7 @@ These claims interpret FTD entities in terms of physics. They are **not** deriva
 |----------|-------|-------|
 | Axioms | 5 | A1 (D=3) → Derived |
 | Definitions | 5+ | |
-| Core Paper Theorems (T1-T8) | **6** | D=3 uniqueness, C1/C2 proven |
+| Core Paper Theorems (T1-T8) | **6** | D=3 uniqueness, C1 proven |
 | Selection Principles (S1-S4) | 4 | |
 | Companion Work [†] | **38** | GR, inflation, baryogenesis |
 | Verified (simulation) | **17** (pre-retirement count; the sLoop-Bell entry was RETIRED 2026-07-01, FTD-0347) | Lorentz, SU(3) |
@@ -407,7 +404,7 @@ FTD achieves **foundational completeness** within its assumptions:
 
 - **Framework completeness**: 100%
 - **Free parameters**: 0 (4 integers uniquely constrained)
-- **Conjectures C1, C2**: PROVEN
+- **Conjecture C1**: PROVEN
 - **Axiom A1 (D=3)**: DERIVED
 - **GR sector**: COMPLETE with 8πG coefficient
 - **Cosmology**: Inflation + baryogenesis DERIVED
@@ -419,10 +416,9 @@ FTD achieves **foundational completeness** within its assumptions:
 | Category | Derived | Status |
 |----------|---------|--------|
 | Fine structure α | 1 | [SMC] 1.26 ppm tree-level match (identification not derived; 0.21 ppt is post-hoc fit) |
-| Color number N_c | 1 | [SMC] root matches 3 to 0.80% ($N_c=3$ independently derived) |
 | Lemniscatic constant G* | 1 | [T] 0.0006% |
 | Coefficient 16 | 1 | [T] Exact (lattice DoF) |
-| **Total core** | **4** | |
+| **Total core** | **3** | |
 
 ### Companion Work Derivations [†]
 

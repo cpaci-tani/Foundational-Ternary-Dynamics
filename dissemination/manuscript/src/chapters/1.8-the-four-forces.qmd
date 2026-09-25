@@ -346,18 +346,10 @@ Why cannot we see isolated quarks? Between separated quarks, the flux forms **tu
 
 | Test | Expected | Result | Status |
 |------|----------|--------|--------|
-| Number of colors $N_c$ | 3 | 3.024 → 3 | ✅ PASS (0.8%) |
 | Gell-Mann algebra | $[T^a, T^b] = if^{abc}T^c$ | Max error < 10⁻¹⁴ | ✅ PASS |
 | String tension σ | > 0 (confinement) | σ = 0.18 GeV² | ✅ PASS |
 | Asymptotic freedom | $\alpha_s(M_Z) < 1$ | 0.118 | ✅ PASS |
 | Color neutrality (baryon) | RGB → white | Confirmed | ✅ PASS |
-
-**Why N_c = 3.024?**
-
-The master quadratic (Chapter 1.10b) produces:
-$$x_- = 8G^{*2} - 8G^{*2}\sqrt{1 - 1/G^*} = 3.024$$
-
-This is **derived**, not input. The slight deviation from exactly 3 represents RG flow corrections at energies above the confinement scale.
 
 ::: {.callout-tip}
 ## For the Skeptical Physicist

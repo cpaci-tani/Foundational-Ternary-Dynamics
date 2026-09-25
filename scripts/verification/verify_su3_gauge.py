@@ -100,21 +100,8 @@ record(
     f"dim(R^3 flux) = {D_spatial} = N_c = {N_C} [SELECTION]"
 )
 
-# SU3-2: N_c = 3 from x_- root
-print("\nSU3-2: N_c from master quadratic")
-c_val = GSTAR
-disc = (16 * c_val**2)**2 - 4 * 16 * c_val**3
-x_minus = (16 * c_val**2 - np.sqrt(disc)) / 2
-record(
-    "x_- from master quadratic ~ 3.024",
-    abs(x_minus - 3.024) < 0.01,
-    f"x_- = {x_minus:.6f}"
-)
-record(
-    "floor(x_-) = 3 = N_c",
-    int(np.floor(x_minus)) == N_C,
-    f"floor({x_minus:.4f}) = {int(np.floor(x_minus))} = N_c"
-)
+# SU3-2: N_c = 3 from lattice dimensionality
+print("\nSU3-2: N_c from lattice dimensionality")
 record(
     "N_c = D (lattice dimensionality)",
     N_C == D_spatial,

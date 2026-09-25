@@ -984,7 +984,7 @@ def master_quadratic_analysis(lattice, labels, phases, moore_data):
 
     print(f"  Master quadratic: x^2 - 16*G*^2*x + 16*G*^3 = 0")
     print(f"  x+ = {X_PLUS:.10f}  (1/alpha)")
-    print(f"  x- = {X_MINUS:.10f}  (~ N_c)")
+    print(f"  x- = {X_MINUS:.10f}")
     print(f"  Sum:     x+ + x- = {X_PLUS + X_MINUS:.10f} = 16*G*^2 = {16*gstar**2:.10f}")
     print(f"  Product: x+ * x- = {X_PLUS * X_MINUS:.10f} = 16*G*^3 = {16*gstar**3:.10f}")
     print()

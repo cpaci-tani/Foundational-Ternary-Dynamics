@@ -63,20 +63,14 @@ How does an algebraic equation become physics?
 
 The roots of the quadratic are numbers: 137.036 and 3.024.
 
-These numbers enter the physical constants:
+The larger root enters the physical constants:
 - α = 1/x₊ = 1/137.036 (fine structure constant)
-- N_c = ⌊x₋⌋ = 3 (color charges)
 
 From α, all electromagnetic phenomena follow:
 - Atomic spectra
 - Chemical bonds
 - The speed of light in materials
 - The size of atoms
-
-From N_c, the strong force structure follows:
-- Three colors of quarks
-- Color confinement
-- Nuclear binding
 
 The quadratic is the seed; physics is the tree.
 
@@ -213,11 +207,11 @@ The equation is eternal. Our understanding of it is just beginning.
 
 ## Key Points
 
-- The master quadratic f(x) = x² - 16G*²x + 16G*³ encodes α and N_c
+- The master quadratic f(x) = x² - 16G*²x + 16G*³ encodes α
 - It is "eternal" mathematically, physically, and epistemologically
 - The lemniscate is the curve underlying G*—special for its complex multiplication
 - Self-consistency selects this curve and this equation uniquely
-- From the quadratic's roots, all physics flows: EM, strong force, masses
+- From the quadratic's larger root, all physics flows: EM, masses
 - The equation has existed forever; human discovery is recent
 - Ancient traditions tracked the numbers (432, 7, 137) without knowing the equation
 - The equation may be a cognitive attractor—drawing minds across millennia

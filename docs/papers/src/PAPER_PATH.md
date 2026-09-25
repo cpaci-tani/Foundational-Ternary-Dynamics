@@ -1,6 +1,6 @@
 # FTD Paper Path — Complete
 
-**Status:** 11 path papers, all written/edited. Math-first foundation → physics claims.
+**Status:** 10 path papers, all written/edited. Math-first foundation → physics claims.
 
 **Layout rule:** TeX sources for the path live in `docs/papers/src/`; active compiled PDFs live in `docs/papers/`; archived PDFs live in `docs/papers/archive/`.
 
@@ -8,7 +8,7 @@
 
 ## The Reader's Journey
 
-A skeptic reads in order. Papers 0a–0d are pure mathematics — no physics, no lattice, no FTD. Papers 1a–1b introduce the cubic lattice as a mathematical object. Papers 2a–2b derive the master quadratic and its precision formula. Papers 3a–3c make the physical claims, with every identification explicitly labeled.
+A skeptic reads in order. Papers 0a–0d are pure mathematics — no physics, no lattice, no FTD. Papers 1a–1b introduce the cubic lattice as a mathematical object. Papers 2a–2b derive the master quadratic and its precision formula. Papers 3b–3c make the physical claims, with every identification explicitly labeled.
 
 At no point is the reader asked to accept something on faith before the math supporting it is established.
 
@@ -43,8 +43,7 @@ At no point is the reader asked to accept something on faith before the math sup
 
 | # | File | Title | Pages |
 |---|------|-------|-------|
-| 3a | `PAPER_3A_PHYSICAL_IDENTIFICATION.tex` | From Lattice Geometry to Coupling Constants: Physical Identification of the Master Quadratic Roots | 7 |
-| 3b | `ontic_derivation_chain.tex` | The Ontic Derivation Chain: Physical Constants from Two Inputs (conditional on 3a) | 11 |
+| 3b | `ontic_derivation_chain.tex` | The Ontic Derivation Chain: Physical Constants from Two Inputs | 11 |
 | 3c | `FTD_One_Unit_Final.tex` | One Unit of Existence: The Lifecycle of a Hydrogen Atom from Lattice Geometry to Dissolution | 10 |
 
 ---
@@ -55,7 +54,7 @@ At no point is the reader asked to accept something on faith before the math sup
 |----------|-------|
 | Theorems (proven from axioms) | ~25 |
 | Structural selections (motivated, not unique) | 5 |
-| Physical identifications (conjectured) | 2 |
+| Physical identifications (conjectured) | 1 |
 | Impositions (calibration choices) | 1 |
 | Falsifiable predictions | 4 |
 

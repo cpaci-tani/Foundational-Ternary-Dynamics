@@ -38,10 +38,9 @@ FTD has the following explicit inputs:
 2. $N_f = 6$ (number of quark flavors, used in $b_3 = (11N_c - 2N_f)/3$; derivable from generation count but currently [SELECTION])
 3. CODATA value of $\alpha$ for comparison (not used in derivation, only for validation)
 
-**Selection principles (2):**
+**Selection principles (1):**
 
 1. $x_+ = 1/\alpha$ (larger root of master quadratic is the inverse fine structure constant) [SELECTION]
-2. $\lfloor x_- \rfloor = N_c$ (smaller root rounds to the number of colors) [SELECTION]
 
 Everything else is derived. The derivation chain is: Postulates $\to$ Moore decomposition $\to$ BCC Watson identity $\to$ $\Gs$ $\to$ master quadratic $\to$ roots $\to$ integers $\to$ masses $\to$ Standard Model.
 
@@ -74,7 +73,7 @@ This framework does **not**:
 | $\mathbf{J}(v)$ | Flux vector at $v$ | Ch. 2 |
 | $N^M(v)$ | Moore neighborhood of $v$ | Ch. 1 |
 | $\Gs$ | Lemniscatic bridge constant | Ch. 7 |
-| $\alpha$ | Fine structure constant ($= 1/x_+$) | Ch. 9 |
+| $\alpha$ | Fine structure constant ($= 1/x_+$) | Ch. 8 |
 | $N_c, N_{\text{base}}, b_3, N_{\text{eff}}$ | Framework integers $\{3, 4, 7, 13\}$ | Ch. 10 |
 | $K_B$ | Manifestation threshold (0.511) | Ch. 2 |
 | $K$ | DOF coefficient (= 16) | Ch. 8 |

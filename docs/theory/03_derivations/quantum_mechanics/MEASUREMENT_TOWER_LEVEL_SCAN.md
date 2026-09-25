@@ -85,7 +85,7 @@ Git tag: `preregister-tower-level-scan-v1` (applied at the commit landing this m
 **Consistent with**: the structural reading (`THEOREM_HARMONIC_INVARIANT_TOWER.md` §6.6) that `k = 4` is uniquely selected as the smallest level at which the discriminant correction `A_k = 2^(k−2) G*^(k−3) − 1` contains a positive power of `G*`. Under this reading, framework integers do not index tower levels; only the structural `G*`-non-trivial criterion does, and it singles out `k = 4` alone.
 
 **Does not establish**:
-- Why `k = 4` carries physical content. The structural criterion (`G*`-non-trivial) describes; it does not derive. The empirical match `α⁻¹ ≈ x_+(4)` to 1.3 ppm remains [STRONGLY MOTIVATED CONJECTURE] (FTD-0013; the single live physics identification of the master quadratic). *(The historical "dual prediction" framing paired with FTD-0014 `x_-  N_c` is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.)*
+- Why `k = 4` carries physical content. The structural criterion (`G*`-non-trivial) describes; it does not derive. The empirical match `α⁻¹ ≈ x_+(4)` to 1.3 ppm remains [STRONGLY MOTIVATED CONJECTURE] (FTD-0013).
 - Uniqueness of the `(1+i)` multiplier choice. The blind scan tests one tower (with `m_k = 2^k`); rigidity against other Gaussian/rational primes (`(2+i)`, `(2+3i)`, `p = 3, 5, 7, …`) requires its own pre-registered protocol.
 - Any negative result against the level-3 cyclotomic identity `1/y_∓(3) = sin²(π/8), cos²(π/8)`. That is [THEOREM] (`THEOREM_HARMONIC_INVARIANT_TOWER.md` §6.5), independent of any scan.
 
@@ -93,7 +93,7 @@ Git tag: `preregister-tower-level-scan-v1` (applied at the commit landing this m
 
 ## 5 · LEDGER row
 
-**FTD-0111 EXTENDED — blind tower-level scan v1 closes (1) framework-integer hypothesis at locked 22-constant catalog [NULL_CONSISTENT, control passes].** First confirmatory blind execution of `PROTOCOL_TOWER_LEVEL_FALSIFIER.md`. Runner SHA-256 `e20147e2…`, protocol SHA-256 `84a07e40…`, tag `preregister-tower-level-scan-v1`. Result: 0 independent matches at `k ≠ 4`; only the anchor `k = 4 x_+  1/α` (1.3 ppm) verified. Framework-integer-as-tower-index hypothesis terminally falsified at this scan band. Output: `engine/results/tower_level_scan_2026-04-29/scan_result.json`. Surviving structural reason for `k = 4` selection (Section 6.6 of the theorem doc): first level at which `A_k` contains a positive power of `G*`. The dual physical-identification conjecture `α  1/x_+(4)`, `N_c  x_-(4)` is unaffected — [STRONGLY MOTIVATED CONJECTURE], unchanged.
+**FTD-0111 EXTENDED — blind tower-level scan v1 closes (1) framework-integer hypothesis at locked 22-constant catalog [NULL_CONSISTENT, control passes].** First confirmatory blind execution of `PROTOCOL_TOWER_LEVEL_FALSIFIER.md`. Runner SHA-256 `e20147e2…`, protocol SHA-256 `84a07e40…`, tag `preregister-tower-level-scan-v1`. Result: 0 independent matches at `k ≠ 4`; only the anchor `k = 4 x_+  1/α` (1.3 ppm) verified. Framework-integer-as-tower-index hypothesis terminally falsified at this scan band. Output: `engine/results/tower_level_scan_2026-04-29/scan_result.json`. Surviving structural reason for `k = 4` selection (Section 6.6 of the theorem doc): first level at which `A_k` contains a positive power of `G*`. The physical-identification conjecture `α = 1/x_+(4)` is unaffected — [STRONGLY MOTIVATED CONJECTURE], unchanged.
 
 ---
 

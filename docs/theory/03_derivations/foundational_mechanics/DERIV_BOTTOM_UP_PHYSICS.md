@@ -173,7 +173,6 @@ $$x_\pm = 8G^{*2} \pm 8G^{*2}\sqrt{1 - \frac{1}{G^*}}$$
 | Root | Value | Physical Meaning |
 |------|-------|-----------------|
 | x₊ | **137.036** | 1/α (fine structure constant) |
-| x₋ | **3.024** | N_c (effective color charges) |
 
 **Accuracy**: x₊ matches CODATA 2022 value 1/α = 137.035999177(21) to **1.26 ppm**.
 
@@ -310,7 +309,7 @@ Bosons can occupy the same state (condensation) because they are **waves**, not 
 | **Photon** | EM force | Flux wave in void (J ≠ 0, s = 0) |
 | **W±** | Weak charged | Domain transition (0  ±1) |
 | **Z** | Weak neutral | Void self-interaction |
-| **Gluon** | Strong force | Color flux (x₋ domain structure) |
+| **Gluon** | Strong force | Color flux |
 | **Higgs** | Mass giver | Void condensate (excitation of s = 0) |
 | **Graviton** | Gravity | Void curvature gradient |
 
@@ -331,14 +330,13 @@ Bosons can occupy the same state (condensation) because they are **waves**, not 
 
 ## 7.2 Strong Force
 
-**Structure**: N_c = floor(x₋) = floor(3.024) = 3
+**Structure**: N_c = 3 (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`)
 
 **What it is**: Confinement of quarks into hadrons.
 
 **FTD interpretation**:
-- x₋ = 3.024 gives exactly 3 color charges
 - Quarks are "partial bodies"—they manifest in groups of 3 to form complete +1 states
-- Gluons carry color flux—the void's internal structure at the x₋ scale
+- Gluons carry color flux—the void's internal structure
 - Confinement = requirement for complete manifestation
 
 ## 7.3 Weak Force
@@ -420,7 +418,6 @@ The observer is not special because it "observes"—it is special because it is 
 | K_B threshold | Electron mass | m_e = 0.511 MeV |
 | K_C threshold | Reference frame context threshold | |y| = 3.60 |
 | x₊ = 137.036 | 1/α | EM coupling inverse |
-| x₋ = 3.024 | N_c | Color charge number |
 | G* = 2.959 | Lemniscatic constant | Arc length of self-crossing |
 | k = 16 | Lattice DoF | L₃² (Lucas square) |
 | Δ > 0 | Physics domain | Real roots, measurable |
@@ -432,7 +429,7 @@ Everything in physics derives from four integers:
 
 | Integer | Value | Origin | Role |
 |---------|-------|--------|------|
-| N_c | 3 | floor(x₋) | Color charges, generations |
+| N_c | 3 | Moore Layer Theorem | Color charges, generations |
 | N_base | 4 | Lattice geometry | Quaternion dimension |
 | b₃ | 7 | Octonion imaginary units | QCD beta function |
 | N_eff | 13 | Fibonacci closure F₇ = T₇ | Effective field count |
@@ -470,7 +467,6 @@ Master quadratic          [SELECTION: Quadratic form chosen (SP2)]
 x₊ = 137.036              [THEOREM: Larger root of the quadratic]
   identified as 1/α       [CONJECTURE: Physical identification (SP4)]
 x₋ = 3.024                [THEOREM: Smaller root of the quadratic]
-  identified as N_c        [CONJECTURE: Physical identification (SP4)]
         ↓
 ~24 genuine derivations   [THEOREM: From G*, α, and {3,4,7,13}]
 ~50 parametric insertions [IMPOSED: FTD values in standard QFT formulas]

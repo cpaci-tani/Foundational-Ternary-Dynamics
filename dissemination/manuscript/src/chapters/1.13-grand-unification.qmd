@@ -162,7 +162,7 @@ $$\mathbf{16} = \text{all fermions of one generation}$$
 ### Why FTD Prefers SU(3)×SU(2)×U(1)
 
 The framework derives the **product structure** directly:
-- SU(3) from N_c = 3 (quadratic root)
+- SU(3) from N_c = 3
 - SU(2) from manifest doublet (+1, -1)
 - U(1) from phase freedom
 

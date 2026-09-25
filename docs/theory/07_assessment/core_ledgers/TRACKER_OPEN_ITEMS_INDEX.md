@@ -1,10 +1,10 @@
 # Open Items Tracker — Index
 
-Generated companion to `TRACKER_OPEN_ITEMS.md` (44 active or pending-verification item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
+Generated companion to `TRACKER_OPEN_ITEMS.md` (43 active or pending-verification item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
 
 This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remains canonical for working items; [`TRACKER_RESOLVED_ITEMS.md`](TRACKER_RESOLVED_ITEMS.md) preserves closed and retired provenance. Where this index and either tracker's prose disagree, the trackers win.
 
-**44 working / 42 resolved or retired** item headings.
+**43 working / 41 resolved or retired** item headings.
 
 ---
 
@@ -93,10 +93,9 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 
 ## §10 Dissemination + residual-claim sweeps — queued arcs (not counted open here)
 
-**3 working headings.**
+**2 working headings.**
 
 | # | Item | Status |
 |---|---|---|
 | 10.1 | [Dissemination layer vs canon (the public-facing staleness)](TRACKER_OPEN_ITEMS.md#101-dissemination-layer-vs-canon-the-public-facing-staleness) | — |
-| 10.2 | [Internal-docs x₋↔N_c residual live-claim sweep](TRACKER_OPEN_ITEMS.md#102-internal-docs-xn_c-residual-live-claim-sweep) | — |
-| 10.3 | [Bookkeeping notes for the future arc](TRACKER_OPEN_ITEMS.md#103-bookkeeping-notes-for-the-future-arc) | — |
+| 10.2 | [Bookkeeping notes for the future arc](TRACKER_OPEN_ITEMS.md#102-bookkeeping-notes-for-the-future-arc) | — |

@@ -97,7 +97,7 @@ The continuum is an extraordinarily good approximation, but the approximation \e
 ## FTD_One_Unit_Final.tex
 **Path:** `docs/papers/src/FTD_One_Unit_Final.tex`
 
-\noindent We trace the lifecycle of a hydrogen atom as a deductive chain within Foundational Ternary Dynamics (FTD), a framework postulating a cubic lattice $\ZZ^3$ with ternary states and local causality. The central object is the \emph{master quadratic} $x^2 - 16{G^{*}}^2 x + 16{G^{*}}^3 = 0$, whose coefficients are fixed by the lemniscatic constant ${G^{*}} = \sqrt{2}\,\Gamma(1/4)^2/(2\pi)$. Its roots yield $x_+ = 137.036\ldots$ (identified with $\alpha^{-1}$ at 1.26\,ppm) and $\lfloor x_- \rfloor = 3$ (the number of color charges, uniquely self-consistent in $D = 3$). From this single algebraic object, the gauge groups, the Higgs quartic $\lambda = 3/23$, the Bell violation $S = 2\sqrt{2}$, and the hydrogen spectrum follow. Every claim carries an epistemic tag: \etag{Axiom}, \etag{Theorem}, \etag{Selection}, \etag{Conjecture}, or \etag{Parametric Insertion}. Five selection principles are stated and critiqued. Falsification criteria are provided. This paper is accompanied by a complete derivation chain, a mathematical analysis of the discrete--continuous bridge, and an ontological constructor unifying the component results.
+\noindent We trace the lifecycle of a hydrogen atom as a deductive chain within Foundational Ternary Dynamics (FTD), a framework postulating a cubic lattice $\ZZ^3$ with ternary states and local causality. The central object is the \emph{master quadratic} $x^2 - 16{G^{*}}^2 x + 16{G^{*}}^3 = 0$, whose coefficients are fixed by the lemniscatic constant ${G^{*}} = \sqrt{2}\,\Gamma(1/4)^2/(2\pi)$. Its larger root $x_+ = 137.036\ldots$ is identified with $\alpha^{-1}$ at 1.26\,ppm. From this single algebraic object, the gauge groups, the Higgs quartic $\lambda = 3/23$, the Bell violation $S = 2\sqrt{2}$, and the hydrogen spectrum follow. Every claim carries an epistemic tag: \etag{Axiom}, \etag{Theorem}, \etag{Selection}, \etag{Conjecture}, or \etag{Parametric Insertion}. Five selection principles are stated and critiqued. Falsification criteria are provided. This paper is accompanied by a complete derivation chain, a mathematical analysis of the discrete--continuous bridge, and an ontological constructor unifying the component results.
 
 ---
 
@@ -136,13 +136,6 @@ The continuum is an extraordinarily good approximation, but the approximation \e
 
 ---
 
-## PAPER_3A_PHYSICAL_IDENTIFICATION.tex
-**Path:** `docs/papers/src/PAPER_3A_PHYSICAL_IDENTIFICATION.tex`
-
-\noindent Previous results establish, without physical assumptions, that the three-dimensional cubic lattice $\mathbb{Z}^3$ admits a self-consistency equation---the master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$---whose roots are $x_+ = 137.036$ and $x_- = 3.024$. This paper proposes the physical identification $x_+ = 1/\alpha$ (inverse fine structure constant) and $x_- \approx N_c$ (number of quark color charges). We state this identification as a \emph{conjecture}, catalog every assumption required to reach it, distinguish proven theorems from selections and impositions, and derive the falsification criteria. The identification, if correct, would determine the fine structure constant from pure lattice geometry with no adjustable parameters; if incorrect, it would be refuted by a precision measurement of $\alpha$ disagreeing with the predicted value at the $10^{-11}$ level.
-
----
-
 ## PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md
 **Path:** `docs/papers/src/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md`
 
@@ -160,7 +153,7 @@ where $G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi} \approx 2.9587$ is the lemnisc
 
 We demonstrate three chains of derivation from this single algebraic source:
 
-1. **QFT chain:** Real roots $\to$ $\alpha = 1/137.036$ and $N_c = 3$ $\to$ gauge groups $\to$ particle spectrum with ~30 values matching experiment to < 1%
+1. **QFT chain:** Real roots $\to$ $\alpha = 1/137.036$ $\to$ gauge groups $\to$ particle spectrum with ~30 values matching experiment to < 1%
 
 2. **GRT chain:** The same flux field $J$ that serves as QFT propagator also generates the stress-energy tensor $T_{\mu\nu}$ and Einstein's equations $R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = 8\pi G\, T_{\mu\nu}$
 
@@ -381,8 +374,8 @@ $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$---a chain of algebraic identities
 yields twenty-six testable physical quantities (some sharing common roots). The chain proceeds:
 $\varpi \to M \to G^{*} \to \pi$, where a master quadratic
 $x^2 - 16\,G^{*2}\,x + 16\,G^{*3} = 0$ produces roots
-$x_+ = 137.036$ and $x_- = 3.024$, identified with $1/\alpha$ (1.26\,ppm
-tree-level; $<\!1$\,ppt corrected) and $N_c = 3$. An integer cascade
+$x_+ = 137.036$ and $x_- = 3.024$, the larger identified with $1/\alpha$ (1.26\,ppm
+tree-level; $<\!1$\,ppt corrected). An integer cascade
 yields $\{3,4,7,13,47\}$, from which follow
 $\sin^2\!\theta_W = 3/13$,
 $\alpha_s(M_Z) = 7/59$,

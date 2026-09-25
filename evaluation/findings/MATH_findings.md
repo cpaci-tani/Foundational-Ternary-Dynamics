@@ -77,7 +77,6 @@ This is numerology dressed as derivation.
 **Location**: Throughout, especially 14.10-number-theory.qmd
 
 The manuscript claims these integers arise from "self-referential consistency" but:
-- $N_c = 3$: Claimed to be the smaller quadratic root floor, but the quadratic was constructed to give this
 - $N_{\text{base}} = 4$: Claimed to be a Lucas number with $L_3 = 4$, but this is selection not derivation
 - $b_3 = 7$: Claimed to equal $N_c + N_{\text{base}}$, but this is a definition
 - $N_{\text{eff}} = 13$: Claimed to be $F_7$ (Fibonacci), but the subscript 7 is chosen because $b_3 = 7$

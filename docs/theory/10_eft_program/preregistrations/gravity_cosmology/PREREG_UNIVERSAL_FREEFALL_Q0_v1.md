@@ -150,7 +150,7 @@ FOUND may not cite V2 as evidence. The geometric content is V1+V4+V5: FC-2’s s
 - Posit \(h_{\mu\nu}\), a graviton, or occupancy telegraph as this Q0.
 - Coincidence / near-miss numerical search; CODATA insertion as derivation.
 - Claim UFF from P1–P5 without FC-2, or claim P1–P5 force class \(\mathcal{C}\).
-- Re-open \(G_N=1/100\); identify \(x_-\) with \(N_c\); golden-tick change.
+- Re-open \(G_N=1/100\); golden-tick change.
 - Edit this prereg after observing EL output.
 
 ---

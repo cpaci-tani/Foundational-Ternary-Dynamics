@@ -270,8 +270,6 @@ D_SPATIAL = 3
 D_CONSTRAINT = 47
 
 # Verify integer relations
-check("0.9a", "N_c = floor(x_-) = 3", int(mpmath.floor(xm_exact)) == N_C,
-      f"floor({float(xm_exact):.6f}) = {int(mpmath.floor(xm_exact))}")
 check("0.9b", "N_gen = N_c = 3", N_GEN == N_C, "")
 check("0.9c", "N_f = 2*N_gen = 6", N_F == 2 * N_GEN, "")
 check("0.9d", "b_3 = (11*N_c - 2*N_f)/3 = 7", (11*N_C - 2*N_F) // 3 == B_3,

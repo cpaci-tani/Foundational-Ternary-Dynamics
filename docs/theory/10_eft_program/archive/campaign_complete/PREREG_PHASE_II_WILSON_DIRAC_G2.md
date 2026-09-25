@@ -2,7 +2,7 @@
 
 **Status:** PRE-REGISTRATION (committed BEFORE any measurement; hash-locked via git tag `preregister-phase-ii-wilson-dirac-g2-v1`).
 **Date:** 2026-05-03
-**Pre-registration discipline:** follows FTD-0097 / FTD-0121 / FTD-0123 / FTD-0124 / FTD-0125 methodology. Phase II is a multi-phase campaign (~4-6 weeks total); each sub-phase has its own internal pre-registration milestones, all rooted in this document.
+**Pre-registration discipline:** follows FTD-0097 / FTD-0121 / FTD-0124 / FTD-0125 methodology. Phase II is a multi-phase campaign (~4-6 weeks total); each sub-phase has its own internal pre-registration milestones, all rooted in this document.
 
 ---
 

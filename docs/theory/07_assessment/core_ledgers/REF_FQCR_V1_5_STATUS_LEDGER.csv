@@ -10,7 +10,6 @@ Constants,G*=Γ(1/4)/Γ(3/4),THEOREM / DEFINITION,Quarter-ratio anchor
 Constants,Γ(1/4)Γ(3/4)=π√2,THEOREM,Product sibling
 Constants,W_BCC=(G*)²/(2π),THEOREM,Lattice loop prefactor
 FQCR-EM,x_+=α^{-1},RECONSTRUCTION / CONJECTURE,Central alpha claim
-FQCR-EM,x_-≈N_c,RETIRED / FAILED,Do not use as color derivation
 SM,Z6 center closure,CONDITIONAL THEOREM,SM charge skeleton
 SM,sin²θ_W^lock=3/8,CONDITIONAL THEOREM,Weak trace lock
 Gravity scalar,D†WDU=κψJχ,CONDITIONAL THEOREM,Weak source law

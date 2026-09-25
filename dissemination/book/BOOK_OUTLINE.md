@@ -319,7 +319,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - [Your personal narrative of discovery]
 - The master quadratic: f(x) = x² - 16G*²x + 16G*³
 - The roots: 137.036 and 3.024
-- The recognition: these are fundamental constants
+- The recognition: 137.036 is a fundamental constant
 - *Framework connection*: THIS IS THE FRAMEWORK CONNECTION
 
 **Chapter 36: Following the Thread**

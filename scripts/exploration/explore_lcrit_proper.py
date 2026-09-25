@@ -30,13 +30,13 @@ print("PROPER l_crit FROM THE LATTICE")
 print("=" * 72)
 
 # Lattice constants
-alpha_s = 1.0 / 3.024   # strong coupling from x-
+alpha_s = 1.0 / 3.024   # strong coupling
 sigma = 0.209            # string tension
 K_B = 0.511              # MeV (manifestation threshold = nucleon mass scale)
 r_0 = np.sqrt(alpha_s / sigma)  # equilibrium distance
 
 print(f"\n  Lattice constants:")
-print(f"    alpha_s = 1/x- = {alpha_s:.4f}")
+print(f"    alpha_s = {alpha_s:.4f}")
 print(f"    sigma = {sigma:.4f}")
 print(f"    r_0 = sqrt(alpha_s/sigma) = {r_0:.4f} lattice units")
 print()
@@ -134,7 +134,7 @@ d2V_dr2_r0 = -2 * alpha_s / r_0**3
 # The spin-orbit strength determines which levels are intruders.
 # On the lattice: the spin-orbit comes from the velocity coupling g_c * s * (v.J).
 # The coupling strength is g_c = sqrt(alpha) for EM, but for nuclear:
-# g_c_nuclear = sqrt(alpha_s) where alpha_s = 1/x- = 1/3.024
+# g_c_nuclear = sqrt(alpha_s) where alpha_s = 1/3.024
 
 # The spin-orbit parameter from the lattice:
 # kappa_lattice = g_c_nuclear^2 * <1/r dV/dr> / (m * c^2)

@@ -134,7 +134,7 @@
 
 **Manifestation**: In the framework, the transition of a voxel from state 0 to state ±1.
 
-**Master quadratic**: The equation f(x) = x² - 16G*²x + 16G*³ = 0, whose roots encode α and N_c.
+**Master quadratic**: The equation f(x) = x² - 16G*²x + 16G*³ = 0, whose larger root encodes α.
 
 **Maya**: In Hindu philosophy, the cosmic illusion that veils the true nature of reality.
 
@@ -148,7 +148,7 @@
 
 **N_base**: In the framework, = 4, the minimal vertex count for 3D structure.
 
-**N_c**: In the framework, ≈ 3, the number of color charges. Corresponds to x₋.
+**N_c**: In the framework, 3, the number of color charges.
 
 **N_eff**: In the framework, = 13, the effective degrees of freedom.
 

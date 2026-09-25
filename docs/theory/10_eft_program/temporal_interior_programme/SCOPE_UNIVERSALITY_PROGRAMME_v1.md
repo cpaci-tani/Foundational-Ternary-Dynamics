@@ -121,8 +121,7 @@ so any row stating it formally states it for the first time.
 
 **Consequence for (b) — first finding.** Its stated precondition ("if the C3
 impossibility trend completes") is **not met**. Writing the priced negative on
-that basis would assert a route closure over an uncharacterized search space —
-the precise defect that withdrew FTD-0791 and FTD-0802.
+that basis would assert a route closure over an uncharacterized search space.
 
 **Second finding, and the decisive one: (b) is malformed as written.** A
 corpus search establishes that *"the clock route into MC-T4.3"* is **not an

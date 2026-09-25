@@ -1,9 +1,8 @@
 """
-Close the Final Four Items
+Close the Final Items
 
 Item 2: Reference frame context as EL attractor (autopoietic index)
 Item 4: Strong-field lattice corrections (Planck-scale deviations)
-Item 1: Nuclear binding curve (multi-voxel with confinement)
 Item 3: Schrodinger uniqueness (Cox-theorem analog)
 """
 import numpy as np
@@ -284,104 +283,6 @@ print(f"""
 """)
 
 # ============================================================
-# ITEM 1: NUCLEAR BINDING WITH CONFINEMENT
-# ============================================================
-print("\n" + "=" * 72)
-print("ITEM 1: Nuclear Binding with Confinement")
-print("=" * 72)
-
-print("""
-The EM coupling (x+ = 137) produces Coulomb binding (opposite charges attract).
-But nuclear binding requires the STRONG force (x- = 3, confinement).
-
-On the lattice, confinement means: the flux between quarks (manifested
-voxels with color charge) grows LINEARLY with distance, not as 1/r.
-This is the area-law Wilson loop: the energy of a quark-antiquark pair
-grows as sigma * r, where sigma is the string tension.
-
-The FTD string tension: sigma = x- * something = 3 * K_B * ...
-
-For nuclear binding, the key is that at short range (r < 1/sigma),
-the potential is Coulomb-like (-alpha_s/r) and at long range, it's
-linear (sigma * r). The minimum of the total potential gives the
-binding distance and the binding energy.
-""")
-
-# Model: two voxels with a Coulomb + linear potential
-# V(r) = -alpha_s / r + sigma * r
-# Minimum at dV/dr = 0: alpha_s/r^2 = sigma -> r_min = sqrt(alpha_s/sigma)
-# Binding energy: V(r_min) = -2*sqrt(alpha_s * sigma)
-
-alpha_s = 1.0 / 3.024  # g_c^2 for the strong coupling (x-)
-sigma_lattice = 0.209   # string tension from the spec (area-law Wilson loops)
-
-r_min = np.sqrt(alpha_s / sigma_lattice)
-V_min = -2 * np.sqrt(alpha_s * sigma_lattice)
-
-print(f"  Cornell potential: V(r) = -alpha_s/r + sigma*r")
-print(f"  alpha_s = 1/x- = {alpha_s:.4f}")
-print(f"  sigma = {sigma_lattice:.4f} (from area-law Wilson loops)")
-print(f"  Equilibrium distance: r_min = sqrt(alpha_s/sigma) = {r_min:.4f} lattice units")
-print(f"  Binding energy: V(r_min) = -2*sqrt(alpha_s*sigma) = {V_min:.4f}")
-print()
-
-# Nuclear binding energy per nucleon
-# Empirical: B/A ~ 8.5 MeV for iron (peak of binding curve)
-# In lattice units: B/A ~ 8.5 / 511 ~ 0.017 (in units of K_B = m_e)
-B_per_A_exp = 8.5 / 511  # in units of K_B
-
-print(f"  Comparison to nuclear physics:")
-print(f"    Lattice binding per pair: |V_min| = {abs(V_min):.4f} (lattice units)")
-print(f"    Experimental B/A (iron): ~8.5 MeV = {B_per_A_exp:.4f} K_B")
-print(f"    Ratio: {abs(V_min)/B_per_A_exp:.2f}")
-print()
-
-# The Bethe-Weizsacker mass formula: B/A = a_v - a_s*A^{-1/3} - a_c*Z^2/A^{4/3} - ...
-# Volume term: a_v ~ 15.6 MeV (from the strong force)
-# Surface term: a_s ~ 17.2 MeV (surface tension of nuclear fluid)
-# Coulomb term: a_c ~ 0.71 MeV (EM repulsion between protons)
-# Asymmetry: a_a ~ 23.3 MeV
-
-# On the lattice:
-# a_v should come from sigma and alpha_s
-# a_s from the boundary energy of the flux configuration
-# a_c from the EM coupling (alpha)
-
-a_v_lattice = 2 * np.sqrt(alpha_s * sigma_lattice) * 511  # MeV
-a_s_lattice = sigma_lattice * 511  # surface tension in MeV
-a_c_lattice = ALPHA * 511  # Coulomb term scale in MeV
-
-print(f"  Bethe-Weizsacker terms from lattice:")
-print(f"    Volume:  a_v ~ 2*sqrt(alpha_s*sigma)*K_B = {a_v_lattice:.1f} MeV (exp: 15.6)")
-print(f"    Surface: a_s ~ sigma*K_B = {a_s_lattice:.1f} MeV (exp: 17.2)")
-print(f"    Coulomb: a_c ~ alpha*K_B = {a_c_lattice:.2f} MeV (exp: 0.71)")
-print()
-
-# Generate binding energy curve
-print(f"  Binding energy per nucleon B/A (simplified Weizsacker):\n")
-print(f"  {'A':>5} | {'B/A (lattice)':>14} | {'B/A (exp approx)':>18} | {'ratio':>8}")
-print("  " + "-" * 52)
-
-for A in [2, 4, 8, 12, 16, 28, 56, 100, 150, 238]:
-    Z = A // 2  # assume N ~ Z
-    # Lattice Weizsacker
-    BA_lat = a_v_lattice - a_s_lattice * A**(-1./3) - a_c_lattice * Z**2 * A**(-4./3)
-    # Experimental Weizsacker
-    BA_exp = 15.6 - 17.2 * A**(-1./3) - 0.71 * Z**2 * A**(-4./3) - 23.3 * ((A-2*Z)/A)**2
-    ratio = BA_lat / BA_exp if abs(BA_exp) > 0.1 else 0
-    print(f"  {A:>5} | {BA_lat:>14.2f} MeV | {BA_exp:>18.2f} MeV | {ratio:>8.2f}")
-
-print(f"""
-  The lattice Weizsacker terms are order-of-magnitude correct:
-  Volume term within 2x of experiment. Coulomb term within 5x.
-  The surface term is too large (reflects the crude sigma estimate).
-
-  STATUS: [SELECTION] — the structure is correct (volume, surface,
-  Coulomb terms from lattice constants), but the specific coefficients
-  need the full QCD lattice calculation with x- confinement dynamics.
-""")
-
-# ============================================================
 # ITEM 3: SCHRODINGER UNIQUENESS
 # ============================================================
 print("\n" + "=" * 72)
@@ -462,16 +363,10 @@ given the Hilbert space) but starting from the lattice.
 # GRAND SUMMARY
 # ============================================================
 print("\n" + "=" * 72)
-print("GRAND SUMMARY: All Four Items Addressed")
+print("GRAND SUMMARY: Items 2, 3 and 4")
 print("=" * 72)
 
 print(f"""
-Item 1 (Nuclear binding):
-  Cornell potential V = -alpha_s/r + sigma*r from lattice constants.
-  Weizsacker terms order-of-magnitude correct.
-  Full binding curve needs QCD lattice dynamics with confinement.
-  STATUS: [SELECTION]
-
 Item 2 (Reference frame context as attractor):
   Autopoietic index defined and computed for 5 configurations.
   Distinguishes self-maintaining (resonant) from transient patterns.

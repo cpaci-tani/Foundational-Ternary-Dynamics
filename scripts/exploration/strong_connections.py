@@ -67,74 +67,10 @@ print('    Ratio: %.10f' % (actual_g14_sq / target_g14_sq))
 print('    Deviation: %.4f%%' % (abs(actual_g14_sq/target_g14_sq - 1)*100))
 print()
 
-# Alternatively: can we express 10/27 in terms of G*?
-# 10/27 = C(D+2, 2) / N_c^D
-# where D=3 and N_c = floor(x-) = 3
-# x- comes from the master quadratic: depends on G*
-# So 10/27 depends on G* THROUGH x- and the lattice dimension D
-# But D=3 is also derived from G* (through the lattice axiom)
-
-# The chain: G* -> master quadratic -> x- ~ 3.024 -> floor(x-) = N_c = 3
-#            G* -> (separate argument) -> D = 3
-#            N_c, D -> C(D+2,2)/N_c^D = 10/27
-
-# Is there a reason G*/8 should equal C(D+2,2)/N_c^D?
-# G*/8 = G*/2^D (since D=3)
-# C(D+2,2)/N_c^D = (D+1)(D+2)/(2*N_c^D) = 4*5/(2*27) = 10/27
-
-# So the question becomes: does G* = 2^D * (D+1)(D+2) / (2*N_c^D)?
-# = 8 * 20 / (2 * 27) = 80/27 = 2.963
-
-# Using the Vieta relation: N_c ~ x- = 8G*^2 - 4G*^(3/2)*sqrt(4G*-1)
-# If we set N_c = 3 exactly (as an integer), then:
-# G* must satisfy x- = 3, which gives a different quadratic
-
-print('  What if x- = 3 EXACTLY (instead of 3.024)?')
-print()
-
-# If x- = 3, from master quadratic:
-# 3^2 - 16G*^2 * 3 + 16G*^3 = 0
-# 9 - 48G*^2 + 16G*^3 = 0
-# 16G*^3 - 48G*^2 + 9 = 0
-
-# Solve numerically
-coeffs_exact = [16, -48, 0, 9]
-roots_exact = np.roots(coeffs_exact)
-real_positive = [r.real for r in roots_exact if abs(r.imag) < 1e-10 and r.real > 0]
-real_positive.sort()
-
-print('  If x- = 3 exactly: 16G*^3 - 48G*^2 + 9 = 0')
-print('  Roots: %s' % ', '.join('%.10f' % r for r in real_positive))
-print()
-
-# The root near 2.96 would be the G* consistent with x-=3
-if len(real_positive) >= 2:
-    g_star_exact_nc = real_positive[1]  # should be near 2.96
-    print('  G* if x-=3 exactly: %.10f' % g_star_exact_nc)
-    print('  Actual G*:          %.10f' % G_STAR)
-    print('  Difference:         %.6e (%.4f%%)' %
-          (abs(g_star_exact_nc - G_STAR), abs(g_star_exact_nc - G_STAR)/G_STAR*100))
-    print()
-
-    # And what is G*/8 for this value?
-    vis_exact_nc = g_star_exact_nc / 8
-    print('  G*/8 at this value: %.10f' % vis_exact_nc)
-    print('  10/27 =            %.10f' % (10./27))
-    print('  Difference:        %.6e' % abs(vis_exact_nc - 10./27))
-    print()
-
-    # And what is x+ for this G*?
-    xp_exact = 16 * g_star_exact_nc**2 - 3  # from Vieta: x+ + x- = 16G*^2
-    print('  x+ at this G*: %.10f (actual 1/alpha = %.10f)' % (xp_exact, X_PLUS))
-    print('  Deviation from 1/alpha: %.4f%%' %
-          (abs(xp_exact - X_PLUS)/X_PLUS*100))
-
-print()
-
 # =====================================================================
-# CONNECTION 2: x-/G* = 1.022 (strong force = circle scale)
+# CONNECTION 2: x-/G* = 1.022
 # =====================================================================
-print('  CONNECTION 2: x-/G* ~ 1 (strong force = circle scale)')
+print('  CONNECTION 2: x-/G* ~ 1')
 print('  ' + '-' * 68)
 print()
 
@@ -502,7 +438,6 @@ print()
 print('  NEAR-MISSES (0.1-0.7% accuracy, status unknown):')
 print('    - G*/8 ~ 10/27 (0.14%)')
 print('    - 10e ~ 27 (0.68%)')
-print('    - If x-=3 exactly, G* = 2.9597 (0.04% from actual)')
 print()
 print('  THE DEEPEST STRUCTURAL RESULT:')
 print('    xi = Phi_6(sqrt(pi)) / (pi-1)')

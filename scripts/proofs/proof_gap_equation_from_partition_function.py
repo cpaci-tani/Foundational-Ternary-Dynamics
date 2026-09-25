@@ -17,7 +17,7 @@ What this proves:
   [THEOREM]  The self-energy per gauge mode is Σ_mode = W₃/x (exact, not one-loop)
   [THEOREM]  The total self-energy is Σ = K·W₃/x with K = 16G*² (from O_h + Haar)
   [THEOREM]  The self-consistency x = K − KG*/x gives x² − Kx + KG* = 0
-  [THEOREM]  The roots are x₊ = 137.036 (= 1/α) and x₋ = 3.024 (≈ N_c)
+  [THEOREM]  The roots are x₊ = 137.036 (= 1/α) and x₋ = 3.024
   [SELECTION] The self-consistency prescription itself (definition of "effective coupling")
 
 Depends on:
@@ -562,7 +562,6 @@ print(f"    x₋ = (K − √Δ)/2 = {x_minus:.10f}")
 print()
 print(f"  PHYSICAL IDENTIFICATION:")
 print(f"    1/α = x₊ = {x_plus:.6f}  (CODATA: 137.035999)")
-print(f"    N_c ≈ x₋ = {x_minus:.6f}  (QCD: 3)")
 print()
 
 suite.assert_close(
@@ -572,7 +571,7 @@ suite.assert_close(
 )
 
 suite.assert_close(
-    "Master quadratic root x₋ ≈ N_c",
+    "Master quadratic root x₋",
     x_minus, X_MINUS, MACHINE_EPS,
     tag="[THEOREM]"
 )
@@ -824,10 +823,9 @@ print("    O_h symmetry → 16 gauge-fixed modes (K coefficient)[THEOREM]")
 print("    Watson integral → G* as natural lattice scale      [THEOREM]")
 print("    Self-consistency prescription                       [SELECTION]")
 print("    x = K(1−G*/x) → x² − 16G*²x + 16G*³ = 0         [THEOREM]")
-print("    Quadratic formula → x₊ = 1/α, x₋ ≈ N_c           [THEOREM]")
+print("    Quadratic formula → x₊ = 1/α                   [THEOREM]")
 print()
 print(f"  RESULT: α = 1/{x_plus:.6f}  (CODATA: 1/137.035999)")
-print(f"          N_c ≈ {x_minus:.6f}  (QCD: 3)")
 print()
 
 

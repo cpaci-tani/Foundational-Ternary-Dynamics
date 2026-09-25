@@ -240,23 +240,9 @@ The deepest question: why exactly three copies of each fermion?
 
 ### The FTD Answer
 
-$$N_{\text{generations}} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3$$
-
 The number of colors (from the lattice's three spatial dimensions) determines the number of generations.
 
 More deeply: each generation corresponds to one axis of the flux field. The three generations explore the three independent directions in configuration space.
-
-### The Second Root
-
-Recall the master quadratic from Chapter 1.10:
-
-$$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
-
-This has two roots:
-- $x_+$ = 137.036 $\to$ $1/\alpha$ (fine structure constant)
-- $x_-$ = 3.024 $\to$ $N_c$ (number of colors/generations)
-
-**The same equation that gives α also gives 3 generations.**
 
 ## The Pattern: All Flavor Physics from Four Integers
 

@@ -5,7 +5,6 @@
 **Companions:**
 - [FOUND_LADDER_GENERATING_RULE.md](FOUND_LADDER_GENERATING_RULE.md) — the ladder walk this closes
 - [FOUND_AXIOM_ZERO.md](FOUND_AXIOM_ZERO.md) — S2 selection in chain §2.3
-- [FOUND_MASTER_QUADRATIC_UNIQUENESS_PROOF.md](FOUND_MASTER_QUADRATIC_UNIQUENESS_PROOF.md) (FTD-0083) — Program E closed S1
 - [test_ladder_walk_from_oh.cpp](../../../engine/tests/test_ladder_walk_from_oh.cpp) — constructive proof
 
 ---
@@ -22,7 +21,7 @@ Program A, proposed in the [historical FTD-0081 synthesis](../archive/FOUND_MAST
 Net effect on S2 in the cogito-axiom ladder ([FTD-0080](FOUND_AXIOM_ZERO.md)):
 **S2 [SELECTION] $\to$ [THEOREM on multiset + SELECTION on order].**
 
-Combined with Program E (FTD-0083) closing S1:
+Cogito-axiom ladder status:
 - S1 (master quadratic): **[THEOREM]**
 - S2 (ladder walk): **[PARTIAL THEOREM]** — multiset closed, order narrowed
 
@@ -177,16 +176,16 @@ Attempting to match $\{4, 3, 3, 6\}$ as branching multiplicities is worse: each 
 |---|---|---|
 | Step integers $\{N_{\text{base}}, N_c, N_f\} = \{4, 3, 6\}$ | [THEOREM] | $O_h$ irrep structure (§2) |
 | Step-size multiset $\{3, 3, 4, 6\}$ | [THEOREM] | Partition theorem (§3) |
-| Total sum $= 16$ | [THEOREM] | FTD-0083 (master-quadratic coefficient) |
+| Total sum $= 16$ | [THEOREM] | Master-quadratic coefficient |
 | Color-appears-twice | [STRONGLY MOTIVATED] | Parity classes of $T$-type irreps (§2.2) |
 | Step ORDER $\{4, 3, 3, 6\}$ | [SELECTION, narrowed] | SM physics input (§4) |
 | Positions $\{4, 8, 11, 14, 20\}$ | [CONDITIONAL on order] | Consequence of order choice |
 
 ### 5.2 Impact on cogito-axiom ladder
 
-| Selection | Before Programs E + A | After Programs E + A |
+| Selection | Before | After |
 |---|---|---|
-| S1 (master quadratic) | [SELECTION] | **[THEOREM]** (FTD-0083) |
+| S1 (master quadratic) | [SELECTION] | **[THEOREM]** |
 | S2 (ladder walk) | [SELECTION] | **[PARTIAL THEOREM]** (this doc) |
 
 **Cogito-axiom ladder residual selection content:** one partial-selection remaining — the specific order within the forced multiset $\{3, 3, 4, 6\}$. This is a much narrower selection than "the full ladder walk is a free choice."
@@ -219,7 +218,7 @@ A specific subgroup chain $O_h = G_0 \supset G_1 \supset \cdots \supset G_n$ who
 
 ### 6.3 Path 3: Recovery from the master quadratic
 
-Since Programs E + A reduce the chain to a single residual selection (the order), perhaps the order can be fixed by requiring consistency with a specific physics prediction (e.g., $m_e/m_p$ ratio, neutrino mass scale). This would convert the residual [SELECTION] into a physics-calibration tag.
+Since the chain is reduced to a single residual selection (the order), perhaps the order can be fixed by requiring consistency with a specific physics prediction (e.g., $m_e/m_p$ ratio, neutrino mass scale). This would convert the residual [SELECTION] into a physics-calibration tag.
 
 **Caveat:** this is a calibration, not a derivation — consistent with [SELECTION, narrowed] but not promoting to [THEOREM].
 
@@ -246,11 +245,11 @@ Test: `engine/tests/test_ladder_walk_from_oh.cpp`
 **Remaining:**
 - Step ORDER within the multiset: **[SELECTION, narrowed]** (12 orderings allowed; SM-structural order chosen)
 
-**Cogito-axiom ladder status (after Programs E + A):**
-- S1: [THEOREM] (Program E, FTD-0083)
+**Cogito-axiom ladder status:**
+- S1: [THEOREM]
 - S2: [PARTIAL THEOREM] (Program A, this doc)
 - Residual: one narrow selection (the step order within a forced multiset)
 
 ---
 
-*Closes Program A as a partial closure of S2. Promotes step-size multiset $\{3, 3, 4, 6\}$ from [SELECTION] to [THEOREM] via $O_h$ structural integers + partition theorem. Step ORDER remains [SELECTION, narrowed] pending additional derivation work. Combined with Program E (FTD-0083), the cogito-axiom ladder is reduced from 2 selections to 1 narrow selection.*
+*Closes Program A as a partial closure of S2. Promotes step-size multiset $\{3, 3, 4, 6\}$ from [SELECTION] to [THEOREM] via $O_h$ structural integers + partition theorem. Step ORDER remains [SELECTION, narrowed] pending additional derivation work.*

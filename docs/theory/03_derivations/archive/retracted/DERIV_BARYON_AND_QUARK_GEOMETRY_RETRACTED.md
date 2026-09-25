@@ -11,7 +11,7 @@ $N_{eff}/\alpha$ formula) · the $L_9$ "knot" re-spelling `[PARAMETRIC]` · the 
 
 > **Epistemic note (adjudicated):** the `[THEOREM]` promotion (commit `fdc483d0`)
 > is **RETRACTED** — these are substitution identities, not forcing chains; they fail the
-> FTD-0097/0189 look-elsewhere bar and the standing zero-promotion discipline.
+> FTD-0097 look-elsewhere bar and the standing zero-promotion discipline.
 > **Honest tags:** the proton mass ratio is a `[STRONGLY MOTIVATED CONJECTURE]` via the
 > prior formula $m_p/m_e = N_{eff}/\alpha + N_{base}\cdot N_{eff} + N_c$ (≈173 ppm); the six
 > quark masses are `[PARAMETRIC]` (tuned integer recipes; $m_t$ imports $Z=118$/Oganesson

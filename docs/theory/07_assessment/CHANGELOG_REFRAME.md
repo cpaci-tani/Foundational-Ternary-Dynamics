@@ -35,7 +35,7 @@ Shifted the framework's foundational ontology from completed-infinity ℤ³ to u
 - **Substantive rewrites required:** FOUND_AXIOM_ZERO, DERIV_MASTER_QUADRATIC_GAP_EQUATION, DERIV_PATH_INTEGRAL_CONSTRUCTION, DERIV_VON_NEUMANN_CONSTRUCTION, SPEC_FTD §Postulate 1.
 - **Mechanical RESTATE:** 38 documents (5 parallel sweep batches).
 - **RETRACTED:** "Master quadratic as L → ∞ limit of finite-L gap equation" (FTD-0032).
-- **DEMOTED:** Type III₁ classification SELECTION → HYPOTHESIS (FTD-0033); x₊  1/α and x₋  N_c THEOREM → STRONGLY MOTIVATED CONJECTURE (FTD-0013, FTD-0014); 7-term α series CONJECTURE (was implied derivation) (FTD-0022); sin²θ_W, sin²θ_13, α_s, PMNS angles → PARAMETRIC / STRUCTURALLY MOTIVATED PARAMETRIC (FTD-0018-21, per Option 4 audit on the same day).
+- **DEMOTED:** Type III₁ classification SELECTION → HYPOTHESIS (FTD-0033); x₊  1/α THEOREM → STRONGLY MOTIVATED CONJECTURE (FTD-0013); 7-term α series CONJECTURE (was implied derivation) (FTD-0022); sin²θ_W, sin²θ_13, α_s, PMNS angles → PARAMETRIC / STRUCTURALLY MOTIVATED PARAMETRIC (FTD-0018-21, per Option 4 audit on the same day).
 - **NEW [OPEN]:** `a_phys` (lattice → physical length conversion) — created as load-bearing problem (FTD-0030).
 
 ### Phase 4 — Restatement and re-derivation
@@ -45,7 +45,7 @@ Shifted the framework's foundational ontology from completed-infinity ℤ³ to u
 | File | Change | LEDGER row |
 |---|---|---|
 | `02_foundations/FOUND_AXIOM_ZERO.md` | Position clause restated to undefined-boundary; §3.2/§4.2/§4.3 restated as algebraic-identity claims (gap-equation thermodynamic-limit framing withdrawn); chain table Step 0 updated. | FTD-0036 |
-| `03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` | **Full rewrite.** Title changed to "Algebraic Identity and Physical Match." Coefficient 16 presented via two finite-combinatorial routes (\|Aut(E)\|² + z_BCC·2). Discriminant trichotomy preserved. Physical identification x₊1/α, x₋N_c moved to STRONGLY MOTIVATED CONJECTURE anchored on dual match + CM uniqueness. Gap-equation/thermodynamic-limit narrative withdrawn. | FTD-0001, FTD-0013, FTD-0014, FTD-0032 |
+| `03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` | **Full rewrite.** Title changed to "Algebraic Identity and Physical Match." Coefficient 16 presented via two finite-combinatorial routes (\|Aut(E)\|² + z_BCC·2). Discriminant trichotomy preserved. Physical identification x₊1/α moved to STRONGLY MOTIVATED CONJECTURE anchored on CM uniqueness. Gap-equation/thermodynamic-limit narrative withdrawn. | FTD-0001, FTD-0013, FTD-0032 |
 | `03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md` | §1.2 configuration-space framing restated to undefined-boundary; §1.4 IR-finiteness corollary restated; §5.5 "thermodynamic limit" theorem restated as scaling property of {F_N} family with explicit "no exact non-analyticity at any finite N" caveat. | n/a (theorem-level, finitary statement) |
 | `06_reference_frames_and_measurement/DERIV_VON_NEUMANN_CONSTRUCTION.md` | Type III₁ demoted SELECTION → HYPOTHESIS. Sections 5–6 restated as "Araki–Woods inductive-limit scaffold yields Type III₁ *if* applied"; Section 7 numerical-verification rows tagged [HYPOTHESIS] (Scaffold) for III₁ items; Section 8 epistemic accounting updated. | FTD-0033 |
 | `docs/SPEC_FTD.md` | Postulate 1 restated to "undefined-boundary cubic lattice"; DEF.1 updated; finite-size-effects note updated. | FTD-0036 |
@@ -104,8 +104,8 @@ The devil's-advocate agent (`DEVILS_ADVOCATE_REPORT.md`) flagged 3 blocking issu
 | Issue | File | Fix |
 |---|---|---|
 | Boxed Axiom Zero contradicted body (line 17 said "x ∈ ℤ³"; body said "undefined-boundary cubic graph") | `02_foundations/FOUND_AXIOM_ZERO.md` | Restated boxed Axiom Zero position clause to undefined-boundary. |
-| §4.4 still attributed master quadratic to "fixed point of gap equation" | `02_foundations/FOUND_AXIOM_ZERO.md` | Restated to algebraic-uniqueness + dual match + CM-curve uniqueness. |
-| One-sentence summary still said "self-consistent gap equation yields x_+" | `02_foundations/FOUND_AXIOM_ZERO.md` | Restated as algebraic determination + dual match. |
+| §4.4 still attributed master quadratic to "fixed point of gap equation" | `02_foundations/FOUND_AXIOM_ZERO.md` | Restated to algebraic-uniqueness + CM-curve uniqueness. |
+| One-sentence summary still said "self-consistent gap equation yields x_+" | `02_foundations/FOUND_AXIOM_ZERO.md` | Restated as algebraic determination. |
 | Orphan Type III₁ premise: "the flux field IS Type III$_1$" still asserted in 3 places | `06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md` (lines 28, 320, 511) | Restated all three to "[HYPOTHESIS] under Araki–Woods scaffold"; cross-cited `DERIV_VON_NEUMANN_CONSTRUCTION.md`. |
 
 ### Engine-audit follow-up (Phase 5 fixes, same-day)
@@ -536,7 +536,7 @@ From refactoring (P2/P3):
 
 User-invoked session to test an implicit additional conjecture on top of the master quadratic: that the polynomial `x² − 16G*² x + 16G*³ = 0` arises as the characteristic polynomial of a renormalization-group step on the FTD engine's bare-lattice dynamics. Three independent tests run (Candidate 1 direct; analytical Option β; thermalized Run 3 on new Langevin infrastructure); all three close negative; all three agree structurally on *why* (the engine's 18-point coupling stencil is ½(σ_SC + σ_FCC) and has zero BCC component, while the master quadratic's 16G*² coefficient is exactly the BCC Watson integral times 2π·16).
 
-**Net effect on the framework:** FTD-0001, FTD-0013, FTD-0014 are unchanged. One speculative additional interpretation ("RG-flow reading") is removed from scope. New engine infrastructure (Langevin thermostat) landed and is reusable for the EFT campaign's thermal-ensemble needs.
+**Net effect on the framework:** FTD-0001 and FTD-0013 are unchanged. One speculative additional interpretation ("RG-flow reading") is removed from scope. New engine infrastructure (Langevin thermostat) landed and is reusable for the EFT campaign's thermal-ensemble needs.
 
 ### Phase A — Candidate 1 direct (real-space Kadanoff blocking)
 
@@ -594,7 +594,7 @@ User-invoked session to test an implicit additional conjecture on top of the mas
 ### Epistemic status after this session
 
 - **Firm theorems unchanged:** FTD-0001 (master quadratic algebraic identity), FTD-0002, FTD-0003, FTD-0004, FTD-0005, FTD-0006, FTD-0007, FTD-0008, FTD-0010, FTD-0011, FTD-0044.
-- **STRONGLY MOTIVATED CONJECTURE unchanged:** FTD-0013 (x₊  1/α), FTD-0014 (x₋  N_c), FTD-0015 (m_e formula), FTD-0016 (m_p/m_e formula).
+- **STRONGLY MOTIVATED CONJECTURE unchanged:** FTD-0013 (x₊  1/α), FTD-0015 (m_e formula), FTD-0016 (m_p/m_e formula).
 - **NEW CLOSED NEGATIVE:** FTD-0050 — master quadratic is NOT the characteristic polynomial of an RG step on the current engine.
 - **NEW INFRASTRUCTURE:** FTD-0051 — Langevin thermostat operational.
 - **NEW OPEN:** FTD-0052 — s-field Metropolis (deferred).
@@ -672,7 +672,6 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 - **RESTATE**: SPEC_ALGEBRAIC_SPINE.md Theorem 3 = `[NUMERICAL FACT, exhaustive over 9-element h=1 set]` (was [THEOREM]); LEDGER FTD-0003.
 - **RESTATE**: SPEC_SM_REPLACEMENT_COMPLETE.md abstract — removed overclaim; updated to LEDGER current state.
 - **PROMOTE**: 38 LEDGER detail blocks added for FTD-0060 → FTD-0121 (audit's central epistemic gap).
-- **NEW**: `git tag hashlock-polynomial-scan-v1` against commit f36b741 — retroactive hash-lock for FTD-0121 polynomial scan.
 - **RESTATE**: CLAUDE.md tag table extended with [STRONGLY MOTIVATED CONJECTURE], [PARAMETRIC], [SYNTHESIS], [CLOSED NEGATIVE], [DERIVED].
 - **RETAG**: META_INDEX.md row count 49 → 119; broken AUDIT_LOOK_ELSEWHERE link fixed.
 
@@ -703,10 +702,6 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 
 ### Phase 3: Tier II + cross-tier advance (commits `83823a6`, `df4a407`)
 
-- **NEW**: `scripts/proofs/proof_polynomial_look_elsewhere_extended.py` — extended polynomial-scan runner.
-- **NEW**: `git tag preregister-polynomial-scan-extended-v1` against commit 83823a6 BEFORE scan execution. **Genuine pre-registration** — closes the FTD-0097/FTD-0121 methodological-discipline gap.
-- **PROMOTE**: 2,871,576 polynomials/multipliers scanned (~19× original). Master quadratic uniquely dual-selective. **0 dual-matchers in Eisenstein family** confirms (1+i, k=4) Gaussian-integer choice is structurally distinguished. Closes MC-T2.1 + MC-T2.2.
-- **RETAG**: FTD-0001 detail block — structural-uniqueness backing strengthened. FTD-0111 (1+i, k=4) selection promoted from "rank-1 in Gaussian family" to "structurally distinguished from Eisenstein analogue". FTD-0121 [SYNTHESIS] Bayes factor strengthened from ~20,000:1 to **~4×10⁵:1**.
 - **NEW**: `scripts/proofs/proof_a1g_dual4_via_zi_units.py` — Z[i]^× structural argument. Three [THEOREM]-grade roles for "4" all trace to |Z[i]^×| = 4. Advances MC-T1.5 from [empirical agreement] to [STRUCTURAL CONJECTURE supported]; advances MC-T4.5 jointly.
 - **NEW**: `docs/theory/09_mathematical/EXPLR_CHOWLA_SELBERG_HIGHER_H.md` — closes MC-T2.3 with theory-note machinery list for h≥2 generalization.
 
@@ -714,14 +709,14 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 
 - **9 of 18 checklist items concretely advanced** (Tier I 5/5, Tier II 3/3, Tier III T3.2, Tier IV T4.5). 4 honest investigations. 1 blocked. 4 untouched.
 - **9 new proof scripts** under `scripts/proofs/`.
-- **Historical session report (status corrected later):** Paper A strengthened its FTD-0121 Bayes discussion and preregistration record; its then-current `n=11 [DERIVED]` statement is superseded by FTD-0390/0397 and now reads [SELECTION].
+- **Historical session report (status corrected later):** Paper A's then-current `n=11 [DERIVED]` statement is superseded by FTD-0390/0397 and now reads [SELECTION].
 - **MC-T4.3 unchanged**: the central foundational obstruction (non-action α-injection mechanism) remains untouched. Lead-physicist diagnosis (Phase J ultralocality structurally decouples spine from action) still stands.
 
 ---
 
 ## 2026-05-02 evening + 2026-05-03 — publication trio + tracker consolidation + 3 new LEDGER entries
 
-**Eleven commits since `a016994` morning session-close.** Major themes: (1) overclaim cleanup + MC-T4.1 reframe; (2) publication trio (Papers A v2, B v1, C revision); (3) three new LEDGER entries (FTD-0122 [DERIVED], FTD-0123 [NUMERICAL FACT], FTD-0124 [METHODOLOGICAL]); (4) canonical bedrock tracker + paper-inventory database; (5) tracker landscape consolidation (4 deletions).
+**Eleven commits since `a016994` morning session-close.** Major themes: (1) overclaim cleanup + MC-T4.1 reframe; (2) publication trio (Papers A v2, B v1, C revision); (3) new LEDGER entries (FTD-0122 [DERIVED], FTD-0124 [METHODOLOGICAL]); (4) canonical bedrock tracker + paper-inventory database; (5) tracker landscape consolidation (4 deletions).
 
 ### Phase 4 — MC-T4.1 reframe (cc93c2d)
 
@@ -734,24 +729,18 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 - **RESTATE**: `dissemination/manuscript_v2/src/preface.qmd` and `index.qmd` (and `vol1/` mirrors) — removed "zero free parameters", "Derives / Recovers / Resolves / Predicts" → tagged versions.
 - **RESTATE**: `engine/web/js/ui/components/faq/data.js` — 6 FAQ THEOREM tags downgraded. Browser preview verified.
 
-### Phase 6 — Paper A v2 (99a94c0)
-
-- **PROMOTE**: extended polynomial scan 147,456 → 2,871,576 polynomials/multipliers (~19.5×). Three extension directions (rational coefficients, cubic embeddings, Eisenstein-integer multipliers).
-- **NEW**: `scripts/proofs/proof_polynomial_look_elsewhere_extended.py` — pre-reg tag `preregister-polynomial-scan-extended-v1` BEFORE execution.
-- **RETAG**: FTD-0121 SYNTHESIS Bayes factor strengthened to ~4×10⁵:1; 0 Eisenstein-family dual-matchers confirms (1+i, k=4) Gaussian choice is structurally distinguished.
-
-### Phase 7 — FTD-0122 BCC complex-structure theorem (16b0d92)
+### Phase 6 — FTD-0122 BCC complex-structure theorem (16b0d92)
 
 - **NEW**: `docs/theory/09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md` and `scripts/proofs/proof_bcc_complex_structure.py` (5/5 PASS in exact rationals).
 - **NEW LEDGER ROW**: FTD-0122 [DERIVED for Roles 1+3] + [NO-GO for Roles 2+4]. Z[BCC] ⊗ Q decomposes as `V_triv² ⊕ V_sign² ⊕ V_complex²`; V_complex carries natural Z[i]-module structure ≅ Z[i]². Unifies CM Aut count + tower level k=4 via Z[i]; honestly disclaims Roles 2 (O_h^ab Klein ≠ Z/4) + 4 (orbit-count, sizes (1,6,12,8)).
 - **RETAG**: MC-T4.5 in `CHECKLIST_MATH_COMPLETE.md` from [STRUCTURAL CONJECTURE supported] to **[Roles 1+3 DERIVED] + [Roles 2+4 NO-GO]**.
 - **SUPERSEDE**: `proof_a1g_dual4_via_zi_units.py` (committed `df4a407` morning) — its informal "natural Z[i]-module structure on BCC" deferral is now formalized; the over-strong four-role unification is explicitly disclaimed.
 
-### Phase 8 — Paper B v1 draft (93b34d6)
+### Phase 7 — Paper B v1 draft (93b34d6)
 
 - **NEW**: `dissemination/papers/PAPER_B_BCC_COMPLEX_STRUCTURE.tex` (7pp; LMP target). Companion to Paper A. Theorems 3.1 (BCC complex structure), 4.1 (CM connection / Role 1), 5.1 (tower-level / Role 3), 6.1 + 6.2 (no-go for Roles 2 + 4).
 
-### Phase 9 — FTD-0124 9-Heegner rigidity / criterion-bifurcation (64aa4a9)
+### Phase 8 — FTD-0124 9-Heegner rigidity / criterion-bifurcation (64aa4a9)
 
 - **NEW**: `docs/theory/10_eft_program/archive/campaign_complete/PREREG_HEEGNER_TOWER_RIGIDITY.md` + `AUDIT_HEEGNER_TOWER_RIGIDITY.md`.
 - **NEW LEDGER ROW**: FTD-0124 [NUMERICAL FACT + METHODOLOGICAL]. 5814-quadruple grid (9 Heegner × 19 coeff × 17 targets × 2 roots). Two criteria, two verdicts:
@@ -759,31 +748,24 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
   - Rational-multiplier (q ≤ 200, FC-factorable): 21 strict matches. Theorem 3 FAILS at this looser criterion.
 - **METHODOLOGICAL FINDING**: framework currently applies BOTH criteria in different places without flagging the choice. F10 hygiene issue.
 
-### Phase 10 — FTD-0123 Chowla-Selberg h≥2 (fdb35fa)
-
-- **NEW**: `scripts/proofs/proof_chowla_selberg_higher_h_scan.py` — pre-reg tag `preregister-chowla-selberg-higher-h-scan-v1` BEFORE execution.
-- **NEW LEDGER ROW**: FTD-0123 [NUMERICAL FACT]. 63 fundamental discriminants spanning class numbers 1-4 (9 h=1 + 18 h=2 + 16 h=3 + 20 h=4) with |d| ≤ 907. Γ-product `G^*_d := ∏ Γ(a/|d|)^{χ_d(a)}` reproduces canonical G* exactly at d=−4. ZERO h ≥ 2 dual-matchers.
-- **RETAG**: FTD-0003 / Theorem 3 numerical net 7× larger; was [NUMERICAL FACT, h=1 only], now [NUMERICAL FACT, classes 1-4 with |d| ≤ 907 under trivial-multiplier criterion].
-- **CLOSE**: MC-T2.3 §4 item 3 (numerical scan across h ≥ 2). Item 4 (structural theorem) remains [OPEN].
-
-### Phase 11 — Paper C revision (9291b4d)
+### Phase 9 — Paper C revision (9291b4d)
 
 - **RESTATE**: `dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex` (15pp). Abstract front + introduction + §3.2 finding block + conclusion all aligned with Phase-G reframe.
 - **RETRACT (in-paper)**: original "160× QED β" claim wrapped in `\sout` with explicit retraction note.
-- **RESTATE conclusion**: Branch-A native EFT [COMPLETE at minimum-viable level]; Branch-B QED matching [structurally decoupled]; empirical match [STRONGLY MOTIVATED CONJECTURE] backed by FTD-0121 + FTD-0123 + FTD-0122 evidence.
+- **RESTATE conclusion**: Branch-A native EFT [COMPLETE at minimum-viable level]; Branch-B QED matching [structurally decoupled]; empirical match [STRONGLY MOTIVATED CONJECTURE] backed by FTD-0121 + FTD-0122 evidence.
 - **ADD**: bibliography entries for `SpecAlgebraicSpine`, `PaperA`, `PaperB`.
 
-### Phase 12 — Paper inventory database (5cfd847)
+### Phase 10 — Paper inventory database (5cfd847)
 
 - **NEW**: `scripts/build_paper_inventory.py` (366 LOC) + `dissemination/papers/INVENTORY.json` + `INVENTORY.md`. 87-paper database with anti-target audit + heuristic tier + verdict.
 - Initial findings: KEEP 12, REVISE 2, RETIRE 43, ARCHIVED 30. Three anti-target offenders flagged.
 
-### Phase 13 — TRACKER_ONTIC_TRUTH (f2ce559)
+### Phase 11 — TRACKER_ONTIC_TRUTH (f2ce559)
 
 - **NEW**: `docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md` (canonical bedrock). 5-tier truth ranking; each row has unique `OT-N.M` ID + verification artifact.
 - **CLAUDE.md** updated: TRACKER_ONTIC_TRUTH.md is now the top-of-section pointer; "read this FIRST before defending any FTD math claim."
 
-### Phase 14 — Tracker consolidation (2b660aa)
+### Phase 12 — Tracker consolidation (2b660aa)
 
 - **DELETE**: `TRACKER_DOCUMENT_STATUS.md` (April 11, 991 lines, pre-reframe).
 - **DELETE**: `evaluation/ISSUE_TRACKER.md` (March 15, 353 lines, pre-reframe).
@@ -793,7 +775,7 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 
 ### Net effect
 
-- **3 new LEDGER entries**: FTD-0122 [DERIVED], FTD-0123 [NUMERICAL FACT], FTD-0124 [METHODOLOGICAL].
+- **New LEDGER entries**: FTD-0122 [DERIVED], FTD-0124 [METHODOLOGICAL].
 - **Publication trio ready** (Papers A, B, C build clean, anti-target audited).
 - **Canonical bedrock tracker** + 87-paper inventory database shipped.
 - **6 live trackers, 0 stale** (post-consolidation).
@@ -889,8 +871,6 @@ v1 `manuscript/` reference files unchanged in FIX 1 (their gravity/Weinberg stat
 | `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`, `SPEC_DIMENSIONAL_MAP.md` | Theorem 1 proof attribution corrected: elementary Euler reflection, not Chowla-Selberg | RETAG |
 | `docs/theory/09_mathematical/number_theory/EXPLR_CHOWLA_SELBERG_HIGHER_H.md` | Fabricated "Damerell-Anderson-Schipnitzer (1971)" replaced with doc's own correct §7 sources | FIX |
 | `docs/theory/06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md`, `DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md` | Epistemic hedge moved from FTD-native step to actual domain-validity risk (relativistic theorem on non-relativistic substrate) | RETAG |
-| `docs/theory/07_assessment/core_ledgers/LEDGER.md` (FTD-0001/0121/0129 rows) | 4×10⁵:1 Bayes-figure caveat propagated (already correct elsewhere) | RETAG |
-| `dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex`, `dissemination/manuscript/src/chapters/1.10b-master-quadratic-derivation.qmd` | Same Bayes caveat | RETAG |
 | `dissemination/manuscript/src/chapters/7.1-gravity-wells.qmd`, `dissemination/manuscript_v2/src/chapters/7.1-gravity-wells.qmd`, `dissemination/manuscript_v2/vol2/src/chapters/7.1-gravity-wells.qmd` | "Full Einstein equations emerge" caveated with FTD-0189/FTD-0193 | RETAG |
 | `engine/web/js/ui/components/faq/data.js` | Deser-bootstrap FAQ entry `[SELECTION]`→`[CONJECTURE]` | RETAG |
 | `docs/papers/ontological_chain/ch3_mathematics.tex` | Phase-J / Q(G*) rows corrected to match `SPEC_ALGEBRAIC_SPINE.md` | RETAG |
@@ -935,7 +915,7 @@ v1 `manuscript/` reference files unchanged in FIX 1 (their gravity/Weinberg stat
 | CLAUDE.md | EFT Reconstruction section (~line 291-296) | "Alpha is now a DERIVED quantity" → restructured-not-derived per constants.h HONEST FRAMING; benchmark line re-graded (hydrogen classical-Kepler caveat, Bell N/A) | RETAG | FTD-0347 |
 | docs/theory/07_assessment/core_ledgers/LEDGER.md | FTD-0336 row | "five-fold independent mathematical convergence" → "one structural fact stated in five vocabularies" (the FTD-0346 correction, propagated to the canonical row it had missed) | RETAG | FTD-0347 |
 | scripts/benchmarks/analyze_convergence.py | B2 scorecard row + EM domain row | Inline circularity caveat added (alpha is INPUT by construction; B2 = solver self-consistency), matching the B7/B16 caveat convention; `ast.parse` verified | RETAG | FTD-0347 |
-| docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md | lines ~4/18 (count convention) + §§4/7/12/14 (four "six+three" sites) | Self-contradictory headline count (7+2 vs 6+3) reconciled to one canonical formulation: seven theorem-grade + two tiered, Theorem 3 counting at its arithmetic core only (physics dual-match separately [NUMERICAL FACT], per FTD-0318) | RECONCILE | FTD-0347 |
+| docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md | lines ~4/18 (count convention) + §§4/7/12/14 (four "six+three" sites) | Self-contradictory headline count (7+2 vs 6+3) reconciled to one canonical formulation: seven theorem-grade + two tiered, Theorem 3 counting at its arithmetic core only | RECONCILE | FTD-0347 |
 | lean/FTD/Axioms.lean | header comment | HONEST DISCLOSURE added: all axiom bodies are `True` — citation bookkeeping, not machine-checked formalization; rigorous artifact is FtdNoGo/Standalone.lean; no axiom changed | DISCLOSE | FTD-0347 |
 | docs/theory/07_assessment/framework_audits_redteams_reconciliation/AUDIT_PROVISIONAL_SPECIALIST_REVIEW_2026-07-01.md | new file | Capture doc: method, 7 findings + verdicts, 8 attacked-and-survived non-issues, K-BIND open flag, §0 AI-self-critique disclosure | NEW | FTD-0347 |
 
@@ -989,12 +969,12 @@ Left as-is: `scripts/verification/results/math_node_map.json` (generated artifac
 | `SPEC_SM_REPLACEMENT_COMPLETE.md` ×2, `SPEC_NOVEL_PREDICTIONS.md` ×2, `SPEC_SIX_ALGORITHMS.md`, `docs/SPEC_FTD.md` ×2, `SPEC_FTD_REFERENCE.md`, `proof_complete_sm.py` | α_G(p,p) `[THEOREM]`/`[DERIVED]` → `[SMP]` everywhere (imported dimensional relation; α²⁰ dressing parametric; precision spelling-dependent +0.05% vs −0.33%); **new catalog §13b** (previously no α_G row existed); PMNS §7.1 header + 4 script prints reconciled to the FTD-0320 demotion | DEMOTE + ADD |
 | `CLAUDE.md`, `AGENTS.md`, catalog, `proof_complete_sm.py` | m_H "0.24%" → −0.36% = −4.1σ vs canonical PDG 2024 (125.20±0.11); comparator edition-tagged | CORRECT |
 | `proof_complete_sm.py` §6 + catalog §13 | Corrupted σ formula −ln(x₋/(x₋+1))=0.2857 → canonical −ln(I₁(β)/I₀(β))=0.2086; `[THEOREM]`/`[DERIVED]` → `[SELECTION]` per the constitution; dead PROTON_RATIO formula (=3519.97) replaced with the canonical one | CORRECT + DEMOTE |
-| `SPEC_ALGEBRAIC_SPINE.md` §1/§12/§13/§14, `TRACKER_ONTIC_TRUTH.md` OT-2.2/OT-3.3/line-124/Tier-2 header, `THEOREM_HARMONIC_INVARIANT_TOWER.md` | Spine-tail retired-id/"scan not run"/pointer fixes; OT-2.2 non-sequitur sketch → Chudnovsky-independence route; two-scans conflation disambiguated; list typo + header count; FTD-0002 pointer + dependency line; Theorem-8/9 rows added; ppm digit + stale drift note | CORRECT |
+| `SPEC_ALGEBRAIC_SPINE.md` §1/§12/§13/§14, `TRACKER_ONTIC_TRUTH.md` OT-2.2/line-124/Tier-2 header, `THEOREM_HARMONIC_INVARIANT_TOWER.md` | Spine-tail retired-id/"scan not run"/pointer fixes; OT-2.2 non-sequitur sketch → Chudnovsky-independence route; list typo + header count; FTD-0002 pointer + dependency line; Theorem-8/9 rows added; ppm digit + stale drift note | CORRECT |
 | `CLAUDE.md` ×5 + spine ×2 | Stale `archive_session_outputs` paths → `campaigns/archive_session_outputs`; tower path → `electromagnetism/` | FIX |
 | `proof_k_bind_axiomatization.py`, `proof_orientation_carriers_closed.py` | Verdict banners outrunning their checks corrected (PSLQ-linear vs field statement); re-run clean | FIX |
 | `AUDIT_ALPHA_EXTRACTION.md`, `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` | Staleness banner ("NO ½ prefactor" false at HEAD — ½ restored 2026-04-27); §1 convention note reconciling 2rG_L (Phase-F era) with rG_L (FTD-0286-v2/HEAD) | DISCLOSE |
 
-**Flagged open, NOT fixed** (specialist/owner judgment; recorded in the capture doc §3 + the FTD-0348 LEDGER row): OT-2.7/FTD-0175 false-as-proved ((1,3) survives all criteria — do not cite as `[THEOREM]` pending repair); FTD-0244 Lemma-1 field-enlargement rewrite; Theorem-3 scan-domain restatement (86 not 63; h=4 truncated) + Damerell pre-reg complement; two PROVEN-row justification rewrites + frontier row-4 falsifier scoping; the `MONOGRAPH_EFFECTIVE_EQUATIONS` Born/Schrödinger/Dirac `[THEOREM]` cluster; `PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` "seven theorems total".
+**Flagged open, NOT fixed** (specialist/owner judgment; recorded in the capture doc §3 + the FTD-0348 LEDGER row): OT-2.7/FTD-0175 false-as-proved ((1,3) survives all criteria — do not cite as `[THEOREM]` pending repair); FTD-0244 Lemma-1 field-enlargement rewrite; two PROVEN-row justification rewrites + frontier row-4 falsifier scoping; the `MONOGRAPH_EFFECTIVE_EQUATIONS` Born/Schrödinger/Dirac `[THEOREM]` cluster; `PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` "seven theorems total".
 
 **Net effect:** zero promotions; golden hash untouched; no engine behavior change. One retraction, ~10 demotions, ~30 corrections/disclosures. LEDGER row FTD-0348 added; next free id **FTD-0349**.
 
@@ -1013,7 +993,7 @@ Three parallel Fable agents on gaps 1–3 of the post-review roadmap; every scri
 Zero promotions except the adversarially-verified Theorem-7 scope extension; x₊=1/α [SMC]; MC-T4.3 [FOUNDATIONAL OBSTRUCTION]; golden untouched. Next free id **FTD-0352**.
 ### Count-convention carry (same FTD-0347 arc) — follow-through on the 7+2 propagation
 
-The 35-site propagation above initially carried only the bare "seven + two" totals. Because a bare 6→7 bump can read as a promotion of Theorem 3's physics landing, every propagated live site now carries the §0 count convention inline — "seven theorem-grade + two honestly-tiered (Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention)"; the d=−4 physics dual-match privilege stays separately [NUMERICAL FACT] and is never part of the count. The two dated `AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` sites (left as provenance above) now carry a bracketed superseded-count note instead of a rewrite. Archives and `CHANGELOG.md` entries untouched; `PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` (four "the seven theorems of FTD's algebraic spine" total-count sites, lines ~186/248/375/382) remains flagged for owner judgment. Zero promotions.
+The 35-site propagation above initially carried only the bare "seven + two" totals. Because a bare 6→7 bump can read as a promotion of Theorem 3's physics landing, every propagated live site now carries the §0 count convention inline — "seven theorem-grade + two honestly-tiered (Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention)". The two dated `AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` sites (left as provenance above) now carry a bracketed superseded-count note instead of a rewrite. Archives and `CHANGELOG.md` entries untouched; `PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` (four "the seven theorems of FTD's algebraic spine" total-count sites, lines ~186/248/375/382) remains flagged for owner judgment. Zero promotions.
 
 ### `t_phys` tick correction (2026-07-08) — factor-3 fix + dimensional-gate derivation
 

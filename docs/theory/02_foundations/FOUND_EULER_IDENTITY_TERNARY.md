@@ -110,9 +110,9 @@ The discriminant partitions the coefficient space into three regions:
 With k = 16 (the coefficient encoding physical degrees of freedom on the minimal 2x2x2 lattice):
 
 $$x_+ = 137.036... = 1/\alpha \quad \text{(fine structure constant)}$$
-$$x_- = 3.024... \approx N_c \quad \text{(color charges)}$$
+$$x_- = 3.024...$$
 
-Both roots are real. The physical constants alpha and N_c emerge as real numbers from the quadratic.
+Both roots are real. The physical constant alpha emerges as a real number from the quadratic.
 
 ### Interface: Measurement boundary (k = 4/G* ~ 1.352, degenerate)
 

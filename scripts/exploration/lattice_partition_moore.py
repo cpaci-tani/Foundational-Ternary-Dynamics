@@ -267,18 +267,8 @@ if disc >= 0:
     xp = (K_bcc + np.sqrt(disc)) / 2
     xm = (K_bcc - np.sqrt(disc)) / 2
     print(f"  x+ = {xp:.4f}, x- = {xm:.4f}")
-    print(f"  floor(x-) = {int(np.floor(xm))}")
 else:
     print(f"  Discriminant < 0: {disc:.4f}")
-
-# What K would give x- ≈ 3 on this torus?
-# x^2 - Kx + K*G0_BCC = 0, want x- = 3
-# 9 - 3K + K*G0_BCC = 0 => K(G0_BCC - 3) = -9 => K = 9 / (3 - G0_BCC)
-K_for_3 = 9 / (3 - G0_BCC)
-xp_for_3 = K_for_3 - 3
-print(f"\nK needed for x- = 3: K = {K_for_3:.4f}")
-print(f"  This gives x+ = {xp_for_3:.4f}")
-print(f"  K / G0_BCC = {K_for_3 / G0_BCC:.2f} (if this approaches 16 as L -> inf...)")
 
 # What K would give x+ = 137 on this torus?
 # 137^2 - 137*K + K*G0_BCC = 0 => K(G0_BCC - 137) = -137^2

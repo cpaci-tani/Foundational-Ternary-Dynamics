@@ -25,7 +25,6 @@ The master quadratic derivation (Chapter 1.10b) produces alpha = 1/137.0361... w
 ```
 | Root | Value | Physical Meaning |
 | x_+ | 137.036 | 1/alpha (electromagnetic coupling) |
-| x_- | 3.024 | N_c (number of color charges) |
 ```
 The probability of accidentally achieving this level of precision from an arbitrary mathematical structure is extremely low.
 

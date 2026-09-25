@@ -21,7 +21,6 @@ What this proves:
   [THEOREM]  Phase separation ratio σ(x₋)/σ(x₊) >> 1
   [THEOREM]  Wilson loop ratio test: consistent with exp(-V(R)·T)
   [THEOREM]  Creutz ratio converges to σ for area law
-  [SELECTION] x₋ identified with QCD confined phase
 
 Depends on:
   - proof_coulomb_phase_coupling.py (Coulomb phase at x₊ established)
@@ -467,52 +466,6 @@ def test_creutz_ratio(suite):
 
 
 # =========================================================================
-# Section 8: QCD identification
-# =========================================================================
-
-def test_qcd_identification(suite):
-    """
-    The identification of x₋ with QCD is a [SELECTION], not a theorem.
-
-    Supporting evidence:
-    1. x₋ ≈ 3.024 and floor(x₋) = 3 = N_c (number of colors)
-    2. Area law (confinement) at x₋
-    3. g²(x₋) = 0.331 is O(1), consistent with strong coupling
-    4. Phase separation mirrors EM/QCD hierarchy in nature
-    """
-    print("\n--- Section 8: QCD Identification [SELECTION] ---")
-
-    g2_minus = 1.0 / X_MINUS
-    alpha_s_from_root = g2_minus / (4.0 * math.pi)  # standard convention
-
-    print(f"  x- = {X_MINUS:.6f}")
-    print(f"  floor(x-) = {int(math.floor(X_MINUS))} = N_c")
-    print(f"  g^2(x-) = {g2_minus:.6f}")
-    print(f"  alpha_s(x-) = g^2/(4pi) = {alpha_s_from_root:.6f}")
-    print(f"  N_c = {N_C}")
-    print(f"  B_3 (1-loop beta coeff) = {B_3}")
-
-    # SELECTION: floor(x₋) = N_c
-    suite.assert_equal(
-        "floor(x-) = N_c = 3",
-        float(int(math.floor(X_MINUS))), float(N_C),
-        tag="[SELECTION]"
-    )
-
-    # SELECTION: g²(x₋) is O(1) (strong coupling regime)
-    suite.assert_true(
-        "g^2(x-) is O(1): strong coupling",
-        0.1 < g2_minus < 1.0,
-        tag="[SELECTION]"
-    )
-
-    print("\n  Note: This identification is [SELECTION].")
-    print("  The theorems above (area law, sigma > 0, linear V(r))")
-    print("  are rigorous consequences of the gap equation.")
-    print("  The mapping x- ↔ QCD requires physical interpretation.")
-
-
-# =========================================================================
 # Main proof
 # =========================================================================
 
@@ -545,9 +498,6 @@ def main():
     # Section 7: Creutz ratio
     test_creutz_ratio(suite)
 
-    # Section 8: QCD identification [SELECTION]
-    test_qcd_identification(suite)
-
     # ------------------------------------------------------------------
     # Summary
     # ------------------------------------------------------------------
@@ -563,7 +513,6 @@ def main():
         print(f"    - Linear static potential: V(r) = sigma * r")
         print(f"    - Phase separation: sigma(x-)/sigma(x+) = {sigma_minus/sigma_plus:.0f}")
         print("\n  [THEOREM] Confinement follows from the gap equation.")
-        print("  [SELECTION] Identification with QCD (x- -> N_c = 3).")
     else:
         print(f"\n{suite.failed} test(s) FAILED.")
 

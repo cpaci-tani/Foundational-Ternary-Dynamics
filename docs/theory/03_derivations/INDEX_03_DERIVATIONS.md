@@ -25,7 +25,7 @@ The algebraic core: the polynomial `x² − 16G*²x + 16G*³ = 0`, its provenanc
 
 | File | Tag | Purpose |
 |---|---|---|
-| [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) | [THEOREM] algebra / [STRONGLY MOTIVATED CONJECTURE] physical ID | Canonical master-quadratic reference: identity, coefficient routes, discriminant trichotomy, dual match. |
+| [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) | [THEOREM] algebra / [STRONGLY MOTIVATED CONJECTURE] physical ID | Canonical master-quadratic reference: identity, coefficient routes, discriminant trichotomy, empirical match. |
 | [DERIV_QUADRATURE_COVARIANCE.md](DERIV_QUADRATURE_COVARIANCE.md) | [THEOREM] | Formal derivation of the intrinsic $\mathbb{Z}[i]$ quadrature field via edge-covariant transverse projection. |
 | [DERIV_FLUCTUATION_KERNEL_GREEN.md](DERIV_FLUCTUATION_KERNEL_GREEN.md) | [THEOREM] | Explicit definition of $\mathcal{K}_{A_J}$ as the covariant lattice Green's operator, linking its trace to the Watson integral $W_3$. |
 | [DERIV_OSCILLATORY_CLOUD_DYNAMICS.md](foundational_mechanics/DERIV_OSCILLATORY_CLOUD_DYNAMICS.md) | [OPEN PROGRAM] | Formalizes the dynamic resonance of $\mathcal{B}_{\Omega}(t)$, its return map $M_{\rm cloud}$, and the resonant-mode crossover explaining the FTD-0110 mass bridge. |
@@ -33,7 +33,6 @@ The algebraic core: the polynomial `x² − 16G*²x + 16G*³ = 0`, its provenanc
 | [ANALYSIS_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md](foundational_mechanics/ANALYSIS_TOPOLOGICAL_CHARGE_TRANSPORT_v1.md) | [MEASURED — UNDERDETERMINED] | FTD-0398 terminal scaled-octahedron transport test. Transient charges decide neither persistent transport nor the registered destruction event; no mass evidence and no further shell redesign. |
 | [ANALYSIS_FLUX_EOS_v1.md](foundational_mechanics/ANALYSIS_FLUX_EOS_v1.md) | [MEASURED — CLOSED NEGATIVE] | Tests whether x₋ = 3.024 is the dimensionless pressure of the flux field; the EoS configuration that reaches 3.024 is geometric (mode-spectrum-set), not α-locked (FTD-0312). |
 | [DERIV_QUADRATIC_NECESSITY.md](foundational_mechanics/DERIV_QUADRATIC_NECESSITY.md) | [DERIVATION] (two proofs) | Two independent arguments that degree 2 is structurally forced, not chosen. |
-| [DERIV_CHARGE_QUARTIC_FROM_GSTAR.md](foundational_mechanics/DERIV_CHARGE_QUARTIC_FROM_GSTAR.md) | [THEOREM] (6) + [SELECTION] (1) | The charge quartic: master quadratic viewed in charge space `e² = 1/x`. |
 | [DERIV_INTEGER_PHYSICAL_IDENTIFICATION.md](foundational_mechanics/DERIV_INTEGER_PHYSICAL_IDENTIFICATION.md) | [THEOREM] given N_gen = N_c [SELECTION] | Traces each framework integer {3, 4, 7, 13} to its physical role. |
 | [DERIV_NC_FROM_TOPOLOGY.md](standard_model/DERIV_NC_FROM_TOPOLOGY.md) | [THEOREM] for N_c=3 invariant / [SELECTION] for QCD ID | N_c = 3 from four independent topological routes on the Moore neighborhood. |
 | [THEOREM_HARMONIC_INVARIANT_TOWER.md](electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md) | [THEOREM] + [DERIVED] | The (1+i)-tower of master quadratics; harmonic invariant `1/y₊ + 1/y₋ = 1` (FTD-0111). |

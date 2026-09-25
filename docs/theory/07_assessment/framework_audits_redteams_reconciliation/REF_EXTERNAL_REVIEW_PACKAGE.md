@@ -11,7 +11,7 @@
 **The ask:** verify or refute the seven theorem-grade results of the algebraic spine, at either of two tiers —
 
 - **Tier 1 (spot check, ~2–4 hours):** read the claim statements (§2), run the verification scripts (§4), and check the two proofs the project itself flags as most load-bearing: the Watson identity route through Chowla–Selberg, and the `ℚ(G*)` π-freeness argument's use of Chudnovsky 1976.
-- **Tier 2 (full, ~1–2 days):** additionally audit the CM-uniqueness scan domain (the OT-1.9 caveat), the Sym²⊕Sym³ constraint-set correction (OT-2.7, which contains a self-documented retraction — a good probe of whether the corpus's corrections are real), and the coefficient-16 status (OT-4.1, the project's own declared softest spot).
+- **Tier 2 (full, ~1–2 days):** additionally audit the Sym²⊕Sym³ constraint-set correction (OT-2.7, which contains a self-documented retraction — a good probe of whether the corpus's corrections are real), and the coefficient-16 status (OT-4.1, the project's own declared softest spot).
 
 ## 2 · The minimal claim set (nothing else is being submitted)
 
@@ -23,7 +23,7 @@ All statements live in [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEB
 
 1. Every "red-team," "referee," and "adversarial" document in this corpus is AI self-critique; the project's own failure-mode catalog names the risk this creates (progressive collusion toward defensible readings). You are the first external check. Distrust accordingly.
 2. The physics identification `x₊ = 1/α` is tagged `[STRONGLY MOTIVATED CONJECTURE]`, is not part of Package A, and no review of it is requested. No α is derived anywhere in the project, by the project's own statement of record.
-3. The project's declared pressure points (TRACKER_ONTIC_TRUTH "Pressure points" section) are part of the package: coefficient-16 (OT-4.1) is a value-level coincidence with a conjectured structural reason; the h ≥ 2 Damerell scan has not been run; pre-registration tag dates are checkable against measurement dates in git and the reviewer is invited to check them.
+3. The project's declared pressure points (TRACKER_ONTIC_TRUTH "Pressure points" section) are part of the package: coefficient-16 (OT-4.1) is a value-level coincidence with a conjectured structural reason; pre-registration tag dates are checkable against measurement dates in git and the reviewer is invited to check them.
 
 ## 4 · Runnable verification (all paths repo-relative; Python ≥ 3.10, mpmath/numpy/sympy)
 
@@ -34,8 +34,6 @@ All statements live in [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEB
 | `scripts/proofs/proof_bcc_complex_structure.py` | OT-1.5/1.6 in exact rationals | 5/5 PASS |
 | `scripts/proofs/proof_fqcr_convergence.py` | OT-1.8 finite-N attractor rate | all assertions PASS |
 | `scripts/proofs/proof_field_theoretic_qgstar.py` | OT-2.3 π-freeness route | PASS |
-| `scripts/proofs/proof_polynomial_look_elsewhere_extended.py` | OT-3.3 scan — **retagged `[SELECTION]` 2026-08-04, FTD-0802; no longer supports `x_+ = 1/α`** | **4** non-master dual-matchers / 2,871,576 (previously reported 0, via a hardcoded literal). Failed its base-rate control: `N_null = 0.0014`, Outcome B |
-| `scripts/experiments/verify_ot33_baserate.py` | FTD-0802 base-rate control for the above (pre-registered `PREREG_OT33_BASERATE_v1.md`) | `N_null = 0.0014`, `P(>=1) = 0.0009` — OUTCOME B |
 
 A reviewer who prefers independence should recompute OT-1.2 and OT-2.1 in their own CAS; both are one-session computations (the Watson integral to 100 digits in PARI/GP reproduces `G*²/(2π)`).
 

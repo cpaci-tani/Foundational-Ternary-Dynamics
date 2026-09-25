@@ -5,9 +5,7 @@
 **Hash-lock target tag:** `preregister-alpha-arithmetic-generativity-v1`
 **LEDGER row reservation:** FTD-0185
 **Supersedes:** an earlier, uncommitted draft of this pre-registration. This redone v1 retains that draft's strict rule-set (Sections 2-4), adds the structural grounding that makes the candidate space concrete (Section 2.1), and records the first desk-audit pass (Section 5).
-**Companion docs:** `SPEC_FQCR.md` Section 6 (Test 4); `SPEC_ALPHA_READOUT_CONTRACT.md` (ARC / FTD-0152 -- the operational alpha-readout problem MC-T4.3); `PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md` (FTD-0143, Test 2); `SPEC_ALGEBRAIC_SPINE.md` Section 4 (coefficient 16 = |Aut(E)|^2, FTD-0006); LEDGER FTD-0013 (master quadratic single-root readout; FTD-0014 retired per v1.4 §5 — see annotation below), FTD-0157 (equianharmonic dichotomy), FTD-0163 (chi character-unification), FTD-0175/0182 (Sym^2-Sym^3 (2,3)-uniqueness), FTD-0181 (integer-4 unification); `scripts/exploration/gstar_equianharmonic.py`, `scripts/exploration/sym23_uniqueness_proof.py`.
-
-**2026-05-22 v1.4 cleanup-taxonomy annotation (outside frozen scope).** Hash-locked references to FTD-0014 (`x_-  N_c`) and the "Forbidden: `x_- ~ N_c` dual-root match as generativity prize" rule below refer to the framework state at registration time (2026-05-20). On 2026-05-22, **after this pre-registration was locked**, FTD/FQCR Cleanup Taxonomy v1.4 §5 retired the `x_-  N_c` identification (LEDGER FTD-0014 removed in commit `ca7eb61`). Per pre-registration discipline (§0), the frozen §§2-4 content is preserved verbatim. The retirement strengthens the prohibition's intent (the dual-root match is now not merely "already advertised" but **structurally not a live physics identification at all**); the rule's force is unchanged. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
+**Companion docs:** `SPEC_FQCR.md` Section 6 (Test 4); `SPEC_ALPHA_READOUT_CONTRACT.md` (ARC / FTD-0152 -- the operational alpha-readout problem MC-T4.3); `PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md` (FTD-0143, Test 2); `SPEC_ALGEBRAIC_SPINE.md` Section 4 (coefficient 16 = |Aut(E)|^2, FTD-0006); LEDGER FTD-0013 (master quadratic readout), FTD-0157 (equianharmonic dichotomy), FTD-0163 (chi character-unification), FTD-0175/0182 (Sym^2-Sym^3 (2,3)-uniqueness), FTD-0181 (integer-4 unification); `scripts/exploration/gstar_equianharmonic.py`, `scripts/exploration/sym23_uniqueness_proof.py`.
 
 > **Pre-registration discipline.** The rules in Sections 2-4 are committed before any generativity candidate is numerically evaluated. Section 5 records the first desk-audit pass, reached by structural reasoning only -- no numerical comparison. After commit, this document's SHA256 is recorded in `REF_PREREGISTER_MANIFEST.md` and the git tag is applied. Any post-hoc edit to Sections 2-4 invalidates v1; a v2 must be issued before a new candidate is evaluated.
 
@@ -68,7 +66,6 @@ An admissible Test-4 candidate may reuse only the following fixed structure:
 - Adding a free integer, exponent, scale, threshold, or normalization after looking at a target value.
 - Substituting FTD numbers into a standard physics formula and calling the result a derivation.
 - Retuning FQCR response terms (R, t, exponent quadruples, observer terms) to hit a target.
-- Counting the already-advertised `x_- ~ N_c` dual-root match as the generativity prize.
 - Using dimensional calibrations (`a_phys`, `K_B`, `ell_P`, measured SI masses) to manufacture a dimensionless-looking target.
 
 ---
@@ -89,7 +86,7 @@ The declaration must exist before the numerical residual is evaluated. If the re
 
 ## 4. Locked pass/fail criteria
 
-**Outcome A -- generativity pass.** All hold: the candidate uses only the Section 2 mechanism; the Section 3 declaration is complete before numerical comparison; the output predicts one independent physical dimensionless observable not already encoded by the master-quadratic dual-root story; no new tunable freedom is introduced; the comparison lands inside the pre-declared tolerance; the derivation explains *why* that observable reads the arithmetic quantity. Claim impact: `x_+ <-> 1/alpha` may be considered for upgrade from [STRONGLY MOTIVATED CONJECTURE] to a "generative arithmetic conjecture" status, subject to separate LEDGER review; the new observable receives its own tag by proof quality.
+**Outcome A -- generativity pass.** All hold: the candidate uses only the Section 2 mechanism; the Section 3 declaration is complete before numerical comparison; the output predicts one independent physical dimensionless observable not already encoded by the master quadratic; no new tunable freedom is introduced; the comparison lands inside the pre-declared tolerance; the derivation explains *why* that observable reads the arithmetic quantity. Claim impact: `x_+ <-> 1/alpha` may be considered for upgrade from [STRONGLY MOTIVATED CONJECTURE] to a "generative arithmetic conjecture" status, subject to separate LEDGER review; the new observable receives its own tag by proof quality.
 
 **Outcome B -- arithmetic-only pass.** The architecture produces a new theorem or invariant but no operational physical readout. Claim impact: pure mathematics may strengthen; the alpha physics claim does not promote.
 
@@ -118,7 +115,6 @@ The candidate must declare a physical target observable *before* numerical compa
 
 - The lemniscatic readout `x_+ <-> 1/alpha` itself has **no derived mechanism** -- this is exactly MC-T4.3, which is [OPEN]. There is no established "why" for the k = 4 case.
 - With no "why" for k = 4, there is no "why" to transfer to the equianharmonic (k = 3) case. No principled argument names a physical observable for the equianharmonic roots in advance.
-- The one structural echo available -- the equianharmonic small root playing an `x_- ~ N_c`-type role -- is explicitly excluded as a prize by Section 2.3.
 
 Any physical target for the equianharmonic roots would therefore be visible only *after* numerical evaluation. By Section 3 the candidate is **rejected** for Test-4 purposes. (It remains legitimate exploratory mathematics; nothing here closes the equianharmonic polynomial as a mathematical object.)
 

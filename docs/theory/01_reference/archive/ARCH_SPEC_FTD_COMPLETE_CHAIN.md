@@ -123,21 +123,7 @@ Vieta's formulas:
 
 **Proof script:** `proof_gap_equation_from_partition_function.py` (18/18 tests, all [THEOREM]) [THEOREM]
 
-## 1.8 Prime Classification of the Roots [THEOREM]
-
-The nearest prime to x+ is 137. Since 137 = 1 mod 4, it **splits** in Z[i]:
-
-    137 = 4^2 + 11^2 = (4 + 11i)(4 - 11i)
-
-The nearest integer to x- is 3. Since 3 = 3 mod 4, it is **inert** in Z[i]:
-
-    3 stays prime. It cannot be written as a^2 + b^2.
-
-The split/inert classification of i sorts the two roots into complex-factorable (split, EM-like) and real-only (inert, confinement-like).
-
-**Proof script:** `explore_primes_and_gstar.py` [THEOREM for the number theory]
-
-## 1.9 G* Encodes the Prime Distribution [THEOREM]
+## 1.8 G* Encodes the Prime Distribution [THEOREM]
 
 The Dirichlet L-function:
 
@@ -153,7 +139,7 @@ Since G* = Gamma(1/4)^2 / (sqrt(2)*pi), and pi is determined by the prime produc
 
 # 2. The Physical Identification
 
-**This section contains the only two non-rigorous steps in the entire chain.**
+**This section contains the only non-rigorous step in the entire chain.**
 
 ## 2.1 x+ = 1/alpha [STRONGLY MOTIVATED CONJECTURE]
 
@@ -174,16 +160,6 @@ With the 7-term expansion in epsilon = e^pi - pi - 20 (conditional on the SP5 in
 This identification is [SELECTION] because no physical mechanism connecting elliptic-curve geometry to gauge couplings has been established at the master-quadratic level. The precision claims below 1.26 ppm are further conditional on the selected Structure-1 scalar-EFT scheme (one-loop) or on SP5 integer uniqueness (7-term); neither is unconditionally proven.
 
 **Open matching problem:** [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../../03_derivations/electromagnetism/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) argues FTD = compact U(1) LGT in temporal gauge, invokes Wilson's two-phase theorem, and derives a UV scale rigidity lemma. The 2026-04-22 Structure-2 audit shows this is not enough to upgrade the ppb correction: a unique FTD-to-EFT matching rule must still specify matter content, regulator/counterterm prescription, and the physical electromagnetic kinetic operator.
-
-## 2.2 floor(x-) = N_c = 3 [SELECTION]
-
-The smaller root x- = 3.024 has floor(x-) = 3 = N_c, the number of color charges in QCD.
-
-The x- value is not independent — it is fully determined by Vieta: x- = 16*G*^3 / x+. Once x+ is fixed, x- follows.
-
-The floor operation (integer rounding) is motivated by topological quantization: the number of colors must be an integer, and x- = 3.024 rounds to 3. But the rounding mechanism is not derived from the lattice action.
-
-**What would make it [THEOREM]:** A derivation of topological quantization showing that the confined phase only supports integer color numbers, with the specific integer determined by floor(x-).
 
 ---
 
@@ -400,7 +376,6 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 | G* IS the Euler reflection ratio at s=1/4 | [THEOREM] | Identity |
 | Sommerfeld-Schwarzschild orbital identity | [THEOREM] | Binet equation |
 | 10/10 GR observations from A+B | [THEOREM] | Numerical verification |
-| 137 splits in Z[i], 3 is inert | [THEOREM] | Number theory |
 | G* encodes prime distribution via L-function | [THEOREM] | Euler product |
 | Cosine SHAPE from continuous flux projections | [THEOREM] | <(v.a)(-v.b)> = -(1/3)cos(theta); shape is cosine, amplitude is 1/3 |
 | Born rule P ~ |J|^2 | [SELECTION] | Parseval shows E ~ |J|^2; identification of energy fraction with detection probability is the Born rule itself, not a derivation of it. Canonical: LEDGER FTD-0187 |
@@ -416,7 +391,6 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 | Claim | Status | What would close it |
 |---|---|---|
 | x+ = 1/alpha | [STRONGLY MOTIVATED CONJECTURE] (1.26 ppm; ppb corrections conditional) | Derive a unique FTD-to-EFT matching rule, not a fit to alpha |
-| floor(x-) = N_c = 3 | [SELECTION] | Derive topological quantization mechanism |
 | Frame dragging factor of 2 from dual BI contribution | [CONJECTURE] | Qualitative argument only; needs explicit derivation from BI Lagrangian in rotating background |
 | QM = epistemology, not ontology | [SELECTION] | Prove that QM statistics follow necessarily from lattice + partial observation |
 | Born rule from |J|^2 manifestation | [SELECTION] (|psi|^2 form) / [CLOSED DECLINED] | The step deriving manifestation *frequency* = normalized energy density is formally declined under FC-1 as a physical target; the discrete threshold $K_B$ holds. |
@@ -439,7 +413,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 
 ## 7.5 The Bottom Line
 
-The mathematical chain from i to the master quadratic roots is rigorous: 7/9 links [THEOREM], 2/9 [STRONGLY MOTIVATED CONJECTURE] as physical identifications (x+ = 1/alpha and floor(x-) = N_c). The baseline tag for x+ = 1/alpha is **[STRONGLY MOTIVATED CONJECTURE]** across this document. The continuum-limit argument in [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../../03_derivations/electromagnetism/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) is supporting context, but it does not by itself upgrade the alpha claim: the 2026-04-22 Structure-2 audit shows that a unique FTD-to-EFT matching rule is still required. The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
+The mathematical chain from i to the master quadratic roots is rigorous; x+ = 1/alpha is [STRONGLY MOTIVATED CONJECTURE] as a physical identification. The baseline tag for x+ = 1/alpha is **[STRONGLY MOTIVATED CONJECTURE]** across this document. The continuum-limit argument in [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../../03_derivations/electromagnetism/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) is supporting context, but it does not by itself upgrade the alpha claim: the 2026-04-22 Structure-2 audit shows that a unique FTD-to-EFT matching rule is still required. The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
 
 **The Bell violation (S = 2.83 vs lattice S <= 2) is now understood as EMERGENT** (April 11, 2026). S = 2 sqrt(2) follows from the QM that emerges from the lattice (Tsirelson's bound). The remaining target is the singlet-state lemma: void event -> maximally entangled pair in emergent Hilbert space. The Born rule (P ~ |J|^2) is [SELECTION] — Parseval gives E ~ |J|^2 but identifying energy fraction with detection probability is the Born rule itself.
 

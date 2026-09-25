@@ -13,7 +13,7 @@ The Dirac equation is not imported into FTD from standard physics. It is the **c
 
 $$\Delta = kG^{*3}(kG^* - 4)$$
 
-- $\Delta > 0$ ($k = 16$): real roots → bosons (coupling constants $\alpha$, $N_c$)
+- $\Delta > 0$ ($k = 16$): real roots → bosons (coupling constant $\alpha$)
 - $\Delta = 0$ ($k = 4/G^*$): degenerate → measurement (Born rule)
 - $\Delta < 0$ ($k < 4/G^*$): **complex roots → fermions (Dirac spinors)**
 
@@ -218,7 +218,7 @@ $$x^2 - kG^{*2}x + kG^{*3} = 0$$
 
 | $k$ | Discriminant | Roots | Physics | Equation |
 |-----|-------------|-------|---------|----------|
-| 16 | $\Delta > 0$ | Real: 137, 3 | Coupling constants $\alpha$, $N_c$ | Master quadratic |
+| 16 | $\Delta > 0$ | Real: 137, 3 | Coupling constant $\alpha$ | Master quadratic |
 | $4/G^*$ | $\Delta = 0$ | Degenerate: $2G^*$ | Born rule $P = |ψ|^2$ | Pythagorean theorem |
 | $1/2$ | $\Delta < 0$ | Complex conjugates | Fermion mass + spin | Dirac equation |
 | 0 | $\Delta = 0$ | $x = 0$ (trivial) | Vacuum | Nothing |
@@ -229,7 +229,7 @@ $$x^2 - kG^{*2}x + kG^{*3} = 0$$
 |-------------|-----------|----------------|
 | **Born rule** $P = |ψ|^2$ | Null cone $i^2 + a^2 + b^2 = 0$ | The Pythagorean theorem on the null cone |
 | **Dirac equation** $(iγ∂ - m)ψ = 0$ | Complex roots of the master quadratic | Factorization of Klein-Gordon, spinor from BCC pairs |
-| **Coupling constants** $\alpha$, $N_c$ | Real roots of the master quadratic | Gap equation self-consistency |
+| **Coupling constant** $\alpha$ | Real roots of the master quadratic | Gap equation self-consistency |
 | **Measurement** | $\Delta = 0$ threshold | Transition between real (bosonic) and complex (fermionic) regimes |
 
 ---

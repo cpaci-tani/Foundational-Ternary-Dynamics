@@ -318,7 +318,7 @@ def run() -> ProofSuite:
     # =========================================================================
     # Layer 4: Framework Integers
     # =========================================================================
-    nc = int(math.floor(xm))
+    nc = N_C
     ngen = nc
     nf = 2 * ngen
     nbase = 2**((D_SPATIAL + 1) // 2)
@@ -326,7 +326,6 @@ def run() -> ProofSuite:
     neff = b3 + 2 * nc
     dcon = nc * nbase**2 - 1
 
-    s.assert_true("L4: N_c = floor(x₋) = 3", nc == 3, tag="[THEOREM]")
     s.assert_true("L4: N_gen = N_c = 3", ngen == N_GEN, tag="[SELECTION]")
     s.assert_true("L4: N_f = 2·N_gen = 6", nf == N_F, tag="[THEOREM]")
     s.assert_true("L4: N_base = 2^((D+1)/2) = 4", nbase == N_BASE, tag="[THEOREM]")

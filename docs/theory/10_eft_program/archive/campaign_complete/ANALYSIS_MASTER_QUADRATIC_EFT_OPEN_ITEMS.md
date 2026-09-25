@@ -55,11 +55,10 @@ e_2 = G_* K
 x^2 - 16 G_*^2 x + 16 G_*^3 = 0
 ```
 
-The physical identifications remain:
+The physical identification remains:
 
 ```text
 x_+ ~= alpha(0)^-1     [SELECTION / OPEN MATCHING]
-x_- ~= N_c             [SELECTION / OPEN MATCHING]
 ```
 
 The paper is therefore not an alpha derivation. It is a rigorous arithmetic
@@ -112,7 +111,6 @@ engine histories.
 | Reaction/current ledger | Full-tick GPU ledgers now make BCC/corner-channel history tests possible. | Define BCC-sensitive observables from histories: corner transport, delayed layer response, and reaction-corner coupling. |
 | `g_c` first principles | Shows that a dimensionless capacity normalization exists without CODATA. | Does not derive engine `g_c`; at best it suggests a capacity-matching condition to test. |
 | Physical alpha matching | Gives a mathematically exact `x_+` near alpha inverse. | Still needs independent physical normalization and correction/matching terms. |
-| Color/N_c matching | Gives a smaller root near 3. | Still needs dynamical confinement/rank selection from engine histories. |
 
 ---
 
@@ -315,7 +313,6 @@ engine-derived BCC action
 production Gauss replacement
 first-principles g_c
 physical alpha derivation
-color-rank derivation
 ```
 
 The right next move is a BCC/corner-channel measurement program inside the

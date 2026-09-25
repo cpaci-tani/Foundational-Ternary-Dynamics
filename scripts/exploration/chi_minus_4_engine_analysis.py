@@ -3,17 +3,16 @@ chi_{-4} STRUCTURE EMPIRICAL ANALYSIS
 
 Question: does the engine's stable cluster spectrum exhibit chi_{-4}
 structure -- specifically, do stable cluster sizes preferentially align
-with |Z[i]^x| = 4, multiples of 4, or master quadratic root values?
+with |Z[i]^x| = 4 or multiples of 4?
 
 Data: GPU runs (CUDA, L=32) of:
   1. test_framework_integer_clusters (Phase B.3): A/K_G sweep 3.0 -> 16.0
   2. test_ftd0110_cluster_geometry: A/K_G sweep 10.0 -> 50.0
   3. test_cluster_lightest_stable: A/K_G sweep 6.0 -> 10.0, 3 seeds each
 
-Three predictions to test:
+Two predictions to test:
   P1: stable cluster sizes preferentially divisible by 4 (chi_{-4} fingerprint)
-  P2: master-quadratic root x_- ~= 3.024 (or N_c = 3) appears as stable size
-  P3: |Z[i]^x|^2 = 16 appears as a stable size or near-stable plateau
+  P2: |Z[i]^x|^2 = 16 appears as a stable size or near-stable plateau
 
 Null hypothesis: stable sizes scatter uniformly across small integers.
 """
@@ -172,46 +171,10 @@ print(f"P1 verdict: {p1_verdict}")
 print()
 
 # ============================================================
-# P2: master-quadratic root x_- ~= 3.024 appears as stable size
+# P2: |Z[i]^x|^2 = 16 appears as stable plateau or near-stable
 # ============================================================
 print("=" * 80)
-print("P2: master-quadratic small root x_- ~= 3.024 ~ N_c = 3 appears as stable cluster")
-print("=" * 80)
-
-# x_- value
-G_star = 2.95867511918863889231082135772771956647
-A_mq = 16 * G_star**2
-B_mq = 16 * G_star**3
-disc = A_mq**2 - 4*B_mq
-x_minus = (A_mq - disc**0.5)/2
-print(f"  x_- (master quadratic small root) = {x_minus:.10f}")
-print(f"  Nearest integer to x_-: {round(x_minus)} (= N_c expected)")
-print()
-
-# Does N=3 appear as a stable cluster size?
-n_size_3 = sum(1 for N in sizes if N == 3)
-n_size_1 = sum(1 for N in sizes if N == 1)
-n_size_4 = sum(1 for N in sizes if N == 4)
-print(f"  N=1 stable amplitudes: {n_size_1}")
-print(f"  N=3 stable amplitudes: {n_size_3}")
-print(f"  N=4 stable amplitudes: {n_size_4}")
-print()
-
-# Interpretation
-if n_size_3 == 0 and n_size_4 > 0:
-    p2_verdict = "PARTIAL: N=3 (matching x_- ~ N_c) NOT observed as stable cluster size; N=4 (= N_base = |Z[i]^x|) observed as stable. The engine prefers the algebraic N_base over the physical N_c."
-elif n_size_3 > 0:
-    p2_verdict = "POSITIVE: N=3 stable cluster observed (matching x_- ~ N_c)"
-else:
-    p2_verdict = "NEGATIVE: neither N=3 nor N=4 observed"
-print(f"P2 verdict: {p2_verdict}")
-print()
-
-# ============================================================
-# P3: |Z[i]^x|^2 = 16 appears as stable plateau or near-stable
-# ============================================================
-print("=" * 80)
-print("P3: |Z[i]^x|^2 = 16 appears in the stable spectrum")
+print("P2: |Z[i]^x|^2 = 16 appears in the stable spectrum")
 print("=" * 80)
 
 # Check for stable sizes near 16
@@ -231,12 +194,12 @@ print()
 # Notable: we see N=15, N=18.6 as stable sizes
 # N=15 is the lightest stable at A=8.0; N=18.6 is mean at A=15
 if n_size_16 > 0:
-    p3_verdict = "POSITIVE: N=16 exactly observed as stable"
+    p2_verdict = "POSITIVE: N=16 exactly observed as stable"
 elif n_near_16 > 0:
-    p3_verdict = f"PARTIAL: {n_near_16} stable sizes within 2 of 16 (N=15 at A=8.0; ~18.6 mean at A=15). |Z[i]^x|^2 = 16 appears as the approximate plateau between A=8.0 and A=15."
+    p2_verdict = f"PARTIAL: {n_near_16} stable sizes within 2 of 16 (N=15 at A=8.0; ~18.6 mean at A=15). |Z[i]^x|^2 = 16 appears as the approximate plateau between A=8.0 and A=15."
 else:
-    p3_verdict = "NEGATIVE: no stable sizes near 16"
-print(f"P3 verdict: {p3_verdict}")
+    p2_verdict = "NEGATIVE: no stable sizes near 16"
+print(f"P2 verdict: {p2_verdict}")
 print()
 
 # ============================================================
@@ -247,8 +210,7 @@ print("SUMMARY: chi_{-4} structure in FTD lattice dynamics")
 print("=" * 80)
 print(f"""
 P1 (divisibility by 4):     {p1_verdict}
-P2 (x_- ~ 3 as cluster):    {p2_verdict}
-P3 (16 = |Z[i]^x|^2):       {p3_verdict}
+P2 (16 = |Z[i]^x|^2):       {p2_verdict}
 
 Overall observation:
   - The cluster size N=4 = N_base = |Z[i]^x| is empirically stable across
@@ -256,23 +218,13 @@ Overall observation:
   - N=1 (single voxel) is stable at low amplitudes (A=3.0-4.0).
   - N=12 (= 3 * |Z[i]^x|), N=15 (~ |Z[i]^x|^2 - 1), and N=23-25 (~ 6 *
     |Z[i]^x|) appear as stable cluster sizes at higher amplitudes.
-  - N=3 (= N_c, the master-quadratic x_- root) does NOT appear as a
-    stable cluster size in any of the runs.
 
 Interpretation: the engine empirically realizes the |Z[i]^x| algebraic
-structure at the lattice level (N_base = 4 is dynamically preferred),
-but the bridge from x_- to N_c does not appear directly as a cluster
-size. This is consistent with the FTD bridge being a CONJECTURE on the
-mapping of master-quadratic roots to physical observables, not a
-mechanical identification of cluster sizes with x_+ and x_-.
+structure at the lattice level (N_base = 4 is dynamically preferred).
 
 The chi_{-4} signature is PRESENT (N_base = 4 is a stable cluster, not
-random) but is the |Z[i]^x| cardinality, not the master quadratic root
-spectrum.
+random) as the |Z[i]^x| cardinality.
 
 VERDICT: empirical evidence for chi_{-4} structure in the engine:
   - |Z[i]^x| = 4 appears as a dynamically-preferred cluster size: YES
-  - Master quadratic roots appear directly as cluster sizes: NO
-  - The bridge from algebraic spine to physical observables is mediated
-    by the master quadratic POLYNOMIAL FORM, not by cluster size equality.
 """)

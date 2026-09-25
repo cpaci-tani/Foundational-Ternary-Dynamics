@@ -94,22 +94,19 @@ where W₃ = Γ(1/4)⁴/(4π³) is the Watson integral (the 3D cubic lattice sel
 
 The two roots are:
 - x₊ = 137.036... (electromagnetic coupling)
-- x₋ = 3.024... (color charge)
+- x₋ = 3.024...
 
 ### 3.2 Why x₊ Is the Electromagnetic Coupling [SELECTION]
 
-The force structure document (FOUND_FORCE_STRUCTURE.md §V) establishes:
+The force structure document (FOUND_FORCE_STRUCTURE.md) establishes:
 
 **Electromagnetism is the most direct force.** It emerges at alpha¹ — no additional structure is needed beyond the master quadratic itself. All other forces require additional algebraic layers:
 - Weak: alpha⁸ (adds spinor structure, +N_base steps)
-- Strong: from x₋ directly (the subdominant root)
 - Gravity: alpha²⁰ (adds ALL Standard Model content, +16 steps)
-
-The substrate asymmetry δ = (x₊ − x₋)/(x₊ + x₋) = 0.957 means 97.8% of the flux carries electromagnetic coupling. EM dominates because x₊ >> x₋.
 
 **The interpretation:** 1/α = x₊ because electromagnetic coupling is what the lattice's self-consistency equation DIRECTLY produces. It is the "first output" — the most ontic coupling constant. Other forces are derived from it through additional algebraic structure.
 
-### 3.3 Why x₋ ≈ 3 but Not Exactly 3 [SELECTION]
+### 3.3 The G* ≈ 3 Near-Fixed-Point [SELECTION]
 
 The EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md (Part VI) establishes the G* ≈ 3 near-fixed-point:
 
@@ -118,14 +115,6 @@ At G* = 3 exactly, the wave equation on Z³ achieves perfect self-consistency: c
 But G* is not 3. It is 2.9587... — determined by the lemniscate geometry (ϖ), not by the integer 3. The 1.4% deviation from the fixed point is what generates the actual fine structure constant:
 
 $$\frac{1}{\alpha}\bigg|_{G^*=3} = 141 \quad \longrightarrow \quad \frac{1}{\alpha}\bigg|_{G^*=2.9587} = 137.036$$
-
-**The interpretation (retired):** x₋ = 3.024 was read as encoding TWO pieces of information:
-1. **Integer part** floor(x₋) = 3 = N_c (the number of color charges, from the cuboctahedral geometry)
-2. **Fractional part** 0.024 = the coupling correction that connects color charge to electromagnetic coupling through the shared quadratic structure
-
-The `x_-  N_c` identification — including the "integer part = N_c" reading — is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (four routes; the cuboctahedral geometry referenced above is one of them) and the Moore Layer Theorem. The smaller root `x_- ≈ 3.024` is now a mathematical artifact of the polynomial only; the integer/fractional decomposition above is preserved as historical commentary.
-
-This reading was framed as analogous to how α_s(M_Z) = 0.118 is not the integer 3 but encodes N_c = 3 through the QCD beta function. That analogy depends on the retired identification and is not load-bearing.
 
 ---
 
@@ -160,8 +149,7 @@ This reading was framed as analogous to how α_s(M_Z) = 0.118 is not the integer
 2. **[THEOREM]** The unique CM elliptic curve with Z₄ automorphisms is E: y²=x³−x
 3. **[THEOREM]** G* = ϖ/√(PF) is the curve's period in lattice units
 4. **[THEOREM]** The quadratic produces x₊ = 137.036 and x₋ = 3.024
-5. **[SELECTION]** EM is the most direct force (alpha¹, 97.8% of substrate flux)
-6. ~~**[SELECTION]** x₋ ≈ 3 encodes N_c in its integer part, coupling correction in its fractional part~~ — **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (cuboctahedral geometry among the four routes)
+5. **[SELECTION]** EM is the most direct force (alpha¹)
 
 ### Gaps and Status
 
@@ -179,5 +167,5 @@ The Structure-2 audit (`docs/theory/10_eft_program/archive/closed_negative/AUDIT
 - DERIV_QUADRATIC_NECESSITY.md — Why degree 2 (03_derivations)
 - MATH_MASTER_QUADRATIC.md — Complete quadratic structure (01_reference)
 - EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md — G* dimensional triad and near-fixed-point (09_mathematical)
-- FOUND_FORCE_STRUCTURE.md — Force hierarchy and EM dominance (02_foundations)
+- FOUND_FORCE_STRUCTURE.md — Force hierarchy (02_foundations)
 - AUDIT_HIDDEN_SELECTIONS.md — Selection principles catalog (07_assessment)

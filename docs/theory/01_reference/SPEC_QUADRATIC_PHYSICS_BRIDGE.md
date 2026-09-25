@@ -73,7 +73,7 @@ The $j = 1728$ curve has the maximal automorphism group compatible with a **squa
 
 ### 2.3 Critique
 
-**Post-hoc selection.** The quadratic form was chosen because it produces roots near 137 and 3. A cubic with three roots could potentially encode three coupling constants; a quartic could encode four. No principled argument excludes these.
+**Post-hoc selection.** The quadratic form was chosen because it produces a root near 137. A cubic with three roots could potentially encode three coupling constants; a quartic could encode four. No principled argument excludes these.
 
 **Why polynomial at all?** A transcendental equation (e.g., $G^* = x \cdot e^{-1/x}$) could also relate $G^*$ to a root. There is no a priori reason the relationship must be algebraic.
 
@@ -208,7 +208,7 @@ This is the OSR (ontic structural realism) move — Worrall, Ladyman, Ross — a
 
 #### 4.6.2 The 't Hooft Beable Equiprobability Derivation — [THEOREM]
 
-The selectiveness of the *arithmetic mean* as the bridge functional is mathematically derived and upgraded to a **[THEOREM]** by formalizing the 't Hooft beable equivalence route. Rather than importing an unargued metaphysical commitment (that the electromagnetic and color sectors contribute additively and equally), we model the master-quadratic roots $(x_+, x_-)$ as the two ontic states of a single, two-state *master beable* operating in the unbroken phase.
+The selectiveness of the *arithmetic mean* as the bridge functional is mathematically derived and upgraded to a **[THEOREM]** by formalizing the 't Hooft beable equivalence route. Rather than importing an unargued metaphysical commitment (that the two roots contribute additively and equally), we model the master-quadratic roots $(x_+, x_-)$ as the two ontic states of a single, two-state *master beable* operating in the unbroken phase.
 
 Let the beable occupy a state space $S = \{s_+, s_-\}$ corresponding to the eigenvalues $x_+$ and $x_-$. We define the dynamics of this beable by a symmetric, unbiased Markov chain transition matrix:
 
@@ -253,8 +253,6 @@ This completes the proof. The arithmetic-mean functional is not an arbitrary cho
 This resolves **FTD-0095** and upgrades it to **[THEOREM]**.
 
 #### 4.6.3 Slogan upgrade
-
-The dual-prediction framing *"the master quadratic predicts α and N_c"* is **retired** along with the `x_-  N_c` identification (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`). The live framing is single-root: *"the master quadratic predicts 1/α as its larger root"*.
 
 The active slogan:
 
@@ -315,7 +313,7 @@ The integers $\{3, 4, 7, 13\}$ were identified from **known physics**, then show
 
 | Integer | Physical origin | Mathematical constraint |
 |---------|----------------|----------------------|
-| $N_c = 3$ | Number of quark colors (QCD) | $L_3 - 1 = 3$ (historical: $x_- \approx 3.024$ — the `x_-  N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
+| $N_c = 3$ | Number of quark colors (QCD) | $L_3 - 1 = 3$ |
 | $N_{\mathrm{base}} = 4$ | Spacetime dimensions / $L_3$ | $L_3 = 4$; unique Lucas perfect square |
 | $b_3 = 7$ | QCD one-loop beta coefficient | $L_4 = 7$; crossover index $F_7 = T_7$ |
 | $N_{\mathrm{eff}} = 13$ | Closure parameter | $F_7 = T_7 = 13$; 6th prime |
@@ -404,8 +402,8 @@ SP3 (k = |Aut(E)|² = 16) ───┤
                               │
                     ┌─────────┴─────────┐
                     ▼                   ▼
-               x₊ = 137.036       x₋ = 3.024  (mathematical artifact;
-                    │                   no physics ID; `x₋  N_c` RETIRED v1.4 §5)
+               x₊ = 137.036       x₋ = 3.024
+                    │
 SP4 (x₊ = 1/α) ───┤
                     ▼
               α = 1/137.036
@@ -415,17 +413,17 @@ SP5 (integers) ────┤
             Precision formula
             Mass formulas
             Coupling constants
-            sin²θ_W = 3/13 (uses N_c independently sourced; see DERIV_NC_FROM_TOPOLOGY.md)
+            sin²θ_W = 3/13 (uses N_c from DERIV_NC_FROM_TOPOLOGY.md)
 ```
 
-**Observation:** The tree-level result $x_+ = 137.036$ depends only on SP1 + SP2 + SP3. The physical identification adds SP4 (`x_+ = 1/α`). The extended physics adds SP5. The historical `x_-  N_c` identification is retired per v1.4 §5; the smaller root is a mathematical artifact of $P(x)$ only. The dependency is cumulative and each layer adds epistemic risk.
+**Observation:** The tree-level result $x_+ = 137.036$ depends only on SP1 + SP2 + SP3. The physical identification adds SP4 (`x_+ = 1/α`). The extended physics adds SP5. The dependency is cumulative and each layer adds epistemic risk.
 
 ### 7.3 Conditional Theorem Template
 
 Given SP1–SP3:
 1. $G^* = \Gamma(1/4)/\Gamma(3/4) = \sqrt{2} \cdot \Gamma(1/4)^2/(2\pi) \approx 2.9587$ **[THEOREM]**
 2. $x_+ = 8G^{*2}(1 + \sqrt{1 - 1/G^*}) = 137.036\ldots$ **[THEOREM]**
-3. $x_- = 8G^{*2}(1 - \sqrt{1 - 1/G^*}) = 3.024\ldots$ **[THEOREM]** (mathematical artifact of $P(x)$; the historical `x_-  N_c` identification is **RETIRED** per v1.4 §5)
+3. $x_- = 8G^{*2}(1 - \sqrt{1 - 1/G^*}) = 3.024\ldots$ **[THEOREM]**
 
 Adding SP4:
 4. $\alpha = 1/x_+ = 1/137.036\ldots$ **[CONDITIONAL on SP4]** — the single live physics identification of the master quadratic.
@@ -457,9 +455,6 @@ The result's genuine strength lies in its **structural convergence**:
 1. **Two independent truncations** (tree level and 4-term) both land within experimental error
 2. **The coefficient 16 is intrinsic** to the curve, not a free parameter (conditional on SP1)
 3. **The precision formula predicts specific unmeasured digits** — a genuinely falsifiable claim
-4. ~~**Polynomial-template uniqueness** (FTD-0319, formerly cited as FTD-0189): the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket — rank 1 by ~130×.~~ **Withdrawn 2026-08-03/04, FTD-0791/FTD-0802:** the scan sits at its own chance base rate (registered gate expects 1.42–1.67 matchers, found 1), so it no longer counts as structural-uniqueness evidence; the scan-rigid count is now zero.
-
-(The historical "smaller root $x_-$ matches $N_c$" point is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`. The polynomial-template-uniqueness fact in item 4 no longer stands in as canonical structural-uniqueness evidence — see the withdrawal above.)
 
 This convergence from multiple directions distinguishes the master quadratic from a pure numerical coincidence. But convergence is not proof.
 
@@ -846,14 +841,13 @@ The Galois structure (`MATH_MASTER_QUADRATIC.md`, §10.4) shows the real ($k=16$
 
 ## §19. The Root Hierarchy and Physical Structure
 
-### 19.1 The Two Roots as Coupling Hierarchy
+### 19.1 The larger root
 
-If SP4 is accepted, the roots encode a hierarchy:
+If SP4 is accepted:
 
 | Root | Value | Identification | Status |
 |------|-------|----------------------|--------|
 | $x_+$ | 137.036 | $1/\alpha_{\mathrm{em}}$ (electromagnetic) | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
-| $x_-$ | 3.024 | mathematical artifact of $P(x)$; no physics identification | **RETIRED** (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
 
 ### 19.2 The $x_-$ value
 
@@ -861,11 +855,9 @@ $x_- = 3.024$ is fully determined by Vieta once $x_+$ is fixed by the quadratic 
 
 $$x_- = \frac{16G^{*3}}{x_+} = \frac{16G^{*3}}{137.036}$$
 
-The historical identification of $\lfloor x_- \rfloor$ with $N_c = 3$ is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The smaller root is a mathematical artifact of the polynomial only; $N_c = 3$ in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
-
 ### 19.3 Status
 
-> **`x_+  1/α`**: [STRONGLY MOTIVATED CONJECTURE] (FTD-0013). **`x_-  N_c`**: RETIRED (v1.4 §5).
+> **`x_+  1/α`**: [STRONGLY MOTIVATED CONJECTURE] (FTD-0013).
 
 ---
 
@@ -878,8 +870,6 @@ The historical identification of $\lfloor x_- \rfloor$ with $N_c = 3$ is **RETIR
 | Result | Value | Experimental | Error |
 |--------|-------|-------------|-------|
 | $\alpha^{-1}$ (tree) | 137.036 | 137.036 | 1.26 ppm |
-
-(The historical $\lfloor x_- \rfloor \to N_c$ row is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.)
 
 **Tier 2: Conditional on SP1–SP5 (circularity risk from integers):**
 

@@ -74,8 +74,6 @@ x₋ ≈ 3.024
 
 The larger root is 137.036—matching 1/α to better than 1 part per million.
 
-The smaller root is approximately 3—the number of color charges in QCD.
-
 ---
 
 ## Is This Coincidence?
@@ -157,7 +155,6 @@ This is how science works.
 - The lemniscatic constant G* ≈ 2.9587 arises from elliptic curve theory
 - The master quadratic x² - 16G*²x + 16G*³ = 0 has roots 137.036 and 3.024
 - The larger root matches 1/α to better than 1 ppm
-- The smaller root matches the number of color charges (N_c = 3)
 - The framework claims the quadratic arises from deeper geometric principles
 - Mathematical coincidence is not physics; the framework must make testable predictions
 - Predictions include mass ratios, coupling unification, neutrino properties, cosmology

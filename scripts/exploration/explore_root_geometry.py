@@ -49,7 +49,6 @@ print()
 print("    Vieta relations: y+ + y- = 16G* = y+ * y-")
 print("    Therefore: 1/y+ + 1/y- = (y+ + y-) / (y+ * y-) = 1.  QED")
 print()
-print("  MEANING: The two couplings are projectively complementary.")
 print("  In reciprocal space (u = 1/y = G*/x), the roots u+ and u-")
 print("  lie on the hyperplane u+ + u- = 1.")
 print()
@@ -57,13 +56,9 @@ print()
 # Reciprocal roots
 up = 1/yp
 um = 1/ym
-print(f"  u+ = G*/x+ = {up:.10f}  (EM sector: ~2% of unit)")
-print(f"  u- = G*/x- = {um:.10f}  (Color sector: ~98% of unit)")
+print(f"  u+ = G*/x+ = {up:.10f}")
+print(f"  u- = G*/x- = {um:.10f}")
 print(f"  u+ + u- = {up + um:.15f}")
-print()
-print("  The electromagnetic coupling consumes {:.2f}% of the reciprocal budget.".format(up*100))
-print("  The color coupling consumes {:.2f}%.".format(um*100))
-print("  They exhaust the budget exactly.")
 
 # =====================================================
 print()
@@ -400,8 +395,8 @@ print(f"    Classical: {ym:.4f}")
 print(f"    Offset:    1")
 print(f"    Resonance: {1/(ym-1):.6f}  (LARGE -- near pole)")
 print()
-print(f"  The EM root is deep in the classical regime.")
-print(f"  The color root is dominated by the resonance term.")
+print(f"  The larger root is deep in the classical regime.")
+print(f"  The smaller root is dominated by the resonance term.")
 print(f"  G* (u=1) is the pole -- the singularity that separates them.")
 
 # =====================================================

@@ -101,7 +101,7 @@ Let $\rho_\Delta:=\prod_{a=1}^{|\Delta|-1}\Gamma(a/|\Delta|)^{\chi_\Delta(a)}$ b
 
 **Theorem 8 (the $\Gamma$-ratio tower; external).** Each $\rho_\Delta$ is a real transcendental with a Chowla–Selberg closed form ($\log\rho_\Delta$ a rational multiple of $|\Delta|\,L'(0,\chi_\Delta)$, via Lerch 1897 / the Kronecker limit formula); the tower is non-monotone in $|\Delta|$. In particular $\rho_{-4}=G^{*}$ is transcendental (Chudnovsky). Algebraicity of the associated CM $L$-values is the Damerell–Shimura theory; the CM case of Deligne's period conjecture is proven (Blasius 1986, Anderson 1986, Shimura 1979).
 
-**Out of scope (noted for honesty).** The source project additionally forms a per-discriminant quadratic and asks which $\Delta$ makes its roots meet a prescribed *external (physical)* target; over the nine fields $\Delta=-4$ is then the unique simultaneous matcher. That selection is a **numerical observation, valid for class number $1$ only, and criterion-dependent** (it flips under a rational-multiplier criterion), *not* a theorem; the $h\ge2$ question is **open**. It couples to an out-of-scope external target and is not developed here.
+**Out of scope (noted for honesty).** The source project additionally forms a per-discriminant quadratic and asks which $\Delta$ makes its larger root meet a prescribed *external (physical)* target; over the nine fields $\Delta=-4$ is then the unique matcher. That selection is a **numerical observation, valid for class number $1$ only, and criterion-dependent** (it flips under a rational-multiplier criterion), *not* a theorem; the $h\ge2$ question is **open**. It couples to an out-of-scope external target and is not developed here.
 
 ---
 

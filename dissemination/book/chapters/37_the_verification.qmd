@@ -21,28 +21,6 @@ The test is clear: future precision measurements of α can confirm or falsify th
 
 ---
 
-## The Color Charge Number
-
-The smaller root of the quadratic:
-
-x₋ = 8G*² - 8G*²√(1 - 1/(4G*)) ≈ 3.024
-
-The framework identifies this with N_c, the number of color charges in quantum chromodynamics.
-
-The Standard Model has N_c = 3 exactly—there are precisely three colors (red, green, blue) carried by quarks, and exactly three anticolors.
-
-The prediction x₋ ≈ 3.024 is close to 3, but not exactly 3. The framework explains this as:
-
-- The root represents an *effective* color parameter
-- At low energies (where we observe), N_c = ⌊x₋⌋ = 3
-- The fractional part (0.024) relates to running of the coupling
-
-This is testable in principle: if a fourth color charge were discovered, the framework would be falsified.
-
-Current experimental bounds: LHC and other colliders have searched extensively for fourth-generation quarks and found none. The framework is consistent with this—it predicts exactly 3 colors.
-
----
-
 ## The Electron Mass
 
 The framework derives the electron mass:
@@ -225,7 +203,6 @@ The framework claims progress on all five fronts. But extraordinary claims requi
 ## Key Points
 
 - The framework predicts α⁻¹ = 137.036, matching measurement to 1.26 ppm
-- The color charge number N_c ≈ 3 is the floor of the smaller root (3.024)
 - The electron mass is derived: m_e = m_P √(2π) (16/3) α¹¹, accurate to 0.27%
 - The Higgs VEV is derived: v = m_P √(2π) α⁸, accurate to 0.05%
 - The gravitational coupling is derived to 0.01% accuracy

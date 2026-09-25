@@ -8,7 +8,7 @@
 
 ## The Gap Equation Derived from Z(x)
 
-**Status (per LEDGER, v1.4 retirement):** The "L → ∞ gap-equation derivation" route described here is **RETRACTED (FTD-0032)**: Phase I numerical convergence does not hold; Phase J shows the L=2 partition function is ultralocal with no master-quadratic signature; under undefined-boundary ontology "L → ∞" is not a well-posed load-bearing step. The polynomial itself is preserved as **[THEOREM] (FTD-0001)** — pure algebra. The single live physical identification is $x_+ \leftrightarrow 1/\alpha$ ([STRONGLY MOTIVATED CONJECTURE] FTD-0013) resting on the empirical match (1.26 ppm) + CM-curve uniqueness (the polynomial-template uniqueness leg, FTD-0319, formerly cited as FTD-0189, was **withdrawn 2026-08-03/04, FTD-0791/FTD-0802** — it sits at its own chance base rate and the scan-rigid count is now zero). The historical paired identification $x_- \leftrightarrow N_c$ is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
+**Status (per LEDGER):** The "L → ∞ gap-equation derivation" route described here is **RETRACTED (FTD-0032)**: Phase I numerical convergence does not hold; Phase J shows the L=2 partition function is ultralocal with no master-quadratic signature; under undefined-boundary ontology "L → ∞" is not a well-posed load-bearing step. The polynomial itself is preserved as **[THEOREM] (FTD-0001)** — pure algebra. The physical identification is $x_+ \leftrightarrow 1/\alpha$ ([STRONGLY MOTIVATED CONJECTURE] FTD-0013) resting on the empirical match (1.26 ppm) + CM-curve uniqueness.
 **Depends on:** DERIV_GAP_EQUATION_FORM.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md
 **Proof script:** `scripts/proofs/proof_gap_equation_from_partition_function.py`
 
@@ -111,7 +111,7 @@ Discriminant: Delta = K^2 - 4KG\* = 17959.27
 
 Roots:
 - x\_+ = (K + sqrt(Delta))/2 = 137.0362 = 1/alpha
-- x\_- = (K - sqrt(Delta))/2 = 3.0240 ~ N\_c
+- x\_- = (K - sqrt(Delta))/2 = 3.0240
 
 Vieta's formulas:
 - x\_+ + x\_- = K = 16G\*^2 (sum of roots = linear coefficient)
@@ -170,7 +170,6 @@ All 18 tests pass in `proof_gap_equation_from_partition_function.py`:
 | Finite-size convergence | PASS | [THEOREM] |
 | K = 16G\*^2 coefficient | PASS | [THEOREM] |
 | Root x\_+ = 1/alpha | PASS | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
-| ~~Root x\_- = N\_c~~ | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` | n/a |
 | Vieta sum | PASS | [THEOREM] |
 | Vieta product | PASS | [THEOREM] |
 | Finite-lattice two positive roots | PASS | [THEOREM] |

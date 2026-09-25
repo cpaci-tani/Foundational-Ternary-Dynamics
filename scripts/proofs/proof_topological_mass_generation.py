@@ -8,7 +8,7 @@ proof. The comparison targets are hardcoded and the integer node counts are
 hand-selected to land near them; the script establishes only NUMERIC AGREEMENT
 between chosen integer recipes and experiment — it does NOT establish a forcing chain
 or a theorem. The 2026-06-18 [THEOREM] framing (commit fdc483d0) is RETRACTED:
-these are substitution identities that fail the FTD-0097/0189 look-elsewhere bar and
+these are substitution identities that fail the FTD-0097 look-elsewhere bar and
 the standing zero-promotion discipline. Honest tags: m_e / m_p = [STRONGLY MOTIVATED
 CONJECTURE]; the six quark masses = [PARAMETRIC] (m_t imports Z=118/Oganesson from
 chemistry; m_u is ~5% off). Do not cite this script as a proof.
@@ -114,7 +114,7 @@ def main():
 
     print("\nNumeric agreement only: these are integer-recipe fits, NOT derivations.")
     print("Tags: m_e/m_p = [SMC]; six quark masses = [PARAMETRIC] (m_t imports Z=118).")
-    print("STATUS: [FIT-CHECK PASS] (not a proof; fails FTD-0097/0189 look-elsewhere bar)")
+    print("STATUS: [FIT-CHECK PASS] (not a proof; fails FTD-0097 look-elsewhere bar)")
 
 if __name__ == "__main__":
     main()

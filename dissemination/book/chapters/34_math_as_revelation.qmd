@@ -68,7 +68,7 @@ This equation is not arbitrary. Each element emerges from deeper structure:
 
 The roots of this equation are:
 - x₊ ≈ 137.036 → 1/α (the fine structure constant)
-- x₋ ≈ 3.024 → N_c (the color charge number)
+- x₋ ≈ 3.024
 
 If correct, this single equation encodes the fundamental constants of physics—not as arbitrary inputs but as mathematical necessities.
 
@@ -121,7 +121,7 @@ The framework proposes a derivation chain from axioms to physics:
 3. **Constraint**: Gauss law and conservation
 4. **Selection**: CM uniqueness selects the lemniscatic curve
 5. **Quadratic**: The master equation emerges from lattice geometry
-6. **Constants**: α, N_c, masses, couplings follow from the quadratic
+6. **Constants**: α, masses, couplings follow from the quadratic
 7. **Physics**: Standard Model + gravity emerge at continuum limit
 
 Each step follows from the previous. There are no arbitrary choices. Everything is necessary.

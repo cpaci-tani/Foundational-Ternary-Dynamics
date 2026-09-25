@@ -272,7 +272,7 @@ record(
 record(
     "N_c = 3 is explicit in the anomaly factor",
     N_C == 3,
-    "N_c provenance is the independent topology/Moore structure; x_- identification retired"
+    "N_c provenance is the independent topology/Moore structure"
 )
 
 # ANOM-7: Decay rate
@@ -421,14 +421,6 @@ record(
     "alpha in pi0 formula = alpha from G* (same constant)",
     abs(alpha_from_gstar - ALPHA) / ALPHA < 2e-6,
     f"alpha(G*) = {alpha_from_gstar:.8f}, alpha(used) = {ALPHA:.8f}"
-)
-
-# Historical arithmetic relation only; it is not N_c provenance and is not
-# counted as a verification target.
-x_minus = (16 * c_val**2 - np.sqrt(disc)) / 2
-print(
-    f"  legacy note: floor(x_-) = {int(np.floor(x_minus))}; "
-    "the physical N_c identification is retired"
 )
 
 # Full SM anomalous Ward identity

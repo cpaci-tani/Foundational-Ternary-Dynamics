@@ -373,7 +373,7 @@ record(
     f"x+ = {X_PLUS:.10f}"
 )
 record(
-    "x- = 3.023964... (color charge root)",
+    "x- = 3.023964...",
     abs(X_MINUS - 3.024) < 0.001,
     f"x- = {X_MINUS:.10f}"
 )

@@ -10,7 +10,7 @@
 > **Correction notice.** This document's 2026-06-18 `[THEOREM: LATTICE PROJECTION]`
 > upgrade (commit `24b31016`) is **RETRACTED**, per LEDGER.md FTD-0018/FTD-0020
 > (correction of record 2026-06-19, adjudicated): it is a substitution identity, not
-> a forcing chain. It fails the FTD-0097/0189 look-elsewhere bar — a competitor
+> a forcing chain. It fails the FTD-0097 look-elsewhere bar — a competitor
 > ratio fits sin²θ_W better (2/9 at 0.31% vs this document's 3/13 at 3.5%) and
 > another fits α_s better (2/17 at 0.29% vs 7/59 at 0.63%) — and the standing
 > zero-promotion discipline. The document's own citation of "per FTD-0259" as

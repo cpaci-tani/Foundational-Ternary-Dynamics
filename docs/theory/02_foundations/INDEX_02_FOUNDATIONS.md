@@ -62,7 +62,6 @@
 | File | Tag | Purpose |
 |---|---|---|
 | [FOUND_MASTER_QUADRATIC_BARE_STRUCTURE.md](FOUND_MASTER_QUADRATIC_BARE_STRUCTURE.md) | [THEOREM] | The master quadratic stripped to bare algebra — what the math says without physics (FTD-0082). |
-| [FOUND_MASTER_QUADRATIC_UNIQUENESS_PROOF.md](FOUND_MASTER_QUADRATIC_UNIQUENESS_PROOF.md) | [THEOREM] | Program E uniqueness result; SP2 promoted to theorem (FTD-0083). |
 | [FOUND_LADDER_GENERATING_RULE.md](FOUND_LADDER_GENERATING_RULE.md) | [THEOREM] / [SELECTION] | Why the α-power ladder exponents are what they are — structural identity. |
 | [FOUND_LADDER_WALK_FROM_OH_STRUCTURE.md](FOUND_LADDER_WALK_FROM_OH_STRUCTURE.md) | [THEOREM] + [SELECTION narrowed] | Ladder-walk step sizes derived from O_h structure, Program A partial closure (FTD-0084). |
 | [FOUND_FORCE_STRUCTURE.md](FOUND_FORCE_STRUCTURE.md) | [THEOREM] / [SELECTION] / [CONJECTURE] | How the master quadratic generates all four forces — force genealogy. |

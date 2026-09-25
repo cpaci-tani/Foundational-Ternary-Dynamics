@@ -335,28 +335,6 @@ class TestSelection(unittest.TestCase):
     The choice is motivated but not uniquely determined.
     """
 
-    def test_n_c_equals_3(self):
-        """
-        [SELECTION] N_c = 3 is selected by:
-        1. First Fermat-forbidden exponent (n=3 in x^n + y^n = z^n)
-        2. QCD requires exactly 3 colors for confinement + asymptotic freedom
-        3. x_- = 3.024 rounds to 3
-
-        Multiple constraints point to 3, but each is a selection principle.
-        """
-        # From quadratic
-        n_c_from_quadratic = int(np.floor(X_MINUS))
-        self.assertEqual(n_c_from_quadratic, 3)
-
-        # Fermat constraint: smallest n > 2 with no integer solutions
-        # This is proven (Wiles 1995), so N_c = 3 is selected by FLT.
-
-        print("\n[SELECTION] N_c = 3:")
-        print(f"  From quadratic: floor({X_MINUS:.4f}) = {n_c_from_quadratic}")
-        print("  From Fermat: first forbidden exponent = 3")
-        print("  From QCD: confinement requires N_c = 3")
-        print("  Convergent selection: NOT numerology")
-
     def test_weinberg_angle_selection(self):
         """
         [SELECTION] sin^2(theta_W) = N_c / N_eff = 3/13

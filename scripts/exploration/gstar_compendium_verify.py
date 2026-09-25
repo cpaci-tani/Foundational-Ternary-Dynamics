@@ -202,9 +202,9 @@ check(
 print()
 print(
     f"  x_+ = {x_plus}  "
-    "(1/alpha identification is SMC; 1.26 ppm match has no uniqueness support)"
+    "(1/alpha identification is SMC; x+ = 1/alpha has no numerical-uniqueness support.)"
 )
-print(f"  x_- = {x_minus}  (algebraic root; historical N_c identification retired)")
+print(f"  x_- = {x_minus}  (algebraic root)")
 print(f"  16 G*^2 = {16 * G_star**2}")
 print(f"  16 G*^3 = {16 * G_star**3}")
 

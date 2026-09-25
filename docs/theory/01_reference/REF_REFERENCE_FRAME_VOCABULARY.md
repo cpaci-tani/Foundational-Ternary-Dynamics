@@ -48,7 +48,7 @@ These are different things. A static subset has structural reference but no acti
 | **Local reference frame** | noun | A voxel or local region of the lattice that instantiates reference frame structure. In FTD, the canonical example is the center of a 27-block (Moore-26 + center). |
 | **Reference frame projection** | noun | The operator that maps the full state to a frame-relative readout. In FTD: the noumenal → phenomenal projection. Corresponds to **observable-algebra restriction** in algebraic-QFT terms. |
 | **Frame-relative readout** | noun | The output of a reference frame projection — what the structure "knows about itself." Replaces the loaded term *experience* or *subjectivity*. |
-| **Frame-relative eigenmode** | noun | An eigenstate of the reference frame projection. The hypothesis that the master quadratic spectrum (x_+ ≈ 137, x_- ≈ 3) consists of frame-relative eigenmodes is what MC-T4.3 closure would establish. |
+| **Frame-relative eigenmode** | noun | An eigenstate of the reference frame projection. The hypothesis that the master quadratic spectrum (x_+, x_-) consists of frame-relative eigenmodes is what MC-T4.3 closure would establish. |
 | **Frame-relative integration** | noun | The dynamical process by which a reference frame structure updates its self-readout over time. |
 
 ### Frame Dynamics (dynamical)

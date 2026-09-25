@@ -39,15 +39,7 @@ Each frontier is graded:
 
 **What closing requires.** A non-circular dimension functional (whose value at general D is **not** computed via |O_h|) **and** a structural-necessity proof that the EM-coupling polynomial's coefficient must be |Aut(E)|². This is the **same wall as MC-T4.3** (the α-readout operator-forcing obstruction): a 6th-postulate-class input would be required. Marked **[FOUNDATIONAL OBSTRUCTION — boundary]**, route-invariant (FTD-0242/0244/0313/0314). Not closeable internally without a new axiom.
 
-## F4 — Structural CM d=−4 uniqueness across h≥2 — **(b), closeable with a tool/effort**
-
-**Question.** Is d=−4 the unique dual-matcher across *all* CM curves, or only across the finite single-number Γ-product scan (|d|≤907, h=1–4) that FTD-0123 ran?
-
-**Status.** `[NUMERICAL FACT]` (finite scan; 0 h≥2 matchers via the single-number Γ-product analogue). The honest gap (per `EXPLR_CHOWLA_SELBERG_HIGHER_H.md`): at h≥2 the scan uses a single Γ-product per discriminant, **not** the full per-ideal-class **Damerell period vector**.
-
-**What closing requires.** Implement per-ideal-class Damerell periods (ideal-class enumeration in ℚ(√d) + Gauss-sum evaluation per class) for the 54 h≥2 discriminants and re-test. ~200 lines of Python (or Sage/PARI). Either strengthens the uniqueness toward theorem-grade or finds a counterexample — both are goal-clause-2 progress. **Must be pre-registered** (it is a scan). See `PREREG_DAMERELL_SCAN_v1.md` (registered; run deferred — the ideal-class machinery is the bounded-but-real remaining effort).
-
-## F5 — Unconditional transcendence of G\* (the Chudnovsky dependency) — **(c), permanent external import**
+## F4 — Unconditional transcendence of G\* (the Chudnovsky dependency) — **(c), permanent external import**
 
 **Question.** A large fraction of the deep spine — ℚ(G\*) π-freeness (Thm 9), A_k transcendence (k≥4), and the **entire W-narrowing theorem (FTD-0314)** — is conditional on **Chudnovsky 1976** (algebraic independence of π and Γ(1/4)). Can it be made unconditional?
 
@@ -59,7 +51,7 @@ Each frontier is graded:
 
 **Question (gtca F10).** Is the framework's integer-combination space dense enough that its physics "matches" are statistically unsurprising?
 
-**Status.** The **simple-rational** identifications are now scanned: FTD-0310 (sin²θ_W, α_s, m_e prefactor) + FTD-0320 (sin²θ₁₂, sin²θ₂₃, Δm²-ratio) — **all non-rigid, all demoted to `[PARAMETRIC]`**. **Zero** identifications survive an adversarial uniqueness scan (**revised 2026-08-03, FTD-0791**; this read "Exactly **one** … **x₊=1/α** (FTD-0319, and that a `[NUMERICAL FACT]` under the registered gate, not a structural Bayes result)" until FTD-0319 was itself audited and found to sit at its own null's expectation — 1.42–1.67 matchers expected, 1 found — and retagged `[MEASURED]` → `[SELECTION]`). The **integer-combination families** (~120 remaining: quark/hadron masses, m_p/m_e, CKM) are **unscanned** — their test is the FTD-0097-style combinatorial look-elsewhere scan (FTD-0097 already found the monomial catalog over-rich/NULL). Closing this for the combination families is the registered **deferred v2** scan and remains the deepest open methodological question.
+**Status.** The **simple-rational** identifications are now scanned: FTD-0310 (sin²θ_W, α_s, m_e prefactor) + FTD-0320 (sin²θ₁₂, sin²θ₂₃, Δm²-ratio) — **all non-rigid, all demoted to `[PARAMETRIC]`**. The **integer-combination families** (~120 remaining: quark/hadron masses, m_p/m_e, CKM) are **unscanned** — their test is the FTD-0097-style combinatorial look-elsewhere scan (FTD-0097 already found the monomial catalog over-rich/NULL). Closing this for the combination families is the registered **deferred v2** scan and remains the deepest open methodological question.
 
 ---
 
@@ -70,8 +62,7 @@ Each frontier is graded:
 | F1 L-value verification | (a) | **L(E,1) reproduced**; Sym² value still cited (deferred) |
 | F2 ℚ(G\*) maximality | (c) | "maximal" struck; restricted conjecture statable; general case external |
 | F3 coeff-16 / D=3 forcing | (c) | arithmetic THEOREM / forcing SELECTION; the MC-T4.3 wall |
-| F4 CM d=−4 across h≥2 | (b) | NUMERICAL FACT (single-number); full Damerell scan pre-registered, deferred |
-| F5 G\* transcendence | (c) | permanent Chudnovsky import; clause must ride along |
+| F4 G\* transcendence | (c) | permanent Chudnovsky import; clause must ride along |
 | Catalog rigidity | (a/b) | simple-rational subset scanned (all demoted); combination families deferred |
 
-**The honest top line:** the spine's unconditional theorem-grade core is real but narrow; its deep content is conditional on Chudnovsky; its physics-facing matches are, where tested, not statistically special — FTD-0791 withdrew the former `x₊=1/α` exception while leaving its canonical `[SMC]` tag unchanged — and the genuinely-closeable items (F1 done; F4 mechanizable) sit alongside three boundaries (F2/F3/F5) that FTD maps but cannot cross internally. No frontier licenses any promotion.
+**The honest top line:** the spine's unconditional theorem-grade core is real but narrow; its deep content is conditional on Chudnovsky; its physics-facing matches are, where tested, not statistically special; and the genuinely-closeable item (F1, done) sits alongside three boundaries (F2/F3/F4) that FTD maps but cannot cross internally. No frontier licenses any promotion.

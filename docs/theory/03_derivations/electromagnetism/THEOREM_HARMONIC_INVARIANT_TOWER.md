@@ -130,7 +130,7 @@ $$\boxed{\;\alpha_{\text{tree}} \;=\; \frac{1}{2 G^*} \;-\; \frac{\sqrt{4 G^* - 
 
 This is the canonical FTD-0001 1.26 ppm tree-level result, expressed as a difference of two `G*`-algebraic terms rather than as `1/x_+`. The two forms are algebraically identical — the closed form is FTD-0001 in publication-grade prose, not a new claim.
 
-**[DERIVED]** — re-statement of FTD-0001 (Theorem 3 of SPEC_ALGEBRAIC_SPINE) in a more legible algebraic form. Does *not* change the LEDGER tag of the physical identification `α  1/x_+`, which remains [STRONGLY MOTIVATED CONJECTURE] (the dual conjecture; LEDGER FTD-0001).
+**[DERIVED]** — re-statement of FTD-0001 (Theorem 3 of SPEC_ALGEBRAIC_SPINE) in a more legible algebraic form. Does *not* change the LEDGER tag of the physical identification `α  1/x_+`, which remains [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0001).
 
 ---
 
@@ -144,10 +144,10 @@ This is the canonical FTD-0001 1.26 ppm tree-level result, expressed as a differ
 
 **What is NOT added:**
 
-1. **Resolution of the dual conjecture.** The 1.26 ppm match `α ≈ 1/x_+` and the 0.80% match `N_c ≈ x_−` remain [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0001). The harmonic invariant constrains the *algebraic relationship* between the two roots; it does not derive their physical identification.
-2. **Selection of level `k = 4`.** The tower parameterizes the master-quadratic family; the empirical observation that the level-4 instance matches `α⁻¹` to 1.26 ppm (and N_c to 0.80% in the same instance) is unaltered. **[OPEN]**: why level 4? See §6.
+1. **Resolution of the physical identification.** The 1.26 ppm match `α ≈ 1/x_+` remains [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0001). The harmonic invariant constrains the *algebraic relationship* between the two roots; it does not derive the physical identification.
+2. **Selection of level `k = 4`.** The tower parameterizes the master-quadratic family; the empirical observation that the level-4 instance matches `α⁻¹` to 1.26 ppm is unaltered. **[OPEN]**: why level 4? See §6.
 3. **A formal anomaly construction.** The phrase "level-4 anomaly" used informally in some discussions is a metaphor borrowed from QFT conformal-anomaly language; it does not correspond to any derived QFT result in FTD as of this writing. **[CONJECTURE / exploratory]**: that there exists a regularization-class construction in the matched-stencil lattice EFT whose level enumerates `k`. Until such a construction is exhibited, "level-`k` discriminant correction" is the appropriate technical term, not "anomaly."
-4. **Uniqueness of the (1+i)-multiplier choice.** The harmonic invariant holds for every family `c = G* · b`, regardless of multiplier. The (1+i)-tower selects `m_k = 2^k`; other Gaussian-prime towers (`(2+i)`-tower with `m_k = 5^k`, etc.) and rational-prime towers (`m_k = p^k`) all admit the harmonic invariant identically. **[OPEN]**: a CM-style rigidity scan analogous to the 60k-polynomial scan that rigidified FTD-0001, asked at the level of multiplier choice rather than coefficient choice.
+4. **Uniqueness of the (1+i)-multiplier choice.** The harmonic invariant holds for every family `c = G* · b`, regardless of multiplier. The (1+i)-tower selects `m_k = 2^k`; other Gaussian-prime towers (`(2+i)`-tower with `m_k = 5^k`, etc.) and rational-prime towers (`m_k = p^k`) all admit the harmonic invariant identically. **[OPEN]**: a CM-style rigidity scan asked at the level of multiplier choice rather than coefficient choice.
 
 ---
 
@@ -227,7 +227,7 @@ This sharpens the "why `k = 4`?" question from "empirical coincidence" to "first
 
 A post-hoc scan against 16 known dimensionless physics constants at 1% tolerance (script: `scripts/exploration/explore_tower_level_scan.py`) returned exactly two matches:
 
-1. **`x_+(4) = 137.0362`  `α⁻¹` (1.26 ppm)** — the canonical FTD-0001 dual conjecture; reproduced.
+1. **`x_+(4) = 137.0362`  `α⁻¹` (1.26 ppm)** — the canonical FTD-0001 conjecture; reproduced.
 2. **`1/y_-(4) = 0.9784`  `cos²(θ_13)` PMNS = 0.978 (0.04% / 420 ppm)** — *automatic from harmonic invariant*, since `1/y_-(4) = 1 − 1/y_+(4) = 1 − G*α`, so this is not independent evidence.
 
 No matches at any other level, including the framework-integer levels `k ∈ {3, 7, 13} = {N_c, b_3, N_eff}`. **The framework-integer-as-tower-index hypothesis is falsified by this scan**: only `k = N_base = 4` carries verified physical content, and the structural explanation (Section 6.6) is "first `G*`-non-trivial level," not "framework integer."
@@ -236,43 +236,10 @@ No matches at any other level, including the framework-integer levels `k ∈ {3,
 
 ---
 
-## 6.8 · Cover-page reformulation: the harmonic complement — historical, retired
-
-**Historical framing — RETIRED per v1.4 §5.** Under the historical paired identification `x_+  1/α` and `x_-  N_c`, the harmonic invariant collapsed to one line:
-
-$$\boxed{\; \alpha \;+\; \frac{1}{N_c} \;=\; \frac{1}{G^*} \;}\quad\text{(historical slogan, retired)}$$
-
-**Derivation (historical).** Theorem 1 gives `1/y_+ + 1/y_- = 1` for the level-4 master quadratic. Substituting `1/y_+ = G*/x_+ = G*α` (FTD-0013: `α = 1/x_+`, [STRONGLY MOTIVATED CONJECTURE]) and `1/y_- = G*/x_- = G*/N_c` (historical FTD-0014: `N_c = x_-` — **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`), then dividing by `G*`, gives the boxed equation directly. □
-
-**Post-v1.4 status.** The `x_-  N_c` identification is retired; the smaller root `x_- ≈ 3.024` is a mathematical artifact of $P(x)$ only, and `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem. The live algebraic content is the bare identity `1/x_+ + 1/x_- = 1/G^*` (Vieta); the "α + 1/N_c = 1/G*" slogan form is preserved here only as historical commentary.
-
-**What it was, numerically (historical).** With `α_obs = 0.00729735`, `N_c = 3` (integer), and `1/G* = 0.337988`:
-
-$$\alpha_{\text{obs}} + \tfrac{1}{3} \;=\; 0.34063 \quad \text{vs} \quad 1/G^* = 0.33799,$$
-
-differing by **0.78%** — the *same* 0.78% as the master quadratic's smaller root deviation from 3 (`x_- = 3.0240 = 3 × (1 + 0.0080)`). Under the historical paired identification, the two equivalent statements:
-- "The master quadratic's smaller root is 3.024, off the integer N_c = 3 by 0.80%"
-- "α + 1/N_c (with N_c = 3) deviates from 1/G* by 0.78%"
-
-were the same conjecture in different framings. Both framings depend on the now-retired `x_-  N_c` identification; only the bare algebraic identity `1/x_+ + 1/x_- = 1/G^*` survives unchanged.
-
-**Cross-domain bridge (historical commentary).** The structure `1/A + 1/B = 1/C` recurs across physics:
-- **Parallel resistors** (Kirchhoff): `1/R_eq = 1/R_1 + 1/R_2`
-- **Reduced mass** (Newtonian two-body): `1/μ = 1/m_1 + 1/m_2`
-- **Thin lens equation** (paraxial optics): `1/f = 1/d_o + 1/d_i`
-
-Under the historical paired identification, the FTD instance placed `G*` as the "equivalent reciprocal" of which `α` (electromagnetic) and `1/N_c` (color) were complementary terms. The Kirchhoff slogan and the "cover-page" form are **retired** along with `x_-  N_c` (v1.4 §5); the structural analogy at the bare-algebra level (`1/x_+ + 1/x_- = 1/G^*`) survives, but its physics-notation slogan does not.
-
-**Slogan-grade summary (historical, retired)**: `(α, 1/N_c)` were complementary harmonic conjugates of `1/G*`.
-
----
-
 ## 7 · Cross-references
 
 - **Canonical theorem list:** `SPEC_ALGEBRAIC_SPINE.md` — proposed Theorem 8 added in same commit.
 - **FTD-0001 (master quadratic):** Theorem 2 of SPEC_ALGEBRAIC_SPINE; this is the level-4 instance.
-- **Dual conjecture:** §9 of SPEC_ALGEBRAIC_SPINE (`α  1/x_+` at 1.26 ppm; `N_c  x_−` at 0.80%) — unchanged.
-- **60k-polynomial rigidity scan:** `EXPLR_60K_POLYNOMIAL_SCAN.md` — established that FTD-0001's coefficients (16, 16, 1) are rigid against perturbation. Q1 above proposes the multiplier-level analog.
 - **Constants:** `scripts/constants.py` line 103/265 (`G_STAR = Γ(1/4)/Γ(3/4) ≈ 2.9586751`).
 - **Verification script:** `scripts/proofs/proof_harmonic_invariant_tower.py` (numerical confirmation at 50-digit precision for `k ∈ {3, 4, 5, 6, 7}`).
 - **LEDGER row:** FTD-0111 (this entry).
@@ -281,4 +248,4 @@ Under the historical paired identification, the FTD instance placed `G*` as the 
 
 ## 8 · Single-line summary
 
-**The master quadratic `M(x) = x² − 16 G*² x + 16 G*³` (FTD-0001, Theorem 2 of SPEC_ALGEBRAIC_SPINE) is the level-4 instance of the (1+i)-tower of `G*`-normalized quadratics `M_k(x) = x² − 2^k G*^{k−2} x + 2^k G*^{k−1}`; this tower admits a single algebraic invariant `1/y_+ + 1/y_− = 1` (where `y_± := x_±/G*`) at every level [THEOREM 1, proved via Vieta + the `c_k = G* · b_k` normalization]; its discriminant factors as `disc(M_k) = 2^{k+2} G*^{k−1} A_k` with level-`k` correction `A_k = 2^{k−2} G*^{k−3} − 1` [THEOREM 2 for the factorization, by direct computation; the `A_k` transcendence over `Q` for `k ≥ 4` is a [CONDITIONAL THEOREM given Chudnovsky 1976] (alg. indep. of `π` and `Γ(1/4)`; Waldschmidt 2000 §1.4)]; the level-4 instance gives the closed-form tree-level identity `α = 1/(2G*) − √(4G* − 1)/(4 G*^{3/2})` [DERIVED, restatement of FTD-0001 in publication-grade form] reproducing CODATA's `α⁻¹` to the canonical 1.26 ppm; the dual physical-identification conjecture (`α  1/x_+`, `N_c  x_−`) is unchanged in tag, the (1+i)-multiplier uniqueness and level-4 selection remain [OPEN], and the QFT-conformal-anomaly analogy is metaphor-only [CONJECTURE, exploratory] absent a formal regularization-class construction.**
+**The master quadratic `M(x) = x² − 16 G*² x + 16 G*³` (FTD-0001, Theorem 2 of SPEC_ALGEBRAIC_SPINE) is the level-4 instance of the (1+i)-tower of `G*`-normalized quadratics `M_k(x) = x² − 2^k G*^{k−2} x + 2^k G*^{k−1}`; this tower admits a single algebraic invariant `1/y_+ + 1/y_− = 1` (where `y_± := x_±/G*`) at every level [THEOREM 1, proved via Vieta + the `c_k = G* · b_k` normalization]; its discriminant factors as `disc(M_k) = 2^{k+2} G*^{k−1} A_k` with level-`k` correction `A_k = 2^{k−2} G*^{k−3} − 1` [THEOREM 2 for the factorization, by direct computation; the `A_k` transcendence over `Q` for `k ≥ 4` is a [CONDITIONAL THEOREM given Chudnovsky 1976] (alg. indep. of `π` and `Γ(1/4)`; Waldschmidt 2000 §1.4)]; the level-4 instance gives the closed-form tree-level identity `α = 1/(2G*) − √(4G* − 1)/(4 G*^{3/2})` [DERIVED, restatement of FTD-0001 in publication-grade form] reproducing CODATA's `α⁻¹` to the canonical 1.26 ppm; the physical-identification conjecture (`α = 1/x_+`) is unchanged in tag, the (1+i)-multiplier uniqueness and level-4 selection remain [OPEN], and the QFT-conformal-anomaly analogy is metaphor-only [CONJECTURE, exploratory] absent a formal regularization-class construction.**

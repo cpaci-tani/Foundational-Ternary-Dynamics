@@ -5,7 +5,7 @@
 **Status:** [THEOREM] + [SELECTION] (mixed -- see Claims Table Section 7)
 **Epistemic Tag:** Triangle diagram (VVA) computed on the FTD lattice. UV finiteness is [THEOREM] (compact Brillouin zone). Vanishing anomaly for naive fermions is [THEOREM] (Nielsen-Ninomiya). Wilson fermion resolution recovering the correct anomaly coefficient is [THEOREM] for arbitrarily fine lattice spacing $a$, with violations bounded by $O(a)$. Choice of Wilson term is [SELECTION]. The pi-zero decay rate Gamma = 7.73 eV (1.2% vs PDG) is [THEOREM] with f_pi adopted as [IMPOSED]. Baryogenesis connection via lattice topological charge is [SELECTION].
 
-> The chiral anomaly -- the quantum mechanical breaking of classical axial symmetry -- is one of the most profound results in quantum field theory. It governs neutral pion decay, constrains the number of light quark flavors, and provides the microscopic mechanism for baryon number violation. This document derives the anomaly from the FTD lattice Feynman rules. The triangle diagram is computed on the compact Brillouin zone BZ = [-pi, pi]^4, yielding a UV-finite integral that requires no regularization. The anomaly coefficient is topological: it counts the winding number of the fermion determinant over BZ. Naive fermions give zero anomaly (Nielsen-Ninomiya theorem); Wilson fermions recover the correct coefficient Q^2 alpha/(2pi) per physical fermion. With N_c = 3 derived from the master quadratic, the pi-zero decay rate follows with only f_pi as input.
+> The chiral anomaly -- the quantum mechanical breaking of classical axial symmetry -- is one of the most profound results in quantum field theory. It governs neutral pion decay, constrains the number of light quark flavors, and provides the microscopic mechanism for baryon number violation. This document derives the anomaly from the FTD lattice Feynman rules. The triangle diagram is computed on the compact Brillouin zone BZ = [-pi, pi]^4, yielding a UV-finite integral that requires no regularization. The anomaly coefficient is topological: it counts the winding number of the fermion determinant over BZ. Naive fermions give zero anomaly (Nielsen-Ninomiya theorem); Wilson fermions recover the correct coefficient Q^2 alpha/(2pi) per physical fermion. With N_c = 3 (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`), the pi-zero decay rate follows with only f_pi as input.
 
 **Depends on:**
 
@@ -327,7 +327,7 @@ $$\mathcal{M}(\pi^0 \to \gamma\gamma) = \frac{\alpha}{\pi f_{\pi}} \times N_c\!\
 where:
 - $\alpha = 1/137.036$ -- fine structure constant (derived from master quadratic, CLAUDE.md Section 7.4)
 - $f_{\pi} \approx 92$ MeV -- pion decay constant [IMPOSED]
-- $N_c = 3$ -- number of colors (derived from master quadratic, Theorem 1.1 of DERIV_LATTICE_SU3_GAUGE.md)
+- $N_c = 3$ -- number of colors (Theorem 1.1 of DERIV_LATTICE_SU3_GAUGE.md)
 - $Q_u = +2/3$, $Q_d = -1/3$ -- quark electric charges (from FTD charge assignments)
 
 ## 5.3 The Critical Factor: N_c(Q_u^2 - Q_d^2) [THEOREM]
@@ -338,7 +338,7 @@ $$N_c\!\left(Q_u^2 - Q_d^2\right) = 3 \times \left[\left(\frac{2}{3}\right)^2 - 
 
 This factor equals unity -- a striking result that historically provided the first experimental evidence for $N_c = 3$. In FTD:
 
-- $N_c = 3$ is **derived** from the master quadratic root $x_{-} = 3.024 \to N_c = 3$ via RG flow + topological quantization (CLAUDE.md, Section 7.4; DERIV_LATTICE_SU3_GAUGE.md, Theorem 1.1)
+- $N_c = 3$ is sourced via the Moore Layer Theorem and `DERIV_NC_FROM_TOPOLOGY.md` (DERIV_LATTICE_SU3_GAUGE.md, Theorem 1.1)
 - $Q_u = 2/3$ and $Q_d = -1/3$ follow from the FTD charge assignment (DERIV_COMPLETE_PARTICLE_PHYSICS.md)
 
 Therefore the anomaly factor $N_c(Q_u^2 - Q_d^2) = 1$ is a **derived** quantity in FTD, not an input.
@@ -356,7 +356,7 @@ $$\Gamma(\pi^0 \to \gamma\gamma) = \frac{\alpha^2\, m_{\pi}^3}{64\pi^3\, f_{\pi}
 | $\alpha$ | $1/137.036$ | Master quadratic | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
 | $m_{\pi^0}$ | 135.0 MeV | FTD mass formula | [STRONGLY MOTIVATED CONJECTURE] |
 | $f_{\pi}$ | 92.0 MeV | Adopted from experiment | [IMPOSED] |
-| $N_c(Q_u^2 - Q_d^2)$ | 1 | Derived (see Section 5.3); $N_c = 3$ independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and Moore Layer Theorem | [SELECTION] (the historical FTD-0014 `x_-  N_c` route is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
+| $N_c(Q_u^2 - Q_d^2)$ | 1 | Derived (see Section 5.3); $N_c = 3$ sourced via `DERIV_NC_FROM_TOPOLOGY.md` and Moore Layer Theorem | [SELECTION] |
 
 Substituting:
 
@@ -377,7 +377,7 @@ The FTD prediction lies within the experimental uncertainty band.
 **Epistemic upgrade.** This result previously had status [PARAMETRIC INSERTION] -- the formula was imported from anomaly theory with $N_c = 3$ as input. It is now upgraded to [THEOREM] because:
 
 1. The anomaly coefficient is **derived** from the lattice triangle diagram (Section 2)
-2. $N_c = 3$ is **derived** from the master quadratic (DERIV_LATTICE_SU3_GAUGE.md)
+2. $N_c = 3$ is sourced via the Moore Layer Theorem and `DERIV_NC_FROM_TOPOLOGY.md` (DERIV_LATTICE_SU3_GAUGE.md)
 3. $\alpha = 1/137.036$ is **derived** from G* (CLAUDE.md, Section 7.4)
 4. $m_{\pi} = 135.0$ MeV is **derived** from chiral perturbation theory with FTD quark masses
 
@@ -446,7 +446,7 @@ The resulting baryon-to-photon ratio $\eta \sim 10^{-10}$ (CLAUDE.md, Section 22
 | ANOM-5 | Anomaly coefficient is topological (integer-valued in units of $\alpha/(2\pi)$) | [THEOREM] | Atiyah-Singer index theorem |
 | ANOM-6 | Wilson term adopted as doubler resolution | [SELECTION] | Standard lattice QFT practice |
 | ANOM-7 | $\Gamma(\pi^0 \to \gamma\gamma) = 7.73$ eV (1.2% vs PDG 7.82 eV) | [STRONGLY MOTIVATED CONJECTURE] | $\alpha$, $N_c$, $m_{\pi}$ derived; $f_{\pi}$ imposed |
-| ANOM-8 | $N_c = 3$ factor in anomaly coefficient derived (not input) | [SELECTION] — `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and Moore Layer Theorem. *(Prior FTD-0014 / master-quadratic route is **RETIRED** per v1.4 §5; LEDGER row removed in commit `ca7eb61`.)* | DERIV_NC_FROM_TOPOLOGY.md; DERIV_LATTICE_SU3_GAUGE.md |
+| ANOM-8 | $N_c = 3$ factor in anomaly coefficient derived (not input) | [SELECTION] — `N_c = 3` sourced via `DERIV_NC_FROM_TOPOLOGY.md` and Moore Layer Theorem. | DERIV_NC_FROM_TOPOLOGY.md; DERIV_LATTICE_SU3_GAUGE.md |
 | ANOM-9 | $f_{\pi} = 92$ MeV adopted as input | [IMPOSED] | Not derived from FTD dynamics |
 | ANOM-10 | Baryogenesis connection via lattice topological charge $Q_{\text{top}} \in \mathbb{Z}$ | [SELECTION] | Compact gauge group + sphaleron physics |
 | ANOM-11 | Ginsparg-Wilson and Overlap Fermion relation and lattice Atiyah-Singer index theorem | [THEOREM] | verify_chiral_anomaly.py; proof_lattice_index_theorem.py |

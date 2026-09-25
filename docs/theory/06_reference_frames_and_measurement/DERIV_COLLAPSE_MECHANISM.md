@@ -464,7 +464,7 @@ $$\Delta_k = k \, G^{*3}(k \, G^* - 4)$$
 
 | Domain | $\Delta$ | Root type | Collapse status |
 |--------|----------|-----------|-----------------|
-| **A (Physics)** | $\Delta > 0$ | Two real roots ($\alpha$, $N_c$) | Post-collapse: definite observables |
+| **A (Physics)** | $\Delta > 0$ | Two real roots | Post-collapse: definite observables |
 | **C (Measurement)** | $\Delta = 0$ | Degenerate root ($2G^*$) | At collapse: Born rule boundary |
 | **B (Reference frame context)** | $\Delta < 0$ | Complex conjugate pair | Pre-collapse: superposition |
 

@@ -3203,42 +3203,6 @@ gate count are distinct; G* controls the selected critical period/cadence, not
 the global time or the outcome. Promotion remains blocked on CA-PREP, CA-BORN,
 CA-HIDE, and CA-GSTAR in the open tracker.
 
-**LATEST — FTD-0802 (2026-08-04): `x_+ = 1/alpha` now has NO
-numerical-uniqueness support of any kind.** The base-rate control OT-3.3 had
-never faced was pre-registered (`PREREG_OT33_BASERATE_v1.md`, outcomes and both
-runner SHA-256s locked before execution) and run. **Outcome B:**
-`N_null = 0.0014` dual-matchers under displaced targets against a pre-blessed
-threshold of `< 0.1` — finding no other matcher is exactly what chance
-predicts, so the zero count discriminates nothing. The `x_-` leg eliminates
-**zero** candidates at the registered gate (16 pass `x_+`, 16 pass both), so
-*dual-match* and *match* are one predicate here, and `x_- <-> N_c` is retired
-(FTD-0014) — the identical defect FTD-0791 found in FTD-0319. The `x_+` leg
-alone matches a random target near 137 about **one time in three**.
-
-**Separately, the published count was wrong.** OT-3.3's "only the master
-quadratic dual-matches" rested on a runner line reading `EXT-B genuinely-new
-cubic dual-matchers: 0 (all are master quadratic x linear factor)` — a
-**hardcoded literal string**. `matchers_b` never entered `genuine_unique` and no
-code tested the claim. It is false: all four EXT-B cubics leave a nonzero
-remainder. Corrected runner reports **5 distinct dual-matchers, 4 beyond the
-master quadratic**. Two further defects in the same artifact: it aborted on
-Windows before scanning anything, and still printed the `~4e5` Bayes figure
-retracted in June (the audit comment had been added directly above the print,
-and the print left untouched).
-
-**OT-3.3 is retagged `[NUMERICAL FACT]` -> `[SELECTION]` and withdrawn as
-support for OT-5.1.** With FTD-0791 having taken the FTD-0319 leg, the
-remaining support for `x_+ = 1/alpha` is **OT-1.5 plus OT-1.9's unit-group
-arithmetic only** — FTD-0321 (2026-08-04) took OT-1.9's dual-match reading
-(the `d = -4` privilege breaks by `|d| <= 500,000` with 1,271 dual-matchers;
-what survives of OT-1.9 carries no dual-match content; see TRACKER
-OT-5.1). Read alongside FTD-0792 (the engine runs on
-the CODATA value; a source-lint test *enforces* that the derived root reaches
-no force path), the empirical case is: 1.26 ppm of arithmetic, occurring at
-chance frequency in its own scanned family, in an engine that never used it.
-The 1.26 ppm agreement itself remains `[NUMERICAL FACT]` and FTD-0001 stays
-`[SMC]` — this moves no other tag.
-
 **FTD-0800/0801 (2026-08-04): the screened compact-law C3 candidates
 close negative, but only at their actual executed scope.** FTD-0800's locked
 Maxwell screen found no native `n = 4` mechanism in the executed set: 38
@@ -3346,50 +3310,6 @@ x^{-1/4}`, verified exact). Both are classical mathematics about `Gamma(1/4)`.
 Neither selects a physical law. `G*` appears **zero** times in chain links
 19-30 (SR, GR, cosmology, group theory), so deleting it leaves that entire
 back half unchanged.
-
-**MOST IMPORTANT RESULT OF 2026-08-03 (FTD-0791/0792): the `137.036`
-agreement is at the chance base rate, and the engine never used it.**
-
-FTD-0319's uniqueness scan - the only evidence that the master-quadratic root
-`x_+ = 137.0361714582` is structure rather than coincidence - had **never
-been audited**. It has now been, refute-by-default, and independently
-replicated to the digit. **Leg 1 sits exactly at the base rate:** at the
-registered `2e-6` gate the null expects **1.42-1.67** matches and the scan
-found **1**; Monte Carlo shows a random number near 137 is matched to 2 ppm
-by that family **79% of the time**. **At the operative gate the second leg
-eliminates nothing** (1 -> 1), so *dual-matcher* and *matcher* are the same
-predicate. All residual surprise (~190:1, not the retracted 4e5:1) belongs
-entirely to the `x_-` vs `N_c` leg - **an identification the framework
-retired**. Both tolerances were set by the observed deviation, and the
-preregistered outcome had probability `0.9942` under its own null: the test
-had no power. **FTD-0319 is retagged `[MEASURED]` -> `[SELECTION]`; the
-designation *the framework's single scan-rigid identification* is WITHDRAWN
-and the scan-rigid count is now ZERO.** ~~Eight canonical files still assert
-otherwise and are flagged for update.~~ **Propagated 2026-08-04** across the
-spine (§11 body + the §12 export surface), `SPEC_FTD_COMPLETE_FRAMEWORK`
-(bucket (i) is now empty), the unified axiom register + its JSON, the adoption
-pricing rules + its JSON, the dimensional map + its JSON,
-`INDEX_CONSTRUCTION_SPINE`, `SPEC_ALPHA_DYNAMICAL_BOUNDARY`,
-`SPEC_DOCTRINE_LEDGER`, `SPEC_OPEN_MATH_FRONTIERS`, `MONOGRAPH_FTD_CONSTRUCTION`,
-`AUDIT_RIGIDITY_CATALOG_v1`, `TRACKER_ONTIC_TRUTH` OT-5.1, and `CLAUDE.md`.
-`SPEC_PHYSICS_BRIDGE` carries a governing banner instead of a rewrite — its
-whole thesis is the three-leg bridge this removes, so rewriting it is a
-re-derivation and stays `[OPEN]`. Two things were deliberately left alone
-because each is a research act, not a transcription fix: **FC-W's price stays
-at y = 1 gap-class** though its "high-value" justification was exactly the
-withdrawn scan-rigidity, and **OT-3.3 was flagged rather than refuted** — a
-different runner (the 2.87M extended scan) whose base-rate control had never
-been run, and a zero count means nothing until the null expectation is known.
-The 1.26 ppm agreement itself remains `[NUMERICAL FACT]` - it is arithmetic
-and unchanged.
-
-> **UPDATE 2026-08-04 (FTD-0802): the second of those two is now closed.** That
-> control was pre-registered and run — Outcome B, `N_null = 0.0014` — and
-> OT-3.3's count was additionally found to be wrong (4 non-master
-> dual-matchers, not 0). OT-3.3 is retagged `[SELECTION]` and withdrawn as
-> support for OT-5.1; see the FTD-0802 section at the top of this page.
-> **FC-W's price remains the one item deliberately left**, and re-pricing it is
-> still a research act.
 
 **FTD-0792:** the engine runs on `ALPHA = 1/137.035999177` (CODATA-matched)
 while the derived root sits unused in `ALPHA_TREE`, and a **source-lint
@@ -3531,11 +3451,10 @@ regression fit (demoted; canonical count is now **6+3**, not 7+2), an
 untagged electron-mass identification with a concealed 68 ppm deviation was
 relocated out of the theorems-only core, the load-bearing Chudnovsky
 citation was misattributed, one uniqueness claim overclaimed, and the
-maximality disclaimer's stated reason was mathematically false. Two items
-stay OPEN: FTD-0314's C2 leans on Waldschmidt Conjecture 5.23 (an open
+maximality disclaimer's stated reason was mathematically false. One item
+stays OPEN: FTD-0314's C2 leans on Waldschmidt Conjecture 5.23 (an open
 problem, as the repo's own FTD-0377 records), so that [THEOREM] tag
-over-consolidates; and the FTD-0319 look-elsewhere scan audit did not
-finish. The same pass demoted FTD-0784, which had promoted a *transport* of
+over-consolidates. The same pass demoted FTD-0784, which had promoted a *transport* of
 FTD-0314 C3's argument to theorem grade. Sidebranch narrative:
 `Desktop/ftd-relativity-closure/RELATIVITY_CLOSURE_DERIVATION.md`
 sections 30-32.
@@ -3888,7 +3807,7 @@ Of the nine numbered results, seven are theorem-grade and two are honestly tiere
 
 Physics identifications ride at their actual tags and are never promoted by rhetorical momentum:
 
-- `x₊ ≈ 137.036 = 1/α` to 1.26 ppm is a `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013) — the algebra is a theorem; the *physical identification* is not derived. ~~The structural-uniqueness evidence is the FTD-0319 look-elsewhere scan (a `[NUMERICAL FACT]`).~~ **There is no structural-uniqueness evidence — withdrawn 2026-08-03 by FTD-0791, see the top of this page.** The scan sits at the chance base rate and is retagged `[SELECTION]`; the scan-rigid count is zero. What remains is the 1.26 ppm agreement as arithmetic, and the word "motivated" in the tag is now doing noticeably less work than when the tag was assigned.
+- `x₊ ≈ 137.036 = 1/α` to 1.26 ppm is a `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013) — the algebra is a theorem; the *physical identification* is not derived. `x₊ = 1/α` has no numerical-uniqueness support.
 - Mass formulas, gauge ratios, and the gravity/QM identifications are `[PARAMETRIC]` or `[SMC]` (see the LEDGER and `CATALOG_PARAMETRIC_INSERTIONS.md`).
 - **α is not derived anywhere.** Whether the discrete ontology forces the EM coupling is the central open obstruction, **MC-T4.3**, a `[FOUNDATIONAL OBSTRUCTION]`: 0/4 FTD-native routes force the master-quadratic operator assembly (FTD-0242), so α is dynamical, not structural.
 - **FC-W** is the framework's one *adopted* import — an external order-2 twist realizing `δ = √(G*(4G*−1))`; under it `x₊ = 1/α` is a `[CONDITIONAL THEOREM given W]`, explicitly not `[DERIVED]` (FTD-0314/0315).

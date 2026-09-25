@@ -5,7 +5,7 @@
 **Supersedes:** `SPEC_FTD_COMPLETE_CHAIN.md` (the "i→α proof chain"; archived). This doc keeps that "every link tagged" spirit and adds the framework commitments, the boundary map (now priced), the rigidity-coverage map, the prediction spine, the falsifier table, and the external-validation status.
 **Precedence:** **LEDGER > constitution (`SPEC_FTD_FRAMEWORK_V1`) > this doc > other prose.** If a number or tag here disagrees with the LEDGER, the LEDGER wins.
 
-> **What this document is.** The one page a peer reads to know — exactly and honestly — what FTD *derives*, what it *cannot* derive (and why, rigorously, and at what priced cost), what it *predicts*, what would *kill* it (§8), what is *externally validated*, and — per claim family — whether a numerical match is **scan-rigid, scan-NULL, or merely tagged**. It is a *map*, not a textbook: it restates no proofs and no narrative (those live in `SPEC_ALGEBRAIC_SPINE` and `MONOGRAPH_FTD_CONSTRUCTION`); it cites.
+> **What this document is.** The one page a peer reads to know — exactly and honestly — what FTD *derives*, what it *cannot* derive (and why, rigorously, and at what priced cost), what it *predicts*, what would *kill* it (§8), what is *externally validated*, and — per claim family — whether a numerical match is **scan-tested or merely tagged**. It is a *map*, not a textbook: it restates no proofs and no narrative (those live in `SPEC_ALGEBRAIC_SPINE` and `MONOGRAPH_FTD_CONSTRUCTION`); it cites.
 >
 > **What "complete" means here.** Not "derives the Standard Model" — the mapped boundaries (§3) show it cannot, by any examined route (α route-invariant; QM's M and reversibility declined as `[AXIOM]`-class commitments; atomic dynamics structurally wrong-dispersion). Complete = the derive-vs-cannot map is **exhaustive, honestly tagged, and priced** (every import counted in a common currency with a falsifier, §3/§8). FTD is a **philosophy-of-mathematics project with a rigorous algebraic core and suggestive — not derived — physics connections**; its north star is rigorous algebra + honestly-marked-and-priced boundaries.
 
@@ -91,12 +91,11 @@ A LEDGER tag *labels* a claim; it does not answer *is the numerical match statis
 
 | Bucket | Claim family | Evidence |
 |---|---|---|
-| **(i) Scan-rigid** | ***(empty — 0 members)*** | **WITHDRAWN 2026-08-03, FTD-0791.** This row formerly held **x₊ = 1/α** on the strength of FTD-0319. The scan was audited and sits at the **chance base rate**: at the registered `2e-6` gate the null expects **1.42–1.67** matchers and the scan found **1** (Monte Carlo: a random number near 137 is matched by this family **79%** of the time), and at that gate the second leg eliminates nothing (1 → 1). FTD-0319 is retagged `[MEASURED]` → `[SELECTION]`. **The scan-rigid count is ZERO.** The 1.26 ppm agreement itself is unchanged and remains `[NUMERICAL FACT]` — arithmetic, not evidence. |
-| **(ii) Scan-tested → NULL** | FTD integer/monomial catalog (general); cluster-mass SM identification; **FQCR Model-IV quadruple (4,6;3,2)** | FTD-0097: catalog over-rich >5× background; FTD-0262: SM ratios p=2.05 (chance-level); **FTD-0143 (2026-07-12): all 2401 quadruples reproduce α⁻¹ at 1e−5 — the ansatz choice is generic, uniqueness rejected**. |
-| **(iii) Scan-tested → NOT rigid** | **sin²θ_W=3/13, α_s=7/59, m_e prefactor 16/3** (FTD-0310); **sin²θ₁₂=3/10, sin²θ₂₃=16/29, Δm²₃₁/Δm²₂₁=100/3** (FTD-0320) | **FTD-0310 + FTD-0320: none rigid.** α_s MDL-dominated by 2/17; sin²θ_W p≈0.05; prefactor p≈0.08; sin²θ₂₃ MDL-dominated by 6/11 (~10× better); Δm²-ratio by 33/1; sin²θ₁₂ chance-level (p=0.48). All six **demoted** to `[PARAMETRIC]`. |
-| **(iv) Tagged, NOT scanned** | ~122 remaining `[PARAMETRIC]` — now essentially the integer-**combination** families (quark masses, ~90 hadron spectroscopy, decay rates, precision-QED imports, CKM Wolfenstein, Koide) | **No rigidity scan run** for the combination families (the simple-rational subset is now scanned, bucket iii). Their test is the FTD-0097-style combinatorial look-elsewhere scan (deferred v2; FTD-0097 already NULL at the monomial level). *Still the deepest open methodological question.* |
+| **(i) Scan-tested → NULL** | FTD integer/monomial catalog (general); cluster-mass SM identification; **FQCR Model-IV quadruple (4,6;3,2)** | FTD-0097: catalog over-rich >5× background; FTD-0262: SM ratios p=2.05 (chance-level); **FTD-0143 (2026-07-12): all 2401 quadruples reproduce α⁻¹ at 1e−5 — the ansatz choice is generic, uniqueness rejected**. |
+| **(ii) Scan-tested → NOT rigid** | **sin²θ_W=3/13, α_s=7/59, m_e prefactor 16/3** (FTD-0310); **sin²θ₁₂=3/10, sin²θ₂₃=16/29, Δm²₃₁/Δm²₂₁=100/3** (FTD-0320) | **FTD-0310 + FTD-0320: none rigid.** α_s MDL-dominated by 2/17; sin²θ_W p≈0.05; prefactor p≈0.08; sin²θ₂₃ MDL-dominated by 6/11 (~10× better); Δm²-ratio by 33/1; sin²θ₁₂ chance-level (p=0.48). All six **demoted** to `[PARAMETRIC]`. |
+| **(iii) Tagged, NOT scanned** | ~122 remaining `[PARAMETRIC]` — now essentially the integer-**combination** families (quark masses, ~90 hadron spectroscopy, decay rates, precision-QED imports, CKM Wolfenstein, Koide) | **No rigidity scan run** for the combination families (the simple-rational subset is now scanned, bucket ii). Their test is the FTD-0097-style combinatorial look-elsewhere scan (deferred v2; FTD-0097 already NULL at the monomial level). *Still the deepest open methodological question.* |
 
-**The honest one-liner:** exactly **one** numerical identification (x₊=1/α) has survived an adversarial uniqueness scan; everything tested since — including the 2026-07 pre-registered executions — has come back NULL, non-rigid, or generic; the large remainder is tagged-but-unscanned. The framework's physics matches should be read as *suggestive*, with the rigid algebraic spine (§2) carrying the weight.
+**The honest one-liner:** the scans run so far, including the 2026-07 pre-registered executions, have come back NULL, non-rigid, or generic; the large remainder is tagged-but-unscanned. The framework's physics matches should be read as *suggestive*, with the rigid algebraic spine (§2) carrying the weight.
 
 ---
 
@@ -118,7 +117,7 @@ A LEDGER tag *labels* a claim; it does not answer *is the numerical match statis
 
 - **~21 `[DERIVED]`/`[THEOREM]`** · **~131 `[PARAMETRIC]`** · **~10 `[IMPOSED]`/`[SELECTION]`** (~162 total claims; figures per the FTD-0348 correction of record). No drift across CATALOG / TRACKER_ONTIC_TRUTH / spine.
 - **Truth tiers:** T1 rock-solid `[THEOREM]` (OT-1.x) · T2 conditional-on-classical-theorems · T3 numerical-fact · T4 the coefficient-16 `[CONJECTURE]` · T5 the central conjecture x₊=1/α `[SMC]`.
-- **Rigidity overlay (the §4 news, quantified):** of the ~131 `[PARAMETRIC]`, **0** are scan-rigid (**revised 2026-08-03, FTD-0791** — this read "**1** … (x₊, also the T5 conjecture; FTD-0319)" until that scan was audited and found to sit at its own null's expectation), **~6** are scan-tested-and-not-rigid (FTD-0310 + FTD-0320, all now `[PARAMETRIC]`), the bulk catalog is scan-NULL-at-the-monomial-level (FTD-0097), the FQCR quadruple is scan-generic (FTD-0143), and **~122 are unscanned** — now essentially the integer-combination families.
+- **Rigidity overlay (the §4 news, quantified):** of the ~131 `[PARAMETRIC]`, **~6** are scan-tested-and-not-rigid (FTD-0310 + FTD-0320, all now `[PARAMETRIC]`), the bulk catalog is scan-NULL-at-the-monomial-level (FTD-0097), the FQCR quadruple is scan-generic (FTD-0143), and **~122 are unscanned** — now essentially the integer-combination families.
 - **The import bill (the §3 pricing, one line):** 1 adopted bit + 4 selected types + 4 named results (3 open) + 3 calibrations + the empirical bridges + 2 declined bets — stratified, deliberately **no single headline number** (`SPEC_IMPORT_LEDGER.md` §5's reading guard).
 
 ---
@@ -192,7 +191,6 @@ Every way the framework can be killed, upgraded, or refuted — merged from four
 | Ran | Result |
 |---|---|
 | FTD-0097 monomial look-elsewhere | catalog **over-rich** >5× background — monomial matches carry no evidential weight |
-| FTD-0319 x₊ dual-match scan | **DID NOT SURVIVE (FTD-0791, 2026-08-03)** — audited refute-by-default and replicated to the digit; the single dual-matcher is what the null predicts (1.42–1.67 expected). Retagged `[MEASURED]` → `[SELECTION]`; scan-rigid count now zero. *(This cell read "**survived** — the one scan-rigid identification" before the audit.)* |
 | FTD-0262 SM cluster-mass scan | **NULL** (p = 2.05, chance-level) |
 | FTD-0310 + FTD-0320 rigidity audits | six simple-rational identifications **not rigid** — all demoted `[PARAMETRIC]` |
 | FTD-0143 FQCR quadruple scan (2026-07-12) | **uniqueness rejected** — 2401/2401 α-matchers; ansatz generic at t=1 |
@@ -219,10 +217,10 @@ Every way the framework can be killed, upgraded, or refuted — merged from four
 The remaining program is **mapping, validation, and external exposure — not α attacks** (closing the central boundaries would require a new 6th-postulate-class input, and the doctrine ledger's own assessment is that the maximal self-claim `T_FTD` "may not be achievable without ontology extension beyond the 5 axioms"):
 
 1. **External human review** — the standing TRACKER §0 item; circulate `REF_EXPORTED_RESULTS_SPINE.md` + `REF_EXPORTED_PROBLEMS_E1_E2.md` (the items flagged "needs external eyes": FTD-0375 A4, FTD-0377, FTD-0378's no-rank-1 lemma). Nothing internal can substitute.
-2. **Rigidity-audit extension to bucket (iv)** — the FTD-0097-style combinatorial scan over the ~122 unscanned `[PARAMETRIC]` combination families; the §4 map's completion.
+2. **Rigidity-audit extension to bucket (iii)** — the FTD-0097-style combinatorial scan over the ~122 unscanned `[PARAMETRIC]` combination families; the §4 map's completion.
 3. **Doctrine-ledger Phase-2 hardening priorities** (all `[OPEN]`): MC-T3.1/FTD-0110-NL nonlinear bridge (with the FTD-0277-v1-negative constraint), MC-T3.6 β-coefficients, χ_H, flavor depth matrices, confinement (structurally obstructed), substrate strong-field gravity (FTD-0184).
 4. **Named engine/theory residues:** PL-4 diagonals; the nonlinear-rung transcript/properness characterization left by FTD-0396's double BLOCKED-ESCAPE verdict (the scheduled v2 pre-registration is complete); M1-v2 vertex follow-up + the Program-F effective-toggle audit; **FTD-0406 supplies a selected collision-free CPU NCEMC-1–4 contract, so the remaining strong-sector work is GPU, topology-changing, mixed-force and moving-latency extension before any separately locked target-blind mass readout**; the E1/E2 walls (progress in either direction re-adjudicates FTD-0369 via the frozen map).
-5. **The queued dissemination refresh** — the public layer (whitepaper, manuscript_v2) still carries the retired x₋↔N_c identification and pre-FTD-0348 Higgs figures; queued as one coherent arc (TRACKER §10), not piecemeal patches.
+5. **The queued dissemination refresh** — the public layer (whitepaper, manuscript_v2) still carries pre-FTD-0348 Higgs figures; queued as one coherent arc (TRACKER §10), not piecemeal patches.
 
 ---
 

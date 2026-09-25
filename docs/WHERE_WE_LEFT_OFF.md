@@ -11,7 +11,7 @@
 ## Recent mathematical and physical boundaries
 
 - FTD-1024 conditionally proves `C[X_A x X_B] ~= C[X_A] tensor C[X_B]` **when** finite systems have complete Cartesian joint alternatives. The independent-conjunction/joint-label-completeness type is priced, not adopted as a sixth v3 postulate. Native entangled preparation, laboratory Bell recovery, exchange statistics, CAR/Fock, and QFT remain open.
-- FTD-1025 closes the proposed compact-phase/BCC derivation of the master quadratic's linear coefficient: it confused a local susceptibility with an inverse-propagator stiffness. The polynomial algebra survives; the physical `x_+ = 1/alpha` identification remains a `[STRONGLY MOTIVATED CONJECTURE]`, without numerical-uniqueness support in the audited scan family (FTD-0791/0802).
+- FTD-1025 closes the proposed compact-phase/BCC derivation of the master quadratic's linear coefficient: it confused a local susceptibility with an inverse-propagator stiffness. The polynomial algebra survives; the physical `x_+ = 1/alpha` identification remains a `[STRONGLY MOTIVATED CONJECTURE]` and has no numerical-uniqueness support.
 - FTD-1026 classifies the radical surface: the symmetric root formulation carries no branch choice, while the branch-sensitive alpha reading costs one adopted bit. Positivity, reflection, and expiry do not retire that choice.
 - FTD-0999 gives a conditional, exact cumulative resource ledger for coherent clock growth, including atomic batch admission and finite-reserve bounds. A native phase-complete reserve density/current, ownership, and production mechanism are still open; the scalar ledger is not physical hardware.
 

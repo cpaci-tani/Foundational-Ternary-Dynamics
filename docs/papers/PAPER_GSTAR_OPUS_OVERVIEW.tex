@@ -17,7 +17,7 @@
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\Aut}{\mathrm{Aut}}
 
-\title{The $\Gs$ opus: a four-paper overview\\
+\title{The $\Gs$ opus: a three-paper overview\\
 \large Reader's guide, dependency map, and submission strategy}
 \author{}
 \date{2026-05-19}
@@ -38,8 +38,7 @@ fields ($d \in \{1, 2, 3, 7, 11, 19, 43, 67, 163\}$), and proves a clean
 $\eta$-tower theorem $|\eta(\tau_K)|^{2 w_K} = \GK^{w_K}/(2\pi|d_K|)^{w_K/2}$
 that uniformly recovers the lemniscatic case and the Heegner near-integer
 phenomenon $e^{\pi\sqrt{163}} \approx 640320^{3} + 744$ as instances of
-the same arithmetic structure. The opus consists of four papers, total
-$44$ pages of new mathematics, with the master quadratic exponent
+the same arithmetic structure. The opus consists of three papers, with the master quadratic exponent
 constraints (see Erratum below) and the value-algebra polynomial-ring
 statement as the principal structural results.
 
@@ -63,7 +62,7 @@ the corrected statement with dated remarks; every mention of the
 erratum. Conjecture 16.5.2, restated as an admissible-set conjecture,
 remains open.
 
-\section{The four papers}
+\section{The three papers}
 
 \begin{center}
 \renewcommand{\arraystretch}{1.3}
@@ -72,19 +71,18 @@ remains open.
 Paper & Title (abbreviated) & Pages & Target venue \\
 \midrule
 A & \emph{The Kronecker character $\chi_{-4}$ as the joint source of the lemniscatic identity algebra} & 29 & Crelle / Compositio / Math.\ Ann.\ / JLMS \\
-B & \emph{The master quadratic $P_{\Gs}$ as a math--physics bridge} & 5 & Foundations of Physics \\
 C & \emph{The class-number-one atlas: nine CM constants and their $\chi$-unifications} & 6 & J.\ Number Theory / Acta Arithm.\ \\
 D & \emph{The $\eta$-tower across the class-number-one atlas} & 4 & J.\ Number Theory / Math.\ Comp.\ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-All four are LaTeX-compiled, internally cross-referenced, and verified to
+All three are LaTeX-compiled, internally cross-referenced, and verified to
 50--80 digit numerical precision. Paper A contains the structural spine
 (50+ identities, the $\chi_{-4}$-unification theorem, the $\eta$-half-tower,
 quasi-modular value algebra, equianharmonic dichotomy, the master
 quadratic with its $(2, 3)$ exponent constraints --- formerly a
-``uniqueness theorem,'' retracted per the Erratum above). Papers B--D are short
+``uniqueness theorem,'' retracted per the Erratum above). Papers C and D are short
 companions that extend particular threads.
 
 \section{The mathematical spine: $\chi_{-4}$, the master quadratic, the atlas}
@@ -137,7 +135,6 @@ Audience & Recommended reading path \\
 CM theorist / number theorist & Paper A \S 1--\S 16 $\to$ Paper C $\to$ Paper D $\to$ Paper A \S 17--\S 18 \\
 Modular forms specialist & Paper A \S 11--\S 12 $\to$ Paper A \S 15 $\to$ Paper D \\
 Transcendence theorist & Paper A \S 13--\S 14 $\to$ Paper A \S 16 $\to$ Paper A Theorem 16.5.1 \\
-Math-physics / FTD reader & Paper A abstract $\to$ Paper B (full) $\to$ Paper A \S 8 \\
 Generalist / first-time reader & this overview $\to$ Paper A \S 1, \S 16 $\to$ Paper C \\
 Heegner-phenomenon enthusiast & Paper C Theorem 2.5 $\to$ Paper A \S 16 $\to$ Paper D \\
 \bottomrule
@@ -153,25 +150,23 @@ Heegner-phenomenon enthusiast & Paper C Theorem 2.5 $\to$ Paper A \S 16 $\to$ Pa
   cite/.style={->, thick, draw=black!60},
 ]
 \node[paper] (A) {Paper A \\ (29pp, spine)};
-\node[paper, right=of A] (B) {Paper B \\ (5pp, bridge)};
 \node[paper, below=of A] (C) {Paper C \\ (6pp, atlas)};
 \node[paper, right=of C] (D) {Paper D \\ (4pp, $\eta$-tower)};
 
-\draw[cite] (B) -- node[above, sloped] {\footnotesize cites} (A);
 \draw[cite] (C) -- node[left] {\footnotesize cites} (A);
 \draw[cite] (D) -- node[above] {\footnotesize cites} (A);
 \draw[cite] (D) -- node[left] {\footnotesize cites} (C);
 \end{tikzpicture}
 \end{center}
 
-Paper A is the trunk. Papers B, C, D are independent companions, each
+Paper A is the trunk. Papers C and D are independent companions, each
 citing Paper A as mathematical input; Paper D additionally cites Paper C
 for the atlas data. There are no circular dependencies; each companion
 can be read after Paper A without the others.
 
 \section{Consolidated open questions}
 
-The four papers collectively pose six open mathematical questions,
+The three papers collectively pose six open mathematical questions,
 ordered by tractability:
 
 \begin{enumerate}[label=\textbf{(\Roman*)}, leftmargin=*, itemsep=4pt]
@@ -185,7 +180,8 @@ explicit period-algebra map.
 \item \textbf{Cubic-AGM analog for $G_{\rho}$ (Paper A \S 17 P2).} For
 $K = \Q(\rho)$, find an expression of the equianharmonic constant
 $G_{\rho}$ in terms of the Borwein--Borwein cubic AGM iteration. The
-Q(i) case has $\GG = 1/\mathrm{AGM}(1, \sqrt 2)$; the $\Q(ho)$ analog is
+Q(i) case has $\GG = 1/\mathrm{AGM}(1, \sqrt 2)$; the $\Q(
+ho)$ analog is
 not yet written down. \emph{Estimated:} weeks to months.
 
 \item \textbf{Conjecture D.3.3 (higher-weight value algebras; Paper D).}
@@ -232,8 +228,6 @@ Paper & Primary target & Secondary & Notes \\
 \midrule
 A & Crelle (J.\ reine angew.\ Math.) & Compositio & Submit after final round of
 copy-editing; Math.\ Ann.\ if Crelle declines on length grounds. \\
-B & Foundations of Physics & J.\ Math.\ Phys.\ & Self-contained 5pp companion; format may require
-journal-specific adjustments. \\
 C & J.\ Number Theory & Acta Arithmetica & 6pp standalone; the $\GK$-table and Heegner Theorem 2.5 are
 the contributions. \\
 D & J.\ Number Theory & Math.\ Comp.\ & 4pp standalone; the $\eta$-tower formula
@@ -242,10 +236,10 @@ $|\eta(\tau_K)|^{2 w_K} = \GK^{w_K}/(2\pi|d_K|)^{w_K/2}$ is the contribution. \\
 \end{tabular}
 \end{center}
 
-\paragraph{Submission order.} Submit A first (it is cited by B, C, D as
-the mathematical input). Submit B, C, D in parallel after Paper A's
+\paragraph{Submission order.} Submit A first (it is cited by C, D as
+the mathematical input). Submit C, D in parallel after Paper A's
 status is known; each is self-contained relative to the published Paper A.
-B, C, D can also be posted as a single arXiv preprint together with A
+C, D can also be posted as a single arXiv preprint together with A
 for cross-reference convenience before journal decisions arrive.
 
 \paragraph{Duke / JAMS path.} The current Paper A is
@@ -268,7 +262,7 @@ polymath review. The fix changed $\varpi/2 \to \varpi/4$ in Paper A
 LMFDB curve 32.a3 confirms $L(E, 1) = 0.6555\ldots = \varpi/4$.)
 
 \paragraph{Explicit epistemic tagging prevents silent overclaim.} Every
-substantive claim in the four papers carries one of:
+substantive claim in the three papers carries one of:
 $[\textsc{THEOREM}]$, $[\textsc{CONJECTURE}]$, $[\textsc{OBSERVATION}]$,
 $[\textsc{SYNTHESIS}]$, $[\textsc{CLOSED NEGATIVE}]$. The Sym$^{2}\oplus$Sym$^{3}$
 conjecture (Paper A \S 16.5) was initially stated as a conjecture; it
@@ -288,11 +282,10 @@ explicit candidate list is preserved in Paper A \S 16.5 Remark
 \texttt{master\_quadratic\_from\_chi4.py} and
 \texttt{master\_quadratic\_exponents\_2\_3.py}.
 
-\section*{The four-paper bundle}
+\section*{The three-paper bundle}
 
 \begin{itemize}[leftmargin=*, itemsep=2pt]
 \item \texttt{docs/papers/PAPER\_GSTAR\_INTRODUCTION.tex} (Paper A, 29pp)
-\item \texttt{docs/papers/PAPER\_GSTAR\_FTD\_BRIDGE.tex} (Paper B, 5pp)
 \item \texttt{docs/papers/PAPER\_GSTAR\_H1\_ATLAS.tex} (Paper C, 6pp)
 \item \texttt{docs/papers/PAPER\_GSTAR\_ETA\_TOWER.tex} (Paper D, 4pp)
 \item \texttt{docs/papers/PAPER\_GSTAR\_OPUS\_OVERVIEW.tex} (this document, the helper)

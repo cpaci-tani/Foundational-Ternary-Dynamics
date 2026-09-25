@@ -14,14 +14,14 @@ volumetric ingredients via algebraic combination:
   Step 3: Algebraic combination yields master quadratic
            x^2 - N_base^2 * G*^2 * x + N_base^2 * G*^3 = 0.
 
-  Step 4: Roots are (137.036, 3.024) matching (1/alpha, N_c) at MQ precision.
+  Step 4: Roots are (137.036, 3.024); x_+ matches 1/alpha at MQ precision.
 
 This makes the volumetric content of the master quadratic explicit:
 both coefficient ingredients (G* and N_base^2) come from 3D structural
 properties of FTD's lattice, not from abstract algebra.
 
 Provenance: docs/theory/09_mathematical/EXPLR_VOLUMETRIC_READING_OF_MASTER_QUADRATIC.md
-LEDGER: FTD-0001 / FTD-0013 / FTD-0014 verification at the 3D-volumetric level.
+LEDGER: FTD-0001 / FTD-0013 verification at the 3D-volumetric level.
 
 Usage:
     python scripts/proofs/proof_volumetric_master_quadratic.py
@@ -107,13 +107,10 @@ def main():
 
     diff_alpha = abs(x_plus - ALPHA_INV_CODATA)
     rel_alpha_ppm = diff_alpha / ALPHA_INV_CODATA * 1e6
-    diff_Nc = abs(x_minus - 3.0)
-    rel_Nc_pct = diff_Nc / 3.0 * 100
 
     print(f'  x_+ = {x_plus:.6f}    (CODATA 1/alpha = {ALPHA_INV_CODATA:.6f})')
     print(f'        Match: {rel_alpha_ppm:.2f} ppm')
-    print(f'  x_- = {x_minus:.6f}    (N_c = 3 exact)')
-    print(f'        Match: {rel_Nc_pct:.3f} %')
+    print(f'  x_- = {x_minus:.6f}')
     print()
 
     # Verdict
@@ -121,21 +118,17 @@ def main():
     print('VERDICT')
     print('=' * 70)
     pass1 = rel_alpha_ppm < 2  # 1.26 ppm expected
-    pass2 = rel_Nc_pct < 1     # 0.80% expected
     print(f'  x_+ matches 1/alpha at <2 ppm:  {"PASS" if pass1 else "FAIL"} ({rel_alpha_ppm:.2f} ppm)')
-    print(f'  x_- matches N_c at <1%:          {"PASS" if pass2 else "FAIL"} ({rel_Nc_pct:.3f}%)')
     print()
     print('  Volumetric pathway:')
     print('    [3D BCC BZ integral]  →  G*^2/(2*pi)  →  G*')
     print('    [O_h on Moore block]  →  N_base = 4   →  16 = N_base^2')
     print('    [algebraic]           →  master quadratic')
-    print('    [empirical]           →  roots = (137.036, 3.024) ≈ (1/alpha, N_c)')
+    print('    [empirical]           →  x_+ = 137.036 ≈ 1/alpha')
     print()
-    print('  Both ingredients are 3D-volumetric. The dual prediction emerges from')
-    print('  3D lattice structure via algebraic combination — not from abstract')
-    print('  2-mode matrix interpretations.')
+    print('  Both ingredients are 3D-volumetric.')
 
-    if not (pass1 and pass2):
+    if not pass1:
         sys.exit(1)
 
 

@@ -126,13 +126,13 @@ No. The gap equation $x^2 = K(x - G^*)$ has exactly two solutions for given $K$ 
 
 ### "Isn't this just restating the assumption?"
 
-The assumption is: the 3D cubic lattice exists (Axiom 1). Everything else — $G^*$, $W_3$, the master quadratic, $\alpha$, $N_c$ — follows from self-referential closure of this single axiom. The "circularity" is that the lattice determines its own parameters, which is precisely the content of the axiom. The derivation is not restating the assumption — it is exhibiting the assumption's unique fixed point.
+The assumption is: the 3D cubic lattice exists (Axiom 1). Everything else — $G^*$, $W_3$, the master quadratic, $\alpha$ — follows from self-referential closure of this single axiom. The "circularity" is that the lattice determines its own parameters, which is precisely the content of the axiom. The derivation is not restating the assumption — it is exhibiting the assumption's unique fixed point.
 
 ---
 
 ## Part VI: The Complete Self-Referential Chain
 
-$$\boxed{\mathbb{Z}^3 \xrightarrow{W_3 = G^{*2}/(2\pi)} G^* \xrightarrow{x^2 = 16G^{*2}(x-G^*)} \alpha, N_c \xrightarrow{\text{governs}} \mathbb{Z}^3}$$
+$$\boxed{\mathbb{Z}^3 \xrightarrow{W_3 = G^{*2}/(2\pi)} G^* \xrightarrow{x^2 = 16G^{*2}(x-G^*)} \alpha \xrightarrow{\text{governs}} \mathbb{Z}^3}$$
 
 The chain is a loop. This is not a defect — it is the structure of self-referential closure. The lattice determines its own coupling constants, which govern the lattice's dynamics, which produce the lattice's Green's function, which determines the coupling constants. The loop closes.
 
@@ -140,7 +140,7 @@ The fine structure constant $\alpha = 1/137.036$ is not derived from the lattice
 
 **The self-referential loop produces the entire particle content.** The discriminant trichotomy of the generalized master quadratic ($\Delta = kG^{*3}(kG^* - 4)$) splits the loop's output into three sectors from ONE equation:
 
-- **Real roots** ($\Delta > 0$, $k = 16$): bosonic coupling constants ($\alpha$, $N_c$)
+- **Real roots** ($\Delta > 0$, $k = 16$): bosonic coupling constant ($\alpha$)
 - **Degenerate root** ($\Delta = 0$, $k = 4/G^*$): measurement / Born rule — the boundary where the loop observes itself
 - **Complex roots** ($\Delta < 0$): the Dirac equation — fermions emerge as oscillatory solutions $e^{ibt}$
 

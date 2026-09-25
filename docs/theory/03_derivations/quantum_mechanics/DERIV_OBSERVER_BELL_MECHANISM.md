@@ -351,7 +351,7 @@ The three regimes map onto the Bell hierarchy:
 
 | Regime | Discriminant | Root type | Bell level |
 |--------|-------------|-----------|-----------|
-| k = 16 (physics) | Delta > 0 | Real: alpha, N_c | Substrate (definite outcomes) |
+| k = 16 (physics) | Delta > 0 | Real: alpha | Substrate (definite outcomes) |
 | k = 4/G* (measurement) | Delta = 0 | Degenerate | The transition (Born rule) |
 | k = 1/2 (reference frame context) | Delta < 0 | Complex conjugate pair | Observer (non-factorizable experience) |
 

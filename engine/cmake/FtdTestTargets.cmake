@@ -2677,20 +2677,11 @@ ftd_add_test(test_watson_integrals tests/test_watson_integrals.cpp
              CTEST_NAME watson_integrals TIMEOUT 120 LABELS unit eft)
 
 # Master quadratic bare algebraic identities (Vieta, means, normalized form).
-# Verifies α + 1/N_c = 1/G* to machine precision and the three-means
-# geometric progression.
+# Verifies the harmonic identity 1/x+ + 1/x- = 1/G* to machine precision and
+# the three-means geometric progression.
 ftd_add_test(test_master_quadratic_identities
              tests/test_master_quadratic_identities.cpp
              CTEST_NAME master_quadratic_identities TIMEOUT 60 LABELS unit eft)
-
-# Program E: uniqueness-of-minimal-polynomial proof. Enumerates all monic
-# quadratics with coefficients in the bounded G*-integer class
-# {i * G*^k : |i| <= 16, k in [0,4]} and verifies only (16 G*^2, 16 G*^3)
-# satisfies the dual root match (x_+ = 1/alpha, x_- = N_c). Closes SP2
-# as [THEOREM] modulo the L-value bound |Aut(E_i)|^2 = 16.
-ftd_add_test(test_master_quadratic_uniqueness
-             tests/test_master_quadratic_uniqueness.cpp
-             CTEST_NAME master_quadratic_uniqueness TIMEOUT 120 LABELS unit eft)
 
 # Program A (partial closure): ladder-walk step sizes from O_h structure.
 # Verifies the O_h irrep decomposition of the Moore-26 shells and enumerates

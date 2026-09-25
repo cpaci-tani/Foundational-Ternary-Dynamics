@@ -33,53 +33,15 @@ print("""
   FIRST-LEVEL OUTPUTS (from master quadratic alone):
     x+ = 1/alpha = %.10f
     x- = %.10f
-    N_c = floor(x-) = %d
 
   QUESTION: can we get SECOND-LEVEL outputs (framework integers,
   mass ratios, force properties) WITHOUT assuming them?
-""" % (G_STAR, X_PLUS, X_MINUS, N_c))
+""" % (G_STAR, X_PLUS, X_MINUS))
 
 # =====================================================================
-# ATTEMPT 1: Derive N_base from x- alone
+# ATTEMPT 1: Derive b_3 from N_c alone
 # =====================================================================
-print('  ATTEMPT 1: DERIVE N_base FROM x-')
-print('  ' + '-' * 60)
-print()
-
-# x- = 3.024. N_c = floor(x-) = 3.
-# Can we get N_base = 4 from x- without assuming it?
-# x- has a fractional part: x- - 3 = 0.024 = eps * G*
-# Is N_base related to ceil(x-) = 4? Or to x- + 1 rounded?
-
-frac_part = X_MINUS - int(X_MINUS)
-print('  x- = %.10f' % X_MINUS)
-print('  floor(x-) = N_c = %d' % int(X_MINUS))
-print('  ceil(x-) = %d (= N_base? YES)' % int(np.ceil(X_MINUS)))
-print('  x- fractional part = %.10f' % frac_part)
-print()
-print('  CLAIM: N_base = ceil(x-) = %d' % int(np.ceil(X_MINUS)))
-print('  This is FORCED: x- is between 3 and 4, so ceil = 4.')
-print('  N_c = floor, N_base = ceil. Both from x-.')
-print('  STATUS: [THEOREM] if x- is between N_c and N_c+1.')
-print()
-
-# Verify x- is always between 3 and 4 for any G* near 2.96:
-# x- = (16G*^2 - sqrt(256G*^4 - 64G*^3))/2
-# At G*=2.96: x- = 3.024. At G*=3.0: x- = 3.0 + ...
-# The key: does x- stay in (3, 4) for the physical G*?
-print('  Verify: x- in (3, 4) for G* near the physical value:')
-for g_test in [2.90, 2.95, G_STAR, 2.97, 3.00]:
-    disc_t = (16*g_test**2)**2 - 4*16*g_test**3
-    if disc_t > 0:
-        xm_t = (16*g_test**2 - np.sqrt(disc_t)) / 2
-        print('    G*=%.4f: x- = %.6f  floor=%d ceil=%d' %
-              (g_test, xm_t, int(xm_t), int(np.ceil(xm_t))))
-print()
-
-# =====================================================================
-# ATTEMPT 2: Derive b_3 from N_c alone
-# =====================================================================
-print('  ATTEMPT 2: DERIVE b_3 FROM N_c')
+print('  ATTEMPT 1: DERIVE b_3 FROM N_c')
 print('  ' + '-' * 60)
 print()
 
@@ -114,9 +76,9 @@ print('  STATUS: [SELECTION] -- structurally motivated but not uniquely forced.'
 print()
 
 # =====================================================================
-# ATTEMPT 3: Derive N_eff = 13
+# ATTEMPT 2: Derive N_eff = 13
 # =====================================================================
-print('  ATTEMPT 3: DERIVE N_eff FROM THE CUBE')
+print('  ATTEMPT 2: DERIVE N_eff FROM THE CUBE')
 print('  ' + '-' * 60)
 print()
 
@@ -176,9 +138,9 @@ for D in [1, 2, 3, 4]:
 print()
 
 # =====================================================================
-# ATTEMPT 4: The m_W / Lambda_QCD gap -- what went wrong?
+# ATTEMPT 3: The m_W / Lambda_QCD gap -- what went wrong?
 # =====================================================================
-print('  ATTEMPT 4: WHY THE MASS RATIO FAILS')
+print('  ATTEMPT 3: WHY THE MASS RATIO FAILS')
 print('  ' + '-' * 60)
 print()
 
@@ -225,9 +187,9 @@ print('  Error: %.1f%%' % (abs(mw_lambda - mw_lambda_expt)/mw_lambda_expt*100))
 print()
 
 # =====================================================================
-# ATTEMPT 5: More mass ratios from the framework
+# ATTEMPT 4: More mass ratios from the framework
 # =====================================================================
-print('  ATTEMPT 5: MASS RATIOS FROM FRAMEWORK INTEGERS')
+print('  ATTEMPT 4: MASS RATIOS FROM FRAMEWORK INTEGERS')
 print('  ' + '-' * 60)
 print()
 
@@ -303,9 +265,9 @@ print('    Any absolute mass (needs one physical scale)')
 print()
 
 # =====================================================================
-# ATTEMPT 6: The corrected M_W/Lambda_QCD
+# ATTEMPT 5: The corrected M_W/Lambda_QCD
 # =====================================================================
-print('  ATTEMPT 6: M_W/LAMBDA_QCD FROM RG RUNNING (corrected)')
+print('  ATTEMPT 5: M_W/LAMBDA_QCD FROM RG RUNNING (corrected)')
 print('  ' + '-' * 60)
 print()
 
@@ -356,8 +318,6 @@ print('  ' + '-' * 72)
 
 preds = [
     ('1/alpha', X_PLUS, 137.035999177, ''),
-    ('N_c = floor(x-)', N_c, 3, ''),
-    ('N_base = ceil(x-)', int(np.ceil(X_MINUS)), 4, ''),
     ('N_eff (Laplacian eigenvalues)', n_distinct_L, 13, ''),
     ('N_f = FCC/2', Nf_derived, 6, '[SELECTION]'),
     ('b_3 = (11Nc-2Nf)/3', b3_derived, 7, 'needs Nf'),
@@ -387,7 +347,6 @@ for name, derived, expt, note in preds:
 print()
 print('  DERIVATION CHAIN:')
 print('    G* --[master quadratic]--> 1/alpha, x-')
-print('    x- --[floor, ceil]--> N_c=3, N_base=4')
 print('    3^3 lattice --[O_h reps]--> N_eff=13 (Laplacian eigenvalues)')
 print('    FCC count/2 --[SU(2) doublets]--> N_f=6 [SELECTION]')
 print('    (11Nc-2Nf)/3 --> b_3=7')

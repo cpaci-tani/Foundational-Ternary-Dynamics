@@ -583,8 +583,6 @@ $$
 t_* \approx 0.0618, \qquad R(t_*) \approx 11.835 = 4 G_N^*.
 $$
 
-Physically this is "where the EM branch coalesces with the color branch" — where $1/\alpha$ becomes equal to $N_c$ in the master quadratic readout.
-
 Under each candidate map, $t_*$ corresponds to:
 
 | Map | $\mu(t_*)$ | Physical interpretation |
@@ -603,9 +601,9 @@ This is structurally diagnostic. If FQCR-EM faithfully represented QED running, 
 
 What it *is*:
 
-1. At $t = 1$, $x_+(1) = \alpha^{-1}(m_e)$ to 9-digit precision (after the $\lambda_N + A_N$ corrections) — the dual prediction of FTD's master quadratic.
+1. At $t = 1$, $x_+(1) = \alpha^{-1}(m_e)$ to 9-digit precision (after the $\lambda_N + A_N$ corrections).
 2. At $t \neq 1$, $x_+(t)$ is a mathematical perturbation around the base point. The slope under Map A is in the right *direction* (decreasing $\alpha^{-1}$ with increasing $\mu$) and roughly QED's order of magnitude near $t = 1$, but accelerates much faster than QED at smaller $t$.
-3. The structural Landau-like point at $t_* \approx 0.062$ corresponds to $\alpha = N_c$ in the master quadratic, not to QED's Landau pole.
+3. The structural Landau-like point at $t_* \approx 0.062$ corresponds to the root merger $x_+ = x_-$ in the master quadratic, not to QED's Landau pole.
 
 So the framework gives a value at $t = 1$ but does not naturally give *running*. This is consistent with [`SPEC_FQCR.md`](../../01_reference/SPEC_FQCR.md) §3.2's [SELECTION] tag and with §7's listing of "physical interpretation of $t$" as out-of-scope.
 

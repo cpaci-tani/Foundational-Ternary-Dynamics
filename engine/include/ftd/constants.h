@@ -72,9 +72,6 @@ using ontic::X_MINUS;
 using ontic::X_PLUS;
 using ontic::X_PLUS_PRECISION;
 
-// Layer 3c: Charge-space duality
-using ontic::E2_COLOR;
-
 // Layer 3b: Dual-substrate decomposition
 using ontic::DELTA_APPROX;
 using ontic::DELTA_SQUARED;

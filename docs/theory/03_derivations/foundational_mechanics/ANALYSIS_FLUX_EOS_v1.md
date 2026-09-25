@@ -11,14 +11,14 @@ Result runs **deflationary** (closes the owner's own conjecture). Golden gate **
 
 ## 0 · Verdict
 
-**CLOSED-NEGATIVE: x₋ = 3.023964 is NOT the dimensionless pressure of the flux.** The master quadratic's smaller root x₋ — specifically its residual δ_c = x₋ − 3 = 0.023964 (`[OPEN]` pure-math, SPEC_OPEN_MATH_BY_SECTOR §1) — does not coincide with the flux field's equation-of-state in any natural state, and the EoS that *can* reach 3.024 is **geometric (spectrum-set), not α-locked.** δ_c remains a pure-math `[OPEN]` residual.
+**CLOSED-NEGATIVE: x₋ = 3.023964 is NOT the dimensionless pressure of the flux.** The master quadratic's smaller root x₋ (its residual x₋ − 3 = 0.023964) does not coincide with the flux field's equation-of-state in any natural state, and the EoS that *can* reach 3.024 is **geometric (spectrum-set), not α-locked.**
 
-**The setup.** x₋ is not free: x₋ = 16G\*³/x₊ = **16G\*³·α = 3.023968** (given x₊=1/α `[SMC]`), so "flux pressure = x₋" means "flux pressure = 16G\*³α," α-dependent. A radiation field's dimensionless EoS 1/w = ρ/p = 3 **exactly** in the continuum — the same 0.80% from x₋ that retired the old "x₋ = N_c = 3" reading (FTD-0014). The test: does a measured flux EoS carry the α-locked 0.024, or sit at the radiation integer 3?
+**The setup.** x₋ is not free: x₋ = 16G\*³/x₊ = **16G\*³·α = 3.023968** (given x₊=1/α `[SMC]`), so "flux pressure = x₋" means "flux pressure = 16G\*³α," α-dependent. A radiation field's dimensionless EoS 1/w = ρ/p = 3 **exactly** in the continuum. The test: does a measured flux EoS carry the α-locked 0.024, or sit at the radiation integer 3?
 
 ## 1 · A degeneracy correction (load-bearing)
 
 The naive definition `Π = 3ρ/Σ_i T^ii` with the **Maxwell stress** `T^ij = ½δ_ij(E²+B²) − E_iE_j − B_iB_j` is **degenerate**: that tensor is traceless (`Σ_i T^ii = ½(E²+B²) = ρ` identically), so Π ≡ 3 for *any* field — it measures nothing (the continuum EM stress-energy is traceless = massless = exact radiation). The real, non-degenerate EoS deviation is the **lattice trace anomaly**, captured by the **kinetic pressure** from the flux mode spectrum:
-`1/w = 3·Σ_k ρ_k / Σ_k ρ_k·(k·∇ω/ω)`, ρ_k = |wave_vel_k|², over the FTD 18-pt dispersion `ω(k)² = −c²M(k)`. Linear dispersion → exactly 3; the lattice bending of ω(k) (group velocity < c near the zone edge) pushes 1/w **above** 3 — the right sign for δ_c > 0, but set by the mode **spectrum**, not by α.
+`1/w = 3·Σ_k ρ_k / Σ_k ρ_k·(k·∇ω/ω)`, ρ_k = |wave_vel_k|², over the FTD 18-pt dispersion `ω(k)² = −c²M(k)`. Linear dispersion → exactly 3; the lattice bending of ω(k) (group velocity < c near the zone edge) pushes 1/w **above** 3 — the right sign for x₋ − 3 > 0, but set by the mode **spectrum**, not by α.
 
 ## 2 · Leg A — analytical lattice EoS (`flux_eos_analytical.py`)
 
@@ -47,10 +47,10 @@ A clean transverse flux-wave bath (Langevin thermostat + wave propagation + Gaus
 
 ## 4 · Conclusion
 
-The engine's natural flux states give **~3.000** (IR-dominated / radiation) or **~10.5** (thermal / full-BZ); **x₋=3.024 is a narrow, non-special window in between**, reachable only by fine-tuning the spectrum to an IR cutoff k_max≈0.45 — and the value is **geometric (spectrum-set), T-independent in the thermal regime, and not α-locked**. The α-tracking discriminator is moot: the thermal EoS doesn't even sit near 3.024, let alone track 16G\*³α. **x₋ is not the dimensionless flux pressure.** This is the same lesson as FTD-0310 / the retired N_c reading: a value ≈3 is unremarkable; only an α-locked, structurally-forced 3.024 would be evidence, and the measured EoS is neither.
+The engine's natural flux states give **~3.000** (IR-dominated / radiation) or **~10.5** (thermal / full-BZ); **x₋=3.024 is a narrow, non-special window in between**, reachable only by fine-tuning the spectrum to an IR cutoff k_max≈0.45 — and the value is **geometric (spectrum-set), T-independent in the thermal regime, and not α-locked**. The α-tracking discriminator is moot: the thermal EoS doesn't even sit near 3.024, let alone track 16G\*³α. **x₋ is not the dimensionless flux pressure.** This is the same lesson as FTD-0310: a value ≈3 is unremarkable; only an α-locked, structurally-forced 3.024 would be evidence, and the measured EoS is neither.
 
-**Caveats.** The pre-registered EoS = the kinetic spectral pressure (the Maxwell stress being degenerate). The campaign ran on the GPU backend (`force_cpu` advisory; the EoS is a seed-averaged statistical observable — 3 seeds agree to 0.02 — so backend-robust). δ_c's pure-math closed form stays `[OPEN]`.
+**Caveats.** The pre-registered EoS = the kinetic spectral pressure (the Maxwell stress being degenerate). The campaign ran on the GPU backend (`force_cpu` advisory; the EoS is a seed-averaged statistical observable — 3 seeds agree to 0.02 — so backend-robust).
 
 ## 5 · Non-promotion
 
-`[MEASURED — CLOSED NEGATIVE]`. Nothing promoted; the closure is the deliverable. x₊=1/α `[SMC]`, the master quadratic `[THEOREM]`, N_c=3 `[THEOREM]`, the algebraic spine — all unchanged. δ_c = x₋ − 3 remains a pure-math `[OPEN]` residual with no physical-pressure identification. Golden gate untouched (read-only campaign).
+`[MEASURED — CLOSED NEGATIVE]`. Nothing promoted; the closure is the deliverable. x₊=1/α `[SMC]`, the master quadratic `[THEOREM]`, the algebraic spine — all unchanged. Golden gate untouched (read-only campaign).

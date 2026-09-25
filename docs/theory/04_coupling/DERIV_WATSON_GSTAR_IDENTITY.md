@@ -105,20 +105,7 @@ $$x_+ \cdot x_- = 16\,G^* \cdot 2\pi\,W_3 = 32\pi\,G^*\,W_3 \tag{3.4}$$
 
 The sum and product of the master quadratic roots are **proportional to the Watson integral**. The master quadratic is not an external mathematical object imposed on the lattice — its coefficients are built from the lattice's own self-energy.
 
-### 3.2 Historical physical reading [RETIRED]
-
-The exact statement from (3.3) is
-
-$$x_+ + x_- = 32\pi\,W_3. \tag{3.5}$$
-
-An earlier version replaced $x_+$ by $1/\alpha$ and $x_-$ by $N_c$ and
-therefore wrote $1/\alpha + N_c = 32\pi W_3$. That is not a live theorem:
-$x_+ \leftrightarrow 1/\alpha$ is a physical conjecture, while the historical
-$x_- \leftrightarrow N_c$ identification is retired. In particular, the old
-numerical line subtracted $x_- \simeq 3.024$, not the exact color count
-$N_c=3$. Equation (3.5) is retained only in its root-sum form.
-
-### 3.3 Rewriting the Master Quadratic in Lattice Language [THEOREM]
+### 3.2 Rewriting the Master Quadratic in Lattice Language [THEOREM]
 
 Substituting $G^{*2} = 2\pi\,W_3$ and $G^{*3} = G^* \cdot 2\pi\,W_3$ into the master quadratic:
 
@@ -130,7 +117,7 @@ $$x^2 - 32\pi\,W_3\left(x - G^*\right) = 0 \tag{3.8}$$
 
 This form reveals: the master quadratic is the condition that $x$ satisfies a **self-consistency relation** between the lattice self-energy ($W_3$) and the elliptic curve period ($G^*$). The root $x$ is the value where the lattice's quantum corrections (encoded in $W_3$) balance the classical geometric structure (encoded in $G^*$).
 
-### 3.4 The Harmonic Mean Identity [THEOREM]
+### 3.3 The Harmonic Mean Identity [THEOREM]
 
 The harmonic mean of the two roots is:
 
@@ -342,7 +329,7 @@ With n_DOF = 16, only the BCC Watson integral gives the correct gap equation coe
 
 K = 16 * 2pi * W_BCC = 16 * 2pi * G*^2/(2pi) = 16 G*^2
 
-This reproduces the master quadratic `x^2 - 16G*^2 x + 16G*^3 = 0` with roots x+ ≈ 137.036 and x- ≈ 3.024. The physical readings x+  1/alpha and x-  N_c are [STRONGLY MOTIVATED CONJECTURE], not consequences of the Watson identity alone.
+This reproduces the master quadratic `x^2 - 16G*^2 x + 16G*^3 = 0` with roots x+ ≈ 137.036 and x- ≈ 3.024. The physical reading x+ = 1/alpha is [STRONGLY MOTIVATED CONJECTURE], not a consequence of the Watson identity alone.
 
 ---
 

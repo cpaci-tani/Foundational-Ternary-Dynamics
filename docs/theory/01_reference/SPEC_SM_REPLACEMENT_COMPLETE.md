@@ -13,7 +13,7 @@ The Standard Model Lagrangian $\mathcal{L}_{\text{SM}}$ consists of six disconne
 
 $$\mathcal{L}_{\text{RB}} = -K_B \frac{\sqrt{f^2 - v^2}}{\sqrt{f}} - g_c \cdot s \cdot (\nabla \cdot \mathbf{J}) - \lambda_G(\nabla \cdot \mathbf{J} - \rho_{\text{charge}})^2$$
 
-from which all gauge sectors, the Higgs mechanism, fermion masses, mixing angles, and gravity emerge. The entire framework traces to one physical axiom ($D = 3$ cubic lattice with ternary states and local deterministic updates) and one canonical mathematical constant (the FTD bridge constant $G^* = \Gamma(1/4)/\Gamma(3/4) \approx 2.9587$; **note: $G^*$ is NOT the lemniscate constant $\varpi \approx 2.6221$ — the two are related by $G^* = \varpi \cdot 2/\sqrt{\pi}$ but are distinct quantities, see FTD-0117 typo-bug closure**). The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ yields $x_+ = 137.036$ and $x_- = 3.024$. The polynomial itself is [THEOREM] (FTD-0001); the **physical identifications** $x_+ \leftrightarrow 1/\alpha$ (1.26 ppm) and $x_- \leftrightarrow N_c = 3$ (0.80%) are tagged [STRONGLY MOTIVATED CONJECTURE] (FTD-0013, FTD-0014; downgraded from [THEOREM]). The framework integers $\{3, 4, 7, 13\}$ structure many coupling and mass formulas, but their use in deriving observables is mostly [PARAMETRIC]/[STRUCTURALLY MOTIVATED PARAMETRIC] rather than [DERIVED]. Gravity via the lattice availability factor $f = 1 - \mathcal{L}^2$ reproduces Schwarzschild, Kerr, and Reissner-Nordstrom metrics ([THEOREM] / [SELECTION] depending on the specific result). **Honest accounting per LEDGER:** the canonical algebraic spine has seven theorem-grade results plus two honestly-tiered subsidiary results (nine numbered; see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §0); roughly 23 individual derivations carry [DERIVED] or sub-[THEOREM] tags across the project; ~129 [PARAMETRIC] insertions remain (per [`CATALOG_PARAMETRIC_INSERTIONS.md`](../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md)); ~10 [IMPOSED]/[SELECTION] choices; **at least 87 [OPEN] items** are tracked in [`TRACKER_OPEN_ITEMS.md`](../07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) (NOT zero); the framework rests on 5 axioms + a two-layer ontology + the calibration $a_{\text{phys}} \equiv \ell_P$ (FTD-0041). What is genuinely achieved and what is honestly not yet derived are distinguished throughout.
+from which all gauge sectors, the Higgs mechanism, fermion masses, mixing angles, and gravity emerge. The entire framework traces to one physical axiom ($D = 3$ cubic lattice with ternary states and local deterministic updates) and one canonical mathematical constant (the FTD bridge constant $G^* = \Gamma(1/4)/\Gamma(3/4) \approx 2.9587$; **note: $G^*$ is NOT the lemniscate constant $\varpi \approx 2.6221$ — the two are related by $G^* = \varpi \cdot 2/\sqrt{\pi}$ but are distinct quantities, see FTD-0117 typo-bug closure**). The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ yields $x_+ = 137.036$ and $x_- = 3.024$. The polynomial itself is [THEOREM] (FTD-0001); the **physical identification** $x_+ \leftrightarrow 1/\alpha$ (1.26 ppm) is tagged [STRONGLY MOTIVATED CONJECTURE] (FTD-0013; downgraded from [THEOREM]). The framework integers $\{3, 4, 7, 13\}$ structure many coupling and mass formulas, but their use in deriving observables is mostly [PARAMETRIC]/[STRUCTURALLY MOTIVATED PARAMETRIC] rather than [DERIVED]. Gravity via the lattice availability factor $f = 1 - \mathcal{L}^2$ reproduces Schwarzschild, Kerr, and Reissner-Nordstrom metrics ([THEOREM] / [SELECTION] depending on the specific result). **Honest accounting per LEDGER:** the canonical algebraic spine has seven theorem-grade results plus two honestly-tiered subsidiary results (nine numbered; see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §0); roughly 23 individual derivations carry [DERIVED] or sub-[THEOREM] tags across the project; ~129 [PARAMETRIC] insertions remain (per [`CATALOG_PARAMETRIC_INSERTIONS.md`](../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md)); ~10 [IMPOSED]/[SELECTION] choices; **at least 87 [OPEN] items** are tracked in [`TRACKER_OPEN_ITEMS.md`](../07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) (NOT zero); the framework rests on 5 axioms + a two-layer ontology + the calibration $a_{\text{phys}} \equiv \ell_P$ (FTD-0041). What is genuinely achieved and what is honestly not yet derived are distinguished throughout.
 
 ---
 
@@ -118,19 +118,18 @@ enters the master quadratic:
 
 $$x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
-with coefficient $16 = N_{\text{base}}^2 = 2^{D+1}$ counting physical degrees of freedom on the minimal $2 \times 2 \times 2$ lattice cell. The two roots:
+with coefficient $16 = N_{\text{base}}^2 = 2^{D+1}$ counting physical degrees of freedom on the minimal $2 \times 2 \times 2$ lattice cell. The larger root:
 
 | Root | Value | Physical Identification | Accuracy |
 |------|-------|------------------------|----------|
 | $x_+$ | 137.036 | $1/\alpha$ (fine structure constant) [STRONGLY MOTIVATED CONJECTURE] | 1.26 ppm vs CODATA |
-| $x_-$ | 3.024 | **none** — mathematical artifact of $P(x)$. The historical $x_- \to N_c$ identification is **RETIRED** (LEDGER FTD-0014, commit `ca7eb61`; cf. §4.2 row 2 below). $N_c = 3$ is sourced independently from D=3 (`DERIV_LATTICE_SU3_GAUGE.md`, `DERIV_NC_FROM_TOPOLOGY.md`). | n/a |
 
 ## 2.3 The Framework Integers [THEOREM]
 
 From $\alpha$ and $N_c$, the complete integer structure follows:
 
 ```
-N_c = 3          (from D=3 / SU(D)=SU(3) [SELECTION]; NOT from the master-quadratic root, which is RETIRED — FTD-0014)
+N_c = 3          (from D=3 / SU(D)=SU(3) [SELECTION])
 N_base = 4       (from D=3 spinor structure) [SELECTION]
 N_gen = N_c = 3  (fermion generations)
 N_f = 2*N_gen = 6 (active quark flavors)
@@ -142,7 +141,7 @@ These four integers $\{3, 4, 7, 13\}$ encode the entire Standard Model parameter
 
 ## 2.4 The Derivation Chain Summary
 
-$$D = 3 + \varpi \;\longrightarrow\; \text{PF},\; N_{\text{base}} \;\longrightarrow\; G^* \;\longrightarrow\; \alpha,\; N_c \;\longrightarrow\; \{3, 4, 7, 13\} \;\longrightarrow\; \text{All SM parameters + gravity}$$
+$$D = 3 + \varpi \;\longrightarrow\; \text{PF},\; N_{\text{base}} \;\longrightarrow\; G^* \;\longrightarrow\; \alpha \;\longrightarrow\; \{3, 4, 7, 13\} \;\longrightarrow\; \text{All SM parameters + gravity}$$
 
 ---
 
@@ -283,7 +282,7 @@ $$D = 3 + \varpi \;\longrightarrow\; \text{PF},\; N_{\text{base}} \;\longrightar
 
 **SM status:** The chiral anomaly is an exact result of the SM; it governs $\pi^0 \to \gamma\gamma$ and constrains the fermion spectrum.
 
-**FTD derivation:** The triangle diagram (VVA) computed on the compact Brillouin zone is UV-finite without regularization. Naive lattice fermions give zero anomaly (Nielsen-Ninomiya theorem); Wilson fermions restore the correct coefficient $Q^2\alpha/(2\pi)$ per physical fermion. With $N_c = 3$ (from D=3 / SU(D)=SU(3) [SELECTION]; the master-quadratic-root reading is RETIRED, FTD-0014):
+**FTD derivation:** The triangle diagram (VVA) computed on the compact Brillouin zone is UV-finite without regularization. Naive lattice fermions give zero anomaly (Nielsen-Ninomiya theorem); Wilson fermions restore the correct coefficient $Q^2\alpha/(2\pi)$ per physical fermion. With $N_c = 3$ (from D=3 / SU(D)=SU(3) [SELECTION]):
 
 $$\Gamma(\pi^0 \to \gamma\gamma) = 7.73 \text{ eV} \quad \text{(PDG: 7.82 eV, 1.2\% agreement)}$$
 
@@ -316,7 +315,7 @@ These results follow from $G^*$, the master quadratic, and integer arithmetic al
 | # | Result | Formula | Status |
 |---|--------|---------|--------|
 | 1 | Fine structure constant | $1/\alpha = x_+ = 137.036$ | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013; the polynomial is [THEOREM] FTD-0001, identification x_+  1/α is conjecture) |
-| 2 | Color charge number | $N_c = 3$ (independently sourced, [SELECTION]) | The historical identification `N_c = \lfloor x_- \rfloor` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The smaller root `x_- ≈ 3.024` is a mathematical artifact of $P(x)$ only. `N_c = 3` follows from D=3 (color = spatial flux axis ⟹ SU(D)=SU(3)) [SELECTION] — see `DERIV_LATTICE_SU3_GAUGE.md` (Theorem 1.1) and `DERIV_NC_FROM_TOPOLOGY.md` (D=3 with geometric/topological corroboration; the routes are not independent). |
+| 2 | Color charge number | $N_c = 3$ ([SELECTION]) | `N_c = 3` follows from D=3 (color = spatial flux axis ⟹ SU(D)=SU(3)) [SELECTION] — see `DERIV_LATTICE_SU3_GAUGE.md` (Theorem 1.1) and `DERIV_NC_FROM_TOPOLOGY.md` (D=3 with geometric/topological corroboration; the routes are not independent). |
 | 3 | Weak mixing angle | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted; 3.5% accuracy) |
 | 4 | Strong coupling at $M_Z$ | $\alpha_s = b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | [PARAMETRIC] (LEDGER FTD-0020, demoted) |
 | 5 | Electron mass | $m_e = M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | [STRONGLY MOTIVATED CONJECTURE] with selections (LEDGER FTD-0015; the factor 16 has structural provenance, but the combined prefactor and $n=11$ are not forced; FTD-0390, FTD-0397) |
@@ -572,7 +571,7 @@ This section lists limitations and open problems that the framework does not res
 | ID | Claim | Falsifying Observation | Status |
 |----|-------|----------------------|--------|
 | F-1 | Master quadratic gives $1/\alpha$ | Precision $\alpha$ measurement incompatible with $x_+ = 137.036...$ at better than 10 ppm | Testable now |
-| F-2 | $N_{\text{gen}} = N_c = 3$ (sourced from D=3, NOT from $\lfloor x_- \rfloor$ — that identification is RETIRED, FTD-0014) | Discovery of 4th generation with standard gauge couplings (heavy sterile neutrinos do not count) | Testable at LHC/FCC |
+| F-2 | $N_{\text{gen}} = N_c = 3$ (sourced from D=3) | Discovery of 4th generation with standard gauge couplings (heavy sterile neutrinos do not count) | Testable at LHC/FCC |
 | F-3 | $\sin^2\theta_W = 3/13$ | Precision EW measurement incompatible with 0.23077 at 5$\sigma$ | Testable at ILC/CEPC |
 | F-4 | $m_\tau/m_e = 3477$ | Mass ratio measurement deviating by > 0.01% | Testable now (PDG: 3477.2) |
 | F-5 | Substrate locality | Demonstration that no ensemble averaging over local deterministic states can produce $S > 2$ (mathematical proof, not experiment) | [OPEN] -- would require formal result |
@@ -593,7 +592,7 @@ This section lists limitations and open problems that the framework does not res
 
 # Section 9: Conclusion
 
-Foundational Ternary Dynamics replaces the Standard Model's six disconnected sectors and 19+ free parameters with a single Born-Infeld render-bridge action $\mathcal{L}_{\text{RB}}$ derived from one physical axiom ($D = 3$ lattice) and one mathematical constant ($\varpi$). The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ generates the fine structure constant (1.26 ppm), the color charge number (exact), and through the framework integers $\{3, 4, 7, 13\}$, all Standard Model coupling constants, masses, and mixing angles.
+Foundational Ternary Dynamics replaces the Standard Model's six disconnected sectors and 19+ free parameters with a single Born-Infeld render-bridge action $\mathcal{L}_{\text{RB}}$ derived from one physical axiom ($D = 3$ lattice) and one mathematical constant ($\varpi$). The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ generates the fine structure constant (1.26 ppm), and through the framework integers $\{3, 4, 7, 13\}$, all Standard Model coupling constants, masses, and mixing angles.
 
 The framework is honest about its current status: approximately 25 results are genuine derivations [THEOREM], approximately 10 are structural arguments [SELECTION], and approximately 50 are parametric insertions now largely upgraded to [THEOREM] since $G_F$ is derived. Gravity is native, not appended. The path integral is UV-finite by construction. The anomaly structure is topologically correct.
 
@@ -652,12 +651,12 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-2 | $G^* = \varpi/\sqrt{\text{PF}}$ is the universal render bridge constant | [THEOREM] | Algebraic identity from $D = 3$ + $\varpi$ |
 | SM-3 | Master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ yields $x_+ = 137.036$ | [THEOREM] | SM-2, coefficient 16 from lattice DoF |
 | SM-4 | $x_+ = 1/\alpha$ (identification with fine structure constant) | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013) | SM-3 + CM/uniqueness evidence; physical identification remains conjectural |
-| SM-5 | $x_- = 3.024$ is the smaller root of the master quadratic (mathematical artifact of $P(x)$; no physics identification) | [THEOREM] (algebra only) | SM-3. The historical identification `N_c = \lfloor x_- \rfloor` is **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem. |
+| SM-5 | $x_- = 3.024$ is the smaller root of the master quadratic | [THEOREM] (algebra only) | SM-3 |
 | SM-6 | Framework integers $\{3, 4, 7, 13\}$ are self-consistent | [THEOREM] | AUDIT_SELF_CONSISTENCY; $N_c = 3$ via independent topology routes |
 | SM-7 | U(1) gauge symmetry emerges from Gauss constraint | [THEOREM] | $\lambda_G \to \infty$ in $\mathcal{L}_{\text{RB}}$ |
 | SM-8 | SU(3) from flux triplet $(J_x, J_y, J_z)$ | [SELECTION] | $D = 3$ + complexification step |
 | SM-9 | SU(2) from ternary doublet $\{+1, -1\}$ | [THEOREM] | Postulate 3 (ternary states) |
-| SM-10 | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018) | SM-6, SM-8 ($N_c$ from D=3, NOT from SM-5 / $x_-$) |
+| SM-10 | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018) | SM-6, SM-8 ($N_c$ from D=3) |
 | SM-11 | $\alpha_s(M_Z) = b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | [PARAMETRIC] (LEDGER FTD-0020) | SM-6, RG running |
 | SM-12 | $m_e = M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | [SELECTION] (LEDGER FTD-0015 / FTD-0077; the prefactor $16\sqrt{2\pi}/3$ is [THEOREM], the exponent $n=11$ is [SELECTION]) | SM-4, lattice normalization |
 | SM-13 | $v = M_P\sqrt{2\pi}\alpha^8 = 246.09$ GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] | SM-4, lattice normalization |

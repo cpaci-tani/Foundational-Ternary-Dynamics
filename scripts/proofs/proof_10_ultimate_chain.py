@@ -79,8 +79,8 @@ def print_derivation_chain():
     Layer 3:   x² - 16G*²x + 16G*³ = 0
               / \\
     x₊ = 137.036  x₋ = 3.024
-         |              |
-    Layer 4:   α = 1/x₊     N_c = ⌊x₋⌋ = 3
+         |
+    Layer 4:   α = 1/x₊     N_c = 3
          |              |
          |         N_gen=3, N_f=6, N_base=4
          |         b₃=7, N_eff=13, D=47
@@ -144,7 +144,7 @@ def print_falsification():
        at better than 10 ppm (after accounting for radiative corrections).
 
     2. 4th GENERATION: Discovery of a 4th generation fermion with standard
-       gauge couplings would break N_gen = floor(x₋) = 3.
+       gauge couplings would break N_gen = 3.
 
     3. WRONG INTEGERS: Any derivation in the cascade {3,4,7,13} that fails
        to match the QFT formula it implements (e.g., b₃ ≠ 7 in SU(3) QCD).
@@ -210,7 +210,7 @@ def main():
     print("  ───────────")
     print(f"  G*        = {G_STAR:.15f}")
     print(f"  x₊ (1/α)  = {X_PLUS:.10f}")
-    print(f"  x₋ (N_c)  = {X_MINUS:.10f}")
+    print(f"  x₋        = {X_MINUS:.10f}")
     print(f"  α          = {ALPHA:.15f}")
     print(f"  N_c        = {N_C}")
     print()

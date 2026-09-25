@@ -459,7 +459,7 @@ where:
 
 The FTD framework has:
 - $N_{base} = 4$: The minimal lattice structure (2×2×2 minus constraints)
-- $N_c = 3$: Derived from the master quadratic's smaller root $x_- \approx 3.024$
+- $N_c = 3$: Moore Layer Theorem and `DERIV_NC_FROM_TOPOLOGY.md`
 
 The product $N_{base} \times N_c = 12$ appears throughout:
 - 12 particles per generation (6 quarks × 2 chiralities, but also 12 = 4 × 3)
@@ -542,7 +542,7 @@ $$x_\pm = 8(G^*)^2 \pm 8(G^*)^2\sqrt{1 - 1/G^*}$$
 
 Numerically:
 - $x_+ = 137.0361714...$ (identified with $1/\alpha$)
-- $x_- = 3.0243891...$ (identified with $N_c$)
+- $x_- = 3.0243891...$
 
 ## 5.2 The Discriminant Determines Reality [THEOREM]
 

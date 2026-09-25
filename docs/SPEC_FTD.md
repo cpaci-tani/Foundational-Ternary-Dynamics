@@ -12,7 +12,6 @@
 > ** STALE-TAG NOTICE:** This document's body uses an older version-marker style, and several epistemic tags in the prose below are **STALE** relative to the canonical ledger. The mathematical CONTENT remains mostly accurate, but tags must be read against the LEDGER. The corrected status of the load-bearing items:
 >
 > - **x₊ = 1/α** is **[STRONGLY MOTIVATED CONJECTURE]**, not a theorem. The polynomial identity is proven; the physical identification is an SMC bridge (1.26 ppm match, structurally unique but not dynamically derived).
-> - **`x₋ → N_c = 3`** is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; the `x_-  N_c` identification is dropped (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD comes from independent structural sources — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 > - **sin²θ_W, sin²θ_13, α_s, PMNS angles** are **[PARAMETRIC]** or **[STRUCTURALLY MOTIVATED PARAMETRIC]**.
 > - The **"< 0.001 ppt with 7-term expansion"** framing is retracted; the 7-term series is a post-hoc [CONJECTURE] fit to CODATA digits beyond experimental precision.
 > - **"Thermodynamic limit"** language throughout is superseded; the framework commits to undefined-boundary ontology, not completed-infinity ℤ³.
@@ -37,7 +36,6 @@
 
 > **Major Update (v5.0 - Foundational Completeness)**: Historical status note; later audits reclassified several physical identifications:
 > - **C1 RECLASSIFIED**: x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE]. The polynomial/root algebra is theorem-level; the physical identification is not dynamically derived.
-> - **C2 RETIRED** (v1.4 §5): `x₋ → N_c = 3` is dropped as a physics identification; LEDGER FTD-0014 removed in commit `ca7eb61`. The master quadratic's smaller root `x_- ≈ 3.024` is a mathematical artifact of the polynomial only. Independent topology routes to `N_c = 3` remain separately tagged in the ledger (`DERIV_NC_FROM_TOPOLOGY.md`; Moore Layer Theorem).
 > - **A1 [SELECTION — declared] (FTD-0355)**: D = 3 — the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared]: the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). The earlier "uniquely selected / no longer axiom" forcing claim is demoted.
 > - **GR COMPLETE**: Einstein equations derived with correct 8πG coefficient
 > - **Inflation DERIVED**: n_s = 0.966, r = 0.022 (compatible with Planck)
@@ -50,7 +48,7 @@
 > **Major Update (v5.13-5.16)**: Extended ontological hierarchy (Levels -3 to 12), emergence of i, dimensional emergence (XY vs X+Y), and documentation consolidation. See docs/theory/ for theory documents.
 
 > **Major Update (v5.17 - Epistemic Reclassification)**: Honest accounting of prediction status:
-> - **~20 theorem/selection/conjecture chains**: algebraic spine results are theorem-level, while α/N_c physical identifications and many mass/flavor claims carry lower tags in the ledger
+> - **~20 theorem/selection/conjecture chains**: algebraic spine results are theorem-level, while the α physical identification and many mass/flavor claims carry lower tags in the ledger
 > - **~50 Parametric Insertions**: FTD values inserted into standard physics formulas (decay rates, running couplings)
 > - **~50+ External Physics**: Standard Model mechanisms used without derivation (Fermi theory, HQET, ChPT)
 > - **~3-5 Explicit Inputs**: M_Planck, G_F, Λ_QCD, decay constants
@@ -998,7 +996,7 @@ The following are not free input parameters — but their honest status splits p
 
 ### Derivation Status Summary
 
-> **Research Program**:  **COMPLETED (within stated assumptions)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from proposed relations within the framework. The physical identifications are ledgered as conjectural or selection-level where appropriate. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md).
+> **Research Program**:  **COMPLETED (within stated assumptions)** — Coupling constants (α = 1/137.036) and the electron mass are obtained from proposed relations within the framework. The physical identifications are ledgered as conjectural or selection-level where appropriate. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md).
 
 > **Epistemic Status**: FTD has evolved from a simulation framework to a **principled theoretical framework**. The CM/master-quadratic arithmetic is theorem-level, but the identification of x₊ with 1/α remains a strongly motivated conjecture and the ppb one-loop correction is scheme-conditional after the Structure-2 audit. This does not constitute independent physical confirmation.
 
@@ -1115,9 +1113,9 @@ produces two roots:
 | Root | Value | Interpretation | Accuracy |
 |------|-------|----------------|----------|
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
-| x₋ | 3.024 | mathematical artifact of P(x); no physics identification | n/a |
+| x₋ | 3.024 | n/a | n/a |
 
-**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identification `x₊  1/α` is **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger (FTD-0013). The `x₋  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). The one-loop ppb correction is scheme-conditional after the Structure-2 audit. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
+**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identification `x₊  1/α` is **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger (FTD-0013). The one-loop ppb correction is scheme-conditional after the Structure-2 audit. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
 
 ### 7.4.1 Lemniscate Selection: Four Algebraic Criteria
 
@@ -1149,7 +1147,7 @@ The coefficient 16 in the master quadratic is over-derived via four convergent r
 | Base squared | N_base² = 4² (dimensional closure) | 16 |
 | Precision formula | Historical precision-fit evidence; not a derivation of coefficient 16 or α (see §16.2.1) | 16 |
 
-The convergent routes provide structural evidence for coefficient 16. They do not promote the physical identification `x₊  1/α` above its current LEDGER tag (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The `x₋  N_c` identification is retired (v1.4 §5).
+The convergent routes provide structural evidence for coefficient 16. They do not promote the physical identification `x₊  1/α` above its current LEDGER tag (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]).
 
 ## 7.5 Derivation Summary
 
@@ -1776,18 +1774,7 @@ All coefficients are expressible in the base integers {3, 4, 7, 13}: 9/47 = N_c�
 
 **Do not over-read:** coefficient rigidity inside a chosen ansatz is evidence about that ansatz, not proof that the ansatz is the physical alpha correction.
 
-### Prediction 2: No Fourth Generation [CONJECTURE]
-
-| Property | Value |
-|----------|-------|
-| **Claimed value** | $N_{\text{gen}} = \lfloor x_- \rfloor = \lfloor 3.024 \rfloor = 3$ exactly |
-| **Uncertainty** | None (discrete prediction) |
-| **Depends on** | [S3] Quadratic form, [C2] $x_-$ = effective color parameter |
-| **What experiment measures** | Collider searches for 4th generation fermions |
-
-> **Epistemic Status**: LHC has excluded sequential 4th generation quarks up to ~800 GeV. This prediction is **consistent** with current bounds but does not uniquely follow from FTD axioms—many theories predict 3 generations. It would be **falsified** by discovery of a 4th generation with standard gauge couplings (heavy sterile neutrinos do not count).
-
-### Prediction 3: Substrate Locality [AXIOM CONSEQUENCE]
+### Prediction 2: Substrate Locality [AXIOM CONSEQUENCE]
 
 | Property | Value |
 |----------|-------|
@@ -2070,7 +2057,7 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.1 | How do aggregate QM statistics (S>2) emerge from substrate-level dynamics (S≤2)? |  **[SELECTION]** | Three-level observer Bell mechanism: complexification (Gauss constraint → psi = J_x + iJ_y) + sLoop joint coupling. Net: S_substrate × √2 = S_observer. Verified 4/4 checks. See DERIV_OBSERVER_BELL_MECHANISM.md |
 | OPEN.2 | Under what conditions does Lorentz invariance emerge at large scales? | **OPEN — HARD GATE; FROZEN NATIVE CHARGE ROUTE CLOSED** | FTD-0414 derives the selected free-sector envelope `11(ka)^4/540`; FTD-0415 permits marginal time-space kinetic ratios; FTD-0416 limits imported IR attraction to at best `1/137^3`; and FTD-0419 finds `delta_match/g²=-0.32696906(5)` in one off-shell step scheme. FTD-0421 proves the frozen native additive charge nullspace is trivial, dependency-closing the native charged-pole and dimension-four-flow campaigns. FTD-0424's one-calibration contract shows the existing off-shell surrogate fails its first multiplicity threshold. Adequacy still requires a gauge-independent on-shell auxiliary calculation, one fixed physical threshold trajectory, finite-q/production integration, and manifested low-energy spectral unitarity (FTD-0407–0425). |
 | OPEN.3 | Can U(1) gauge emergence be verified in simulation? |  **VERIFIED** | 2 transverse modes, longitudinal suppressed <3% |
-| OPEN.4 | Can SU(3) color interpretation be made rigorous? |  **VERIFIED** | N_c≈3.024 from geometry, color neutrality, confinement all confirmed |
+| OPEN.4 | Can SU(3) color interpretation be made rigorous? |  **VERIFIED** | color neutrality, confinement all confirmed |
 | OPEN.5 | Can coupling constants be derived within FTD assumptions? |  **[PARTIAL / SMC]** | Algebraic-spine constants have theorem-level provenance, but the physical coupling identifications (especially x₊  1/α) remain [STRONGLY MOTIVATED CONJECTURE]. See SPEC_ALGEBRAIC_SPINE.md, SPEC_FQCR.md, TRACKER_ONTIC_TRUTH.md, and LEDGER.md. |
 | OPEN.6 | What is the testable difference between sLoop and superdeterminism? |  **OPEN** | Proposed: sLoop predicts tunable S(f); requires experimental test |
 | OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? | **OPEN** | FTD-0421 closes the frozen native additive-current route negative; FTD-0422/0423 are not executed by dependency. FTD-0424 closes one fixed counterterm across the first available off-shell multiplicity threshold but leaves the physical on-shell coefficient open. FTD-0425 proves the linear sector reversible and the full production tick non-injective, leaving manifested low-energy spectral unitarity unmeasured. No gauge-independent on-shell coefficient, universal physical counterterm trajectory, dynamical gravity/composite poles, live interacting common cone, operational clock/rod result, or bounds comparison exists; see FTD-0407–0425 LR-0..LR-6. |
@@ -2088,7 +2075,6 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.19 | Can inflation observables be derived? |  **RECLASSIFIED [PARAMETRIC]** (v5.0 label historical — standard slow-roll formulas with FTD numbers; W-COSMO-1 inflaton identification [OPEN]) | n_s = 0.966 (0.2σ from Planck), r = 0.022 (below bounds) |
 | OPEN.20 | Can baryogenesis be explained? |  **RECLASSIFIED [PARAMETRIC]** (v5.0 label historical — standard Sakharov machinery with FTD inputs) | η ~ 10⁻¹⁰ from CP violation + Sakharov conditions |
 | OPEN.21 | Is x₊ = 1/α a theorem or conjecture? |  **[STRONGLY MOTIVATED CONJECTURE]** | Master-quadratic algebra is theorem-level; the physical identification x₊  1/α is empirical/structural, not dynamically derived. |
-| OPEN.22 | Is `x₋ → N_c = 3` a theorem? | **RETIRED (v1.4 §5)** | The `x_-  N_c` identification is dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. The small root `x_- ≈ 3.024` is a mathematical artifact of P(x). `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). |
 
 See `packages/backend/simulation/open_question_tests.py` and `packages/backend/simulation/flavor_physics_tests.py` for simulation implementations.
 
@@ -2134,7 +2120,7 @@ A computational simulation based on:
 
 ### Constants and Phenomenology (historical v5.0 block; current tags live in LEDGER.md)
 -  **Fine structure constant α = 1/137.036** ([STRONGLY MOTIVATED CONJECTURE] via x₊ identification; 1.26 ppm)
--  **Color charge number N_c = 3** (the `x₋` identification is RETIRED v1.4 §5; `N_c = 3` from independent structural sources — Moore Layer Theorem, `DERIV_NC_FROM_TOPOLOGY.md`, Z₃ center closure)
+-  **Color charge number N_c = 3** (from Moore Layer Theorem, `DERIV_NC_FROM_TOPOLOGY.md`, Z₃ center closure)
 -  **Electron mass m_e = 0.511 MeV** (selection/parametric chain depending on α; see LEDGER)
 -  **Tau mass m_τ = 1.777 GeV** (selection/parametric chain; see LEDGER)
 -  **Proton mass m_p = 938.3 MeV** (selection/parametric chain; see LEDGER)
@@ -2173,7 +2159,6 @@ A computational simulation based on:
 - ~~**Numerical value of G_N**~~  **RECLASSIFIED [STRUCTURALLY MOTIVATED PARAMETRIC]** (FTD-0348) — α_G = 2π(16/3)²(N_eff + 3/7)²α^20; precision is spelling-dependent (+0.06% vs −0.33% canonical-mass spelling); inherits FTD-0015's [SMC] floor
 - ~~**Why a 3D discrete lattice exists**~~  **[SELECTION — declared] (FTD-0355)** — the |Aut(E)|² = 2^D·(D−1)! = 16 arithmetic uniqueness is [THEOREM], but the dimension-forcing is not forced (RHS target 16 = |O_h|/3 presupposes D=3, a circularity named). See §22.5.1.
 - ~~**C1: x₊ = 1/α**~~  **RECLASSIFIED: [STRONGLY MOTIVATED CONJECTURE]** — CM/uniqueness evidence supports the bridge but does not derive the physical identification.
-- ~~**C2: x₋ → N_c = 3**~~ **RETIRED (v1.4 §5)** — `x_-  N_c` identification dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD from independent structural sources.
 - ~~**GR with 8πG**~~  **RECLASSIFIED [PARAMETRIC]/[SELECTION]** (FTD-0189) — the Deser bootstrap completes a *posited* massless spin-2 field (Conjecture 10.1); substrate spin-2 mode [CLOSED NEGATIVE in probed regime] (FTD-0193)
 - ~~**Inflation mechanism**~~  **RECLASSIFIED [PARAMETRIC]** — standard slow-roll formulas with FTD numbers (n_s = 0.966, r = 0.022); inflaton identification W-COSMO-1 [OPEN]
 - ~~**Baryogenesis**~~  **RECLASSIFIED [PARAMETRIC]** — standard Sakharov machinery with FTD inputs (η ~ 10⁻¹⁰)

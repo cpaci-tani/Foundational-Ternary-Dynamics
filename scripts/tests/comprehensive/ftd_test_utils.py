@@ -7,7 +7,7 @@ scoring functions, and verdict generation.
 
 import sys
 import os as _os
-sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', '..'))
+sys.path.insert(0, _os.path.normpath(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', '..')))
 from constants import N_c, N_base, b_3, N_eff, D_CONSTRAINT as _D_CONSTRAINT
 
 from dataclasses import dataclass, field

@@ -329,7 +329,7 @@ plot_glowing_line(ax2, Rn_vals, xminus_vals, COLOR_ALGEBRAIC, label=r"$x_-(R_n)$
 plot_glowing_line(ax2, Rn_vals, [16.0 * r**2 for r in Rn_vals], COLOR_ANALYTIC, label=r"Asymptotic limit $16 R_n^2$", linewidth=1.0, ls=':')
 plot_glowing_line(ax2, Rn_vals, [r + 0.0625 for r in Rn_vals], COLOR_ALGEBRAIC, label=r"Asymptotic limit $R_n + 1/16$", linewidth=1.0, ls=':')
 
-# Highlight x_+(R_4) ≈ 1/alpha and x_-(R_4) ≈ N_c
+# Highlight x_+(R_4) ≈ 1/alpha and x_-(R_4)
 scatter_glowing(ax2, [G_star], [137.035999], COLOR_ANALYTIC, size=180, marker='*', edgecolors='#ffffff')
 scatter_glowing(ax2, [G_star], [3.024], COLOR_ALGEBRAIC, size=180, marker='*', edgecolors='#ffffff')
 
@@ -344,7 +344,7 @@ ax2.annotate(
     bbox=dict(boxstyle="round,pad=0.2", facecolor='#06060ce0', edgecolor=COLOR_BORDER)
 )
 ax2.annotate(
-    r"$x_-(R_4) \approx 3.024\ (N_c \approx 3)$ [Selection]",
+    r"$x_-(R_4) \approx 3.024$",
     (G_star, 3.024),
     xytext=(10, 8),
     textcoords="offset points",

@@ -226,7 +226,7 @@ This holds for ANY quadratic with S = P, regardless of the value of S. The harmo
 **Evidence:**
 - x₊ = 137.0362 vs CODATA α⁻¹ = 137.0360(2). Agreement: 1.26 ppm.
 - With 4-term precision formula: agreement to 15+ significant digits.
-- ⌊x₋⌋ = 3 = number of spatial dimensions = number of quark color charges.
+- ⌊x₋⌋ = 3 = number of spatial dimensions.
 - D = 3 is the unique dimension where ⌊x₋(D)⌋ = D (dimensional self-recognition). ■
 
 ---
@@ -249,9 +249,7 @@ Tr = N (self-consistency at L-function center)
 u² − 16G*u + 16G* = 0
  ↓ quadratic formula
 x₊ = 137.036  →  1/α (by axiom; FTD-0013 [SMC])
-x₋ = 3.024    (math artifact of P(x); x_-  N_c RETIRED v1.4 §5;
-                LEDGER FTD-0014 removed in commit ca7eb61;
-                N_c = 3 independently sourced via DERIV_NC_FROM_TOPOLOGY.md)
+x₋ = 3.024
  ↓
 H = 2 = [Q(i):Q]  (harmonic mean = field degree)
 ```

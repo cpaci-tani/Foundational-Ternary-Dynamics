@@ -49,11 +49,11 @@ Key features of the lepton pattern:
 
 ### 1.2 Framework Integers
 
-All integers derive from D = 3 and the lemniscatic constant via the master quadratic:
+All integers derive from D = 3:
 
 | Integer | Symbol | Value | Origin |
 |---------|--------|-------|--------|
-| Color number | N_C | 3 | floor(x_-) from master quadratic |
+| Color number | N_C | 3 | D=3 ⟹ SU(D)=SU(3) |
 | Base dimension | N_BASE | 4 | 2^((D+1)//2) |
 | Beta coefficient | B_3 | 7 | (11*N_C - 2*N_F)/3 |
 | Effective parameter | N_EFF | 13 | B_3 + 2*N_C |

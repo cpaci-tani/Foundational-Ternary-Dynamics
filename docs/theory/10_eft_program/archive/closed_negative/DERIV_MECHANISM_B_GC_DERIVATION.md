@@ -196,7 +196,7 @@ multiplies it must therefore equal `2π α_ref` exactly to recover QED.
 (b) The chain `{D=3, ϖ} → x_+` is the only Axiom-Zero route to a
 number near `1/α`. Any other algebraic combination of `{G*, ϖ, π,
 integers}` that hits 137 to ppm precision is, by the CM-curve
-uniqueness theorem (FTD-0014), the master quadratic root in disguise.
+uniqueness theorem, the master quadratic root in disguise.
 
 ---
 
@@ -294,9 +294,9 @@ note:    Mechanism B (lattice → continuum matching) does not produce
          principles g_c either requires a non-trivial RG flow that the
          current engine does not generate, or accepting g_c as a
          third calibration. The α claim's status is unchanged: FTD-
-         0013 remains [STRONGLY MOTIVATED CONJECTURE] on dual-match
-         + CM-uniqueness evidence; it is not promotable to [THEOREM]
-         via g_c-derivation under Axiom Zero.
+         0013 remains [STRONGLY MOTIVATED CONJECTURE] on CM-uniqueness
+         evidence; it is not promotable to [THEOREM] via g_c-derivation
+         under Axiom Zero.
 ```
 
 This does **not** affect FTD-0001 (master quadratic as algebraic

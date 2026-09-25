@@ -101,7 +101,7 @@ $$G^* = \frac{\sqrt{2}\;\Gamma(1/4)^2}{2\pi} = \frac{2\varpi}{\sqrt{\pi}} = 2.95
 
 $$x^2 - 16\,G^{*2}\,x + 16\,G^{*3} = 0$$
 
-whose roots are x₊ = 137.036... ≈ 1/α and x₋ = 3.024... ≈ N_c.
+whose roots are x₊ = 137.036... ≈ 1/α and x₋ = 3.024...
 
 **Why G* is ontologically last:** It is the most "constructed" of the five. It requires √2 (from the Gauss constraint geometry), Γ(1/4)² (which carries γ through Weierstrass), and π (which carries M and ϖ). G* is where all the preceding structure **converges** into a single number that, through the master quadratic, produces physics.
 
@@ -192,9 +192,7 @@ G* = 2.9587...
 │  [Vieta sum: x₊+x₋ = 16G*² = 32πW₃]
 ▼
 x₊ = 137.036...  ≈  1/α
-x₋ = 3.024...    ≈  N_c
-│
-│  [1/α + N_c = 32π × (Watson integral of Z³)]
+x₋ = 3.024...
 │
 │  [7-term precision formula with ε = e^π - π - 20]
 ▼
@@ -219,7 +217,7 @@ $$G^* = \frac{\sqrt{2}\;\Gamma(1/4)^2}{2\pi} = \frac{2\varpi}{\sqrt{\pi}}$$
 
 $$x^2 - 16\,G^{*2}\,x + 16\,G^{*3} = 0$$
 
-has roots x₊ = 137.036... ≈ 1/α and x₋ = 3.024... ≈ N_c.
+has roots x₊ = 137.036... ≈ 1/α and x₋ = 3.024...
 
 **Honesty note:** All other relations previously listed (ζ(2n) in lemniscatic form, Vieta relations "in ϖ form," fractional power decompositions, discriminant factorizations) are **algebraic consequences of substituting these definitions**. Writing ζ(2) = 16ϖ⁴/(6G*⁴) is just replacing π² with 16ϖ⁴/G*⁴ in the standard formula π²/6. It looks impressive but adds no information. These substitutions are catalogued in `scripts/verification/explore_chain_roots_powers.py` for reference, but they are not independent results.
 

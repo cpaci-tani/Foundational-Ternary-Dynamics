@@ -7,7 +7,7 @@
 
 ## Abstract
 
-We present the complete fifteen-step derivation chain from the lemniscatic constant G* to the charged pion mass m_pi, passing through the fine structure constant, the framework integers, the electron mass, and the pion decay constant. The central new result is a **double identity** that reduces all four framework integers {N_c = 3, N_base = 4, b_3 = 7, N_eff = 13} to a single integer N_c = 3, which is itself derived from the master quadratic. The integers are not four free parameters — they are one integer and three algebraic consequences.
+We present the complete fifteen-step derivation chain from the lemniscatic constant G* to the charged pion mass m_pi, passing through the fine structure constant, the framework integers, the electron mass, and the pion decay constant. The central new result is a **double identity** that reduces all four framework integers {N_c = 3, N_base = 4, b_3 = 7, N_eff = 13} to a single integer N_c = 3. The integers are not four free parameters — they are one integer and three algebraic consequences.
 
 The derivation produces m_pi = b_3 * N_eff * N_c * m_e = 273 * m_e = 139.50 MeV, matching the experimental value 139.57 MeV to **0.048%**. This is the most precise hadronic prediction in FTD.
 
@@ -91,10 +91,9 @@ All six self-consistency constraints C1-C6 (AUDIT_SELF_CONSISTENCY.md) remain sa
 G* (geometry)
   |
   v  [master quadratic]
-alpha, x-
-  |
-  v  [floor function]
-N_c = 3
+alpha
+
+N_c = 3  [Moore Layer Theorem]
   |
   v  [integer reduction theorem]
 {N_base = 4, b_3 = 7, N_eff = 13}
@@ -116,7 +115,7 @@ m_pi = sqrt((m_u + m_d) * B_0) = 139.50 MeV
 |------|-------|---------|-------|------|-------|--------|
 | 1 | Lemniscatic constant | sqrt(2) * Gamma(1/4)^2 / (2*pi) | 2.958675 | geometry | exact | [THEOREM] |
 | 2 | Fine structure constant | Larger root of master quadratic | 1/137.036 | 1/137.036 | 1.3 ppm | [THEOREM] |
-| 3 | Color integer | N_c = floor(x_-) | 3 | 3 | exact | [THEOREM] |
+| 3 | Color integer | N_c = 3 (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`) | 3 | 3 | exact | [THEOREM] |
 | 4 | Additive closure | b_3 = N_c + N_base, with N_base^2 = 16 | 7 | 7 | exact | [THEOREM] |
 | 5 | Goldstone counting | b_3 = N_c^2 - 2 (condensed pseudo-Goldstones) | 7 | 7 | exact | [THEOREM] |
 | 6 | Integer reduction | N_base = N_c^2 - N_c - 2 (from steps 4 + 5) | 4 | 4 | exact | [THEOREM] |

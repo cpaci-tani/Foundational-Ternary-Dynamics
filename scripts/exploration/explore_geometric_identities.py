@@ -309,7 +309,6 @@ print()
 
 print(f"  The ratio (x+/x-)^2 in framework terms:")
 print(f"    x+/x- = {xp/xm:.10f}")
-print(f"    1/(alpha * N_c) = {1/(xp * xm / xp**2 * xp):.4f}... no")
 print(f"    x+/x- = (K - x-)/x- = K/x- - 1 = {K/xm - 1:.6f}")
 print(f"    K/x- = 16*G*^2/x- = {K/xm:.6f}")
 print()

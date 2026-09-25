@@ -151,7 +151,6 @@ All ~26 new chapters are **LIKELY affected** because they are the rigorous re-pr
 | `06-bcc-eigenvalue-watson.qmd` | 121 | **LIKELY** (Watson is infinite-lattice integral) |
 | `07-bridge-constant-gstar.qmd` | 85 | LIKELY-NOT (algebraic) |
 | `08-master-quadratic.qmd` | 107 | LIKELY-NOT |
-| `09-roots-alpha-and-nc.qmd` | 88 | LIKELY-NOT |
 | `10-framework-integers.qmd` | 94 | LIKELY-NOT |
 | `11-precision-formula.qmd` | 71 | UNKNOWN |
 | `12-mass-spectrum.qmd` | 97 | LIKELY-NOT |

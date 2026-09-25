@@ -276,8 +276,8 @@ int main() {
     std::printf("                         SM-structural order is physics-motivated\n\n");
     std::printf("  Net effect on S2: NARROWED from [SELECTION]\n");
     std::printf("                   to [THEOREM on multiset + SELECTION on order]\n\n");
-    std::printf("  Cogito-axiom ladder FTD-0080 after Programs E + A (partial):\n");
-    std::printf("    S1 (master quadratic): [THEOREM]        (Program E, FTD-0083)\n");
+    std::printf("  Cogito-axiom ladder FTD-0080 after Program A (partial):\n");
+    std::printf("    S1 (master quadratic): [THEOREM]\n");
     std::printf("    S2 (ladder walk):      [PARTIAL THEOREM] (Program A, this)\n");
     std::printf("================================================================\n");
 

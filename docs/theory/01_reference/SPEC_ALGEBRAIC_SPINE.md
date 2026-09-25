@@ -12,11 +12,10 @@ misattributed load-bearing citation (Chudnovsky), one uniqueness overclaim
 (§9 on Theorem 8), a mathematically wrong justification for a correct
 disclaimer (maximality), and three stale cross-reference rows. All are
 corrected in place and registered in `ANALYSIS_SPINE_ADVERSARIAL_AUDIT_v1.md`.
-Two findings are **not** yet remediated and are recorded as open: the
-FTD-0314 C2 dependency on an open conjecture, and the un-audited FTD-0319
-look-elsewhere scan.
+One finding is **not** yet remediated and is recorded as open: the
+FTD-0314 C2 dependency on an open conjecture.
 
-**Subsidiary note.** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. Theorem 8 (harmonic invariant of the master-quadratic tower, §8) is `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111; full derivation in `docs/theory/03_derivations/electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`, §9) is conditional on Chudnovsky 1976; LEDGER FTD-0112; full derivation in `docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1. **Maximality is NOT claimed:** only π-freeness is proven. (Reason corrected 2026-08-03, FTD-0785: the former witness Q(Γ(1/4)) does **not** work — it does not contain Q(G*) at all, since G* ∈ Q(Γ(1/4)) would make π = Γ(1/4)²/(√2·G*) algebraic over Q(Γ(1/4)), contradicting the same Chudnovsky independence invoked in Theorem 9; the two fields are *incomparable*. Maximality is nonetheless false, and trivially so: any proper algebraic extension such as Q(G*, √2) is π-free and strictly contains Q(G*). This makes maximality a non-question rather than an interesting [OPEN] problem.) The spine has **nine numbered results** — **six theorem-grade** (Theorems 1, 2, 3, 5, 8, 9) and **three honestly tiered below theorem grade** (**Theorem 6, demoted 2026-08-03 by FTD-0785 — its "proof" is a regression fit against simulator output, see §6**; Theorem 4, a value-level identity with conjectural structural necessity, and Theorem 7, retagged [THEOREM at all L ≥ 2] by FTD-0350 but retained in the tiered bucket pending an independent check of that retag). **Count convention (reconciled 2026-07-01, per the provisional specialist review):** Theorem 3 counts at its **arithmetic core only** — the uniqueness of the `|μ_K| = |disc(K)|` coincidence to ℚ(i) among imaginary quadratic fields, a genuine `[THEOREM]` (`TRACKER_ONTIC_TRUTH.md` OT-1.9, T1); its *physics* dual-match privilege of d = −4 is separately `[NUMERICAL FACT — not a proof]` (it fails under the rational-multiplier criterion, see §3's Status block) and is **never part of the theorem-grade count**. Prior copies of this document stated the count inconsistently ("six + three" in §§4/7/12/14, counting Theorem 3 in the tiered bucket) — the split-count formulation here is the single canonical count, and every count statement below now matches it. **Superseded 2026-08-03 (FTD-0785):** the count is now **6+3**, not 7+2, because Theorem 6 was demoted; `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 vs T4/T3) listed Theorem 6 (OT-1.4) in the upper tier. **Applied 2026-08-04:** OT-1.4 is demoted out of Tier 1 there and the Tier-1 count corrected 9 → 8. This mattered more than a cosmetic mismatch, because `CLAUDE.md` makes that tracker **authoritative on tier assignment** — so while it stood, the authoritative document rated a regression fit as a rock-solid theorem. What survives there is the *deflationary* reading (the projector returns a Green's function, so the engine's Coulomb carries no fine-structure content), which is structural and consistent with FTD-0792; the exact identity does not.
+**Subsidiary note.** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` is **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`. The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. Theorem 8 (harmonic invariant of the master-quadratic tower, §8) is `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111; full derivation in `docs/theory/03_derivations/electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md`. Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`, §9) is conditional on Chudnovsky 1976; LEDGER FTD-0112; full derivation in `docs/theory/07_assessment/campaigns/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1. **Maximality is NOT claimed:** only π-freeness is proven. (Reason corrected 2026-08-03, FTD-0785: the former witness Q(Γ(1/4)) does **not** work — it does not contain Q(G*) at all, since G* ∈ Q(Γ(1/4)) would make π = Γ(1/4)²/(√2·G*) algebraic over Q(Γ(1/4)), contradicting the same Chudnovsky independence invoked in Theorem 9; the two fields are *incomparable*. Maximality is nonetheless false, and trivially so: any proper algebraic extension such as Q(G*, √2) is π-free and strictly contains Q(G*). This makes maximality a non-question rather than an interesting [OPEN] problem.) The spine has **nine numbered results** — **six theorem-grade** (Theorems 1, 2, 3, 5, 8, 9) and **three honestly tiered below theorem grade** (**Theorem 6, demoted 2026-08-03 by FTD-0785 — its "proof" is a regression fit against simulator output, see §6**; Theorem 4, a value-level identity with conjectural structural necessity, and Theorem 7, retagged [THEOREM at all L ≥ 2] by FTD-0350 but retained in the tiered bucket pending an independent check of that retag). **Count convention (reconciled 2026-07-01, per the provisional specialist review):** Theorem 3 counts at its **arithmetic core only** — the uniqueness of the `|μ_K| = |disc(K)|` coincidence to ℚ(i) among imaginary quadratic fields, a genuine `[THEOREM]` (`TRACKER_ONTIC_TRUTH.md` OT-1.9, T1); its *physics* match privilege of d = −4 is separately `[NUMERICAL FACT — not a proof]` (it fails under the rational-multiplier criterion, see §3's Status block) and is **never part of the theorem-grade count**. Prior copies of this document stated the count inconsistently ("six + three" in §§4/7/12/14, counting Theorem 3 in the tiered bucket) — the split-count formulation here is the single canonical count, and every count statement below now matches it. **Superseded 2026-08-03 (FTD-0785):** the count is now **6+3**, not 7+2, because Theorem 6 was demoted; `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 vs T4/T3) listed Theorem 6 (OT-1.4) in the upper tier. **Applied 2026-08-04:** OT-1.4 is demoted out of Tier 1 there and the Tier-1 count corrected 9 → 8. This mattered more than a cosmetic mismatch, because `CLAUDE.md` makes that tracker **authoritative on tier assignment** — so while it stood, the authoritative document rated a regression fit as a rock-solid theorem. What survives there is the *deflationary* reading (the projector returns a Green's function, so the engine's Coulomb carries no fine-structure content), which is structural and consistent with FTD-0792; the exact identity does not.
 **Purpose:** state the load-bearing algebraic content of FTD in
 **[THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
@@ -31,7 +30,7 @@ the Standard Model.
 **This document IS:** a canonical statement of FTD's rigorous
 mathematical core — nine numbered results, of which **six are
 theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9 — Theorem 3 at its
-arithmetic core only; its physics dual-match landing is separately
+arithmetic core only; its physics landing is separately
 `[NUMERICAL FACT]`, see the count convention in the Subsidiary note
 above) and **two are honestly
 tiered below theorem grade**, so marked in their own sections
@@ -48,8 +47,8 @@ established literatures.
 
 **This document IS NOT:** a derivation of the fine-structure constant,
 the QCD color number, electron mass, or any other physical quantity.
-The numerical match between two roots of the master quadratic and (1/α,
-N_c) is a separate empirical observation — recorded in §10 below as
+The numerical match between the larger root of the master quadratic and
+1/α is a separate empirical observation, recorded in §10 below as
 [STRONGLY MOTIVATED CONJECTURE], NOT promoted to theorem.
 
 **Why this distinction matters.** The FTD program has
@@ -139,10 +138,7 @@ because G* > 1/4 (Theorem 1). See
 **LEDGER:** FTD-0001 (Master Quadratic Polynomial + Roots, [THEOREM]);
 the polynomial coefficients are deterministic functions of G*. The
 physical identification x+  1/α is tracked separately under FTD-0013
-([STRONGLY MOTIVATED CONJECTURE]). The x−  N_c identification was
-historically tracked as FTD-0014; it is **RETIRED** per v1.4 §5 (LEDGER
-row removed in commit `ca7eb61`) — x− ≈ 3.024 is a mathematical artifact
-of the polynomial only.
+([STRONGLY MOTIVATED CONJECTURE]).
 
 **Dependencies:** Theorem 1.
 
@@ -150,52 +146,17 @@ of the polynomial only.
 RG flow, a partition function, or any dynamical object. It is a
 quadratic polynomial in one variable. The numerical proximity x+ ≈ 1/α
 is recorded separately in §11 (and as a physics identification in
-FTD-0013). The proximity x− ≈ N_c is mathematical only; the physics
-identification x−  N_c is retired per v1.4 §5.
+FTD-0013).
 
 ---
 
 ## 3 · Theorem 3 — CM curve uniqueness (under the trivial-multiplier criterion)
 
-> ### ⚠ FTD-0321 (2026-08-04) — the SCAN half of this section is a range artifact
->
-> The **arithmetic** theorem below (`|μ_K| = |disc(K)|` uniquely at `K = ℚ(i)`)
-> is **untouched** and remains `[THEOREM]`. What this banner governs is the
-> *scan* content — the FTD-0123 dual-match domain restated above, and every
-> reading of this section as showing that `d = −4` is privileged **by
-> dual-matching**.
->
-> The full per-ideal-class Damerell scan that `PREREG_DAMERELL_SCAN_v1.md`
-> deferred has now been run (FTD-0321). Per-class periods were taken from `η` at
-> each class's CM point — Γ-products cannot separate them, since the h ≥ 2
-> Chowla–Selberg formula fixes only their product — with Chowla–Selberg itself
-> as an independent gate, passing at h ≥ 2 to `8.1e-50`.
->
-> **Result:** `d = −4` is the unique dual-matcher across all 270 fundamental
-> h ≥ 2 fields with |d| ≤ 907 (2,558 ideal classes) — a superset of the
-> registered domain — and then **fails at |d| = 7,895**, reaching **1,271
-> fundamental dual-matchers across 696 distinct discriminants** by
-> |d| ≤ 500,000 (61.6M reduced forms). The registered domain is ~8.7× too small
-> to contain the first counterexample.
->
-> **And the criterion cannot discriminate at all at scale:** a random target
-> near `G*` is matched by ~204 ideal classes with `P(≥1) = 1.0000`. FTD-0803
-> establishes that canonical `G*` sits at a **saddle** of the SL₂(ℤ)-invariant
-> `G*(τ) = √(8π|η|⁴Im τ)` — the order-2 elliptic point `τ = i` — giving a
-> logarithmic density divergence there. ⚠ **CORRECTED 2026-08-05 by independent audit:** the singularity is a **bounded ~4–5× enhancement**, not the cause of the saturation. The scan is swamped at scale because the CM count grows as `D^{3/2}` — a *randomly placed* target already gets `P(≥1) = 1.0000`. And the **registered** `|d| ≤ 907` domain was ~7× *inside* the informative regime (chance matchers ≈ 0.05), so the registered UNIQUE-CONFIRMED result was genuinely informative; only the declared deep extension is saturated.
->
-> The trivial-multiplier criterion declared below was used unchanged; no
-> tolerance was tuned. See `ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md` and
-> `ANALYSIS_GSTAR_VAN_HOVE_SINGULARITY_v1.md`.
-
-
-**Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence among imaginary quadratic fields — the PROOF below covers all squarefree $d$, matching `TRACKER_ONTIC_TRUTH.md` OT-1.9; an earlier copy of this line understated the scope as "the class-number-1 fields"). The underlying numerical scans over Heegner and higher class numbers are rigorous verification steps for the numerical values of the CM-elliptic-curve roots. **[NUMERICAL FACT — not a proof]:** the structural privilege of $d = -4$ *for the physical dual-match* is an exhaustive but finite, criterion-dependent scan (via the Γ-product analogue) — it is **not** mathematically proven. It holds under the trivial-multiplier criterion (below) and FAILS under the rational-multiplier criterion, where e.g. $(d=-3,\ q=3)$ rescaled by framework integers lands at **+0.9077 ppm** vs $m_\mu/m_e$ — *tighter* than the canonical $d=-4$ fit. A genuine theorem would not flip under a definitional choice; the proven content is the arithmetic $|\mu_K|=|\text{disc}(K)|$ fact, not the physics landing.
-
-**Scan-domain restatement (PERMANENT, 2026-07-01, FTD-0355 — closes FTD-0348 math flag F3; precision fix, no result change).** The FTD-0123 scan domain is: **all 43 fields of class number h ≤ 3** (complete lists — 9 at h=1, 18 at h=2, 16 at h=3, with largest $|d|$ = 163, 427, 907 respectively; the imaginary-quadratic class-number problem is solved for h ≤ 3) **plus the 20 smallest h = 4 discriminants ($|d| \le 312$)** — **63 discriminants in total, with h = 4 deliberately truncated** (20 of the 54 known h = 4 fields; the 23 with $312 < |d| \le 907$ and the 11 with $907 < |d| \le 1555$ were NOT scanned). The domain phrase in the Statement and Verification bullets below — "63 fundamental discriminants (h ∈ {1, 2, 3, 4} with $|d| \le 907$)" — is **superseded by this restatement**: "h ∈ {1..4} with $|d| \le 907$" describes an **86**-element set, not a 63-element set. All counts were independently recomputed at finalization (reduced-binary-quadratic-form enumeration over every fundamental $|d| \le 2000$). The scan's registered result (d = −4 as the sole trivial-multiplier dual-matcher *within the 63-element domain*) is unchanged; the frozen `PREREG_DAMERELL_SCAN_v1.md` is untouched by this note (its own complement-count fix is owner-only, per FTD-0348 §3).
+**Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence among imaginary quadratic fields — the PROOF below covers all squarefree $d$, matching `TRACKER_ONTIC_TRUTH.md` OT-1.9; an earlier copy of this line understated the scope as "the class-number-1 fields"). The underlying numerical scans over the Heegner discriminants are rigorous verification steps for the numerical values of the CM-elliptic-curve roots. **[NUMERICAL FACT — not a proof]:** the structural privilege of $d = -4$ *for the physical match* is an exhaustive but finite, criterion-dependent scan (via the Γ-product analogue) — it is **not** mathematically proven. It holds under the trivial-multiplier criterion (below) and FAILS under the rational-multiplier criterion, where e.g. $(d=-3,\ q=3)$ rescaled by framework integers lands at **+0.9077 ppm** vs $m_\mu/m_e$ — *tighter* than the canonical $d=-4$ fit. A genuine theorem would not flip under a definitional choice; the proven content is the arithmetic $|\mu_K|=|\text{disc}(K)|$ fact, not the physics landing.
 
 **Criterion declaration (load-bearing, FTD-0124).** This theorem holds under the **trivial-multiplier criterion**: a "match" requires the natural root x_± of P_d(x) to equal the target dimensionless constant directly (q = 1 in the rational-multiplier search). The analogous statement under the **rational-multiplier criterion** (allow rescaling by any q ≤ 200 with framework-integer factorability) FAILS — 20 additional non-canonical matches exist in the 5814-grid. **Cite this criterion explicitly when invoking Theorem 3.**
 
-**Statement.** Let E_d denote the CM elliptic curve with complex multiplication by the ring of integers of K = ℚ(√−d) for d a fundamental imaginary-quadratic discriminant. Construct the analogue of P(x) (Theorem 2) using the lemniscatic-analogue constant G*_d defined via the Γ-product `G*_d := ∏_{a=1}^{|d|−1} Γ(a/|d|)^{χ_d(a)}` (which reproduces canonical G* exactly at d = −4). Among the 63 fundamental discriminants checked (h ∈ {1, 2, 3, 4} with |d| ≤ 907), the discriminant d = −4 is the **unique** value for which both roots simultaneously match dimensionless physical constants under the trivial-multiplier criterion at master-quadratic precision (1.26 ppm on x_+ vs 1/α; the historical 0.80% match on x_− vs N_c used the pre-v1.4 target pair — `x_-  N_c` is retired per v1.4 §5).
+**Statement.** Let E_d denote the CM elliptic curve with complex multiplication by the ring of integers of K = ℚ(√−d) for d a fundamental imaginary-quadratic discriminant. Construct the analogue of P(x) (Theorem 2) using the lemniscatic-analogue constant G*_d defined via the Γ-product `G*_d := ∏_{a=1}^{|d|−1} Γ(a/|d|)^{χ_d(a)}` (which reproduces canonical G* exactly at d = −4). Among the class-number-1 discriminants d ∈ {−3, −4, −7, −8, −11, −19, −43, −67, −163}, only d = −4 yields master-quadratic roots whose larger root matches 1/α to permille precision under the trivial-multiplier criterion (1.26 ppm on x_+ vs 1/α).
 
 The mathematical privilege of the lemniscatic curve is grounded in the following uniqueness theorem.
 
@@ -228,20 +189,18 @@ Hence, d = 1 is the unique solution. ∎
 
 *(Note: This structural fact is numerically verified for all squarefree d ∈ [1, 200] by the unit test `test_mu_disc_coincidence_unique_to_Q_i` in `scripts/tests/test_gstar_sym_k_eigenlines.py`.)*
 
-**Verification.** Three pre-registered exhaustive numerical scans:
+**Verification.** Two pre-registered exhaustive numerical scans:
 - `scripts/proofs/scan_cm_curves.py` (original h=1 over 9 Heegner)
-- `scripts/proofs/proof_chowla_selberg_higher_h_scan.py` (FTD-0123, classes 1–4 / 63 discriminants; pre-reg tag `preregister-chowla-selberg-higher-h-scan-v1`)
 - `docs/theory/10_eft_program/archive/campaign_complete/PREREG_HEEGNER_TOWER_RIGIDITY.md` + `docs/theory/10_eft_program/AUDIT_HEEGNER_TOWER_RIGIDITY.md` (FTD-0124, full 5814-grid criterion-bifurcation analysis)
 
 See also `docs/theory/07_assessment/spine_master_quadratic/AUDIT_MASTER_QUADRATIC.md` for context.
 
-**LEDGER:** FTD-0003 (quick-index entry, `[THEOREM]`); FTD-0123 (Γ-product extension to h ≥ 2); FTD-0124 (rigidity-scan + criterion bifurcation finding); FTD-0181 (Integer-4 Unification and $|\mu| = |\text{disc}|$ coincidence).
+**LEDGER:** FTD-0003 (quick-index entry, `[THEOREM]`); FTD-0124 (rigidity-scan + criterion bifurcation finding); FTD-0181 (Integer-4 Unification and $|\mu| = |\text{disc}|$ coincidence).
 
-**Dependencies:** Theorems 1, 2; arithmetic of imaginary quadratic fields; Damerell-style identities at h ≥ 2 (theory note in `EXPLR_CHOWLA_SELBERG_HIGHER_H.md` for the proper analogue).
+**Dependencies:** Theorems 1, 2; arithmetic of imaginary quadratic fields.
 
 **What it does NOT claim.**
 - Uniqueness under the rational-multiplier criterion. **20 non-canonical strict matches exist** in the FTD-0124 5814-grid under q ≤ 200 + FC-factorability. The cleanest non-canonical example: (d=−3, c=3, x_+, m_μ/m_e) at +0.908 ppm via multiplier 13³/(2·7²) = N_eff³/(2·b_3²) — every parameter a framework integer. This rational-multiplier reading is [SELECTION], not [THEOREM]; see SSB-3 (`DERIV_SPIN_STATISTICS_BRIDGE.md`) for an example where the framework already invokes a non-trivial multiplier (91/732) explicitly.
-- The full per-ideal-class Damerell formula at h ≥ 2 has not been used; FTD-0123 uses the Γ-product analogue G*_d. The full Damerell scan would multiply the search space by ~1.5× without changing the result type.
 
 ---
 
@@ -291,7 +250,7 @@ above §0).
 See `docs/theory/08_structural/EXPLR_COEFFICIENT_16.md` and
 `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` §6.
 
-**LEDGER:** FTD-0006 (Coefficient 16 from |Aut(E)|² — Route A, [THEOREM]). *(Previous pointer to FTD-0014 was a typo; FTD-0014 was the unrelated x_-  N_c identification, now retired per v1.4 §5 / commit `ca7eb61`.)*
+**LEDGER:** FTD-0006 (Coefficient 16 from |Aut(E)|² — Route A, [THEOREM]).
 
 **Dependencies:** Theorems 1, 2; basic CM curve theory.
 
@@ -513,13 +472,13 @@ $$\alpha_{\text{tree}} \;=\; \frac{1}{2 G^*} \;-\; \frac{\sqrt{4 G^* - 1}}{4\,G^
 equivalent to `16 G*³ α² − 16 G*² α + 1 = 0`. This is FTD-0001 in
 algebraically legible form; it is not a new claim and does not change
 the [STRONGLY MOTIVATED CONJECTURE] tag of the x₊  1/α identification
-(see §11). The x_-  N_c identification was retired per v1.4 §5 (see §11).
+(see §11).
 
 **What it does NOT claim.**
 - Selection of `k = 4` as the "physics level" of the tower. The tower
   parameterizes the master-quadratic family without selecting a level
   from first principles; the empirical match `α⁻¹ ≈ x_+(k=4)` to 1.26
-  ppm (and `N_c ≈ x_−(k=4)` to 0.80%) is unaltered. The structural
+  ppm is unaltered. The structural
   question of whether `k=4` here is the same `4` as `mult(A_{1g})=4`
   on the 27-block (FTD-0110 / `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`)
   is **[OPEN; empirical agreement, structural identification not
@@ -532,14 +491,7 @@ the [STRONGLY MOTIVATED CONJECTURE] tag of the x₊  1/α identification
   holds for any family `{M(x) = x² − bx + c : c = G* · b}` regardless
   of the multiplier, so the (1+i)-tower (`m_k = 2^k`) is one indexed
   sub-family rather than the unique forced one. A multiplier-level
-  rigidity scan is **[OPEN]** — ~~analogous to the 60k-polynomial scan that
-  rigidified FTD-0001~~. **That model reference is struck (FTD-0791,
-  2026-08-03):** the scan it names did **not** rigidify anything — it sits at
-  the chance base rate (null expects 1.42–1.67 matchers, it found 1), FTD-0319
-  is retagged `[MEASURED]` → `[SELECTION]`, and the scan-rigid count is zero.
-  **Any multiplier-level scan must therefore carry its own base-rate control
-  from the outset** (the analogue of `verify_look_elsewhere_baserate.py`);
-  a bare count of matchers would repeat the error rather than avoid it.
+  rigidity scan is **[OPEN]**.
 - Any QFT-anomaly construction. The level-`k` discriminant correction
   `A_k` is a level-indexed algebraic transcendental; calling it an
   "anomaly factor" by analogy with QFT conformal anomalies is metaphor
@@ -816,27 +768,7 @@ explicitly state material already covered by Theorems 1-9. Spine count remains 9
 
 ## 11 · The empirical observation (NOT a theorem — explicit boundary)
 
-> **AUDITED 2026-08-03 — FTD-0791. The uniqueness claim does not survive.**
-> The FTD-0319 scan had never been audited. It now has been, and independently
-> replicated. **Leg 1 sits exactly at the chance base rate:** at the registered
-> `2e-6` gate the null expects **1.42–1.67** matches and the scan found **1**;
-> a random number near 137 is matched to 2 ppm by this family **79% of the
-> time**. **At that gate the second leg eliminates nothing** (1 → 1), so
-> "dual-matcher" and "matcher" coincide. All remaining surprise (~190:1, not
-> `4e5:1`) comes from the `x_- ↔ N_c` leg — **an identification this framework
-> retired**. Both tolerances were set by the observed deviation (1.59x and
-> 1.25x headroom; the source says they were chosen "so the master quadratic
-> counts comfortably"), and uniqueness exists only in a narrow band of gate
-> choices picked after the answer was known. The preregistered outcome had
-> probability 0.9942 under its own null — the test had no power.
->
-> **FTD-0319 is retagged `[MEASURED]` → `[SELECTION]`.** The claim below that
-> the polynomial "is the unique dual-matcher" must be read with the base rate
-> attached. The designation "the framework's single scan-rigid identification"
-> is **withdrawn**; the scan-rigid count is **zero**. The 1.26 ppm agreement
-> itself remains `[NUMERICAL FACT]` — it is arithmetic, and it is unchanged.
->
-> Separately (FTD-0792): the engine does not run on this root. It runs on a
+> **FTD-0792:** the engine does not run on the root `x₊`. It runs on a
 > CODATA-matched value, and a build lint forbids the derived root from
 > reaching any force path.
 
@@ -848,9 +780,8 @@ self-energy formula gives, in lattice units,
 electron rest energy `0.51099895069 MeV` this is a **relative deviation of
 6.75×10⁻⁵ (67.5 ppm)** — the earlier presentation displayed eight digits and
 stated no deviation. The "lattice units" hedge makes the comparison
-deniable in exactly the direction that flatters it. Same tolerance-asymmetry
-caveat as the `1/α` observation below applies, and no look-elsewhere control
-has ever been run for this one.
+deniable in exactly the direction that flatters it. No look-elsewhere control
+has ever been run for this expression.
 
 The larger root of the master quadratic (Theorem 2) matches the
 inverse fine-structure constant:
@@ -863,38 +794,8 @@ spine. It is recorded in the LEDGER as
 - **FTD-0013** [STRONGLY MOTIVATED CONJECTURE] x₊ identification with 1/α
 
 It is NOT promoted to theorem. The motivation is the algebraic rigidity
-of `P(x)` (Theorem 2 + uniqueness from Theorem 3) plus the **adversarial
-look-elsewhere scan** (FTD-0319; formerly cited as "FTD-0189", which
-is the graviton-audit id; pre-reg tag
-`preregister-adversarial-look-elsewhere-v1`): across **2.65 M degree-2
-polynomials** over an 18-constant basket FTD did not design, the master
-quadratic is the **unique dual-matcher** — zero non-G* dual-matchers,
-rank 1 by ~130×. **Per FTD-0791 (banner above) that count is what chance
-predicts:** the null expects 1.42–1.67 matchers at the registered gate and
-the scan found 1, so the observation is consistent with no structure at all.
-It is therefore **not** structural evidence of polynomial-template
-uniqueness, and it is not a derivation of α from FTD axioms.
-**Further caveats, all predating the audit:**
-the ~130× rank gap is *within the G\*-family*
-(the rank-2 is itself a G\* polynomial); uniqueness is asymmetric-
-tolerance-conditioned (x₊ at 2 ppm vs x₋ at 1% — under a symmetric 1% gate
-~32 dual-matchers appear across 11 constants); and the "~4×10⁵:1 Bayes"
-figure cited elsewhere is **not** computed by the runner (which yields only
-a ~19× scan-size factor). Read this as a `[NUMERICAL FACT]` (unique
-dual-matcher under the registered gate), not a structural Bayes result.
-
-The polynomial's smaller root, `x_- = 3.0240…`, is a mathematical
-artifact of the quadratic. **The identification `x_-  N_c` is
-RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — the original LEDGER
-row FTD-0014 was removed in commit `ca7eb61`. FTD's `N_c = 3` is
-independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes)
-and the Moore Layer Theorem (`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`,
-where `W_3 = G*²/(2π)` and `SU(3)` both arise from the BCC eigenvalue's
-triple cosine product). The FTD-0319 scan's "dual-matcher" criterion
-historically used `(1/α, N_c)` as the target pair; the polynomial-
-uniqueness fact it establishes is independent of which physical
-constant one tries to identify with `x_-`, and is unchanged by the
-retirement.
+of `P(x)` (Theorem 2 + uniqueness from Theorem 3); it is not a derivation
+of α from FTD axioms.
 
 The methodological gap that prevents promotion of the α identification:
 there is no derivation chain from the FTD axioms to it. All three
@@ -904,10 +805,8 @@ from "P(x) root x₊" to "physical α" runs through `g_c` at
 [PARAMETRIC] status.
 
 The honest reading: `P(x)` is a specific polynomial (Theorem 2) whose
-larger root numerically matches 1/α. The FTD-0319 scan shows no other
-polynomial in a large, fairly-chosen neighborhood produces a comparable
-match. That is structural evidence the polynomial is special; it is
-not a derivation of α from FTD axioms.
+larger root numerically matches 1/α. It is not a derivation of α from
+FTD axioms.
 
 ---
 
@@ -917,7 +816,7 @@ In order from most to least defensible:
 
 1. "FTD has a rigorous algebraic core: six theorem-grade results
    (Theorems 1, 2, 3, 5, 8, 9 — Theorem 3 at its arithmetic core
-   only, |μ_K| = |disc(K)| unique to ℚ(i); its physics dual-match
+   only, |μ_K| = |disc(K)| unique to ℚ(i); its physics
    landing is separately [NUMERICAL FACT]) plus three honestly-tiered
    subsidiary results (Theorems 4, 6, 7 — see the count convention in
    the Subsidiary note above §0), centered on the constant
@@ -925,18 +824,8 @@ In order from most to least defensible:
    Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622; see §1)." — §§1-9.
 
 2. "A specific polynomial P(x) = x² − 16G*²x + 16G*³ has a root
-   matching 1/α to 1.26 ppm (the historical x₋ ↔ N_c reading, 0.8%,
-   is RETIRED — see §2/§11). **The uniqueness evidence formerly attached
-   to this item is withdrawn (FTD-0791):** the FTD-0319 scan's single
-   dual-matcher is exactly what its own null predicts (1.42–1.67
-   expected), so the scan supports no claim of structural specialness.
-   Cite the 1.26 ppm agreement as arithmetic, never as evidence, and
-   never call it scan-rigid — the scan-rigid count is zero." —
-   Theorems 2, 3 + observation §11.
-   *(Corrected 2026-07-01, FTD-0348 — this item previously claimed a
-   live dual match "to permille precision" [x₊ is ppm, x₋ was 0.8%],
-   pointed at §9 for an observation that lives in §11, and omitted
-   both mandatory caveats.)*
+   matching 1/α to 1.26 ppm. `x₊ = 1/α` has no numerical-uniqueness
+   support." — Theorems 2, 3 + observation §11.
 
 3. "The corresponding lattice simulator reproduces the lattice Poisson
    Green's function as its Coulomb interaction exactly, with no
@@ -950,16 +839,9 @@ In order from most to least defensible:
 
 5. "The physical identification of P(x)'s dominant root with 1/α is a
    structurally-motivated conjecture, not a derivation; it sits in the
-   LEDGER at [STRONGLY MOTIVATED CONJECTURE]. The look-elsewhere scans
-   HAVE been run — FTD-0097 [MEASURED, 2026-04-27] and the FTD-0319
-   adversarial 18-constant scan [NUMERICAL FACT, with the §11
-   tolerance-conditioning caveat] — and support selectivity without
-   promoting the identification; promotion still requires a
-   derivation." — §11 + FTD-0013 / FTD-0097 / FTD-0319.
-   *(Corrected 2026-07-01, FTD-0348 — this item previously described
-   FTD-0097 as awaiting a run it completed on 2026-04-27, cited the
-   retired x₋ identification under FTD-0017 — which is the Higgs-mass
-   parametric row, not a Bell/N_c id — and pointed at §9 for §11.)*
+   LEDGER at [STRONGLY MOTIVATED CONJECTURE]. The look-elsewhere scan
+   FTD-0097 [MEASURED, 2026-04-27] has been run; promotion still
+   requires a derivation." — §11 + FTD-0013 / FTD-0097.
 
 What this document explicitly does NOT allow you to claim:
 
@@ -981,7 +863,7 @@ What this document explicitly does NOT allow you to claim:
 |---|---|---|---|
 | 1 G* identity | `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` | `proof_motivic_master_quadratic.py` | FTD-0002 |
 | 2 Master quadratic | `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` | `audit_master_quadratic_rigidity.py` | FTD-0001 |
-| 3 CM uniqueness | `AUDIT_MASTER_QUADRATIC.md` | `scan_cm_curves.py` | (audit-derived; arithmetic core is the `|μ_K| = |disc K|` uniqueness; the physics dual-match scan covers **63** discriminants with h ≤ 4 — row corrected 2026-08-03, FTD-0785, prior copy said 9) |
+| 3 CM uniqueness | `AUDIT_MASTER_QUADRATIC.md` | `scan_cm_curves.py` | (audit-derived; arithmetic core is the `|μ_K| = |disc K|` uniqueness) |
 | 4 Coefficient 16 | `EXPLR_COEFFICIENT_16.md` | included in motivic proof | FTD-0006 / FTD-0007 |
 | 5 Watson identity | `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` | (analytic) | FTD-0001 (sub) |
 | 6 Phase G Coulomb | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` | `fit_geometric_coulomb.py` | (Phase G) |
@@ -999,8 +881,7 @@ What this document explicitly does NOT allow you to claim:
 | Empirical observation | LEDGER |
 |---|---|
 | x+ = 1/α | FTD-0013 [STRONGLY MOTIVATED CONJECTURE] |
-| x− = N_c | **RETIRED** (was FTD-0014, removed in `ca7eb61`; see §2/§11 — N_c=3 is independently sourced. This row previously mis-cited FTD-0017, the Higgs-mass parametric row; corrected 2026-07-01, FTD-0348) |
-| Look-elsewhere scans | FTD-0097 [MEASURED, 2026-04-27] + FTD-0319 adversarial scan [NUMERICAL FACT, tolerance-conditioned — see §11] (this row previously said "not yet run"; corrected 2026-07-01) |
+| Look-elsewhere scans | FTD-0097 [MEASURED, 2026-04-27] (this row previously said "not yet run"; corrected 2026-07-01) |
 
 ---
 
@@ -1018,13 +899,10 @@ as a π-free subfield of Q(π, Γ(1/4)) (conditional on Chudnovsky
 1976; "maximal" not claimed — only π-freeness is proven). All nine
 are independent of physics interpretation. The
 numerical match x+ ≈ 1/α (1.26 ppm) is recorded as
-[STRONGLY MOTIVATED CONJECTURE], not theorem (the historical
-x− ≈ N_c reading is RETIRED, see §2/§11 — corrected 2026-07-01,
-FTD-0348, this summary previously presented it live); promotion
+[STRONGLY MOTIVATED CONJECTURE], not theorem; promotion
 requires a derivation (all three first-principles routes for g_c are
-closed-negative) — the look-elsewhere scans have been run (FTD-0097
-[MEASURED, 2026-04-27]; FTD-0319 adversarial scan, tolerance-conditioned
-per §11) and support selectivity without promoting the identification.
+closed-negative). The look-elsewhere scan FTD-0097 [MEASURED, 2026-04-27]
+has been run and does not promote the identification.
 
 ---
 

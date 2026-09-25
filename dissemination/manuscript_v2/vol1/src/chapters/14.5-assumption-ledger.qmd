@@ -78,7 +78,7 @@ The ternary state space $\{-1, 0, +1\}$ has been clarified — it is not an inde
 |----------|-------|--------|-------|-------|
 | C (speed of causality) | 1.0 | [A] AXIOM | Core | Defines units |
 | H (Planck resolution) | 1.0 | [A] AXIOM | Core | Defines units |
-| **ALPHA (fine structure)** | 0.00729 | [SMC] **STRONGLY MOTIVATED CONJECTURE** | Core | Master quadratic [THEOREM]; identification $x_+ = 1/\alpha$ has 1.26 ppm match + ~$4{\times}10^5$:1 Bayes weight (FTD-0121 + FTD-0122 + FTD-0123) but NO derivation chain from axioms. |
+| **ALPHA (fine structure)** | 0.00729 | [SMC] **STRONGLY MOTIVATED CONJECTURE** | Core | Master quadratic [THEOREM]; identification $x_+ = 1/\alpha$ has 1.26 ppm match but NO derivation chain from axioms; $x_+ = 1/\alpha$ has no numerical-uniqueness support. |
 | **KB (existence threshold)** | 0.511 | [†] **COMPANION** | Extended | $m_e = m_P\sqrt{2\pi}(16/3)\alpha^{11}$ |
 | **PHI (golden ratio)** | 1.618 | [†] **COMPANION** | Extended | Stability fixed point |
 | **α_G(e,e)** (gravitational fine-structure) | 1.745×10⁻⁴⁵ | [DERIVED, postulate-conditional] (FTD-0131) | Extended | $(m_e/m_P)^2 = [\sqrt{2\pi}\cdot(16/3)\cdot\alpha^{11}]^2$; 0.38% match to measured. Earlier `GRAVITY_BIAS = 0.01 = 1/(b_3+N_c)^2` is [CLOSED NEGATIVE per FTD-0131]. |
@@ -93,7 +93,6 @@ The ternary state space $\{-1, 0, +1\}$ has been clarified — it is not an inde
 | Quantity | Formula/Value | Status | Accuracy |
 |----------|---------------|--------|----------|
 | Fine structure α | 1/137.036 | [SMC] STRONGLY MOTIVATED CONJECTURE | 1.26 ppm tree-level match. (0.21 ppt expansion is post-hoc fit beyond CODATA precision; not a prediction — see @sec-precision.) |
-| Number of colors N_c | 3.024 → 3 | [SMC] STRONGLY MOTIVATED CONJECTURE | 0.80% match; $x_- = N_c$ identification supported by structural-uniqueness scans (FTD-0121, FTD-0124) but not derived |
 | Lemniscatic constant G* | 2.9587 | [T] THEOREM | $G^* = \Gamma(1/4)/\Gamma(3/4)$; Euler reflection |
 | Coefficient 16 | $\|\mathrm{Aut}_{\bar{\mathbb{Q}}}(E)\|^2 = \|\mathbb{Z}[i]^\times\|^2$ for $E: y^2 = x^3 - x$ | [T] THEOREM (the equality $16 = \|\mathrm{Aut}\|^2$); identification with master-quadratic prefactor [STRUCTURAL CONJECTURE supported by FTD-0122 BCC complex structure] |
 | **D = 3 uniqueness** | Topological necessity (4 routes) | [SELECTION] | The argument constrains but does not exclude all alternative ontologies; see `FOUND_DIMENSIONAL_SELECTION.md`. |
@@ -165,7 +164,6 @@ The ternary state space $\{-1, 0, +1\}$ has been clarified — it is not an inde
 
 | Quantity | Formula | Status | Accuracy |
 |----------|---------|--------|----------|
-| N_generations | floor(N_c) = floor(3.024) = 3 | [†] COMPANION | Exact |
 | Fermions/generation | N_base = 4 | [†] COMPANION | Exact |
 | Total fermions | N_c × N_base = 12 = N_eff - 1 | [†] COMPANION | Exact |
 
@@ -259,7 +257,7 @@ The following items have been **verified in simulation**:
 |------|----------|--------|
 | **sLoop produces Bell violations** | RETIRED (corrected 2026-07-01, FTD-0347): the continuous-Bell sLoop target was CLOSED DECLINED under FC-1 on 2026-06-10 (`DERIV_OBSERVER_BELL_MECHANISM.md`). The substrate is local/classical — the engine measures S ≤ 2 [THEOREM]; S = 2√2 arises only under the imported complexification/measurement reading [SELECTION]; a native S > 2 would *falsify* FC-1, not confirm FTD | [R] **RETIRED** |
 | **Lorentz invariance is relational** | Wave isotropy, Coulomb isotropy, time dilation isotropy all confirmed in simulation | [V] **VERIFIED** |
-| **SU(3) from lattice geometry** | Derived via octonionic structure: Aut(𝕆) = G₂ ⊃ SU(3); Günaydin-Gürsey result (1973); N_c = 3 from master quadratic | [†] **DERIVED** |
+| **SU(3) from lattice geometry** | Derived via octonionic structure: Aut(𝕆) = G₂ ⊃ SU(3); Günaydin-Gürsey result (1973) | [†] **DERIVED** |
 | **SU(2) from ternary states** | Derived via spinor structure: π₁(SO(3)) = ℤ₂ gives spinors; ternary states form natural doublet | [†] **DERIVED** |
 | **U(1) gauge emergence** | Helmholtz decomposition: 2 transverse modes, longitudinal suppression < 3% | [V] **VERIFIED** |
 | **Born rule derivation** | 4 independent derivations (Gleason, frequency, conservation, max entropy): 13/13 tests pass | [T] **THEOREM** |
@@ -299,7 +297,7 @@ This yields the master quadratic as the self-consistent solution, with running c
 |-------------|-------------------|--------------|
 | U(1) | Helmholtz decomposition + Gauss constraint | 2 transverse modes (< 3% longitudinal leakage) |
 | SU(2) | Frame bundle topology: π₁(SO(3)) = ℤ₂ | 720° rotation test, Pauli algebra verification |
-| SU(3) | Günaydin-Gürsey (1973): G₂/U(1) ⊃ SU(3) | N_c = 3.024 → 3, Gell-Mann algebra, confinement |
+| SU(3) | Günaydin-Gürsey (1973): G₂/U(1) ⊃ SU(3) | N_c = 3, Gell-Mann algebra, confinement |
 
 All gauge groups are **derived from FTD structure**, not assumed.
 
@@ -324,7 +322,6 @@ The exponent 2 is uniquely selected by the convergence of four independent argum
 | Question | Status | Notes |
 |----------|--------|-------|
 | ~~Can GRAVITY_BIAS = 1/100 be derived?~~ | [CLOSED NEGATIVE per FTD-0131] | "1/100" framework-integer reading off by 10²⁰ to 10⁴³; substrate-derived α_G(e,e) = (m_e/m_P)² ≈ 1.745×10⁻⁴⁵ at 0.38% [DERIVED, postulate-conditional] |
-| ~~Why 3 generations?~~ | [V] RESOLVED | floor(N_c) = 3 from master quadratic |
 | ~~Can Λ be derived?~~ | [V] RESOLVED | α^57 = 10^-121.8 (0.16% error) |
 | ~~Is the Lemniscate-Alpha unique?~~ | [V] **RESOLVED (scoped)** | Unique within the stated constraint class: structure fixed by self-reference, coefficients encode framework integers |
 | ~~What selects these 4 integers?~~ | [V] **RESOLVED** | Fibonacci skeleton: b₃=N_base+N_c, N_eff=F(b₃) |
@@ -362,7 +359,7 @@ The Lemniscate-Alpha curve is **unique within the stated construction**. The arg
    - Mode 16: $a_{16} = b_{16} = 1/16 = 1/N_{\text{base}}^2$
 
 3. **G* self-consistently determined**:
-   - $G^* = \frac{(1/\alpha) \times N_c}{(1/\alpha) + N_c}$ (harmonic-mean relation)
+   - $G^* = \frac{x_+ x_-}{x_+ + x_-}$ (harmonic-mean relation)
    - $G^* = 3 - \frac{17\alpha}{3}$ where 17 = $n_{\text{eff}} + N_{\text{base}}$
 
 4. **Framework integers unique** (by Fibonacci skeleton)
@@ -576,7 +573,7 @@ The classical half of the cosmological constant problem (where does the $M_\text
 The FTD framework has:
 - **Calibration declarations** ($a_\mathrm{phys} \equiv \ell_P$, $K_B = m_e$, $t_\mathrm{phys}$) explicitly stated; dimensional predictions are calibration-conditional, dimensionless ratios are calibration-independent.
 - **9 algebraic-spine theorems** + the BCC complex-structure theorem (Paper B Thm 3.1) — all proven, all with verification scripts at machine or arbitrary precision.
-- **Empirical match $x_+ = 1/\alpha$ at 1.26 ppm** [STRONGLY MOTIVATED CONJECTURE], backed by structural-uniqueness scans (~$4{\times}10^5$:1 Bayes weight) but lacking a derivation chain from axioms.
+- **Empirical match $x_+ = 1/\alpha$ at 1.26 ppm** [STRONGLY MOTIVATED CONJECTURE], lacking a derivation chain from axioms; $x_+ = 1/\alpha$ has no numerical-uniqueness support.
 - **The strongest possible claim** (axioms→α derivation) remains [OPEN]; lead-physicist diagnosis is structural decoupling via Phase J ultralocality.
 
 The framework is **NOT** "fully derived from first principles." It is a structurally-validated empirical match with a publication-grade mathematical core. See `docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md` for the canonical bedrock.

@@ -330,7 +330,7 @@ print()
 
 # The other root
 x_minus = 3.0239639163
-print(f"  x_- = N_c = {x_minus:.10f}")
+print(f"  x_- = {x_minus:.10f}")
 print(f"  32*pi*W_3*(1-x_minus_inv*G*) with x_minus_inv = 1/x_minus:")
 inv_xm = 1/x_minus
 print(f"  1/x_minus = {inv_xm:.10f}")

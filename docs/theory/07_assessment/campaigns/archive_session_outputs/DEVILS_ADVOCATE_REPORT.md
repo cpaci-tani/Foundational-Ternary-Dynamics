@@ -67,7 +67,7 @@ The biggest single risk is **cross-doc inconsistency**: VON_NEUMANN_CONSTRUCTION
 
 **F5:** §4.2 ("CM-curve uniqueness across class-number-1 fields") still leans on the Option-3 scan ("only one survives"). That scan is finite (9 fields), so it is finitarily clean — Permitted Moves #1. No gap.
 
-**F6:** Algebraic content fully preserved: master quadratic, Vieta, discriminant trichotomy, dual-match, CM-curve uniqueness, two routes to 16. Tag downgrades from [THEOREM] to [STRONGLY MOTIVATED CONJECTURE] for the physical identification are stricter, not laxer — appropriate.
+**F6:** Algebraic content fully preserved: master quadratic, Vieta, discriminant trichotomy, CM-curve uniqueness, two routes to 16. Tag downgrades from [THEOREM] to [STRONGLY MOTIVATED CONJECTURE] for the physical identification are stricter, not laxer — appropriate.
 
 **Recommended action:** None blocking. The OPEN_*.md references should be confirmed to exist. Title change ("Algebraic Identity and Physical Match") matches content.
 

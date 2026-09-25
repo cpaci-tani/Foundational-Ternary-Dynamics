@@ -115,7 +115,7 @@
     {
       "ref": "IMP-E1", "kind": "empirical-identification", "type_imported": "x+ = 1/alpha (the master-quadratic large root IS the inverse fine-structure constant)",
       "price": 1, "unit": "empirical identification", "canonical_tag": "[STRONGLY MOTIVATED CONJECTURE]",
-      "provenance": "FTD-0013; 1.26 ppm tree-level match; structural-uniqueness scan FTD-0319 (a [NUMERICAL FACT], not a structural Bayes result)",
+      "provenance": "FTD-0013; 1.26 ppm tree-level match",
       "frontier_face": "the one adopted empirical bridge the FC-W bit serves",
       "falsifier": "alpha measured to disagree beyond the tree-level tolerance (constitution FC-W kill condition 3)."
     },

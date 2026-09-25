@@ -1,6 +1,6 @@
 # EXPLR — Master Quadratic Structural Readings: Volumetric, 2×2 Mixing-Matrix, and Conjugate-Lattice Interpretations
 
-**Status:** [STRUCTURAL OBSERVATION] — three structural re-framings of the master quadratic `x² − 16·G*²·x + 16·G*³ = 0`. None is a new theorem; each is an interpretive picture of existing spine theorems (FTD-0001/0003/0004/0013/0111; historical FTD-0014 references throughout this document refer to the now-retired `x_-  N_c` identification, **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+  1/α` (FTD-0013); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. All "dual prediction" prose below is preserved as historical interpretation but no longer load-bearing). Per-section tags preserved from sources: the volumetric reading is [STRUCTURAL OBSERVATION] correcting the abstract 2×2 presentation; the 2×2 mixing-matrix reading is [STRUCTURAL OBSERVATION]; the conjugate-lattice reading is [STRUCTURAL OBSERVATION] with Reading 3 (|Aut(E × E)|) structurally cleanest.
+**Status:** [STRUCTURAL OBSERVATION] — three structural re-framings of the master quadratic `x² − 16·G*²·x + 16·G*³ = 0`. None is a new theorem; each is an interpretive picture of existing spine theorems (FTD-0001/0003/0004/0013/0111). Per-section tags preserved from sources: the volumetric reading is [STRUCTURAL OBSERVATION] correcting the abstract 2×2 presentation; the 2×2 mixing-matrix reading is [STRUCTURAL OBSERVATION]; the conjugate-lattice reading is [STRUCTURAL OBSERVATION] with Reading 3 (|Aut(E × E)|) structurally cleanest.
 **Consolidates:** `EXPLR_VOLUMETRIC_READING_OF_MASTER_QUADRATIC.md`, `EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md`, `EXPLR_CONJUGATE_LATTICE_INTERPRETATIONS.md`
 
 **Document type:** Structural interpretation (brainstorm cluster)
@@ -14,11 +14,11 @@ This document consolidates three structural re-framings of the master quadratic 
 
 - **§1 — The volumetric reading (structurally deepest).** The master quadratic IS volumetric, through its *coefficients'* origin in the 3D 27-block structure: G\* from the BCC Watson integral (a 3D Brillouin-zone integral) and `16 = N_base²` from the O_h trivial-irrep multiplicity on the 27-voxel Moore neighborhood. This is the structural claim. It explicitly **corrects** the scope of the 2×2 mixing-matrix reading: the 2×2 presentation is abstract algebraic re-presentation, not a literal 3D 2-partition of voxels.
 
-- **§2 — The 2×2 mixing-matrix reading (pedagogical entry).** The master quadratic is algebraically identical to the characteristic polynomial of a 2×2 symmetric mixing matrix with diagonal `8G*²` and coupling `√(64G*⁴ − 16G*³)`, eigenvalues `(1/α, N_c)`. This provides an accessible physical picture (avoided crossing, bonding/antibonding modes) for the harmonic-conjugate identity `α + 1/N_c = 1/G*`. Per the §1 correction, it should be presented as a *visual analogy*, not a structural claim.
+- **§2 — The 2×2 mixing-matrix reading (pedagogical entry).** The master quadratic is algebraically identical to the characteristic polynomial of a 2×2 symmetric mixing matrix with diagonal `8G*²` and coupling `√(64G*⁴ − 16G*³)`, eigenvalues `(x₊, x₋)`. This provides an accessible physical picture (avoided crossing, bonding/antibonding modes) for the harmonic identity `1/x₊ + 1/x₋ = 1/G*`. Per the §1 correction, it should be presented as a *visual analogy*, not a structural claim.
 
 - **§3 — The conjugate-lattice reading (counting layer).** The squaring `16 = N_base² = |Aut(E)|²` admits three sub-readings; the cleanest is `|Aut(E × E)|_diagonal = 16` for the product variety of the unique class-number-1 CM curve. This is the *counting* origin of the coefficient 16 and connects three spine theorems (3, 4, 8).
 
-The relationship in one line: **the volumetric reading says where the master quadratic lives (in the 3D coefficients); the conjugate-lattice reading says why the coefficient 16 is squared (product-variety automorphism count); the 2×2 reading gives a pedagogical picture for the dual prediction — and is explicitly an analogy, scoped by §1.**
+The relationship in one line: **the volumetric reading says where the master quadratic lives (in the 3D coefficients); the conjugate-lattice reading says why the coefficient 16 is squared (product-variety automorphism count); the 2×2 reading gives a pedagogical picture for the root pair — and is explicitly an analogy, scoped by §1.**
 
 ---
 
@@ -104,7 +104,7 @@ The master quadratic is NOT a literal sub-block of the per-voxel Laplacian. It e
 
 ```
 Voxel-scale (per-voxel coupling):  O(1)   ≈ 18-point Laplacian eigenvalues
-Cluster-scale (master quadratic):  O(100) ≈ 1/α and N_c
+Cluster-scale (master quadratic):  O(100) ≈ x₊ and x₋
 ```
 
 These are **fundamentally different abstraction levels** in FTD's two-layer ontology:
@@ -123,26 +123,18 @@ The master quadratic operates at the cluster-integrated level; the 4×4 A_{1g} L
 2. **Symmetry decomposition**: O_h trivial-irrep multiplicity on the 27-voxel Moore neighborhood gives N_base = 4, hence 16 = N_base².
 3. **Algebraic combination**: master quadratic is the polynomial in these ingredients (linear coefficient 16·G*², constant term 16·G*³).
 
-**The "EM-color mixing" interpretation (commit `09a1569`) works at the algebraic level**, where the master quadratic's roots can be presented as eigenvalues of a 2×2 symmetric matrix. **But the volumetric mechanism** is through the BCC Watson integral and A_{1g} multiplicity — NOT a literal 2-partition of voxels.
-
-### A.3.2 · What this clarifies about the conjecture
-
-The dual prediction `x_+ ≈ 1/α` and `x_- ≈ N_c` is the empirical IDENTIFICATION (FTD-0013, FTD-0014) of the master quadratic's roots with physical SM constants. The 2×2 mixing matrix interpretation provided one **algebraic picture** for this identification. The volumetric reading says:
-
-> *EM coupling 1/α and color count N_c are not literally "two modes" in a 2D abstract space. They are algebraic projections of 3D volumetric structure: the BCC sublattice Watson integral (parameterized by G*) and the O_h trivial-irrep multiplicity on the 27-voxel Moore neighborhood (parameterized by N_base = 4). The master quadratic is the polynomial that combines these 3D ingredients into a form whose roots match the SM constants.*
-
-This is structurally cleaner than the 2×2 abstract reading. It says the dual prediction is rooted in **specific 3D properties** of FTD's lattice (BCC sublattice + Moore neighborhood + O_h symmetry), not in an abstract 2-mode coupling.
+**The 2×2 mixing-matrix interpretation (commit `09a1569`) works at the algebraic level**, where the master quadratic's roots can be presented as eigenvalues of a 2×2 symmetric matrix. **But the volumetric mechanism** is through the BCC Watson integral and A_{1g} multiplicity — NOT a literal 2-partition of voxels.
 
 ## A.4 · What this clarifies for Paper A
 
-The 2×2 mixing matrix reading (commit `09a1569`) is useful as a **visual analogy** for non-physicists ("EM and color as bonding/antibonding modes"), but should be presented as such — an analogy, not a structural claim.
+The 2×2 mixing matrix reading (commit `09a1569`) is useful as a **visual analogy** for non-physicists, but should be presented as such — an analogy, not a structural claim.
 
-**The structural claim is volumetric:** the master quadratic emerges from specific 3D properties (BCC Watson + A_{1g} multiplicity), and the dual prediction is the empirical identification of its roots with SM constants.
+**The structural claim is volumetric:** the master quadratic emerges from specific 3D properties (BCC Watson + A_{1g} multiplicity).
 
 For Paper A:
 - Lead with the **volumetric structural origin** (Theorems 4, 5 + their 3D content)
 - Present the master quadratic as the algebraic combination of these 3D ingredients
-- Show the dual-prediction empirical match with explicit conjecture tag
+- Show the `x₊ = 1/α` empirical match with explicit conjecture tag
 - Use the 2×2 mixing matrix interpretation as a pedagogical aid where helpful, but not as a structural claim
 
 This is the corrected scope.
@@ -150,9 +142,8 @@ This is the corrected scope.
 ## A.5 · What the volumetric reading does NOT change
 
 - The master quadratic theorem (FTD-0001) — still a theorem.
-- The dual-prediction conjecture (FTD-0013, FTD-0014) — still [STRONGLY MOTIVATED CONJECTURE].
+- The `x₊ = 1/α` conjecture (FTD-0013) — still [STRONGLY MOTIVATED CONJECTURE].
 - The 2×2 mixing reading is still **mathematically equivalent** to the master quadratic — same eigenvalues, same characteristic polynomial.
-- The structural-uniqueness scans (commits `0074f92`, `f36b741`) — still valid evidence for the dual-prediction's structural significance.
 
 What changes is the **proper scope** of the 2×2 mixing matrix interpretation: it's an algebraic re-presentation, not a volumetric reading. The volumetric content is in the COEFFICIENTS, not the matrix entries.
 
@@ -178,7 +169,7 @@ These are open follow-ups that pursue the volumetric reading further. None is se
 
 # PART B — The 2×2 Mixing-Matrix Reading (pedagogical entry)
 
-*Consolidates `EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md` — [STRUCTURAL OBSERVATION] reframing the master quadratic as the characteristic equation of a 2×2 EM-color mixing matrix; provides physical picture for the harmonic-conjugate identity. **Scope note:** per Part A, this is an algebraic re-presentation / visual analogy, not a literal volumetric claim.*
+*Consolidates `EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md` — [STRUCTURAL OBSERVATION] reframing the master quadratic as the characteristic equation of a 2×2 mixing matrix; provides physical picture for the harmonic identity. **Scope note:** per Part A, this is an algebraic re-presentation / visual analogy, not a literal volumetric claim.*
 
 ## B.0 · The reframing in one line
 
@@ -193,8 +184,8 @@ M  =  | 8G*²    √(64G*⁴ − 16G*³) |
 with eigenvalues `λ_± = 8G*² ± √(64G*⁴ − 16G*³) = (137.036, 3.024)` and
 eigenvectors `(1, +1)/√2` (symmetric) and `(1, −1)/√2` (antisymmetric).
 
-This is a structurally suggestive reframing: **the dual prediction
-(1/α, N_c) is the symmetric/antisymmetric eigenmode pair of an EM-color
+This is a structurally suggestive reframing: **the root pair
+(x₊, x₋) is the symmetric/antisymmetric eigenmode pair of a
 mixing matrix**, with the coupling parameterized entirely by G*.
 
 ## B.1 · The matrix and its content
@@ -218,8 +209,8 @@ M = [[ 8G*²,             √(64G*⁴ − 16G*³)  ],
 ### B.1.2 · Eigendecomposition
 
 ```
-λ_+ = 8G*² + √(64G*⁴ − 16G*³) = 137.036171   →  ≈ 1/α
-λ_- = 8G*² − √(64G*⁴ − 16G*³) =   3.023964   →  ≈ N_c
+λ_+ = 8G*² + √(64G*⁴ − 16G*³) = 137.036171   =  x₊
+λ_- = 8G*² − √(64G*⁴ − 16G*³) =   3.023964   =  x₋
 
 v_+  = (1, +1)/√2     (symmetric "sum" mode)
 v_-  = (1, −1)/√2     (antisymmetric "difference" mode)
@@ -242,22 +233,7 @@ frequency"; the modes hybridize strongly.
 
 ## B.2 · The structural reading
 
-### B.2.1 · "Bare" vs "physical" couplings
-
-Before diagonalization (in the bare basis):
-- Two modes with **identical** "bare" frequencies `8G*² ≈ 70`
-- Mixed by coupling `√(64G*⁴ − 16G*³) ≈ 67`
-- Coupling/diagonal ≈ 0.96 (strong mixing)
-
-After diagonalization (physical basis):
-- **Sum mode** (symmetric): eigenvalue `≈ 137 = 1/α` (small EM coupling)
-- **Difference mode** (antisymmetric): eigenvalue `≈ 3 = N_c` (small color count)
-
-In this reading, **EM and color are not independent SM parameters** —
-they are the diagonalized (physical) basis of two near-degenerate modes
-that are strongly mixed at the FTD lattice level.
-
-### B.2.2 · Physical analogies
+### B.2.1 · Physical analogies
 
 This 2×2 structure is the **avoided-crossing / hybridization
 template** seen across physics:
@@ -275,13 +251,9 @@ In FTD's master-quadratic-as-mixing-matrix reading:
 - The 137 eigenvalue is the **bonding-like / in-phase / symmetric** mode (large)
 - The 3 eigenvalue is the **antibonding-like / out-of-phase / antisymmetric** mode (small)
 
-The "smallness" of α (1/137) and "integer-ness" of N_c (3) emerge from
-**strong-mixing eigenvalue splitting** of two originally-degenerate
-diagonals at G*² scale.
+### B.2.2 · Re-reading the harmonic identity
 
-### B.2.3 · Re-reading the harmonic-conjugate identity
-
-The slogan `α + 1/N_c = 1/G*` is the **trace of the inverse mixing
+The harmonic identity `1/x₊ + 1/x₋ = 1/G*` is the **trace of the inverse mixing
 matrix**:
 
 ```
@@ -334,48 +306,7 @@ G\* ≈ 2.96 being substantially larger than 1/4. In the limit
 G\* → 1/4, the discriminant → 0 and modes are degenerate (no mixing).
 At G\* ≈ 3, modes are near-maximally mixed.
 
-## B.4 · What this enables (interpretively)
-
-### B.4.1 · A picture for FTD's "α coupling"
-
-Standard QED: α is "the dimensionless coupling strength of EM" — a
-free parameter measured experimentally.
-
-FTD's master-quadratic-as-mixing reading: **α is the inverse-eigenvalue
-of the symmetric mode of a 2×2 EM-color mixing matrix**. Specifically:
-
-- The "natural" coupling at the FTD lattice level is `1/(8G*²) ≈ 1/70 ≈ 0.014`
-- Mixing splits this into a smaller (symmetric) and larger (antisymmetric) eigenvalue
-- α = 1/137 is the smaller; 1/N_c = 1/3 is the larger
-- Their RECIPROCALS are the eigenvalues 137 and 3 (eigenvalues of M)
-- The mixing strength forces the specific 137:3 ratio
-
-### B.4.2 · A picture for "harmonic conjugacy"
-
-`α + 1/N_c = 1/G*` becomes:
-
-> *"The two physical couplings (EM and color), when measured in their
-> proper inverse-eigenvalue forms, sum to the inverse of the master
-> constant. This is the trace of the inverse mixing matrix —
-> mathematically, the parallel-equivalent of the two diagonalized modes."*
-
-Equivalently: G\* is the **parallel-equivalent coupling** that combines
-EM and color modes into a single effective coupling.
-
-### B.4.3 · A picture for "why 137 and 3"
-
-Without the spine theorems forcing the master quadratic, EM and color
-couplings could in principle take any values. With the spine:
-
-- The mixing matrix has diagonal forced to `8G*² ≈ 70`
-- The coupling forced to `√(64G*⁴ − 16G*³) ≈ 67`
-- The eigenvalues are then `70 ± 67 = 137 and 3`
-- Therefore α = 1/137 and N_c = 3 are NOT independent free parameters
-
-The "smallness" of α = 1/137 is a STRUCTURAL CONSEQUENCE of the strong
-mixing in this 2×2 system. Similarly for N_c = 3.
-
-## B.5 · What the 2×2 reading does NOT establish
+## B.4 · What the 2×2 reading does NOT establish
 
 This is a STRUCTURAL INTERPRETATION, not a derivation. Specifically:
 
@@ -395,54 +326,45 @@ This is a STRUCTURAL INTERPRETATION, not a derivation. Specifically:
 
 (See also Part A: per the volumetric correction, the 2×2 presentation is an algebraic re-presentation / visual analogy — the structural mechanism is volumetric, through the coefficients.)
 
-## B.6 · What the 2×2 reading does enable
+## B.5 · What the 2×2 reading does enable
 
 For Paper A (Letters in Mathematical Physics), the master-quadratic-
-as-mixing-matrix reading provides:
-
-1. **A clean physical picture** for the harmonic-conjugate identity:
-   "EM and color as bonding/antibonding modes of a 2×2 system."
-2. **An accessible analogy** for non-physicists: avoided crossing,
-   coupled pendulums, two-level quantum systems.
-3. **A structural framing** of "why 137 and 3 are not independent":
-   they're the eigenvalues of a single mixing matrix forced by G\*.
+as-mixing-matrix reading provides **an accessible analogy** for
+non-physicists: avoided crossing, coupled pendulums, two-level quantum
+systems.
 
 This is interpretive content, useful for explaining FTD without
 overclaiming. The mathematical content (master quadratic theorem,
-uniqueness scans, harmonic invariant tower) carries the rigor; the
-2×2 reading carries the picture.
+harmonic invariant tower) carries the rigor; the 2×2 reading carries
+the picture.
 
-## B.7 · Open follow-ups (2×2 reading)
+## B.6 · Open follow-ups (2×2 reading)
 
 Speculative but interesting:
 
 1. **Higher-dimensional mixing matrices.** If the master quadratic
    is a 2×2, are there 3×3 or 4×4 mixing matrices in FTD whose
-   eigenvalues match other SM constants? E.g., a 3×3 with
-   eigenvalues (1/α, N_c, m_p/m_e)? (See `EXPLR_3X3_MIXING_NEGATIVE.md`
+   eigenvalues match other SM constants? (See `EXPLR_3X3_MIXING_NEGATIVE.md`
    for the 3×3 generalization failure.)
 2. **The (1+i)-tower as nested mixing matrices.** FTD-0111's tower
    has level-k polynomials. Does each level correspond to a distinct
    mixing structure? Are they nested (e.g., 2×2 inside 4×4)?
 3. **Engine implementation of the 2×2 mixing.** Is there a specific
-   FTD lattice operator whose 2×2 representation is M, with eigenvectors
-   identifying physical EM and color sectors?
+   FTD lattice operator whose 2×2 representation is M?
 4. **The 95.7% mixing ratio.** Is this near-maximal mixing a generic
    feature of FTD's algebraic structure, or specific to (m=2, k=4)?
    Could be tested against the (1+i)-tower at other levels.
 
-## B.8 · 2×2 reading — single-line summary
+## B.7 · 2×2 reading — single-line summary
 
 **The master quadratic `x² − 16G*²·x + 16G*³ = 0` is structurally
 identical to the characteristic equation of a 2×2 symmetric mixing
 matrix with diagonal `8G*² ≈ 70` and coupling `√(64G*⁴ − 16G*³) ≈ 67`,
-giving eigenvalues `(1/α, N_c) = (137.04, 3.02)` as the
+giving eigenvalues `(x₊, x₋) = (137.04, 3.02)` as the
 symmetric/antisymmetric eigenmode pair with near-maximal coupling
-ratio 95.7%; this provides a physical picture for the harmonic-
-conjugate identity `α + 1/N_c = 1/G*` as the trace of the inverse
-mixing matrix, and reframes the dual prediction as "EM and color
-couplings are the bonding/antibonding modes of a single 2×2 system
-forced by G\* via the spine theorems" — a structural interpretation
+ratio 95.7%; this provides a physical picture for the harmonic
+identity `1/x₊ + 1/x₋ = 1/G*` as the trace of the inverse
+mixing matrix — a structural interpretation
 useful for Paper A communication without changing the formal status
 of any existing FTD claim.**
 
@@ -536,16 +458,6 @@ Aut(E) × Aut(E) ⊆ Aut(E × E)
 - |Aut(E)|² = 16 is a literal automorphism count, not an abstract product
 - Connects to the existing algebraic-geometry foundation of the spine
 
-**Physical interpretation:**
-- The master quadratic has TWO ROOTS — two distinct sectors of the dual prediction (1/α, N_c)
-- Each sector has its own Aut(E) action
-- The "16" counts the **independent automorphism pairs** acting on the two-sector structure
-
-**The "two copies" reading then becomes:**
-> *The master quadratic's coefficient 16 reflects the automorphism group of the product variety E × E. The two factors of E correspond to the two sectors (EM and color) producing the dual prediction. The squaring 4² = |Aut(E)|² captures independent Z_4 action on each sector.*
-
-This is structurally clean and connects three FTD theorems (3, 4, and the dual prediction conjecture FTD-0013/0014).
-
 ### C.3.3 · Concrete verification
 
 ```
@@ -566,7 +478,7 @@ This identity is **structurally rigorous** (just group-theoretic arithmetic) giv
 
 The three readings rank by structural cleanness:
 
-1. **Reading 3 (|Aut(E × E)|)**: cleanest. Direct from Theorems 3 and 4. The squaring 4² = 16 captures independent automorphism action on the two-sector product variety.
+1. **Reading 3 (|Aut(E × E)|)**: cleanest. Direct from Theorems 3 and 4. The squaring 4² = 16 captures independent automorphism action on the two-factor product variety.
 
 2. **Reading 2 (real  reciprocal duality)**: suggestive but requires additional physical interpretation of how the master quadratic engages joint real-k-space mode space.
 
@@ -574,29 +486,14 @@ The three readings rank by structural cleanness:
 
 ### C.4.1 · Recommended interpretation for Paper A
 
-**The 16 in the master quadratic counts the automorphisms of E × E, where E is the unique class-number-1 CM curve at d = −4.** This connects three spine theorems (3, 4, the dual prediction conjecture) into a single structural narrative:
+**The 16 in the master quadratic counts the automorphisms of E × E, where E is the unique class-number-1 CM curve at d = −4.** This connects spine Theorems 3 and 4 into a single structural narrative:
 
 - Theorem 3 picks E uniquely.
 - Theorem 4 gives Aut(E) = Z_4 of order 4.
 - The product structure E × E (corresponding to the master quadratic's two roots) has |Aut(E × E)|_diagonal = 16.
 - The master quadratic's coefficient 16 is this automorphism count.
 
-This is the structural origin of the squaring. The "two copies" reflect the two-sector structure of the dual prediction.
-
-### C.4.2 · What this means physically
-
-If we accept the dual-prediction conjecture (FTD-0013, FTD-0014):
-- x_+ ≈ 1/α corresponds to ONE copy of E (the EM sector)
-- x_- ≈ N_c corresponds to ANOTHER copy of E (the color sector)
-- Each sector has its own Z_4 automorphism action
-- The COMBINED structure (joint EM-color sector) has 4 × 4 = 16 automorphism pairs
-
-This is consistent with the 2×2 mixing matrix reading from Part B (commit `09a1569`):
-- The 2×2 matrix has eigenvectors symmetric/antisymmetric (1, ±1)/√2
-- The Z_4 symmetry of each sector (rotation by i in Z[i]) gives the 4-fold structure per sector
-- Joint Z_4 × Z_4 gives 16 automorphism pairs
-
-The 2×2 mixing reading and Reading 3 here are **complementary structural pictures**, not competing readings.
+This is the structural origin of the squaring.
 
 ## C.5 · What this clarifies for the spine
 
@@ -604,10 +501,9 @@ The 2×2 mixing reading and Reading 3 here are **complementary structural pictur
 
 Theorem 4 already states `|Aut(E)|² = 16`. Reading 3 says the squaring reflects the **product variety E × E** structure. This connects:
 - The two roots of the master quadratic (x_+, x_-)
-- The two sectors of the dual prediction (1/α, N_c)
 - The two factors in Aut(E) × Aut(E)
 
-A unified structural picture across these three pairings.
+A unified structural picture across these two pairings.
 
 ### C.5.2 · Open question: why TWO copies specifically?
 
@@ -630,14 +526,14 @@ The chain is closed: Theorems 3, 4, 8 + level-k=4 selection → master quadratic
 
 ## C.6 · What the conjugate-lattice reading does NOT establish
 
-- **NOT a derivation of α.** The dual prediction stays [STRONGLY MOTIVATED CONJECTURE].
+- **NOT a derivation of α.** `x₊ = 1/α` stays [STRONGLY MOTIVATED CONJECTURE].
 - **NOT a derivation of "why two copies of E specifically"** — that depends on the master quadratic being degree 2, which is the spine's input.
 - **NOT a unique interpretation** — Reading 2 (real-k-space duality) is also possible; the 2×2 mixing matrix reading is parallel; the volumetric pathway gives yet another presentation.
 - **NOT a falsification of the other readings** — they may be different presentations of the same underlying structure.
 
 ## C.7 · Conjugate-lattice reading — single-line summary
 
-**The squaring `16 = |Aut(E)|² = N_base²` in the master quadratic admits three readings: (1) interpenetrating SC+BCC sublattices, which REDUCES to the standard 27-block analysis; (2) real-space  reciprocal-space duality, suggestive but requiring additional physical interpretation; (3) automorphism count of the product variety E × E for the unique class-number-1 CM curve, which is the structurally cleanest reading and connects three spine theorems (3, 4, 8) into a unified picture of "two copies of E correspond to two sectors (EM, color) of the dual prediction, with independent Z_4 = Aut(E) action on each sector giving |Aut(E)|² = 16 automorphism pairs"; this is the recommended interpretation for Paper A and complements (rather than competes with) the 2×2 mixing matrix reading and the volumetric pathway.**
+**The squaring `16 = |Aut(E)|² = N_base²` in the master quadratic admits three readings: (1) interpenetrating SC+BCC sublattices, which REDUCES to the standard 27-block analysis; (2) real-space  reciprocal-space duality, suggestive but requiring additional physical interpretation; (3) automorphism count of the product variety E × E for the unique class-number-1 CM curve, which is the structurally cleanest reading and connects three spine theorems (3, 4, 8) into a unified picture of independent Z_4 = Aut(E) action on each factor of E × E giving |Aut(E)|² = 16 automorphism pairs; this is the recommended interpretation for Paper A and complements (rather than competes with) the 2×2 mixing matrix reading and the volumetric pathway.**
 
 ---
 
@@ -649,7 +545,6 @@ None of the three readings introduces a new LEDGER entry. Each records a structu
 - FTD-0003 (CM uniqueness): [THEOREM] — picks E
 - FTD-0004 (= Theorem 4, |Aut(E)|² = 16): [THEOREM] — establishes the squaring
 - FTD-0013 (x_+ = 1/α): [STRONGLY MOTIVATED CONJECTURE] — unchanged
-- ~~FTD-0014 (x_- = N_c)~~: **RETIRED** per v1.4 §5; LEDGER row removed in commit `ca7eb61`. `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
 - FTD-0111 (harmonic invariant tower): [THEOREM] — establishes level-k=4 selection; unchanged
 - FTD-0121 (physics bridge synthesis): [SYNTHESIS] — extended in spirit by the 2×2 reading
 

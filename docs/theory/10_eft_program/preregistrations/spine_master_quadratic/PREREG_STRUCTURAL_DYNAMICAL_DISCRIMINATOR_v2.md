@@ -58,7 +58,7 @@ Paradigm cases: m_e in MeV, G_N in SI units, any quantity carrying physical unit
 
 **Scope.** The boundary theorem concerns the **STRUCTURAL vs NON-UNIVERSAL DYNAMICAL** split (both dimensionless). CALIBRATION-CONDITIONAL is recorded for completeness — it is already mapped by `SPEC_DIMENSIONAL_MAP.md` — and is not the theorem's subject.
 
-**Tie-break rule (locked).** The discriminator classifies *claims*, not *symbols*. If a symbol carries both a structural and a dynamical reading — e.g. N_c, where *the integer 3 as a colour count* is structural but *the match x_− = 3.024  N_c* is a `[STRONGLY MOTIVATED CONJECTURE]` identification — the two readings are entered as **separate quantity-claims**: the count is STRUCTURAL, the root-identification is NON-UNIVERSAL DYNAMICAL (it identifies a continuous algebraic root with a physical sector).
+**Tie-break rule (locked).** The discriminator classifies *claims*, not *symbols*. If a symbol carries both a structural and a dynamical reading, the two readings are entered as **separate quantity-claims**: the structural reading is STRUCTURAL, the dynamical reading is NON-UNIVERSAL DYNAMICAL.
 
 ---
 
@@ -129,7 +129,7 @@ Carried over from v1 §6 with one v2 addition (the FTD-0198 ARC-B1 connection):
 |------|----------|------------|
 | The v2 A1 wording is engineered to produce Outcome A | High | Honestly flagged in §1 and §4 — the v2 falsifier *is* designed to match the post-v1 honest reading. The discipline-bearing test is not "does v2 close positive" (it almost certainly does) but "does Stage 2 produce a *provable proposition* with stated axioms, independently of v2's outcome." Outcome A under v2 is necessary but not sufficient for the boundary theorem's program. |
 | A new closed-negative emerges that targets a structural quantity but is *not* a structural-provenance attempt | Medium | This is Outcome B3 — a real falsifier that would refute the §2 definition. The verifier script will be extended whenever a new closed-negative is added to LEDGER; future LEDGER edits should run the v2 partition script as a regression gate. |
-| Dual-reading symbols (N_c and similar) resist classification | Medium | The §2 tie-break rule (classify claims, not symbols); residuals → Outcome C. |
+| Dual-reading symbols resist classification | Medium | The §2 tie-break rule (classify claims, not symbols); residuals → Outcome C. |
 | §4 was rewritten by the same agent planning Stage 2 (GTCA F9: a definition gerrymandered to fit) | High | Pre-registration: §4 v2 is hash-locked **before** the re-run; the v1 firing is honestly recorded in §1 + LEDGER; the partition is checked mechanically by `scripts/proofs/proof_structural_dynamical_partition.py` (already encodes v2-style expectations as documented in the script header). Outcome B remains a real declared outcome under v2. |
 | Stage 3 tension with FTD-0136's discrete-native optimism | Acknowledged | Out of scope for Stage 1; flagged in §6; Stage 3 is explicitly an unpromised research stretch. |
 | FTD-0198 ARC-B1 closure attempt closes positive (FOUND) | Acknowledged | Would re-scope Stage 2 (see §6); does not invalidate v2 — the boundary theorem then characterises a subclass of the dynamical-value space rather than the whole. |

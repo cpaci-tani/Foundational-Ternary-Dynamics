@@ -449,7 +449,7 @@ if fails == 0:
     print("  -> varpi, G*            [algebraic combinations, pi-free]")
     print("  -> pi                   [derived: 4*varpi^2/G*^2]")
     print("  -> master quadratic     [x^2 - 16G*^2 x + 16G*^3 = 0]")
-    print("  -> alpha, N_c           [roots x+, floor(x-)]")
+    print("  -> alpha                [root x+]")
     print("  -> {3, 4, 7, 13}        [framework integers]")
     print("  -> all couplings        [from alpha + integers]")
     print("  -> all mass ratios      [dimensionless]")

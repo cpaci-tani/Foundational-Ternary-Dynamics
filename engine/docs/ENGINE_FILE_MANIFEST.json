@@ -3,13 +3,13 @@
   "generated_by": "engine/tools/build_file_manifest.py",
   "note": "Mechanical per-file catalog. Conceptual docs: engine/ARCHITECTURE.md, CALLSTACKS.md, SCENARIO_ARCHITECTURE.md, SPEC_ENGINE.md, engine/docs/ENGINE_CODE_MAP.md.",
   "totals": {
-    "files": 3130,
-    "loc": 847505
+    "files": 3135,
+    "loc": 847637
   },
   "subsystems": {
     "tests": {
-      "files": 841,
-      "loc": 253491
+      "files": 840,
+      "loc": 253150
     },
     "vendor": {
       "files": 730,
@@ -17,15 +17,15 @@
     },
     "src/core": {
       "files": 199,
-      "loc": 69590
+      "loc": 69570
     },
     "web/tests": {
-      "files": 343,
-      "loc": 66470
+      "files": 349,
+      "loc": 67001
     },
     "include": {
       "files": 313,
-      "loc": 40490
+      "loc": 40457
     },
     "other": {
       "files": 148,
@@ -33,7 +33,7 @@
     },
     "web/js-toplevel": {
       "files": 120,
-      "loc": 32249
+      "loc": 32246
     },
     "web/scale0": {
       "files": 101,
@@ -77,7 +77,7 @@
     },
     "tools": {
       "files": 7,
-      "loc": 1882
+      "loc": 1880
     },
     "web/config": {
       "files": 6,
@@ -663,7 +663,7 @@
     {
       "path": "engine/include/ftd/constants.h",
       "lang": "c-header",
-      "loc": 577,
+      "loc": 574,
       "subsystem": "include",
       "primary": true,
       "purpose": "FTD Render-Bridge Constants Engine-facing interface to the ontic constants registry.",
@@ -3734,7 +3734,7 @@
     {
       "path": "engine/include/ftd/ontic/gauge_couplings.h",
       "lang": "c-header",
-      "loc": 290,
+      "loc": 286,
       "subsystem": "include",
       "primary": true,
       "purpose": "ontic/gauge_couplings.h \u2014 Layers 5, 5b, 7 and simulation parameters.",
@@ -3752,7 +3752,7 @@
     {
       "path": "engine/include/ftd/ontic/master_quadratic.h",
       "lang": "c-header",
-      "loc": 268,
+      "loc": 242,
       "subsystem": "include",
       "primary": true,
       "purpose": "ontic/master_quadratic.h \u2014 Layers 3, 3b, 3c, 4, 4b of the ontic chain.",
@@ -7428,7 +7428,7 @@
     {
       "path": "engine/src/ontic_audit.cpp",
       "lang": "cpp",
-      "loc": 471,
+      "loc": 451,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -9310,7 +9310,7 @@
     {
       "path": "engine/tests/campaign_integer_sweep.cpp",
       "lang": "cpp",
-      "loc": 266,
+      "loc": 255,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: Integer Uniqueness Sweep THE critical test for scientific credibility.",
@@ -9823,7 +9823,7 @@
     {
       "path": "engine/tests/campaign_novel_predictions.cpp",
       "lang": "cpp",
-      "loc": 248,
+      "loc": 228,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: Novel Predictions & Falsifiability (Phase 10) Tests the sharpest predictions of FTD that can be falsified by experiment.",
@@ -12947,7 +12947,7 @@
     {
       "path": "engine/tests/test_falsifiability.cpp",
       "lang": "cpp",
-      "loc": 288,
+      "loc": 249,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Falsifiability Tests: Negative-Result Validation PURPOSE: Demonstrate that FTD is CONSTRAINED, not arbitrary.",
@@ -14535,23 +14535,11 @@
     {
       "path": "engine/tests/test_master_quadratic_identities.cpp",
       "lang": "cpp",
-      "loc": 150,
+      "loc": 145,
       "subsystem": "tests",
       "primary": false,
       "purpose": "@file test_master_quadratic_identities.cpp @brief Numerical verification of the bare algebraic content of the master quadratic.",
       "symbols": []
-    },
-    {
-      "path": "engine/tests/test_master_quadratic_uniqueness.cpp",
-      "lang": "cpp",
-      "loc": 266,
-      "subsystem": "tests",
-      "primary": false,
-      "purpose": "@file test_master_quadratic_uniqueness.cpp @brief Program E \u2014 Uniqueness of the master quadratic as minimal polynomial.",
-      "symbols": [
-        "Candidate",
-        "Match"
-      ]
     },
     {
       "path": "engine/tests/test_matched_action_normalization.cpp",
@@ -24465,7 +24453,7 @@
     {
       "path": "engine/tools/audit_ontic_phase0.py",
       "lang": "python",
-      "loc": 630,
+      "loc": 628,
       "subsystem": "tools",
       "primary": true,
       "purpose": "Phase 0 Ontic Derivation Chain Audit ===================================== Independent verification of every constant in engine/include/ftd/ontic.h using mpmath high-precision arithmetic.",
@@ -25838,7 +25826,7 @@
     {
       "path": "engine/web/js/constants.js",
       "lang": "js",
-      "loc": 610,
+      "loc": 607,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "@file constants.js @brief FTD Constants \u2014 single source of truth for the web dashboard.",
@@ -31587,6 +31575,15 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/dashboard-asset-coverage.spec.js",
+      "lang": "js",
+      "loc": 115,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/dashboard-control-wiring.spec.js",
       "lang": "js",
       "loc": 283,
@@ -31833,6 +31830,15 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/help-surface-absence.spec.js",
+      "lang": "js",
+      "loc": 32,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/hydro-fluid-analysis.node.test.mjs",
       "lang": "js",
       "loc": 71,
@@ -31884,6 +31890,15 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "Node driver for actual compiled hydro-WASM parity (mirrors the inline NODE_DRIVER in scripts/tests/phi_v2_lattice/test_wasm_parity.py for the strict candidate, but kept as a standalone file per tas...",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/jev-integration-regressions.spec.js",
+      "lang": "js",
+      "loc": 157,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -32376,6 +32391,15 @@
       "path": "engine/web/tests/overlay-worker-client.node.test.mjs",
       "lang": "js",
       "loc": 124,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/panel-dock-accessibility.spec.js",
+      "lang": "js",
+      "loc": 69,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -34216,6 +34240,24 @@
       "path": "engine/web/tests/toggle-coverage.spec.js",
       "lang": "js",
       "loc": 341,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/tooltip-accessibility.spec.js",
+      "lang": "js",
+      "loc": 61,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/topbar-one-row.spec.js",
+      "lang": "js",
+      "loc": 97,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",

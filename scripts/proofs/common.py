@@ -67,7 +67,7 @@ X_MINUS = (16.0 * G_STAR**2 - math.sqrt(DISC)) / 2.0
 
 # Layer 4: Framework integers
 D_SPATIAL = 3
-N_C = int(math.floor(X_MINUS))  # = 3
+N_C = 3
 N_GEN = N_C
 N_F = 2 * N_GEN
 N_BASE = 2**((D_SPATIAL + 1) // 2)  # = 4

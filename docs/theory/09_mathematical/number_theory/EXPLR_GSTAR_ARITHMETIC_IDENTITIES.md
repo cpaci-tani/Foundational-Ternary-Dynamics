@@ -17,7 +17,6 @@
 **Related:**
 - FTD-0128 (`FOUND_TERNARY_STATE_FROM_I.md`) — Postulate 3 grounded in Axiom 0 via `s = i²`.
 - `DERIV_LFUNCTION_GSTAR_CONNECTION.md` — separate document; not merged here.
-- `docs/theory/10_eft_program/PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md` — x_- search pre-registration.
 
 **Verification scripts:**
 - `scripts/proofs/proof_g_star_parity_twist.py` (10 lines, parity-twist identity check)
@@ -117,7 +116,7 @@ The dual substrate paper (Layer 3b) explicitly identifies:
 
 > S = E_L + E_R = 16*G*^2 [THEOREM --- 16 DoF x G*^2 per DoF]
 
-So G*^2 is the energy contribution per degree of freedom. With 16 physical DoF on the minimal 2x2x2 lattice, the total energy is 16*G*^2 = 140.06 = 1/alpha + N_c.
+So G*^2 is the energy contribution per degree of freedom. With 16 physical DoF on the minimal 2x2x2 lattice, the total energy is 16*G*^2 = 140.06 = x_+ + x_-.
 
 ### A.2.3 Energy IS Time: the Wheeler-DeWitt argument [SELECTION]
 
@@ -187,11 +186,7 @@ $$G^* = \frac{x_+ \cdot x_-}{x_+ + x_-} = \frac{\text{HM}(x_+, x_-)}{2}$$
 
 where HM denotes the harmonic mean.
 
-**In physics:**
-
-$$G^* = \frac{(1/\alpha) \cdot N_c}{(1/\alpha) + N_c}$$
-
-The lemniscatic constant is half the harmonic mean of the electromagnetic coupling inverse and the number of color charges. The two roots of the master quadratic "average" (harmonically) to produce G* itself.
+The two roots of the master quadratic "average" (harmonically) to produce G* itself.
 
 ### A.4.2 Physical interpretation [SELECTION]
 
@@ -270,7 +265,7 @@ The deviation from the G*=3 fixed point is what generates the fine structure con
 
 G* = 2*varpi/sqrt(pi), where varpi = Gamma(1/4)^2/(2*sqrt(2*pi)). The value 2.9587 is determined by the lemniscate geometry, not by the integer 3. The proximity to 3 (within 1.4%) is remarkable but not exact.
 
-**The interpretation:** G* "wants" to be 3 (for wave equation self-consistency) but is pulled away by the elliptic geometry of the lemniscate. This tension between arithmetic simplicity (N_c = 3) and analytic complexity (varpi) is what generates the entire physics hierarchy. If G* = 3 exactly, there would be no fine structure constant, no alpha, no chemistry.
+**The interpretation:** G* "wants" to be 3 (for wave equation self-consistency) but is pulled away by the elliptic geometry of the lemniscate. This tension between arithmetic simplicity and analytic complexity (varpi) is what generates the entire physics hierarchy. If G* = 3 exactly, there would be no fine structure constant, no alpha, no chemistry.
 
 ## A.7 · Summary of the dimensional triad
 
@@ -303,7 +298,7 @@ In the C++ engine, the flux field J is initialized with magnitude K_B (electron 
 | GFT-2 | G*^2 = energy per DoF | [THEOREM] | Vieta sum: S/16 = G*^2 |
 | GFT-3 | G*^3 = action per DoF | [THEOREM] | Vieta product: P/16 = G*^3 |
 | GFT-4 | G* = time per DoF | [THEOREM] | P/S = G*^3/G*^2 = G* |
-| GFT-5 | G* = HM(1/alpha, N_c)/2 | [THEOREM] | Algebraic identity from Vieta |
+| GFT-5 | G* = HM(x_+, x_-)/2 | [THEOREM] | Algebraic identity from Vieta |
 | GFT-6 | Time IS flux energy (Wheeler-DeWitt analogy) | [SELECTION] | G*^2 per DoF = tick energy |
 | GFT-7 | G* approx 3 is wave equation fixed point | [SELECTION] | c^2 = 1/3 gives closure at G*=3 |
 | GFT-8 | Deviation from G*=3 generates alpha | [SELECTION] | G*=3 gives 1/alpha=141, actual gives 137 |
@@ -405,7 +400,7 @@ This makes one of the framework's most opaque features ("why G\*?") into a one-s
 
 **What this is NOT:**
 - *Not new mathematics.* Each ingredient has a 150–200-year pedigree (Euler ~1750, Gauss ~1800, Jacobi ~1830). Anyone who knew both classical identities would derive `G* = √(2π)·θ_3(0|i)²` in two lines.
-- *Not a derivation of any physics quantity.* The identity is purely about classical analysis; FTD-0013/0014 (the empirical α/N_c match) are unaffected and remain [STRONGLY MOTIVATED CONJECTURE].
+- *Not a derivation of any physics quantity.* The identity is purely about classical analysis; FTD-0013 (the empirical α match) is unaffected and remains [STRONGLY MOTIVATED CONJECTURE].
 - *Not a new spine theorem.* The spine count is unchanged — nine numbered results (seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention). This is filed as [SYNTHESIS], not [THEOREM] or [DERIVED].
 - *Not a uniqueness claim.* `G* = √(2π)·θ_3(0|i)²` does not assert that G\* is the *only* lattice-theta combination with this property; analogous identities exist for higher-conductor CM lattices (e.g., the Eisenstein lattice at τ = e^{iπ/3} produces analogous Γ(1/3)-content).
 - *Not a route to deriving α.* The synthesis sits inside the algebraic spine and does not bridge to the engine or to physics.
@@ -596,9 +591,9 @@ This Result is one more entry in the multiple-4 catalogue: the conductor of the 
 
 ## C.7 · What the parity-twist reading is NOT
 
-- **Not a derivation of α.** The single live identification `x_+ ≈ 1/α` (1.26 ppm) remains [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); this Result extends the algebraic spine's *characterization* of G\*, not its bridge to physics. *(The historical "dual-prediction" framing paired with `x_-  N_c` is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
+- **Not a derivation of α.** The single live identification `x_+ ≈ 1/α` (1.26 ppm) remains [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); this Result extends the algebraic spine's *characterization* of G\*, not its bridge to physics.
 - **Not a connection to ζ's critical line.** Strong claim "FTD  Riemann critical line" is FALSIFIED in the strong form (PSLQ on ζ(1/2) returned None in every tested basis). The partial true form is "FTD  L(s, χ_{−4}) boundary of critical strip"; the center of either critical line is outside the algebraic spine's reach as currently stated.
-- **Not an extension of the spine to higher L-functions.** Result D as stated applies to ζ vs L(s, χ_{−4}) at conductor 4. Higher conductors would require analogous `G*_q` constants (related to FTD-0123's Γ-product analogue `G*_d := ∏ Γ(a/|d|)^{χ_d(a)}`) and analogous parity-twist identifications. Whether the structure generalizes cleanly is an OPEN extension.
+- **Not an extension of the spine to higher L-functions.** Result D as stated applies to ζ vs L(s, χ_{−4}) at conductor 4. Higher conductors would require analogous `G*_q` constants and analogous parity-twist identifications. Whether the structure generalizes cleanly is an OPEN extension.
 - **Not a new spine theorem.** The spine count is unchanged — nine numbered results (seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention). This is filed as a subsidiary of Theorem 9 (FTD-0112), not as Theorem 10.
 
 ## C.8 · Parity-twist reading — single-line summary
@@ -613,7 +608,7 @@ Initial framing: whether Theorem 9's positioning of G\* inside Q(π, Γ(1/4)) ca
 
 # PART D — The Barnes G Reading: G\* in the Multiple-Gamma Hierarchy
 
-*A PSLQ side-discovery from a Path A `ζ''(0, a)` derivation attempt for `PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md`. Path A (deriving `(S, P_*) = (16G*², 16G*³)` from higher-order ζ-determinant invariants) returned CLOSED-NEGATIVE at the naive Hessian-identity level (see `scripts/exploration/check_zeta_hessian_gstar2.py`); the Barnes G identity below surfaced when PSLQ returned a clean basis sub-relation involving the Barnes G ratio at quarter-integer arguments. The identity itself is classical (Kinkelin 1860; Adamchik 1998 §3 "Multiple Gamma Function"; Choi 2003 §4 "Some integral representations of the Clausen function") — what's new here is the FTD-canonical form where G\* is the fundamental constant and Γ(1/4) is the derived quantity (rather than the other way around in classical writeups).*
+*A PSLQ side-discovery from a Path A `ζ''(0, a)` derivation attempt. Path A (deriving `(S, P_*) = (16G*², 16G*³)` from higher-order ζ-determinant invariants) returned CLOSED-NEGATIVE at the naive Hessian-identity level (see `scripts/exploration/check_zeta_hessian_gstar2.py`); the Barnes G identity below surfaced when PSLQ returned a clean basis sub-relation involving the Barnes G ratio at quarter-integer arguments. The identity itself is classical (Kinkelin 1860; Adamchik 1998 §3 "Multiple Gamma Function"; Choi 2003 §4 "Some integral representations of the Clausen function") — what's new here is the FTD-canonical form where G\* is the fundamental constant and Γ(1/4) is the derived quantity (rather than the other way around in classical writeups).*
 
 ## D.1 · The identity [SYNTHESIS]
 
@@ -664,7 +659,7 @@ The identity holds **exactly** in closed form. The 10⁻²⁴⁵ residual is mpm
 
 ## D.4 · Provenance: how the identity was found
 
-An attempted Path A derivation for the x_- physical-identification pre-registration explored higher-order ζ-determinant invariants of the J-chain. The naive Hessian identity `ζ''(0, 1/4) − ζ''(0, 3/4) =? log(16·G*²)` was tested and returned CLOSED-NEGATIVE (residual at order 1, not closed-form precision). A follow-up PSLQ search at 150-digit precision against a basis including `{1, G_Catalan, log G*, log 2, log π, γ, log G_Barnes(1/4) − log G_Barnes(3/4), products}` was run to look for any closed form for `c := ζ''(0, 1/4) − ζ''(0, 3/4) ≈ 1.81380334…`.
+An attempted Path A derivation explored higher-order ζ-determinant invariants of the J-chain. The naive Hessian identity `ζ''(0, 1/4) − ζ''(0, 3/4) =? log(16·G*²)` was tested and returned CLOSED-NEGATIVE (residual at order 1, not closed-form precision). A follow-up PSLQ search at 150-digit precision against a basis including `{1, G_Catalan, log G*, log 2, log π, γ, log G_Barnes(1/4) − log G_Barnes(3/4), products}` was run to look for any closed form for `c := ζ''(0, 1/4) − ζ''(0, 3/4) ≈ 1.81380334…`.
 
 PSLQ did NOT find a relation involving `c` (consistent with c likely requiring K_2-regulator-of-E machinery; multi-month research direction), but it DID find a clean **basis sub-relation** with all-small-integer coefficients:
 
@@ -689,7 +684,6 @@ The two readings are related by the Mellin transform that connects multiple gamm
 - **Not new mathematics.** The identity has been in the analytic-number-theory literature since Kinkelin 1860 (in implicit form) and Adamchik 1998 (in modern form). What's new here is the FTD-canonical re-statement and the PSLQ-recovery provenance. Filed as `[SYNTHESIS]`.
 - **Not a closed form for `c = ζ''(0, 1/4) − ζ''(0, 3/4)`.** That number remains outside elementary closed form in `{1, G_Catalan, log G*, log 2, log π, γ, log A_Glaisher, products}` at maxcoeff = 50000 (per `scripts/exploration/pslq_zeta_hessian_diff_v3.py`); it likely lives at the K_2-regulator-of-E level (Beilinson territory), which is the multi-month math-side research direction.
 - **Not a new spine theorem.** The spine count is unchanged — nine numbered results (seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention). This is filed as a subsidiary identity under Theorem 1 (FTD-0001), not as Theorem 10.
-- **Not load-bearing for x_- physical identification.** The Path A derivation effort that surfaced this identity remains CLOSED-NEGATIVE; the Barnes G identity does NOT inform or alter the PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md verdict. It is recorded here as a clean side-discovery, not as evidence for any physical identification.
 
 ## D.7 · Barnes G reading — single-line summary
 
@@ -697,7 +691,7 @@ The two readings are related by the Mellin transform that connects multiple gamm
 
 ## D.8 · Provenance (Barnes G reading)
 
-Surfaced during a Path A `ζ''(0, a)` derivation attempt for `PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md`. The PSLQ search (`scripts/exploration/pslq_zeta_hessian_diff_v2.py`) was originally targeting a closed form for `c := ζ''(0, 1/4) − ζ''(0, 3/4)` and returned a basis sub-relation instead. The relation is the classical Adamchik–Kinkelin Barnes G ratio at quarter-integer arguments, verified at 250-digit precision (`scripts/proofs/proof_barnes_g_quarter_identity.py`), and filed here as Part D. Path A's primary target (a closed form for c) remains [OPEN] at the elementary-closed-form level and is conjectured to require K_2-regulator-of-E machinery.
+Surfaced during a Path A `ζ''(0, a)` derivation attempt. The PSLQ search (`scripts/exploration/pslq_zeta_hessian_diff_v2.py`) was originally targeting a closed form for `c := ζ''(0, 1/4) − ζ''(0, 3/4)` and returned a basis sub-relation instead. The relation is the classical Adamchik–Kinkelin Barnes G ratio at quarter-integer arguments, verified at 250-digit precision (`scripts/proofs/proof_barnes_g_quarter_identity.py`), and filed here as Part D. Path A's primary target (a closed form for c) remains [OPEN] at the elementary-closed-form level and is conjectured to require K_2-regulator-of-E machinery.
 
 ---
 

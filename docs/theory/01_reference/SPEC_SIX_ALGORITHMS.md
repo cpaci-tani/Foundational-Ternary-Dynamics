@@ -267,7 +267,7 @@ IF s(v) = 0 everywhere:
 
 | Property | Value | Source |
 |----------|-------|--------|
-| Number of colors | N_c = 3 | Master quadratic x₋ = 3.024 |
+| Number of colors | N_c = 3 | Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md` |
 | Number of gluons | 3² − 1 = 8 | SU(3) adjoint representation |
 | Color directions | x, y, z axes of flux | 3D lattice geometry |
 | Color neutrality | All 3 axes balanced | Baryons (3 quarks) and mesons (quark-antiquark) |
@@ -281,7 +281,7 @@ IF s(v) = 0 everywhere:
 | Strong coupling (sim) | g_s | 1.0 | Phenomenological |  IMPOSED |
 | Strong coupling (theory) | α_s(M_Z) | 7/59 = 0.1186 | From b₃ = 7 |  PARAMETRIC (0.6% fit) |
 | Pion mass scale | m_π | 0.15 | Sets Yukawa range |  IMPOSED |
-| Number of colors | N_c | 3 | Master quadratic x₋ |  RETIRED (root-ident); topological THEOREM |
+| Number of colors | N_c | 3 | Lattice topology |  topological THEOREM |
 | Beta function coeff | b₃ | 7 | Framework integer |  THEOREM (CM sequence) |
 | Functional form | Yukawa | — | Borrowed from nuclear physics |  IMPORTED |
 
@@ -517,7 +517,6 @@ Every number in the entire framework:
 |-----------|---------|-------|----------|
 | G* | √2 · Γ(1/4)² / (2π) | 2.9586751192 | Exact |
 | 1/α | Master quadratic x₊ | 137.036171 | 1.26 ppm |
-| N_c | Master quadratic x₋ | 3.024 | 0.8% |
 | 16 | \|Aut(E)\|² = \|E(ℚ)_tors\|² | 16 | Exact |
 
 ## Derived from α and {3, 4, 7, 13}
@@ -574,8 +573,8 @@ Boundary condition: low-entropy start
           │         │
           │         ▼
           │    x² − 16G*²x + 16G*³ = 0
-          │         │              │
-          │         ▼              ▼
+          │         │
+          │         ▼
           │    α = 1/137.036    N_c = 3
           │         │              │
           ▼         ▼              ▼

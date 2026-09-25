@@ -156,7 +156,7 @@ int main() {
         // G_C = sqrt(ALPHA) [DERIVED]
         check_close("G_C^2 = ALPHA", ftd::G_C * ftd::G_C, ftd::ALPHA, 0.0001);
 
-        // G_N = 1/(B_3 + N_C)^2 [DERIVED from framework integers from x_-]
+        // G_N = 1/(B_3 + N_C)^2 [DERIVED from framework integers]
         check_close("G_N = 0.01", ftd::G_N, 0.01, 1e-15);
 
         // K_B = 0.511 [DERIVED: m_e = m_P * sqrt(2pi) * (16/3) * alpha^11]

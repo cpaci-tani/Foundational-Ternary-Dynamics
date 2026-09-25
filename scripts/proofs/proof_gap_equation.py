@@ -275,7 +275,7 @@ print(f"  This IS the master quadratic.")
 print()
 print(f"  Roots:")
 print(f"    x+ = {x_plus:.10f}  (1/alpha = {1/ALPHA:.10f})")
-print(f"    x- = {x_minus:.10f}  (N_c ~ 3)")
+print(f"    x- = {x_minus:.10f}")
 print()
 
 # Vieta relations
@@ -319,7 +319,7 @@ print("""
       |
       v
   x+ = 137.036...  (1/alpha to 1.26 ppm)
-  x- = 3.024...    (N_c ~ 3)
+  x- = 3.024...
 """)
 
 # ===========================================================================

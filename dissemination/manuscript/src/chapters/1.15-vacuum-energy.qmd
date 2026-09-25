@@ -167,10 +167,9 @@ The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ determines:
 | Quantity | How Derived |
 |----------|-------------|
 | $\alpha = 1/137.036$ | Larger root $x_+ = 1/\alpha$ |
-| $N_c \approx 3$ | Smaller root $x_- \approx 3.024$ |
 | $\rho_\Lambda$ | $m_e^4 \times G^{*2} / x_+^{16}$ |
 
-**The same equation encodes electromagnetic coupling, color structure, AND vacuum energy.**
+**The same equation encodes electromagnetic coupling AND vacuum energy.**
 
 ### Equivalent Form
 
@@ -224,10 +223,9 @@ Total: $10^{-88} \times 10^{-35} \times 10 = 10^{-122}$
 
 The master quadratic determines:
 - Electromagnetic coupling ($\alpha$)
-- Color charge number ($N_c$)
 - Vacuum energy density ($\rho_\Lambda$)
 
-**Three fundamental quantities from one geometric structure.**
+**Two fundamental quantities from one geometric structure.**
 
 ### No New Parameters
 

@@ -13,9 +13,8 @@
 - **No BROKEN theorem.** Every theorem-grade claim in Part I recomputed to 40–60 digits (Number-Theorist) and holds; every Part II boundary component is machine-verified group theory (Boundary-Prover).
 - **No tag promotion.** All 464 lines sit at — or below — the tier their canonical source assigns (Epistemic-Tag Auditor). The three hardest places to keep honest (`x₊=1/α`, the α no-go's grade, the `[PARAMETRIC]` physics layer) are each correctly tiered.
 - **The boundary attempt failed (ATTEMPTED, not PROVEN — see `AUDIT_BOUNDARY_MAP.md` §0.5).** The Boundary-Prover's attempt to construct a **5th** FTD-native route to *force* the operator assembly **failed across all 5 candidate principles** — every one landing on the same `Q(G*)`-vs-`√(G*(4G*−1))` wall the route-invariance theorem predicts. This raises the prior against a 6th route succeeding; it does not "strengthen" the boundary the way the underlying route-invariance proof (FTD-0242/0243) does. The full C₄-orbit det_ζ product collapses to the rational number `2`, confirming the odd content `G*` lives only in the *ratio*, never in any symmetric construction.
-- **The F10 honesty note (§III.2) is exemplary** — it concedes the rigidity gap rather than performing concession.
 
-**11 refinements were applied** (§§1–5 below). All were "prose running slightly ahead of the tags" or one propagated numeric mislabel — **none was a false claim, a broken proof, or a promotion**. After fixes: monograph links 0 broken, all numerics match the canonical triple, Paper A recompiles clean.
+**10 refinements were applied** (§§1–5 below). All were "prose running slightly ahead of the tags" or one propagated numeric mislabel — **none was a false claim, a broken proof, or a promotion**. After fixes: monograph links 0 broken, all numerics match the canonical triple, Paper A recompiles clean.
 
 ---
 
@@ -50,8 +49,6 @@ Audited all 464 lines vs `TRACKER_ONTIC_TRUTH`, `SPEC_ALGEBRAIC_SPINE` §0, `LED
 | # | Item | Verdict | Fix |
 |---|---|---|---|
 | TA-1 | §II.6 `[DERIVED, from the contrast]` on "α dynamical not structural" | OK (defensible) but a quote-out-of-context risk | **F6 applied** (clarifying clause) |
-| TA-2 | §III.2 look-elsewhere `[MEASURED]` | OK; pointer "(FTD-0189, OT-5.1)" imprecise | **F8 applied** → "(FTD-0189, OT-3.3, supporting OT-5.1)" |
-| TA-3 | F10 note (§III.2) | OK — exemplary | none |
 
 **Domain verdict:** **the tagging is bulletproof; no promotion present.** Biggest (LOW) risk was the `[DERIVED, from the contrast]` string — **clarified (F6)**.
 
@@ -83,7 +80,7 @@ Machine-verified the group theory (NumPy) and recomputed all boundary numerics (
 | # | Item | Verdict | Fix |
 |---|---|---|---|
 | NS-1 | §II.5 `det=G*` dominant root `≈139.05` | **MISMATCH** (correct 140.04) | **F1 applied** (same as BP-6) |
-| NS-2 | §III.5 `sin²θ_W=3/13` "3.5%" error | informational (scheme-dependent; matches catalog's 3.53%) | left at catalog value | 
+| NS-2 | §III.4 `sin²θ_W=3/13` "3.5%" error | informational (scheme-dependent; matches catalog's 3.53%) | left at catalog value | 
 
 **Domain verdict:** **one mismatch in 45+ checks (F1, fixed); G*≠ϖ respected everywhere; no FTD-0117 regression.** The canonical triple (`constants.py`) is clean and agrees with the monograph.
 
@@ -98,12 +95,11 @@ Read the whole monograph adversarially. **No tag promotion; the α claim held at
 | PR-1 | §II.6 `[DERIVED]` over-formalizes a philosophical label | CRACKS | **F6 applied** |
 | PR-2 | "physics quarantined to Part III" not literally true (Part II names α) | CRACKS (minor) | **F10 applied** |
 | PR-3 | §II.4 "undecidable from 𝔉" connotes formal undecidability | CRACKS | **F3 applied** → "not well-posed over 𝔉" |
-| PR-4 | §III.2 F10 note | HONEST (exemplary) | none |
 | PR-5 | §I.1 `ℤ[i]` seed as choice | HONEST | none |
 | PR-7 | "harder to earn than a derivation" asserted ×3 — reads as spin | SPIN | **F5 applied** (stated once, de-escalated) |
 | PR-9 | §II.4 inherits "odd power" rhetoric without source's "parity is basis-dependent" caveat | CRACKS | **F4 applied** (caveat added) |
 | PR-10 | §I.4 CM "d≤200" appendage undercuts a complete theorem | (HONEST) | **F9 applied** |
-| PR-12 | §III.5 cites flattering gauge ratios, omits competitor-density | CRACKS (cherry-pick by omission) | **F7 applied** |
+| PR-12 | §III.4 cites flattering gauge ratios, omits competitor-density | CRACKS (cherry-pick by omission) | **F7 applied** |
 | PR-11/13/14 | α match honesty / framing hygiene / open questions | HONEST | none |
 
 **Domain verdict:** **survives a skeptical philosopher-of-physics referee *persona* (AI-simulated, not a human referee) — would ask for tightening, not retraction.** The single most damaging honest objection — *"the boundary is dressed-up Tr/Det independence + under-specification, rhetorically inflated to 'harder than a derivation'"* — landed on the **prose, not the tags**, and was answered by rhetorical de-escalation (**F3, F4, F5 applied**), not by new mathematics.
@@ -141,6 +137,5 @@ A hostile, fresh-context auditor (NOT shown the prior team's reasoning; told to 
 ## 7 · Upstream / owner action items (not fixed here)
 
 1. **§II.5 `det=G*`→139.05 mislabel is propagated** from `AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md` §5 (FTD-0243) and inherited by `AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md` §5 (FTD-0242). The monograph is fixed (F1); the **source audits still carry the slip** — fix upstream so it does not re-propagate (`det=G*` → 140.04, or relabel to `det=16G*²`).
-2. **`FTD-0189` LEDGER ID collision** (graviton-provenance audit vs the look-elsewhere scan) — owner to renumber; the monograph uses the TRACKER's referent (correct).
-3. The monograph's `[SYNTHESIS]` LEDGER row to be added at next-free **FTD-0249** by the owner (deferred during concurrent-session contention).
-4. Paper compile produced untracked build artifacts (`.pdf/.aux/.log/...`) in `dissemination/papers/` — do NOT stage these; consider a `.gitignore` rule.
+2. The monograph's `[SYNTHESIS]` LEDGER row to be added at next-free **FTD-0249** by the owner (deferred during concurrent-session contention).
+3. Paper compile produced untracked build artifacts (`.pdf/.aux/.log/...`) in `dissemination/papers/` — do NOT stage these; consider a `.gitignore` rule.

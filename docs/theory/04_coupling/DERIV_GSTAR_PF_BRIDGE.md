@@ -320,7 +320,7 @@ All FTD physics can be expressed through **four transcendental constants** and *
 
 | Integer | Value | Origin |
 |---------|-------|--------|
-| N_c | 3 | Color charges (from master quadratic x_-) |
+| N_c | 3 | Color charges |
 | N_base | 4 | Base dimension (lattice geometry, division algebra) |
 | b_3 | 7 | QCD beta coefficient (11 - 4N_c/3 at N_f = 0) |
 | N_eff | 13 | Fibonacci F_7 (self-referential closure) |
@@ -443,7 +443,7 @@ In PF form:
 
 $$\Delta = \frac{64\varpi^3}{\text{PF}^{3/2}} \left(\frac{4\varpi}{\sqrt{\text{PF}}} - 1\right)$$
 
-The roots $x_+ \approx 137.036$ (→ 1/α) and $x_- \approx 3.024$ (→ N_c) are dimensionless — consistent with the PF cancellation rule (§8), where dimensionless quantities from the master quadratic should be PF-free. However, the roots are functions of G* = ϖ/√(PF), so PF enters implicitly. The cancellation, if it holds, would require $x_\pm$ to depend only on the combination ϖ/√(PF) (which they do, since they depend only on G*). This is the trivial sense of PF-independence: the roots are functions of G* alone, and G* happens to decompose as ϖ/√(PF).
+The roots $x_+ \approx 137.036$ (→ 1/α) and $x_- \approx 3.024$ are dimensionless — consistent with the PF cancellation rule (§8), where dimensionless quantities from the master quadratic should be PF-free. However, the roots are functions of G* = ϖ/√(PF), so PF enters implicitly. The cancellation, if it holds, would require $x_\pm$ to depend only on the combination ϖ/√(PF) (which they do, since they depend only on G*). This is the trivial sense of PF-independence: the roots are functions of G* alone, and G* happens to decompose as ϖ/√(PF).
 
 ---
 

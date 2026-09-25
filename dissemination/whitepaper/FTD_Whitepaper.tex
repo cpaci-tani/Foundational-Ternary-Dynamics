@@ -47,7 +47,7 @@
 \textit{Philosophy of Science:} Karl Popper, Thomas Kuhn
 }
 
-\date{May 1, 2026\\Framework Version: FTD v5.34\\Verification Status: 9-theorem algebraic spine + structural-uniqueness scans (post-2026-04-19 reframe)}
+\date{May 1, 2026\\Framework Version: FTD v5.34\\Verification Status: 9-theorem algebraic spine (post-2026-04-19 reframe)}
 
 \begin{document}
 
@@ -55,12 +55,12 @@
 \thispagestyle{empty}
 
 \begin{abstract}
-We present a comprehensive evaluation of Foundational Ternary Dynamics (FTD), a mathematical framework whose master quadratic $x^2 - 16 G^{*2} x + 16 G^{*3} = 0$ has roots numerically matching $1/\alpha$ and $N_c$, and which provides parametric expressions for 15+ particle masses in terms of four integers $\{3, 4, 7, 13\}$ and the lemniscatic constant $G^*$.
+We present a comprehensive evaluation of Foundational Ternary Dynamics (FTD), a mathematical framework whose master quadratic $x^2 - 16 G^{*2} x + 16 G^{*3} = 0$ has a larger root numerically matching $1/\alpha$, and which provides parametric expressions for 15+ particle masses in terms of four integers $\{3, 4, 7, 13\}$ and the lemniscatic constant $G^*$.
 
 After executing the verification scripts and examining the derivation chains, we report:
 \begin{enumerate}
     \item \textbf{Master quadratic [THEOREM, algebraic only]}: the polynomial and its roots are pure algebra, computable from $G^*$ to arbitrary finite precision.
-    \item \textbf{$x_+ \leftrightarrow 1/\alpha$ (1.26 ppm) and $x_- \leftrightarrow N_c$ (0.80\%) [STRONGLY MOTIVATED CONJECTURE]}: numerical match plus dual-prediction structure; not a dynamical derivation from FTD's update rules.
+    \item \textbf{$x_+ \leftrightarrow 1/\alpha$ (1.26 ppm) [STRONGLY MOTIVATED CONJECTURE]}: numerical match; not a dynamical derivation from FTD's update rules.
     \item \textbf{15 particle masses with $<1\%$ error}: parametric insertions in standard physics formulas (mass anchor $K_B = m_e$ declared, see calibration paragraph below); tau mass 0.007\%.
     \item \textbf{7-term $\alpha$ series matching CODATA to 24 digits [CONJECTURE]}: post-hoc fit; precision exceeds CODATA 2022's $\sim$11 experimental digits and is not an independent prediction.
     \item \textbf{Emergent phenomena verified in simulation}: Lorentz factor, Born rule (0.96 correlation), Kepler's law, hydrogen quantization.
@@ -142,12 +142,11 @@ From $G^*$, FTD derives a quadratic equation:
 \textbf{Root} & \textbf{Value} & \textbf{Physical Identification [SMC]} & \textbf{Numerical match} \\
 \midrule
 $x_+$ & 137.0361714582 & $1/\alpha$ (fine structure constant) & 1.26 ppm \\
-$x_-$ & 3.0239639163 & $N_c$ (colour charges) & 0.80\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The polynomial itself is THEOREM (pure algebra in $G^*$, ledger row FTD-0001). The identifications $x_+ \leftrightarrow 1/\alpha$ and $x_- \leftrightarrow N_c$ are STRONGLY MOTIVATED CONJECTURE [SMC] (ledger rows FTD-0013, FTD-0014): the evidence is the dual numerical match plus CM-curve uniqueness across class-number-1 fields, not a dynamical derivation from FTD's update rules.
+The polynomial itself is THEOREM (pure algebra in $G^*$, ledger row FTD-0001). The identification $x_+ \leftrightarrow 1/\alpha$ is STRONGLY MOTIVATED CONJECTURE [SMC] (ledger row FTD-0013): the evidence is the numerical match plus CM-curve uniqueness across class-number-1 fields, not a dynamical derivation from FTD's update rules.
 
 \subsection{The 7-Term Precision Formula [CONJECTURE]}
 
@@ -196,7 +195,7 @@ where $\varepsilon = e^\pi - \pi - 20 \approx -0.0009$.
 \toprule
 \textbf{Integer} & \textbf{Symbol} & \textbf{Value} & \textbf{Mathematical Origin} & \textbf{Physical Role} \\
 \midrule
-$N_c$ & Colors & 3 & $\lfloor x_- \rfloor$ from quadratic & SU(3) gauge \\
+$N_c$ & Colors & 3 & Moore Layer Theorem & SU(3) gauge \\
 $N_{\text{base}}$ & Base & 4 & Only Lucas perfect square & Lattice geometry \\
 $b_3$ & Beta & 7 & $T_6$ (Tribonacci) & QCD beta function \\
 $N_{\text{eff}}$ & Effective & 13 & $F_7 = T_7$ (crossover) & Effective modes \\
@@ -388,7 +387,7 @@ Eddington & $\sim 5$ & $\alpha$, masses & $\sim 1\%$ \\
 
 \subsection{Overall Posture}
 
-The framework's load-bearing claims fall into three honest categories: (i) THEOREMs that are pure algebra in $G^*$ and the four framework integers (master quadratic, coefficient routes, finite-$L$ engine results), (ii) STRONGLY MOTIVATED CONJECTUREs where a structural argument plus dual numerical match supports a physical identification but no dynamical derivation is in hand ($x_+ \leftrightarrow 1/\alpha$, $x_- \leftrightarrow N_c$, mass formulas), and (iii) PARAMETRIC insertions where FTD values are placed into standard physics formulas (mixing angles, $\alpha_s$). Every dimensional prediction is conditional on the declared calibration $a_{\text{phys}} \equiv \ell_P$, $K_B = m_e$.
+The framework's load-bearing claims fall into three honest categories: (i) THEOREMs that are pure algebra in $G^*$ and the four framework integers (master quadratic, coefficient routes, finite-$L$ engine results), (ii) STRONGLY MOTIVATED CONJECTUREs where a structural argument plus numerical match supports a physical identification but no dynamical derivation is in hand ($x_+ \leftrightarrow 1/\alpha$, mass formulas), and (iii) PARAMETRIC insertions where FTD values are placed into standard physics formulas (mixing angles, $\alpha_s$). Every dimensional prediction is conditional on the declared calibration $a_{\text{phys}} \equiv \ell_P$, $K_B = m_e$.
 
 \subsection{Strengths}
 
@@ -496,7 +495,7 @@ Lorentz factor & Exact & $\gamma = 1/\sqrt{1-v^2/c^2}$ & \textbf{0.00\%} \\
 \textit{Comprehensive whitepaper completed by virtual academic panel.}\\
 \textit{Framework: Foundational Ternary Dynamics v5.34}\\
 \textit{Date: May 1, 2026}\\
-\textit{Verification: 9-theorem algebraic spine + structural-uniqueness scans}\\
+\textit{Verification: 9-theorem algebraic spine}\\
 \textit{Calibration: $a_{\text{phys}} \equiv \ell_P$, $K_B = m_e$ (master ledger FTD-0041)}
 \end{center}
 

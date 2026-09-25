@@ -586,7 +586,7 @@ print(f"""
   LINK 9: G* determines the master quadratic
     x^2 - 16*G*^2*x + 16*G*^3 = 0
     x_+ = {fmt_short(x_plus)} (= 1/alpha in FTD)
-    x_- = {fmt_short(x_minus)} (= N_c in FTD)
+    x_- = {fmt_short(x_minus)}
 """)
 
 # Verify master quadratic

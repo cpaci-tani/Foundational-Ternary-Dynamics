@@ -1,14 +1,14 @@
 # DERIV - Quadrature Covariance and Edge Projection
 
 **Tag:** [THEOREM]
-**LEDGER:** FTD-0212 [SYNTHESIS] - closes the spatial projection No-Go (FTD-0210).
+**LEDGER:** FTD-0212 [SYNTHESIS] - closes the spatial projection No-Go of `SPEC_QUADRATURE_CANONICALIZATION.md`.
 **Companion docs:** `SPEC_QUADRATURE_CANONICALIZATION.md`, `SPEC_CONNECTION_EXTRACTION_RULE.md`
 
 ---
 
 ## 0. Purpose
 
-The Quadrature Canonicalization spec (FTD-0210) established a strict "No-Go" on defining the intrinsic $\mathbb{Z}[i]$ quadrature field $z(v)$ via global, arbitrary spatial projections (e.g., $z = J_x + i J_y$). Such projections violate the 3D rotational cubic symmetry ($O_h$) of the FTD lattice by manually elevating a preferred 2D plane.
+The Quadrature Canonicalization spec established a strict "No-Go" on defining the intrinsic $\mathbb{Z}[i]$ quadrature field $z(v)$ via global, arbitrary spatial projections (e.g., $z = J_x + i J_y$). Such projections violate the 3D rotational cubic symmetry ($O_h$) of the FTD lattice by manually elevating a preferred 2D plane.
 
 This document formally derives the canonical formulation of $z(v)$. It bypasses the No-Go by recognizing that the topological holonomy $\mathcal{L}_C = \sum_{e \in C} A_J(e)$ is evaluated *along a specific integration path*. Therefore, the identification of the complex plane is not a global static field, but an **edge-covariant tangent projection**.
 
@@ -36,7 +36,7 @@ $$ z_e(v) = J_{\perp, 1}(v) + i J_{\perp, 2}(v) $$
 
 ## 2. Closing the No-Go (Symmetry Preservation)
 
-This formulation satisfies all admissibility requirements of FTD-0210:
+This formulation satisfies all admissibility requirements of the Quadrature Canonicalization spec:
 
 1.  **3D Rotational Covariance:** No preferred global plane is selected. The projection is completely covariant with the cubic lattice $O_h$ symmetry. A rotation of the lattice identically rotates the integration path $C$ and its orthogonal planes $P_e$.
 2.  **Topological Winding:** By projecting the continuous flux $J$ onto the transverse plane, $z_e(v)$ naturally inherits the orientational phase $\theta = \operatorname{Arg}(z_e)$ necessary for a well-defined integer winding number $n_C \neq 0$ around a dipole defect.

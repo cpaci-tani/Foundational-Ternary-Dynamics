@@ -458,7 +458,7 @@ $$x_+ = 8G^{*2} + 4G^*\sqrt{G^*(4G^*-1)} = 137.0361714582\ldots$$
 
 $$x_- = 8G^{*2} - 4G^*\sqrt{G^*(4G^*-1)} = 3.0239639163\ldots$$
 
-Both are transcendental. The smaller root floors to ⌊x₋⌋ = 3.
+Both are transcendental.
 
 ### 4.5 The Harmonic Mean
 
@@ -537,7 +537,6 @@ All values computed from the canonical definition G* = Γ(1/4)²/(√2·Γ(1/2)�
 | 16G*³ | 414.392438... | Constant term of quadratic |
 | x₊ | 137.036171458... | Quadratic formula |
 | x₋ | 3.023963916... | Quadratic formula |
-| ⌊x₋⌋ | 3 | — |
 | H (normalized) | 2.000000000... | Vieta: 2·Prod/Sum |
 | θ₃(e^{−π})² | 1.180340599... | = G*/√(2π) |
 | θ₃(0,i) | 1.086434811... | = π^{1/4}/Γ(3/4) = √G*/(2π)^{1/4} (weight-½, Derivation 5) |

@@ -39,7 +39,7 @@
 |----|-----------|--------|---------------|----------|
 | S1 | CM curves preferred among elliptic curves | SELECTION | Max symmetry at min complexity | paper §6 |
 | S2 | j = 1728 selected among CM curves | SELECTION | 4-fold symmetry compatible with cubic lattice | paper §6 |
-| S3 | Master quadratic x² - 16c²x + 16c³ = 0 | SELECTION | Dual constraint from single geometry; not uniquely proven | paper §8 |
+| S3 | Master quadratic x² - 16c²x + 16c³ = 0 | SELECTION | not uniquely proven | paper §8 |
 
 ---
 
@@ -48,7 +48,6 @@
 | Claim ID | Statement | Status | Dependencies | Justified In | Falsification Criterion | Repro Script |
 |----------|-----------|--------|--------------|--------------|------------------------|--------------|
 | **ALPHA-1** | 1/α = 137.036 (1.26 ppm from CODATA) | **SELECTION + CONJECTURE** | S1, S2, S3, GAUSS-1 | paper §5.2, SPEC_FTD_REFERENCE.md §6 | Precision α measurement incompatible at >10 ppm after QED corrections | `scripts/verification/verify_quadratic.py` |
-| ~~**ALPHA-2**~~ | ~~x₋ = 3.024 → N_c = 3 via RG flow~~ | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`) — `N_c = 3` independently sourced from D=3 (SU(D)=SU(3) [SELECTION]) via `DERIV_LATTICE_SU3_GAUGE.md` / `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem | n/a | n/a | n/a | n/a |
 | **BORN-1** | Born rule P(v) = \|ψ(v)\|²/\|\|ψ\|\|² connects Spatial Potential to Epistemic Probability | **BRIDGE PROTOCOL** | A1-A4, EPISTEMIC_BRIDGE | BORN_RULE_DERIVATION.md | Failure of probability to track potential density | `scripts/verification/verify_born_rule.py` (Corr: 0.94) |
 | **GAUSS-1** | Gauss constraint yields 16 DoF on 2×2×2 lattice | THEOREM | A1, A3 | paper Appendix T2 | Mathematical counterexample | `scripts/verification/verify_quadratic.py` |
 | **SQRT2-1** | Critical coupling λ=1 gives ω=√2 | THEOREM | A1, A3 | paper Appendix T3-T4 | Mathematical counterexample | `scripts/verification/verify_quadratic.py` |
@@ -71,7 +70,7 @@
 | **WBOSON-1** | m_W = 67/(8α²) × m_e = 80.36 GeV (0.016% error) | CONJECTURE | ALPHA-1, MASS-1 | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `scripts/verification/verify_masses.py` |
 | **SUSY-0** | No superpartners at any energy | THEOREM | discrete lattice incompatible with SUSY | REF_CLAIMS_MATRIX.md (this doc) | Discovery of any superpartner | n/a (exclusion) |
 | **DIM-3** | D=3 is unique viable spatial dimension | [SELECTION — declared] (FTD-0355) | stability + gauge theory requirements | REF_CLAIMS_MATRIX.md (this doc) | Detection of KK modes or 1/r² deviation | n/a (exclusion) |
-| **GEN-3** | N_gen = N_c = 3 (NOT via ⌊x₋⌋ — that route is RETIRED, FTD-0014; sourced from S3) | **CONJECTURE** | S3 | REF_CLAIMS_MATRIX.md (this doc) | 4th generation with standard couplings | n/a (exclusion) |
+| **GEN-3** | N_gen = N_c = 3 (sourced from S3) | **CONJECTURE** | S3 | REF_CLAIMS_MATRIX.md (this doc) | 4th generation with standard couplings | n/a (exclusion) |
 | **STRING-0** | String theory incompatible (requires D=10/11, SUSY, continuous spacetime) | THEOREM | DIM-3, SUSY-0, A1 | REF_CLAIMS_MATRIX.md (this doc) | Demonstration of string-FTD compatibility | n/a (exclusion) |
 | **DIGIT13-1** | 4-term precision formula predicts digit 13 of 1/α = 0 | **PREDICTION** | ALPHAP-1, ALPHAP-1b | DERIV_ALPHA_PRECISION_FORMULA.md | Digit 13 measured as non-zero | `scripts/verification/verify_precision_formula_v2.py` |
 | **DARKMATTER-1** | DM = sub-threshold flux (0 < \|J\| < K_B) | CONJECTURE | A1-A4 | SPEC_FTD_REFERENCE.md §12 | Confirmed WIMP detection | `scripts/verification/verify_cosmology.py` |
@@ -152,7 +151,7 @@
 | Document | Claims Addressed |
 |----------|-----------------|
 | `CLAUDE.md` | A1-A5, S1-S3, PLANCK-1, GAMMA-1 |
-| `paper/trd_fine_structure.tex` | ALPHA-1, ALPHA-2, GAUSS-1, SQRT2-1, CM-1, S1-S3 |
+| `paper/trd_fine_structure.tex` | ALPHA-1, GAUSS-1, SQRT2-1, CM-1, S1-S3 |
 | `DERIV_QUANTUM_MECHANICS_RESOLVED.md` | BORN-1 |
 | `SPEC_FTD_REFERENCE.md` | HILBERT-1, BELL-1, CONTINUUM-1, SPINOR-1, DARKMATTER-1, Complete v5.0 reference |
 | `FOUND_SLOOP_FORMALIZATION.md` | COLLAPSE-1, OBSERVER-1 |
@@ -168,7 +167,7 @@
 
 | Claim | Verification Script | Expected Output |
 |-------|---------------------|-----------------|
-| ALPHA-1, ALPHA-2 | `scripts/g_star_from_trd.py` | x₊ = 137.036171..., x₋ = 3.02396... |
+| ALPHA-1 | `scripts/g_star_from_trd.py` | x₊ = 137.036171..., x₋ = 3.02396... |
 | GAUSS-1 | `scripts/coefficient_16_from_lattice.py` | DoF = 16 |
 | SQRT2-1 | `scripts/critical_coupling_selection.py` | ω = 1.4142135... |
 | CM-1 | `scripts/cm_selection_proof.py` | j = 1728 only compatible |
@@ -560,7 +559,7 @@ $$x_+, x_- = 70 \pm 67$$
 | Root | Value | Decomposition | Physical Meaning |
 |------|-------|---------------|------------------|
 | x₊ | 137.036 | 70 + 67 | 1/α (electromagnetic) [STRONGLY MOTIVATED CONJECTURE, FTD-0013] |
-| x₋ | 3.024 | 70 - 67 | **none** — mathematical artifact of P(x). The x₋ → N_c identification is **RETIRED** (FTD-0014, commit `ca7eb61`; see ALPHA-2 row at line 55). N_c = 3 is sourced independently (D=3; `DERIV_NC_FROM_TOPOLOGY.md`). |
+| x₋ | 3.024 | 70 - 67 | **none** — mathematical artifact of P(x). |
 
 **67 is a Heegner number** (class number 1) — one of only 9 such numbers.
 
@@ -755,7 +754,7 @@ $$\rho_\Lambda = \frac{m_e^4 \times G^{*2}}{x_+^{16}}$$
 
 where x₊ = 137.036 = 1/α is the larger root of x² − 16G*²x + 16G*³ = 0.
 
-**The same equation determines α, N_c, AND vacuum energy.**
+**The same equation determines α AND vacuum energy.**
 
 ### Falsification Criteria
 

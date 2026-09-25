@@ -198,7 +198,7 @@
   <div class="symbol">G*</div>
   <div class="info">
     <div class="name">Lemniscate-alpha constant (G-star)</div>
-    <div class="english">THE bridge between discrete and continuous. G* = 2&varpi;/&radic;&pi; &approx; 2.9591. It simultaneously encodes lattice structure (discrete integers, packing fraction PF = &pi;/4) and lemniscate geometry (continuous period &varpi;). Also expressible as G* = &varpi;/&radic;PF. The entire ontic derivation chain flows through G*: it determines &alpha;, N<sub>c</sub>, K<sub>B</sub>, and every other physical constant in FTD. Implemented as the first constant in the C++ engine's <code>ontic.h</code> header.</div>
+    <div class="english">THE bridge between discrete and continuous. G* = 2&varpi;/&radic;&pi; &approx; 2.9591. It simultaneously encodes lattice structure (discrete integers, packing fraction PF = &pi;/4) and lemniscate geometry (continuous period &varpi;). Also expressible as G* = &varpi;/&radic;PF. The entire ontic derivation chain flows through G*: it determines &alpha;, K<sub>B</sub>, and every other physical constant in FTD. Implemented as the first constant in the C++ engine's <code>ontic.h</code> header.</div>
     <div class="also">Also: G* = &radic;(2&pi;) &middot; &theta;<sub>3</sub>(e<sup>&minus;&pi;</sup>)&sup2; (theta function identity).</div>
     <span class="tag tag-ftd">FTD Core</span>
   </div>
@@ -237,7 +237,7 @@
   <div class="symbol">N<sub>c</sub></div>
   <div class="info">
     <div class="name">Number of color charges</div>
-    <div class="english">N<sub>c</sub> = 3. The number of quark colors (red, green, blue). Two independent derivations: (1) Floor of the confined root: &lfloor;x<sub>&minus;</sub>&rfloor; = &lfloor;3.024&rfloor; = 3. (2) Baryon saturation: 3 quarks saturate all 3 orthogonal flux components (J<sub>x</sub>, J<sub>y</sub>, J<sub>z</sub>), reaching the manifestation threshold. N<sub>c</sub> = D = 3 because the spatial dimension provides exactly 3 orthogonal flux directions.</div>
+    <div class="english">N<sub>c</sub> = 3. The number of quark colors (red, green, blue). Derived from baryon saturation: 3 quarks saturate all 3 orthogonal flux components (J<sub>x</sub>, J<sub>y</sub>, J<sub>z</sub>), reaching the manifestation threshold. N<sub>c</sub> = D = 3 because the spatial dimension provides exactly 3 orthogonal flux directions.</div>
     <span class="tag tag-ftd">FTD Core</span>
   </div>
 </div>
@@ -255,7 +255,7 @@
   <div class="symbol">G*&sup2;</div>
   <div class="info">
     <div class="name">Energy per tick per degree of freedom</div>
-    <div class="english">G*&sup2; &approx; 8.754. The amount of energy processed at each tick. Time IS energy processing &mdash; each tick converts this much energy per degree of freedom. From the Vieta sum of the master quadratic roots: x<sub>+</sub> + x<sub>&minus;</sub> = 16G*&sup2; = 1/&alpha; + N<sub>c</sub> &approx; 140.06. The total energy budget per tick equals the electromagnetic coupling plus the color coupling.</div>
+    <div class="english">G*&sup2; &approx; 8.754. The amount of energy processed at each tick. Time IS energy processing &mdash; each tick converts this much energy per degree of freedom. From the Vieta sum of the master quadratic roots: x<sub>+</sub> + x<sub>&minus;</sub> = 16G*&sup2; &approx; 140.06.</div>
     <span class="tag tag-ftd">FTD Core</span>
   </div>
 </div>
@@ -311,11 +311,11 @@
   </div>
 </div>
 
-<div class="card" data-search="x minus confined root color strong force quarks can't escape smaller">
+<div class="card" data-search="x minus confined root quarks can't escape smaller">
   <div class="symbol">x<sub>&minus;</sub></div>
   <div class="info">
     <div class="name">Confined root</div>
-    <div class="english">x<sub>&minus;</sub> &approx; 3.024. The smaller root. Governs the strong nuclear force. Its floor gives N<sub>c</sub> = &lfloor;3.024&rfloor; = 3 (three colors). The confined phase &mdash; quarks can't escape because the string tension &sigma; = 0.209 creates a linear potential V(R) = &sigma;R that grows without bound as you try to pull them apart.</div>
+    <div class="english">x<sub>&minus;</sub> &approx; 3.024. The smaller root. The confined phase &mdash; quarks can't escape because the string tension &sigma; = 0.209 creates a linear potential V(R) = &sigma;R that grows without bound as you try to pull them apart.</div>
     <span class="tag tag-ftd">FTD Core</span>
   </div>
 </div>
@@ -324,7 +324,7 @@
   <div class="symbol">x<sub>+</sub> + x<sub>&minus;</sub></div>
   <div class="info">
     <div class="name">Vieta sum (total energy budget)</div>
-    <div class="english">x<sub>+</sub> + x<sub>&minus;</sub> = 16G*&sup2; &approx; 140.06. The sum of the two roots equals the total energy budget per tick. This means: 1/&alpha; + N<sub>c</sub> = 137.036 + 3.024 = 140.06. The electromagnetic and color sectors together account for all the energy the lattice processes each tick.</div>
+    <div class="english">x<sub>+</sub> + x<sub>&minus;</sub> = 16G*&sup2; &approx; 140.06. The sum of the two roots equals the total energy budget per tick.</div>
     <span class="tag tag-ftd">FTD Core</span>
   </div>
 </div>
@@ -595,7 +595,7 @@
 
 <div class="card" data-search="floor integer part round down truncate">
   <div class="symbol">&lfloor;x&rfloor;</div>
-  <div class="info"><div class="name">Floor function</div><div class="english">"Round down to the nearest integer." &lfloor;3.024&rfloor; = 3. &lfloor;137.036&rfloor; = 137. &lfloor;&minus;2.7&rfloor; = &minus;3. This is how N<sub>c</sub> = 3 is extracted from the confined root x<sub>&minus;</sub> = 3.024.</div><span class="tag tag-operator">Operator</span></div>
+  <div class="info"><div class="name">Floor function</div><div class="english">"Round down to the nearest integer." &lfloor;3.024&rfloor; = 3. &lfloor;137.036&rfloor; = 137. &lfloor;&minus;2.7&rfloor; = &minus;3.</div><span class="tag tag-operator">Operator</span></div>
 </div>
 
 <div class="card" data-search="ceiling round up nearest integer above">

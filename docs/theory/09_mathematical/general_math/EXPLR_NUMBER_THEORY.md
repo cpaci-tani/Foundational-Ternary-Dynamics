@@ -4,7 +4,7 @@
 
 **Status:** Verified mathematical connections with derivation chain established
 
-This document consolidates the framework-integer analysis of {3, 4, 7, 13} with the seven-routes-to-42 analysis.
+This document consolidates the framework-integer analysis of {3, 4, 7, 13} with the routes-to-42 analysis.
 
 ---
 
@@ -14,7 +14,7 @@ This document establishes that the FTD framework integers {3, 4, 7, 13} are not 
 
 **Key Achievements:**
 - The j-invariant j = 1728 can now be **derived** as (N_base × N_c)³ rather than being an independent selection principle
-- The number 42 = 2 × N_c × b₃ appears through **seven independent mathematical routes** with combined probability p < 10⁻⁸
+- The number 42 = 2 × N_c × b₃ appears through **six independent mathematical routes** with combined probability p < 10⁻⁸
 
 ---
 
@@ -24,7 +24,7 @@ This document establishes that the FTD framework integers {3, 4, 7, 13} are not 
 
 | Symbol | Value | Physical Role | Mathematical Role |
 |--------|-------|---------------|-------------------|
-| N_c | 3 | Color charges (SU(3)) | Quadratic root floor |
+| N_c | 3 | Color charges (SU(3)) | --- |
 | N_base | 4 | Lattice geometry | Tetrahedron vertices |
 | b_3 | 7 | QCD beta function | N_base + N_c |
 | N_eff | 13 | Effective modes | Fibonacci F_7 |
@@ -37,7 +37,7 @@ Where G* = √2 × Γ(1/4)² / (2π) ≈ 2.9586751192 (lemniscatic constant)
 
 **Roots:**
 - x₊ = 137.036171 (1/α to 1.26 ppm accuracy)
-- x₋ = 3.023964 (floor = N_c = 3)
+- x₋ = 3.023964
 
 ### 1.3 Derived Relationships
 
@@ -59,7 +59,6 @@ The original framework stated integers as "selection principles" without clear d
 | Integer | Original Justification | Issue |
 |---------|----------------------|-------|
 | N_base = 4 | "Self-reference closure (4² = 16)" | Vague |
-| N_c = 3 | floor(x₋) from quadratic | Solid |
 | b_3 = 7 | "N_base + N_c (loop self-enumeration)" | Circular |
 | N_eff = 13 | "F_7 (Fibonacci of loop length)" | Why index 7? |
 
@@ -117,7 +116,7 @@ The original framework stated integers as "selection principles" without clear d
 
 This means **j = 1728 is now DERIVED** from the integer values, not independently selected!
 
-> **Theorem (NTHR-1):** Given N_base = 4 and N_c = 3 (from the master quadratic), the j-invariant is uniquely determined as j = (N_base × N_c)³ = 1728.
+> **Theorem (NTHR-1):** Given N_base = 4 and N_c = 3, the j-invariant is uniquely determined as j = (N_base × N_c)³ = 1728.
 
 ---
 
@@ -299,7 +298,7 @@ With generous allowances for correlation and selection effects: **p < 10⁻⁶**
 
 ---
 
-## Part VII: The 42 Nexus — Seven Independent Routes
+## Part VII: The 42 Nexus — Six Independent Routes
 
 ### 7.1 Route 1: The Heegner Product
 
@@ -323,25 +322,19 @@ $$B_6 = \frac{1}{42}$$
 
 By von Staudt-Clausen: denom(B_{2n}) = ∏(p-1|2n) p. For n = 3: (p-1)|6 for p ∈ {2, 3, 7}.
 
-### 7.5 Route 5: The Mass Gap δ (historical — `x_-  N_c` retired)
-
-$$\delta = x_- - 3 = 3.024 - 3 = 0.024 \approx \frac{1}{42} = 0.0238...$$
-
-Error: 0.8%. The "gap" between the continuous root x₋ and the integer 3 is approximately 1/42. *(Historical framing wrote this as `\delta = x_- - N_c`; that framing depended on the now-retired `x_-  N_c` identification per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. The numerical question — closed form for `x_- − 3` — stands as a pure-math question; `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
-
-### 7.6 Route 6: The Tau Mass Correction
+### 7.5 Route 5: The Tau Mass Correction
 
 $$\frac{m_\tau}{m_e} = (N_{\text{eff}} + N_{\text{base}}) \times 207 - 42 = 17 \times 207 - 42 = 3477$$
 
 Experimental: 3477.2 → **Error: 0.007%** (best mass prediction!)
 
-### 7.7 Route 7: The Bottom Quark Correction
+### 7.6 Route 6: The Bottom Quark Correction
 
 $$\frac{m_b}{m_e} = T(127) + 42 = 8128 + 42 = 8170$$
 
 Experimental: 8182 → **Error: 0.14%**
 
-### 7.8 Route Independence and Probability
+### 7.7 Route Independence and Probability
 
 | Route | Primary Domain | p(42 by chance) |
 |-------|---------------|-----------------|
@@ -349,13 +342,12 @@ Experimental: 8182 → **Error: 0.14%**
 | FTD integers | Framework | ~1/50 |
 | Catalan C₅ | Combinatorics | ~1/40 |
 | Bernoulli B₆ | Analysis | ~1/40 |
-| Mass gap | Physics | ~1/100 |
 | Tau correction | Particle physics | ~1/1000 |
 | Bottom correction | Particle physics | ~1/1000 |
 
 **Combined probability (conservative): p < 10⁻⁸**
 
-### 7.9 The Prime Factorization 2 × 3 × 7
+### 7.8 The Prime Factorization 2 × 3 × 7
 
 | Prime | FTD Role | Physical Meaning |
 |-------|----------|------------------|
@@ -369,7 +361,7 @@ The division algebra connection:
 
 **42 = 2 × 3 × 7 is the signature of octonionic physics.**
 
-### 7.10 The Convergence Diagram
+### 7.9 The Convergence Diagram
 
 ```
     HEEGNER NUMBERS ──────┐
@@ -384,9 +376,6 @@ The division algebra connection:
     FTD INTEGERS ─────────┤
     (2 × N_c × b₃)       │
                           │
-    MASS GAP δ ───────────┤
-    (≈ 1/42)              │
-                          │
     TAU MASS ─────────────┤
     (correction = 42)     │
                           │
@@ -394,7 +383,7 @@ The division algebra connection:
     (correction = 42)
 ```
 
-All seven routes converge because they all probe the same underlying structure: **the self-referential geometry encoded in G*.**
+All six routes converge because they all probe the same underlying structure: **the self-referential geometry encoded in G*.**
 
 ---
 
@@ -419,7 +408,7 @@ All seven routes converge because they all probe the same underlying structure: 
 
 ### Level 4: Solved
 - x₊ = 137.036 = 1/α (1.26 ppm accuracy)
-- x₋ = 3.024, floor = N_c = 3
+- x₋ = 3.024
 
 ### Verification Layer
 - τ(3), Heegner, 1729, η²⁴, 42 nexus all confirm
@@ -499,10 +488,9 @@ The self-dual nome $q = e^{-\pi}$ connects: $1/q = e^{\pi} \approx \pi + b_3 + N
 | Gauge anomaly cancellation | N_c must cancel triangle anomalies | Yes |
 | Asymptotic freedom | b_0 = 11 - 2N_f/3 > 0 requires N_c >= 2 | Yes |
 | Stable baryons | N_c odd for baryon stability | Yes |
-| Master quadratic | x_- = 3.024 -> floor(x_-) = 3 | Yes |
 | Color confinement | N_c > 2 for stable confinement | Yes |
 
-**Uniqueness argument (historical, post-v1.4 caveat):** N_c = 2 fails (no stable baryons, gauge anomalies); the integer-counting `x_-` arguments (e.g. "N_c = 4 fails (x_- != 4), N_c >= 5 fails (master quadratic gives x_- ~ 3.024)") depended on the now-retired `x_-  N_c` identification per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD is now sourced independently via `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
+**Uniqueness argument:** N_c = 2 fails (no stable baryons, gauge anomalies). `N_c = 3` in FTD is sourced via `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 
 #### N_base = 4 (Base Harmonics)
 
@@ -551,7 +539,6 @@ The self-dual nome $q = e^{-\pi}$ connects: $1/q = e^{\pi} \approx \pi + b_3 + N
 | Check | Value | Result |
 |-------|-------|--------|
 | Stable baryons | N_c = 2 has unstable baryons | FAILS |
-| Master quadratic | x_- != 2 | FAILS |
 
 #### Alternative: {3, 4, 11, 17}
 
@@ -569,7 +556,7 @@ The self-dual nome $q = e^{-\pi}$ connects: $1/q = e^{\pi} \approx \pi + b_3 + N
 
     Master Quadratic
     x+ = 137.036 (alpha) <--+
-    x- = 3.024 (N_c)  ------+---> G* = sqrt(2) Gamma(1/4)^2/(2pi)
+    x- = 3.024 -------------+---> G* = sqrt(2) Gamma(1/4)^2/(2pi)
                              |         ^
                              |    Lemniscatic constant
                              |    (from elliptic theory)
@@ -662,11 +649,10 @@ The fact that FTD discovers these integers through physical reasoning (discrete 
 | **42-2** | 2 × N_c × b₃ = 42 | **[THEOREM]** |
 | **42-3** | Catalan C₅ = 42 | **[THEOREM]** |
 | **42-4** | denom(B₆) = 42 | **[THEOREM]** |
-| **42-5** | Mass gap δ ≈ 1/42 | **[THEOREM]** (0.8% error) |
-| **42-6** | Tau correction = 42 | **[THEOREM]** (0.007% error) |
-| **42-7** | Bottom correction = 42 | **[THEOREM]** (0.14% error) |
-| **42-8** | Seven routes are independent | **[THEOREM]** |
-| **42-9** | 42 encodes 2 × 3 × 7 = fundamental structure | **[SELECTION]** |
+| **42-5** | Tau correction = 42 | **[THEOREM]** (0.007% error) |
+| **42-6** | Bottom correction = 42 | **[THEOREM]** (0.14% error) |
+| **42-7** | Six routes are independent | **[THEOREM]** |
+| **42-8** | 42 encodes 2 × 3 × 7 = fundamental structure | **[SELECTION]** |
 
 ---
 
