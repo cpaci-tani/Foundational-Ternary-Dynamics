@@ -218,7 +218,7 @@ $\Gstar$ as the limit of a Wallis-type product over Fermat residue classes.
 ## PAPER_GSTAR_IDENTITIES.tex
 **Path:** `docs/papers/src/PAPER_GSTAR_IDENTITIES.tex`
 
-We compile fifty-two representations of the constant
+We compile fifty-two numbered entries concerning the constant
 ${\Gstar} = \Gamma(\tfrac14)/\Gamma(\tfrac34) \approx 2.9587$,
 organised into twelve families spanning the Gamma and Beta functions,
 the lemniscate, elliptic integrals, the arithmetic-geometric mean,
@@ -226,14 +226,18 @@ Jacobi theta functions, the Dedekind eta function, lattice Green's
 functions (Watson integrals), $L$-functions of CM elliptic curves,
 hypergeometric series, structural relations among
 $\Gstar$, $\varpiup$, and~$\pi$, and modular forms.
-All identities are proved or given precise references.
+The catalogue includes exact representations, identities for related
+quantities, algebraic restatements, and one explicitly bounded approximation.
+Definitions, normalisations, and the classical identities connecting the
+families are stated explicitly.
 Among the representations we include the Wallis-type product
-$\Gstar = \lim_{N\to\infty} N^{-1/2}\prod_{k=0}^{N}(4k+3)/(4k+1)$,
+$\Gstar = \lim_{N\to\infty} N^{-1/2}\prod_{k=0}^{N-1}(4k+3)/(4k+1)$,
 the Dedekind eta evaluation $\Gstar = 2\sqrt{2\pi}\,\eta(i)^{2}$,
 and the factorisation of the lemniscate constant as a product
-of two independent residue-class races, which appear to be new.
-The collection is intended as a definitive reference for the constant
-that connects the circle to the lemniscate.
+of two residue-class products. These are consequences of classical Gamma,
+elliptic, and modular identities; no novelty or priority is claimed.
+The collection is a pedagogical dictionary for a normalised lemniscatic
+period, not a claim of fifty-two independent derivations.
 
 ---
 
@@ -301,18 +305,16 @@ phenomenological selection requiring independent physical matching.
 
 The Euler reflection formula at $z=\tfrac14$ gives
 $\Gamma(\tfrac14)\,\Gamma(\tfrac34) = \pi\sqrt{2}$.
-This \emph{product} is classical and well studied.  We observe that the
-\emph{ratio} $\Gamma(\tfrac14)/\Gamma(\tfrac34) \approx 2.9587$---which
-we denote $\Gstar$ and call the \emph{lemniscatic bridge constant}---has
-received almost no independent attention, despite admitting a Wallis-type
-infinite product, appearing as the scaled period of the CM elliptic curve
-$y^{2}=x^{3}-x$, and factoring the lemniscate constant as
+The associated classical \emph{ratio}
+$\Gamma(\tfrac14)/\Gamma(\tfrac34) \approx 2.9587$---which
+we denote $\Gstar$ and call the \emph{lemniscatic bridge constant}---admits
+a Wallis-type infinite product, appears as a scaled period of the CM elliptic curve
+$y^{2}=x^{3}-x$, and factors the lemniscate constant as
 $\varpiup = {\Gstar}\sqrt{\pi}/2$.
 
-We argue that $\Gstar$ deserves recognition as a fundamental constant on
-the same footing as $\pi$ and $\varpiup$, and that its historical
-absence from the literature is an accident of convention, not of
-substance.
+We introduce this normalisation alongside $\pi$ and $\varpiup$ through
+its classical identities. The dedicated notation is a pedagogical
+proposal; no novelty, priority, or historical-neglect claim is made.
 
 ---
 

@@ -166,7 +166,8 @@ The elliptic curve $E\colon y^{2}=x^{3}-x$ over~$\QQ$ satisfies:
   \item $E(\QQ)_{\mathrm{tors}} =
     \{O,(0,0),(1,0),(-1,0)\} \cong \ZZ/2\ZZ \times \ZZ/2\ZZ$,
     with $\abs{E(\QQ)_{\mathrm{tors}}} = 4$.
-  \item The conductor is $N=32$ \textup{(}LMFDB label \texttt{32.a2}\textup{)}
+  \item The conductor is $N=32$ \textup{(}LMFDB label \texttt{32.a3},
+    Cremona label \texttt{32a2}\textup{)}
     and the root number is $\varepsilon(E) = +1$.
 \end{enumerate}
 \end{proposition}
@@ -187,28 +188,46 @@ quantity that appears in the denominator of the BSD period ratio
 
 The CM field is $K = \QQ(i)$, with $[K:\QQ] = 2$.
 
-\subsection{The BSD computation}\label{ssec:bsd}
+\subsection{The exact \texorpdfstring{$L$}{L}-value and BSD normalisation}\label{ssec:bsd}
 
-The Birch--Swinnerton-Dyer formula, proven for rank-zero CM curves by
-Rubin~\cite{Rubin}, gives
+The curve corresponds to the normalised newform
+$f_{32}(\tau)=\eta(4\tau)^2\eta(8\tau)^2$.
+Its special value follows directly from a Mellin-transform evaluation
+\cite[Lemma~3.1]{LiLongTu}:
+\begin{equation}\label{eq:LE1}
+  L(E,1)=L(f_{32},1)
+  =\frac18 B\!\left(\frac12,\frac14\right)
+  =\frac{\sqrt{\pi}}8\,
+    \frac{\Gamma(\frac14)}{\Gamma(\frac34)}
+  =\frac{\varpiup}{4}\ne0.
+\end{equation}
+This evaluation does not assume the BSD conjecture.
+
+For the N\'{e}ron differential $\omega=dx/(2y)$, the least positive
+real period is
+\[
+  \Omega_{+}=\int_1^\infty\frac{dx}{\sqrt{x^3-x}}
+  =2\int_0^1\frac{dt}{\sqrt{1-t^4}}=\varpiup,
+\]
+where $x=t^{-2}$.  Since $E(\mathbb R)$ has two components, the total
+real period used in the BSD formula is
+$\Omega_E=\int_{E(\mathbb R)}|\omega|=2\Omega_{+}=2\varpiup$.
+The rank-zero BSD expression is
 \begin{equation}\label{eq:bsd}
-  L(E,1) \;=\; \frac{\Omega_{+}\cdot\abs{\text{III}}\cdot
+  L(E,1) \;\stackrel{\mathrm{BSD}}{=}\;
+  \frac{\Omega_E\cdot\abs{\text{III}}\cdot
   \prod_{p}c_{p}}{%
   \abs{E(\QQ)_{\mathrm{tors}}}^{2}}
 \end{equation}
-where $\Omega_{+}=\varpiup$ is the real period,
-$\abs{\text{III}}=1$ (Rubin~\cite{Rubin}),
-$c_{2}=4$ is the Tamagawa number at $p=2$ (the unique prime of bad reduction),
-$c_{p}=1$ for all odd~$p$, and $\abs{E(\QQ)_{\mathrm{tors}}}=4$.
-Hence
-\begin{equation}\label{eq:LE1}
-  L(E,1) \;=\; \frac{\varpiup\cdot 1\cdot 4}{16}
-  \;=\; \frac{\varpiup}{4} \;\neq\; 0.
-\end{equation}
-The nonvanishing was first proved by Coates--Wiles~\cite{CoatesWiles}.
+where $c_2=2$, $c_p=1$ for odd~$p$, and
+$\abs{E(\QQ)_{\mathrm{tors}}}=4$~\cite{Cremona}.
+Thus its right-hand side is $\varpiup\abs{\text{III}}/4$;
+the exact value~\eqref{eq:LE1} gives analytic order~$1$ for the
+Tate--Shafarevich group in this formula.  A general rank-zero CM
+BSD theorem is not needed for the identity used here.
 The representation $\Gstar = 8\,L(E,1)/\gamma_{2}$
 (Theorem~\ref{thm:seven},~\eqref{eq:D7}) thus links $\Gstar$ directly to
-the arithmetic of~$E$ via the BSD formula.
+the arithmetic of this specified curve through its exact $L$-value.
 
 \begin{remark}\label{rem:16inBSD}
 The denominator $\abs{E(\QQ)_{\mathrm{tors}}}^{2}=16$ in~\eqref{eq:bsd}
@@ -220,7 +239,7 @@ identity.
 
 
 % ================================================================
-\section{Seven Representations of $\Gstar$}\label{sec:derivations}
+\section{Seven Representations of \texorpdfstring{$\Gstar$}{G*}}\label{sec:derivations}
 % ================================================================
 
 \begin{theorem}[Equivalence of representations]\label{thm:seven}
@@ -247,8 +266,8 @@ $\theta_{3}(q) = \sum_{n\in\ZZ}q^{n^{2}}$ the Jacobi theta function, and
 $W_{3} = \gamma_{1}^{4}/(4\gamma_{2}^{6})$ the Watson integral for the BCC
 lattice \textup{(Watson~\cite{Watson}; see also
 Zucker--Joyce~\cite{ZuckerJoyce})}.
-An extended catalogue of forty-five further representations is given
-in~\cite{Paper2}.
+The fifty-two-entry catalogue~\cite{Paper2} includes these representations,
+algebraic restatements, and an explicitly marked approximation.
 \end{theorem}
 
 \begin{proof}
@@ -263,7 +282,7 @@ Each reduces to~\eqref{eq:D2} by a single classical identity:
   \item \eqref{eq:D5}: The Chowla--Selberg formula~\cite{ChowlaSelberg}
     gives
     $\theta_{3}(e^{-\gamma_{2}^{2}})
-    = \gamma_{1}/(\gamma_{2}^{3/2}\cdot 2^{1/4})$.
+    = \gamma_{1}/(\sqrt{2}\,\gamma_{2}^{3/2})$.
   \item \eqref{eq:D6}: Watson~\cite{Watson} proved
     $W_{3} = \gamma_{1}^{4}/(4\gamma_{2}^{6})$; then
     $2\gamma_{2}^{2}W_{3} = \gamma_{1}^{4}/(2\gamma_{2}^{4}) = {{\Gstar}}^{2}$.
@@ -306,7 +325,7 @@ $\Gstar$ and the integer~$16$.  What is conjectural is the claim that~$P$
 arises canonically from the geometry of~$E$.  We discuss the evidence for each
 ingredient.
 
-\subsection{Why degree~$2$?}\label{ssec:degree}
+\subsection{Why degree~\texorpdfstring{$2$}{2}?}\label{ssec:degree}
 
 The CM field $K=\QQ(i)$ has $[K:\QQ]=2$.  Every endomorphism $\varphi\in\End(E)$
 satisfies a degree-$2$ characteristic polynomial $t^{2}-\Tr(\varphi)\,t+\deg(\varphi)=0$
@@ -318,7 +337,7 @@ Is there a rigorous argument showing that the self-consistent coupling of~$E$
 on~$\ZZ^{3}$ must satisfy a polynomial of degree exactly~$[K:\QQ]$?
 \end{question}
 
-\subsection{Why coefficient~$16$?}\label{ssec:coeff}
+\subsection{Why coefficient~\texorpdfstring{$16$}{16}?}\label{ssec:coeff}
 
 The integer~$16 = {|\Aut_{\Qbar}(E)|}^{2} = \abs{E(\QQ)_{\mathrm{tors}}}^{2}$
 appears in the BSD formula~\eqref{eq:bsd} as the denominator of the period ratio.
@@ -330,7 +349,7 @@ Does the BSD denominator $\abs{E(\QQ)_{\mathrm{tors}}}^{2}$ canonically
 determine the coefficient of a self-consistency equation on~$E$?
 \end{question}
 
-\subsection{Why Sum~$=$~Product?}\label{ssec:sep}
+\subsection{Why Sum~\texorpdfstring{$=$}{=}~Product?}\label{ssec:sep}
 
 In the normalised variable $u = x/\Gstar$, the quadratic becomes
 \begin{equation}\label{eq:norm-quad}
@@ -404,7 +423,7 @@ Nesterenko~\cite{Nesterenko}, Theorem~1.
 $\lfloor x_{-}\rfloor = 3$.
 \end{corollary}
 
-\subsection{The $k$-family}\label{ssec:kfamily}
+\subsection{The \texorpdfstring{$k$}{k}-family}\label{ssec:kfamily}
 
 Replacing~$16$ by a parameter~$k$, the normalised quadratic
 $u^{2} - k\Gstar\,u + k\Gstar = 0$
@@ -602,12 +621,7 @@ J.~Reine Angew.\ Math.\ \textbf{227} (1967), 86--110.
 J.~E.~Cremona,
 \emph{Algorithms for Modular Elliptic Curves}, 2nd ed.,
 Cambridge Univ.\ Press, 1997.
-See also \url{https://www.lmfdb.org/EllipticCurve/Q/32/a/2}.
-
-\bibitem{CoatesWiles}
-J.~Coates and A.~Wiles,
-\emph{On the conjecture of Birch and Swinnerton-Dyer},
-Invent.\ Math.\ \textbf{39} (1977), 223--251.
+See also \url{https://www.lmfdb.org/EllipticCurve/Q/32/a/3}.
 
 \bibitem{Gauss1799}
 C.~F.~Gauss,
@@ -622,6 +636,12 @@ unpublished note, Drexel University, 2004.
 \bibitem{Legendre}
 A.-M.~Legendre,
 \emph{Exercices de calcul int\'{e}gral}, Vol.~1, Paris, 1811.
+
+\bibitem{LiLongTu}
+W.-C.~W.~Li, L.~Long, and F.-T.~Tu,
+\emph{Computing Special $L$-Values of Certain Modular Forms with Complex
+Multiplication}, SIGMA \textbf{14} (2018), 090, Lemma~3.1.
+\url{https://doi.org/10.3842/SIGMA.2018.090}.
 
 \bibitem{Nesterenko}
 Yu.~V.~Nesterenko,
@@ -640,12 +660,6 @@ companion paper (forthcoming).
 D.~E.~Rohrlich,
 \emph{Root numbers}, in: Arithmetic of $L$-functions, IAS/Park City Math.\
 Ser.\ \textbf{18}, AMS, 2011, 353--448.
-
-\bibitem{Rubin}
-K.~Rubin,
-\emph{The ``main conjectures'' of Iwasawa theory for imaginary quadratic
-fields},
-Invent.\ Math.\ \textbf{103} (1991), 25--68.
 
 \bibitem{Silverman}
 J.~H.~Silverman,

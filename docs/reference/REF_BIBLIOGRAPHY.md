@@ -10,6 +10,10 @@
 
 ## 1 · Γ-function and special values
 
+**Wallis, J. (1656).** *Arithmetica Infinitorum.* Oxford. [Oxford Wallis Project](https://wallis.clp.ox.ac.uk/arithmetica).
+- **Used in FTD for:** historical attribution of the classical Wallis product; the catalogue's residue-class variants and convergence rates follow from its displayed Gamma-ratio calculation.
+- **Citation contexts:** `PAPER_GSTAR_IDENTITIES.tex`, family A′ (A12–A14); `PAPER_MISSING_RATIO.tex`.
+
 **Euler, L. (ca. 1750s).** *Reflection formula:* `Γ(z)Γ(1−z) = π/sin(πz)`. Foundational complex analysis.
 - **Used in FTD for:** establishing `Γ(1/4)·Γ(3/4) = π√2`, the identity that converts between `G* = Γ(1/4)/Γ(3/4)` and `G* = Γ(1/4)²/(π√2)`.
 - **Citation contexts:** Theorem 1 (`SPEC_ALGEBRAIC_SPINE.md §1`), Theorem 9 (FTD-0112), FTD-0127 (parity twist), FTD-0132 (theta-nullwert synthesis).
@@ -33,6 +37,14 @@
 **Chandrasekharan, K. (1985).** *Elliptic Functions.* Grundlehren der mathematischen Wissenschaften 281, Springer.
 - **Used in FTD for:** modern reference for the theory of elliptic functions, periods, and CM evaluations.
 - **Citation contexts:** Theorem 1, Theorem 9, FTD-0132.
+
+**Finch, S. R. (2003).** *Mathematical Constants.* Encyclopedia of Mathematics and its Applications 94, Cambridge University Press. [Publisher's front matter](https://assets.cambridge.org/052181/8052/sample/0521818052ws.pdf).
+- **Used in FTD for:** background on classical constants and their representations; no novelty or priority claim is inferred from this reference.
+- **Citation contexts:** `PAPER_GSTAR_IDENTITIES.tex`, numerical-verification discussion; `PAPER_MISSING_RATIO.tex`.
+
+**NIST (online reference; accessed 2026-09-24).** *Digital Library of Mathematical Functions* (DLMF).
+- **Used in FTD for:** [5.11.8](https://dlmf.nist.gov/5.11.E8), shifted log-Gamma asymptotics; [19.5.1](https://dlmf.nist.gov/19.5.E1), hypergeometric expression for `K`; [19.7.1–2](https://dlmf.nist.gov/19.7), Legendre relation and imaginary-modulus transformation; [19.8.5](https://dlmf.nist.gov/19.8.E5), AGM evaluation; [20.7(viii)](https://dlmf.nist.gov/20.7.viii), theta transformations; [20.9.2](https://dlmf.nist.gov/20.9.E2), theta–elliptic relation; [23.5.5](https://dlmf.nist.gov/23.5.E5), lemniscatic special value.
+- **Citation contexts:** `PAPER_GSTAR_IDENTITIES.tex`, families C–E, H, J, and the Wallis-product convergence theorem. These formulas require the stated modulus and nome conventions.
 
 ---
 
@@ -72,6 +84,18 @@
 **Glasser, M. L. & Zucker, I. J. (1980).** *Lattice sums.* In *Theoretical Chemistry: Advances and Perspectives* 5, 67–139.
 - **Used in FTD for:** comprehensive collection of lattice Green's function and Watson-integral evaluations; the structure of lattice constants for SC, BCC, FCC lattices.
 - **Citation contexts:** Theorem 5 (Watson identity W₃ = G*²/(2π) on BCC), Phase G small-r Green's function exploration.
+
+**Cremona, J. E. (1997).** *Algorithms for Modular Elliptic Curves.* 2nd ed., Cambridge University Press. [Author's edition and tables](https://johncremona.github.io/book/).
+- **Used in FTD for:** curve-specific arithmetic data and period normalisation for Cremona `32a2`, `y² = x³ − x`: Tamagawa number `c₂ = 2`, torsion order `4`, and total real period `2ϖ` for `dx/(2y)`.
+- **Citation contexts:** `PAPER_GSTAR_BRIDGE_CONSTANT.tex`, exact L-value and BSD normalisation; the least positive real period `ϖ` is distinguished from the total period over both real components.
+
+**Li, W.-C. W., Long, L. & Tu, F.-T. (2018).** *Computing Special L-Values of Certain Modular Forms with Complex Multiplication.* SIGMA 14, 090, 32 pp. [doi:10.3842/SIGMA.2018.090](https://doi.org/10.3842/SIGMA.2018.090), Lemma 3.1 (p. 15).
+- **Used in FTD for:** the direct Mellin-transform evaluation `L(η(4τ)²η(8τ)², 1) = B(1/2, 1/4)/8 = ϖ/4`; this exact special-value identity requires no BSD assumption.
+- **Citation contexts:** `PAPER_GSTAR_IDENTITIES.tex`, family G; `PAPER_GSTAR_BRIDGE_CONSTANT.tex` and `PAPER_MISSING_RATIO.tex`, the specified CM curve's L-value.
+
+**The LMFDB Collaboration (online database; accessed 2026-09-24).** *The L-functions and Modular Forms Database.* [Elliptic curve 32.a3](https://www.lmfdb.org/EllipticCurve/Q/32/a/3), [isogeny class 32.a](https://www.lmfdb.org/EllipticCurve/Q/32/a/), and [newform 32.2.a.a](https://www.lmfdb.org/ModularForm/GL2/Q/holomorphic/32/2/a/a/).
+- **Used in FTD for:** identifying `y² = x³ − x` as LMFDB `32.a3` (Cremona `32a2`) and its associated form `η(4τ)²η(8τ)²`; database numerics are checks, while the exact L-value is supplied by Li–Long–Tu above.
+- **Citation contexts:** `PAPER_GSTAR_IDENTITIES.tex`, family G; companion paper curve labels and normalisation.
 
 ---
 

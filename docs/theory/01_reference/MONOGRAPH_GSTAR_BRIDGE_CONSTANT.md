@@ -365,7 +365,7 @@ The closed form `log G* = β′(0) + log 2` is the **parent identity**; the L-va
 
 **The structural placement.** G* IS the residual of Γ at z = 1/4 against its Stirling skeleton, repackaged as a single L-function derivative. The lemniscatic constant cannot be derived from any Bernoulli expansion — it is precisely what Bernoulli expansions cannot see.
 
-**Wallis-Stirling theorem (the symbolic proof of Bernoulli vacuity).** [THEOREM] Apply Stirling at z = N + 1/4 and z = N + 3/4 (both in Stirling's zone of convergence for large N) and combine with the Γ-recursion `log Γ(z) = log Γ(z+N) − Σ_{k=0}^{N−1} log(z+k)`:
+**Wallis-Stirling theorem (the symbolic proof of Bernoulli vacuity).** [THEOREM] Apply Stirling at z = N + 1/4 and z = N + 3/4 (both in the large-positive-argument asymptotic regime; Stirling's series is not a convergent series) and combine with the Γ-recursion `log Γ(z) = log Γ(z+N) − Σ_{k=0}^{N−1} log(z+k)`:
 
 $$\log G^* \;=\; \bigl[\log \Gamma(N + 1/4) - \log \Gamma(N + 3/4)\bigr] \,+\, \log W_N, \qquad W_N \,:=\, \prod_{k=0}^{N-1}\frac{4k+3}{4k+1}$$
 
@@ -373,7 +373,7 @@ The Stirling expansion of the bracketed difference splits as: a leading non-Bern
 
 $$\boxed{\;G^* \;=\; \lim_{N\to\infty}\frac{1}{\sqrt{N}}\prod_{k=0}^{N-1}\frac{4k+3}{4k+1}\;}$$
 
-**Every Bernoulli term contributes identically zero in this limit.** This is the precise symbolic sense in which G\* is invisible to the Bernoulli sector: in the only Stirling-derivation route that converges (the Wallis-recursion route), the entire Bernoulli content vanishes. (Verified numerically: the Wallis product converges to G\* at the predicted ~1/N rate, with relative error ~1.5625% / N.) Euler had every tool to write this — the Γ-recursion, Stirling's main term, and Wallis-style infinite products were all in his 1755 toolkit; only the naming of G\* was missing.
+**Every Bernoulli term contributes identically zero in this limit.** This is the precise symbolic sense in which G\* is invisible to the Bernoulli sector: in the only Stirling-derivation route that converges (the Wallis-recursion route), the entire Bernoulli content vanishes. For the displayed product with exactly N factors, the sharper expansion is `log(W_N/(sqrt(N) G*)) = 1/(64 N²) − 5/(2048 N⁴) + O(N⁻⁶)`, so its relative error is `1/(64 N²) + O(N⁻⁴)`, or approximately `1.5625% / N²`; the formerly printed `1/N` rate was incorrect for this indexing. Euler had every tool to write this — the Γ-recursion, Stirling's main term, and Wallis-style infinite products were all in his 1755 toolkit; only the naming of G\* was missing.
 
 **The two routes to G\*.** Together with Derivation 9's β′(0) identity, this gives **two complementary access paths** to G\*:
 1. **Wallis-Stirling**: the *limit* of a Bernoulli-free Stirling-recursion product (this paragraph)

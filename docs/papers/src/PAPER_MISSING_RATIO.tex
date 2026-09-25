@@ -23,7 +23,7 @@
 \newcommand{\agm}{\operatorname{agm}}
 \newcommand{\abs}[1]{\lvert #1 \rvert}
 
-\title{The Missing Ratio:\\[2pt]
+\title[The Missing Ratio]{The Missing Ratio:\\[2pt]
   $\Gamma(\tfrac14)/\Gamma(\tfrac34)$ as a Fundamental Constant}
 
 \author{}
@@ -40,18 +40,16 @@
 \begin{abstract}
 The Euler reflection formula at $z=\tfrac14$ gives
 $\Gamma(\tfrac14)\,\Gamma(\tfrac34) = \pi\sqrt{2}$.
-This \emph{product} is classical and well studied.  We observe that the
-\emph{ratio} $\Gamma(\tfrac14)/\Gamma(\tfrac34) \approx 2.9587$---which
-we denote $\Gstar$ and call the \emph{lemniscatic bridge constant}---has
-received almost no independent attention, despite admitting a Wallis-type
-infinite product, appearing as the scaled period of the CM elliptic curve
-$y^{2}=x^{3}-x$, and factoring the lemniscate constant as
+The associated classical \emph{ratio}
+$\Gamma(\tfrac14)/\Gamma(\tfrac34) \approx 2.9587$---which
+we denote $\Gstar$ and call the \emph{lemniscatic bridge constant}---admits
+a Wallis-type infinite product, appears as a scaled period of the CM elliptic curve
+$y^{2}=x^{3}-x$, and factors the lemniscate constant as
 $\varpiup = {\Gstar}\sqrt{\pi}/2$.
 
-We argue that $\Gstar$ deserves recognition as a fundamental constant on
-the same footing as $\pi$ and $\varpiup$, and that its historical
-absence from the literature is an accident of convention, not of
-substance.
+We introduce this normalisation alongside $\pi$ and $\varpiup$ through
+its classical identities. The dedicated notation is a pedagogical
+proposal; no novelty, priority, or historical-neglect claim is made.
 \end{abstract}
 
 \maketitle
@@ -72,9 +70,8 @@ At $z = \tfrac14$:
   \;=\; \frac{\pi}{\sin(\pi/4)}
   \;=\; \pi\sqrt{2}\,.
 \end{equation}
-This is the \emph{product}.  It yields a circular quantity ($\pi$,
-modified by $\sqrt{2}$) and has been known since Euler.  It appears in
-hundreds of papers and textbooks.
+This is the \emph{product}. It yields a circular quantity ($\pi$,
+modified by $\sqrt{2}$).
 
 The same two Gamma values also determine a \emph{ratio}:
 \begin{equation}\label{eq:ratio}
@@ -82,9 +79,8 @@ The same two Gamma values also determine a \emph{ratio}:
   \;=\; \frac{\Gamma(\tfrac14)^{2}}{\pi\sqrt{2}}
   \;=\; 2.9586751191886388\ldots
 \end{equation}
-This number, which we denote $\Gstar$, has---to our knowledge---never
-been given a standard name or symbol, despite being as elementary as
-the product.
+We use $\Gstar$ as a dedicated symbol for this ratio, keeping it
+distinct from both the circular constant and the lemniscatic period.
 
 \begin{remark}
 Every evaluation of the reflection formula at a rational argument
@@ -98,43 +94,38 @@ by the reflection formula at a point of the form $z = 1/(2n)$.
 
 
 % ================================================================
-\section{Why the ratio was overlooked}
+\section{Periods and normalisations}
 % ================================================================
 
-We identify three historical reasons why $\Gstar$ was not recognised as
-a fundamental constant.
+Three complementary descriptions make the relationship between the
+ratio, the period, and the circular constant explicit.
 
-\subsection{The tradition of periods}
+\subsection{The geometric period}
 
-Since Euler, the preferred objects in elliptic function theory have been
-\emph{periods}---the arc lengths, areas, and integrals that arise as
-lattice generators.  The lemniscate constant
+The lemniscate constant is a geometric period:
 \begin{equation}\label{eq:varpi}
   \varpiup \;=\; \frac{\Gamma(\tfrac14)^{2}}{2\sqrt{2}\,\Gamma(\tfrac12)}
-  \;=\; 2.6220575542921120\ldots
+  \;=\; 2.6220575542921198\ldots
 \end{equation}
 is the half-perimeter of the lemniscate $r^{2}=\cos 2\theta$ and a
 period of the elliptic curve $y^{2}=x^{3}-x$.  As a period, it has
-geometric meaning: it is a length one can draw.  The constant $\Gstar$
-is not directly a period; it is a \emph{ratio} of two Gamma values.
-Periods were named and studied; ratios were computed and discarded.
+geometric meaning: it is a length one can draw. The constant $\Gstar$
+is the period rescaled by $2/\sqrt\pi$, as well as a ratio of two
+Gamma values.
 
-\subsection{The dominance of $\pi$}
+\subsection{The reflection product}
 
-The reflection formula~\eqref{eq:product} was primarily used to compute
-$\pi$ and its relatives, not to study the Gamma function's internal
-structure.  The product $\Gamma(\tfrac14)\Gamma(\tfrac34) = \pi\sqrt{2}$
-was valued because it gave $\pi$; the ratio was an intermediate quantity
-with no known application.
+The product $\Gamma(\tfrac14)\Gamma(\tfrac34)=\pi\sqrt2$ fixes the
+product of the two Gamma values. Their ratio records their relative
+size. Both descriptions are useful, and neither alone determines
+the two values without further information.
 
-\subsection{The $\pi$-contaminated notation}
+\subsection{Making the normalisation visible}
 
-The standard representation
-$\varpiup = \Gamma(\tfrac14)^{2}/(2\sqrt{2\pi})$ merges $\Gamma(\tfrac14)$
-and $\pi$ into a single expression, hiding the factorisation
-$\varpiup = \Gstar\sqrt{\pi}/2$.  In this notation, $\Gstar$ is invisible:
-it appears only as a ratio of two subexpressions of $\varpiup$ that are
-never separated.  The notation discouraged the decomposition.
+The equivalent forms
+$\varpiup=\Gamma(\tfrac14)^2/(2\sqrt{2\pi})$ and
+$\varpiup=\Gstar\sqrt\pi/2$ emphasise different relations.
+The second makes the chosen Gamma-ratio normalisation explicit.
 
 
 % ================================================================
@@ -166,8 +157,11 @@ We collect its principal representations, all classical:
     &&\text{($L$-function of $y^{2}=x^{3}-x$)}\label{eq:Lfunction}
 \end{align}
 
-Each representation is known; none was previously attributed to a named
-constant.
+These are classical representations of the normalisation used here.
+For $E\colon y^2=x^3-x$ over $\QQ$, the exact evaluation
+$L(E,1)=B(\frac12,\frac14)/8=\varpiup/4$
+follows from the Mellin transform of $\eta(4\tau)^2\eta(8\tau)^2$
+\cite[Lemma~3.1]{LiLongTu}; no BSD assumption is needed for this identity.
 
 
 % ================================================================
@@ -176,9 +170,9 @@ constant.
 
 The product $\Gamma(\tfrac14)\Gamma(\tfrac34)$ is \emph{symmetric}: it
 treats $z=\tfrac14$ and $z=\tfrac34$ on equal footing.  Swapping them
-changes nothing.  The product yields $\pi\sqrt{2}$, a quantity that
-depends only on the \emph{sum} $z + (1-z) = 1$, not on the specific
-partition into $\tfrac14$ and $\tfrac34$.
+changes nothing. The product yields $\pi\sqrt2$ at these two arguments.
+For general $z$, it still depends on $z$ through $\pi/\sin(\pi z)$;
+the fixed sum $z+(1-z)=1$ does not determine the product.
 
 The ratio $\Gamma(\tfrac14)/\Gamma(\tfrac34)$ is \emph{asymmetric}: it
 distinguishes $z=\tfrac14$ from $z=\tfrac34$.  It measures \emph{how much
@@ -203,18 +197,16 @@ $Q_{N}\sim [\Gamma(\tfrac14)/\Gamma(\tfrac34)]\,(N+1)^{1/2}$.
 
 The numerators $3, 7, 11, 15, 19, 23, \ldots$ are integers
 $\equiv 3\pmod{4}$.  The denominators $1, 5, 9, 13, 17, 21, \ldots$
-are integers $\equiv 1\pmod{4}$.  In the arithmetic of the Gaussian
-integers $\ZZ[i]$, the former are \emph{inert} (they remain prime) and
-the latter include the \emph{split} primes (they factor as
-$\pi\bar{\pi}$).  The ratio measures the cumulative advantage of
-inertness over splitting---the Fermat two-square classification made
-multiplicative.
-
-The product knows about $\pi$.  The ratio knows about the lattice.
+are integers $\equiv 1\pmod{4}$. For an odd \emph{prime} $p$, these
+residue classes distinguish inert primes ($p\equiv3\pmod4$) from
+split primes ($p\equiv1\pmod4$) in $\ZZ[i]$. The displayed product,
+however, runs over all integers in these progressions, including
+composites. It is a residue-class product, not an Euler product over
+primes or a measure of an advantage of inertness over splitting.
 
 
 % ================================================================
-\section{The triad and the composite nature of $\varpiup$}
+\section{The triad and the factorisation of \texorpdfstring{$\varpiup$}{varpi}}
 % ================================================================
 
 \begin{theorem}[Factorisation of $\varpiup$]\label{thm:factor}
@@ -232,28 +224,36 @@ $\Gstar\sqrt{\pi}/2
 = \Gamma(\tfrac14)^{2}/(2\sqrt{2}\Gamma(\tfrac12)) = \varpiup$.
 \end{proof}
 
-The lemniscate constant, treated since Euler as a single irreducible
-period, factors into two independent pieces:
+This algebraic factorisation uses two residue-class product limits:
 \begin{itemize}
   \item $\sqrt{\pi}$, which arises from the Wallis product over the
     even/odd partition (the mod-$2$ ``race'');
   \item $\Gstar$, which arises from the Wallis product over the
     $1\bmod 4$ / $3\bmod 4$ partition (the mod-$4$ ``race'').
 \end{itemize}
-Neither piece alone yields $\varpiup$; both are required.
+Multiplying the two limits and dividing by two gives $\varpiup$.
+The factorisation alone establishes no independence statement.
 
-\begin{proposition}[No single-product representation of $\varpiup$]
+\begin{proposition}[A finite arithmetic-progression product]
 \label{prop:no-third}
-There is no ratio product $\prod(an+b)/(an+c)$ over a single arithmetic
-progression that converges (after polynomial prefactor) to $\varpiup$.
+For $a,b,c>0$ and an integer $N\geq1$, let
+$P_N=\prod_{n=0}^{N-1}(an+b)/(an+c)$. Then
+\[
+ P_N=\frac{\Gamma(N+b/a)\Gamma(c/a)}
+ {\Gamma(b/a)\Gamma(N+c/a)},\qquad
+ \lim_{N\to\infty}N^{(c-b)/a}P_N
+ =\frac{\Gamma(c/a)}{\Gamma(b/a)}.
+\]
 \end{proposition}
 
-\begin{proof}[Argument]
-Such a product converges to a ratio $\Gamma(c/a)/\Gamma(b/a)$ (times
-algebraic factors), which involves $\Gamma(\tfrac14)$ at most once.
-The lemniscate constant requires $\Gamma(\tfrac14)^{2}$ in the
-numerator, which cannot be produced by a single ratio.
+\begin{proof}
+Cancel $a$ in each factor and use
+$\prod_{n=0}^{N-1}(n+u)=\Gamma(N+u)/\Gamma(u)$.
+The limit follows from
+$\Gamma(N+u)/\Gamma(N+v)\sim N^{u-v}$.
 \end{proof}
+This reduction does not classify all special values of Gamma ratios
+and gives no nonexistence theorem for representations of $\varpiup$.
 
 
 % ================================================================
@@ -270,10 +270,9 @@ $4\varpiup^{2}/{\Gstar}^{2}
 = 4\cdot{\Gstar}^{2}\pi/(4{\Gstar}^{2}) = \pi$.
 \end{proof}
 
-This expresses the circle constant as a ratio of two lemniscatic
-objects.  In the hierarchy
-$\Gamma(\tfrac14) \to \Gstar \to \varpiup \to \pi$,
-the ratio precedes the period, and the period precedes the circle.
+This expresses the circle constant in terms of two lemniscatic
+quantities. It rearranges the same period normalisation; it does not
+establish an independent order in which the constants are derived.
 
 
 % ================================================================
@@ -294,29 +293,20 @@ Elliptic integrals & $2\sqrt{2}\,K(1/\!\sqrt{2})/\sqrt{\pi}$ \\
 Computational number theory & $2\sqrt{\pi}/\agm(1,\sqrt{2})$ \\
 Modular forms & $\sqrt{2\pi}\,\theta_{3}(e^{-\pi})^{2}$ \\
 Lattice combinatorics & $\sqrt{2\pi\,W_{3}}$ (Watson integral) \\
-Arithmetic geometry & $8\,L(E,1)/\sqrt{\pi}$ (BSD formula) \\
+Arithmetic geometry & $8\,L(E,1)/\sqrt{\pi}$ (CM $L$-value) \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-No other unnamed constant connects this many domains.  The constant
-$\pi$ is the product side of the reflection formula; $\Gstar$ is the
-ratio side.  Both are outputs of the same algebraic identity at the
-same evaluation point.  One was elevated to the most famous number
-in mathematics.  The other was left on the floor.
+The product and ratio of the same two Gamma values organise these
+connections in different ways. The period normalisation, the
+residue-class product, and the specified CM-curve $L$-value each
+offer a useful route to the same constant.
 
-The oversight is understandable.  The product gives $\pi$, which has
-obvious geometric meaning (circumference, area, periodicity).  The
-ratio gives $\Gstar$, which has no simple geometric interpretation as
-a length or an area.  But $\Gstar$ has \emph{arithmetic} meaning: it
-is the limit of the Wallis product over the Fermat residue classes,
-the scaled period of the simplest CM curve, the bridge between the
-lattice and the circle.
-
-The question is not whether $\Gstar$ is new---it is not.
-The question is whether it is fundamental.  We believe the evidence
-presented here, and in the companion papers~\cite{Paper2,Paper3},
-answers in the affirmative.
+Calling $\Gstar$ fundamental is a judgement about mathematical
+usefulness, not a further theorem. The classical identities collected
+here and in the companion papers~\cite{Paper2,Paper3} support a
+pedagogical case for giving this normalisation a dedicated symbol.
 
 
 % ================================================================
@@ -335,10 +325,9 @@ quarter-point to its reflection.}
 \medskip
 
 \noindent
-A dedicated symbol is warranted by the same criterion that warranted
-$\pi$ and $\varpiup$: the constant appears independently in enough
-contexts that writing it out in full each time obscures the structure
-it reveals.
+A dedicated symbol can make the relationships among these classical
+representations easier to read. We propose it for that purpose,
+without claiming a new constant or established naming convention.
 
 
 % ================================================================
@@ -354,6 +343,12 @@ J.~M.~Borwein and P.~B.~Borwein,
 \bibitem{Finch}
 S.~R.~Finch,
 \emph{Mathematical Constants}, Cambridge Univ.\ Press, 2003.
+
+\bibitem{LiLongTu}
+W.-C.~W.~Li, L.~Long, and F.-T.~Tu,
+\emph{Computing Special $L$-Values of Certain Modular Forms with Complex
+Multiplication}, SIGMA \textbf{14} (2018), 090, Lemma~3.1.
+\url{https://doi.org/10.3842/SIGMA.2018.090}.
 
 \bibitem{Paper2}
 \emph{Fifty-two faces of the lemniscatic bridge constant},
