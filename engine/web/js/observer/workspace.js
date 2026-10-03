@@ -57,6 +57,8 @@ export class ObserverWorkspace {
         this.contextLost = false;
         this.visibilityPlaying = false;
         this.panelPlaying = false;
+        this.panelPausedPlayback = false;
+        this.panelIsLive = false;
         this.resumePlaying = true;
         this.lastEpoch = -1;
         this.lastEnvironmentMessage = '';
@@ -116,7 +118,7 @@ export class ObserverWorkspace {
             if (document.hidden) {
                 this.visibilityPlaying = !!this.snapshot?.playing;
                 void this.command({ type: 'pause' });
-            } else if (this.visibilityPlaying && !this.panelOpen && !this.contextLost) {
+            } else if (this.visibilityPlaying && (!this.panelOpen || this.panelIsLive) && !this.contextLost) {
                 this.visibilityPlaying = false;
                 void this.command({ type: 'play' });
             }
@@ -143,7 +145,7 @@ export class ObserverWorkspace {
      */
     releaseAssistantInput(open = true) {
         this.assistantOpen = open;
-        this.input.panelOpen = this.panelOpen || open;
+        this.input.panelOpen = this.panelOpen && !this.panelIsLive || open;
         if (open) { this.input.release(); this.forceGun.end(); this.tether.hide(); }
     }
     getAssistantPreparationVersion() {
@@ -173,7 +175,7 @@ export class ObserverWorkspace {
         this.lastFrame = 0;
         this.resize();
         this.settings = { ...this.settings, liveLink: false };
-        if (this.resumePlaying && !this.panelOpen && !document.hidden) await this.command({ type: 'play' });
+        if (this.resumePlaying && (!this.panelOpen || this.panelIsLive) && !document.hidden) await this.command({ type: 'play' });
         this.renderer.canvas.focus({ preventScroll: true });
         this.updateUI();
     }
@@ -218,10 +220,10 @@ export class ObserverWorkspace {
         this.hitSnapshot = this.snapshot; this.hitViewKey = this.observationViewKey;
         this.tether.update(this.forceGun, this.snapshot, settings, this.renderer);
         this.labels.update(this.snapshot, this.renderer.getOverlayAnchors(this.snapshot, settings), this.settings.overlayFields);
-        this.reticle.hidden = !this.settings.reticle || this.panelOpen;
+        this.reticle.hidden = !this.settings.reticle || this.panelOpen && !this.panelIsLive;
         this.reticle.dataset.target = this.hit?.entityId || this.hit?.id || '';
         this.reticle.dataset.selected = String(!!this.selectedId && this.reticle.dataset.target === this.selectedId);
-        this.gizmo.show(this.panelOpen && !!this.selectedId && !!this.snapshot.entities.find(entity => entity.id === this.selectedId)?.alive);
+        this.gizmo.show(this.panelOpen && !this.panelIsLive && !!this.selectedId && !!this.snapshot.entities.find(entity => entity.id === this.selectedId)?.alive);
         if (now - this.lastUI >= 100) { this.lastUI = now; this.updateUI(); }
         if (now - this.lastAutosave >= 1000) {
             this.lastAutosave = now;
@@ -247,7 +249,7 @@ export class ObserverWorkspace {
     setStatus(message) { this.status = message; this.ui?.setStatus(message); }
 
     get renderSettings() {
-        return { ...this.settings, selectedId: this.selectedId, authorPreview: this.preview,
+        return { ...this.settings, ...(this.snapshot?.spacetime?{optical:true,mirrorWorld:false,feedbackEnabled:false}:{}), selectedId: this.selectedId, authorPreview: this.preview,
             cameraOverride: { yaw: this.input?.yaw ?? 0, pitch: this.input?.pitch ?? 0, roll: this.settings.worldUp ? 0 : this.settings.roll } };
     }
     get observationViewKey() {
@@ -371,20 +373,34 @@ export class ObserverWorkspace {
             document.dispatchEvent(new CustomEvent('ftd:assistant-toggle', { bubbles: true, detail: { workspace: 'observer' } }));
             return;
         }
+        if (action === 'ui-visibility') {
+            this.element.classList.toggle('observer-interface-hidden', !!payload);
+            if (payload && this.assistantOpen) document.dispatchEvent(new CustomEvent('ftd:assistant-toggle', { bubbles: true, detail: { workspace: 'observer' } }));
+            return;
+        }
         if (action === 'panel-open') {
             const wasOpen = this.panelOpen;
+            const wasLive = this.panelIsLive;
+            this.panelIsLive = payload === 'telemetry';
             this.panelOpen = true;
-            this.input.panelOpen = true;
+            this.input.panelOpen = !this.panelIsLive || this.assistantOpen;
             this.input.release();
-            if (!wasOpen) {
+            if (this.panelIsLive && this.panelPausedPlayback) {
+                this.panelPausedPlayback = false;
+                if (this.panelPlaying && this.active) await this.command({ type: 'play' });
+            } else if (!this.panelIsLive && (!wasOpen || wasLive)) {
                 this.panelPlaying = !!this.snapshot?.playing;
+                this.panelPausedPlayback = !!this.settings.pauseOnInspect && this.panelPlaying;
                 if (this.settings.pauseOnInspect) await this.command({ type: 'pause' });
             }
         } else if (action === 'panel-close') {
             this.panelOpen = false;
             this.input.panelOpen = this.assistantOpen;
             this.preview = null;
-            if (this.panelPlaying && this.settings.pauseOnInspect && this.active) await this.command({ type: 'play' });
+            const resume = this.panelPausedPlayback && this.panelPlaying && this.active;
+            this.panelPausedPlayback = false;
+            this.panelIsLive = false;
+            if (resume) await this.command({ type: 'play' });
             this.renderer.canvas.focus({ preventScroll: true });
         } else if (action === 'select') {
             this.cancelAssistantCommands();
@@ -398,7 +414,7 @@ export class ObserverWorkspace {
         } else if (action === 'experiment') {
             await this.command({ type: 'preset', preset: payload.id });
         } else if (action === 'reset-observer') {
-            await this.command({ type: 'observer', patch: { position: [0, 1.6, 8], velocity: [0, 0, 0], yaw: 0, pitch: 0, roll: 0 } });
+            await this.command({ type: 'observer', patch: { position: [0, 1.6, this.snapshot?.spacetime?3:8], velocity: [0, 0, 0], yaw: 0, pitch: 0, roll: 0 } });
             this.input.setPose({ yaw: 0, pitch: 0, roll: 0 });
         } else if (action === 'reset-bindings') this.setSetting('bindings', structuredClone(DEFAULT_BINDINGS));
         else if (action === 'autosave') {

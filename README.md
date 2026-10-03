@@ -300,6 +300,13 @@ Mind's Eye is an adopted Minkowski reference workspace with a read-only lattice
 link. Its [SR API and numerical conventions](engine/web/docs/REF_MINDS_EYE_SR_CONVENTIONS.md)
 and [repair evidence](engine/web/docs/AUDIT_MINDS_EYE_SR_REPAIR.md) document force
 semantics, retained optical histories, display controls and actual GPU checks.
+Its [compact-star experiment](engine/web/docs/REF_MINDS_EYE_COMPACT_STAR.md) adds
+an explicitly adopted Schwarzschild exterior with local SR, curved light rays,
+gravitational clocks and free fall. It does not recover gravity from native FTD.
+The [live telemetry drawer](engine/web/docs/REF_MINDS_EYE_TELEMETRY.md) reports
+clocks, motion, distances, stellar parameters and received light with explicit
+units. The small UI button hides the interface; JEV is hidden by default and can
+be enabled in Controls.
 
 ## License and citation
 

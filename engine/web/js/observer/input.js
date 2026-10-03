@@ -121,7 +121,7 @@ export class ObserverInput {
             return;
         }
         if (this.panelOpen && !['inspect', 'world'].includes(action)) return;
-        if (event.target instanceof Element && event.target.closest('button,select,a,input,textarea')) return;
+        if (event.target instanceof Element && event.target.closest('button,select,a,input,textarea,summary')) return;
         event.preventDefault();
         event.stopImmediatePropagation();
         if (['inspect', 'world', 'reticle', 'overlay'].includes(action)) {

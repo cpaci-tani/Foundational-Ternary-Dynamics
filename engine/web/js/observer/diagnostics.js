@@ -11,7 +11,7 @@ import { traceObserverRay, visibleSegments } from './optics.js';
  */
 export function observationDiagnostics(snapshot, settings, hit, segments = visibleSegments(snapshot, settings), ndcX = 0, ndcY = 0) {
     const observer = { ...snapshot.observer, ...settings.cameraOverride };
-    const opticalMode = snapshot.profile === 'sr' && settings.optical !== false;
+    const opticalMode = !!snapshot.spacetime || snapshot.profile === 'sr' && settings.optical !== false;
     const segment = hit ? segments[hit.segmentIndex] : null;
     let historyStatus = hit ? 'available' : 'no-hit';
     if (!hit && opticalMode) {
@@ -24,6 +24,7 @@ export function observationDiagnostics(snapshot, settings, hit, segments = visib
     return {
         sessionId: snapshot.sessionId, epoch: snapshot.epoch, observerWorldlineId: observer.worldline,
         tick: snapshot.tick, integratorVersion: snapshot.integratorVersion ?? 'legacy-unspecified',
+        ...(snapshot.spacetime?{spacetime:structuredClone(snapshot.spacetime),velocityConvention:'local static orthonormal frame, fraction of c',distanceConvention:'Euclidean arclength in isotropic coordinates; travel time is observationTime minus emissionTime',sourceClockConvention:'static surface proper time; star uses its surface lapse',modelBoundary:'Adopted Schwarzschild exterior; fixed floating emitting sphere; no native FTD recovery'}:{}),
         worldlineReason: observer.worldlineReason ?? 'legacy-unspecified', worldlineStart: observer.worldlineStart ?? null,
         observationTime: snapshot.time, observerPosition: [...observer.position], observerVelocity: [...observer.velocity], observerProperTime: observer.properTime,
         historyStart: snapshot.historyStart, availableInterval: [snapshot.historyStart, snapshot.time], historyStatus, opticalMode,

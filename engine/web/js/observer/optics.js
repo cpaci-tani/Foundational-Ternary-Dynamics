@@ -1,9 +1,10 @@
-/** Float64 optical oracle for an adopted Minkowski reference model; c = 1. */
+/** Float64 optics for explicitly adopted Minkowski and Schwarzschild reference models; c = 1. */
 import { dot, cross, normalize, rotationMatrix, inverseRotate, rotate, intersectShape, buildBVH, hitBounds } from './geometry.js';
+import { traceCompactStar } from './compact-star.js';
 
 /** @typedef {{position:number[],velocity:number[],properTime?:number,yaw?:number,pitch?:number,roll?:number,worldline?:number,worldlineReason?:string,worldlineStart?:number,capApplied?:boolean}} CameraState */
 /** @typedef {{entityId?:string,id?:string,revision:number,start?:number,end?:number|null,originTime?:number,position:number[],velocity:number[],size:number[],rotation:number[],shape:string,color:number[],spectral?:string,emission?:number,clockOffset?:number,alive?:boolean,name?:string,overlay?:unknown,decorative?:boolean,animationRate?:number,integratorVersion?:string,capApplied?:boolean}} OpticalSegment */
-/** @typedef {{time:number,profile:string,historyStart:number,observer:CameraState,entities:OpticalSegment[],segments:OpticalSegment[],environment?:object,environmentHistory?:{start:number,end:number|null,revision:number,environment:object}[],pulses?:{origin:number[],start:number,color:number[]}[],epoch?:number,revision?:number}} OpticalSnapshot */
+/** @typedef {{time:number,profile:string,spacetime?:import('./compact-star.js').CompactStar,historyStart:number,observer:CameraState,entities:OpticalSegment[],segments:OpticalSegment[],environment?:object,environmentHistory?:{start:number,end:number|null,revision:number,environment:object}[],pulses?:{origin:number[],start:number,color:number[]}[],epoch?:number,revision?:number}} OpticalSnapshot */
 /** @typedef {{fov?:number,aspect?:number,optical?:boolean,cameraOverride?:Partial<CameraState>,selectedId?:string|null,[key:string]:unknown}} OpticalSettings */
 /** @typedef {{entityId:string,id:string,revision:number,distance:number,emissionTime:number,properTime:number,position:number[],sourcePosition:number[],restPosition:number[],normal:number[],historical:boolean,mirrored:boolean,segmentIndex:number,doppler:number}} OpticalHit */
 /** @typedef {{segments:OpticalSegment[],bvh:ReturnType<typeof buildBVH>,offset:number[]}} TraceAcceleration */
@@ -36,6 +37,7 @@ export function observerRay(snapshot, settings = {}, ndcX = 0, ndcY = 0) {
 }
 /** @param {OpticalSnapshot} snapshot @param {OpticalSettings} settings @param {OpticalSegment[]} extras */
 export function visibleSegments(snapshot, settings = {}, extras = []) {
+    if(snapshot.spacetime)return snapshot.segments;
     const optical = snapshot.profile === 'sr' && settings.optical !== false;
     const source = optical ? snapshot.segments : snapshot.entities.filter(e => e.alive !== false).map(e => ({ ...e, entityId: e.id, originTime: snapshot.time, start: -Infinity, end: null }));
     return [...source.filter(s => (s.start ?? -Infinity) <= snapshot.time && (s.end ?? Infinity) > (optical ? snapshot.historyStart : -Infinity)), ...extras];
@@ -53,6 +55,7 @@ export function segmentBounds(segment, time, historyStart, index) {
 
 /** @param {OpticalSnapshot} snapshot @param {OpticalSettings} settings @param {number} ndcX @param {number} ndcY @param {OpticalSegment[]} extras @param {TraceAcceleration|null} prepared @returns {OpticalHit|null} */
 export function traceObserverRay(snapshot, settings = {}, ndcX = 0, ndcY = 0, extras = [], prepared = null) {
+    if(snapshot.spacetime)return traceCompactStar(snapshot,settings,ndcX,ndcY);
     const ray = observerRay(snapshot, settings, ndcX, ndcY), segments = prepared?.segments || visibleSegments(snapshot, settings, extras);
     const optical = snapshot.profile === 'sr' && settings.optical !== false, sr = snapshot.profile === 'sr';
     // Simultaneous-frame intersections can lie at coordinate times later than the observation event.

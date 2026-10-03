@@ -4,6 +4,7 @@ import { ENTITY_LIMIT, HISTORY_WINDOW, SEGMENT_LIMIT, MAX_GRAVITY_STRENGTH } fro
 import { PlaygroundPhysics } from './playground.js';
 import { forceGunSettings } from './force-gun-physics.js';
 import { INTEGRATOR_VERSION, normalizeCoordinateForce, migrateObserverSnapshot } from './conventions.js';
+import { compactStar, starApparatus, starMetric, assertExterior, advanceStarObserver, validateStarSnapshot, COMPACT_STAR_METHOD } from './compact-star.js';
 /** @typedef {import('./types.js').WorldEntity} WorldEntity */
 /** @typedef {import('./types.js').WorldSegment} WorldSegment */
 /** @typedef {import('./types.js').WorldSnapshot} WorldSnapshot */
@@ -137,7 +138,7 @@ export class ObserverSession {
     /** @param {WorldEntity} e @param {number} [start] @param {number} [originTime] */
     openSegment(e, start = this.state.time, originTime = this.state.time) {
         if (this.state.segments.length >= SEGMENT_LIMIT) throw new Error(`Optical history limit ${SEGMENT_LIMIT} reached. Pause or reduce recorded trajectories.`);
-        this.state.segments.push({ entityId:e.id, revision:e.revision, start, end:null, originTime, position:[...e.position], velocity:[...e.velocity], size:[...e.size], rotation:[...e.rotation], shape:e.shape, color:[...e.color], emission:e.emission, clockOffset:e.clockOffset, name:e.name, mass:e.mass, spectral:e.spectral, integratorVersion:INTEGRATOR_VERSION, capApplied:e.capApplied === true });
+        this.state.segments.push({ entityId:e.id, revision:e.revision, start, end:null, originTime, position:[...e.position], velocity:[...e.velocity], size:[...e.size], rotation:[...e.rotation], shape:e.shape, color:[...e.color], emission:e.emission, clockOffset:e.clockOffset, name:e.name, mass:e.mass, spectral:e.spectral, integratorVersion:this.state.spacetime?COMPACT_STAR_METHOD:INTEGRATOR_VERSION, capApplied:e.capApplied === true });
     }
     /** @param {WorldEntity} e @param {number} [time] */
     closeSegment(e, time = this.state.time) {
@@ -153,12 +154,21 @@ export class ObserverSession {
     prepare(preset) {
         const aliases = /** @type {Record<string,string>} */ ({ 'approaching-receding':'clocks', 'approaching-receding-clocks':'clocks', 'moving-cube-sphere':'moving-shapes', 'synchronized-clocks':'clock-avenue', 'light-clock-journey':'light-clock', 'point-collision':'collision', 'delayed-intervention':'intervention', 'delayed-edit':'intervention' });
         preset = aliases[preset] ?? preset;
-        if (!['baseline','clocks','moving-shapes','clock-avenue','light-clock','twin-journey','collision','intervention','performance'].includes(preset)) throw new Error('Unknown prepared experiment.');
+        if (!['baseline','clocks','moving-shapes','clock-avenue','light-clock','twin-journey','collision','intervention','performance','compact-star'].includes(preset)) throw new Error('Unknown prepared experiment.');
+        if(this.state.spacetime)this.state.units='normalized (c = 1)';
+        delete this.state.spacetime;
+        this.state.physicsEngine=this.state.profile==='sr'?'Minkowski reference c=1':'Rapier 0.20.0';
         this.state.experiment = preset;this.state.preparedEvents=true; this.state.entities = []; this.state.segments = []; this.state.pulses = []; this.state.joints = []; this.state.collisionOccurred = false;
         this.state.integratorVersion=INTEGRATOR_VERSION; this.state.time = 0; this.state.tick = 0; this.state.historyStart = -HISTORY_WINDOW; this.state.scrubTime = null; this.accumulator = 0;
         this.state.environmentHistory=[{start:-HISTORY_WINDOW,end:null,revision:1,environment:clone(this.state.environment)}];
         this.state.observer = { position:[0,1.6,8],velocity:[0,0,0],properTime:0,yaw:0,pitch:0,roll:0,worldline:this.state.observer.worldline+1,worldlineReason:'preparation',worldlineStart:0,capApplied:false };
-        if (preset === 'baseline' || preset === 'intervention') {
+        if(preset==='compact-star') {
+            this.state.profile='sr';this.state.spacetime=compactStar();this.state.integratorVersion=COMPACT_STAR_METHOD;
+            this.state.physicsEngine='Schwarzschild exterior + local SR';this.state.units='isotropic coordinates; c=1; scaled compact star';
+            this.state.observer.position=[0,1.6,3];
+            for(const properties of starApparatus(this.state.spacetime))this.addEntity({...properties,bodyType:'fixed',gravity:false,collisions:false},true);
+            this.state.spacetime.sourceId=this.state.entities[0].id;
+        } else if (preset === 'baseline' || preset === 'intervention') {
             this.addEntity({name:'Luminous sphere',shape:'sphere',position:[0,1,-2],color:[.15,.8,1],overlay:true},true);
             this.addEntity({name:'Amber cube',shape:'box',position:[-3,.8,-4],size:[1.6,1.6,1.6],color:[1,.45,.12],rotation:[0,.4,0]},true);
             this.addEntity({name:'Violet octahedron',shape:'octahedron',position:[3,1.2,-5],size:[2,2,2],color:[.65,.3,1]},true);
@@ -273,6 +283,7 @@ export class ObserverSession {
             if (command.expectedTargetEditRevision !== undefined && (entity?.editRevision ?? 0) !== command.expectedTargetEditRevision) throw new Error('Stale object edit revision.');
             if(!['play','observer','dolly','settings'].includes(command.type))this.releaseForceGun();
             const edits = ['create','update','delete','duplicate','restore','environment','impulse','joint'].includes(command.type);
+            if(this.state.spacetime&&(edits||['pulse','scrub'].includes(command.type)))throw new Error('The Schwarzschild exterior has a locked static apparatus. Choose another experiment to author geometry or scrub Minkowski histories.');
             if (edits && this.state.scrubTime !== null) { this.branchAtScrub(); entity=this.state.entities.find(e=>e.id===id); }
             const changesParticipants=['create','delete','duplicate','restore','impulse','joint'].includes(command.type);
             const physicalPatch=command.type==='update'&&Object.keys(record(command.patch??payload.patch??{})).some(key=>['position','size','rotation','velocity','mass','shape','properAcceleration','coordinateForcePerMass','angularVelocity','bodyType'].includes(key));
@@ -352,6 +363,13 @@ export class ObserverSession {
                 else if(last)last.end=this.state.time;
                 if(this.state.environmentHistory.length>=16)throw new Error('Environment history limit 16 reached; wait for old optical history to expire or reset the preparation.');
                 this.state.environmentHistory.push({start:this.state.time,end:null,revision,environment:clone(environment)});
+            } else if(command.type==='compact-star-motion') {
+                if(!this.state.spacetime)throw new Error('Enter the compact-star experiment first.');
+                const mode=payload.mode;
+                if(mode!=='guided'&&mode!=='freefall')throw new Error('Unknown compact-star observer mode.');
+                this.state.spacetime.observerMode=mode;
+                if(mode==='guided')this.state.observer.velocity=[0,0,0];
+                this.state.playing=true;this.state.warnings=[];
             } else if (command.type === 'reset' || command.type === 'preset') {
                 this.state.epoch++; this.prepare(String(command.preset??payload.preset??this.state.experiment));
             } else if (command.type === 'profile') {
@@ -411,6 +429,7 @@ export class ObserverSession {
     }
     /** Begin a new clock origin after privileged camera relocation. @param {number[]} position */
     relocateObserver(position) {
+        if(this.state.spacetime)assertExterior(this.state.spacetime,position);
         const observer=this.state.observer;
         observer.position=position; observer.properTime=0; observer.worldline++; observer.velocity=[0,0,0]; observer.worldlineReason='camera relocation'; observer.worldlineStart=this.state.time; observer.capApplied=false; this.relocated=true;
     }
@@ -492,7 +511,10 @@ export class ObserverSession {
         number(candidate.gravityStrength,'gravity strength',0,MAX_GRAVITY_STRENGTH);
         if(typeof candidate.objectCollisions!=='boolean'||typeof candidate.planeCollision!=='boolean')throw new Error('Invalid imported collision settings.');
         candidate.preparedEvents??=true;
-        candidate.physicsEngine=candidate.profile==='sr'?'Minkowski reference c=1':'Rapier 0.20.0';
+        validateStarSnapshot(candidate);
+        if(candidate.experiment==='compact-star'&&!candidate.spacetime)throw new Error('Compact-star preparation requires its metric provider.');
+        candidate.physicsEngine=candidate.spacetime?'Schwarzschild exterior + local SR':candidate.profile==='sr'?'Minkowski reference c=1':'Rapier 0.20.0';
+        if(candidate.spacetime)candidate.integratorVersion=COMPACT_STAR_METHOD;
         if(candidate.pulses.length>256||candidate.joints.length>256)throw new Error('Snapshot exceeds instrument or joint budget.');
         for(const p of candidate.pulses){number(p.start,'pulse start');vec(p.origin,'pulse origin');vec(p.color,'pulse color');}
         for(const j of candidate.joints){if(!ids.has(j.a)||!ids.has(j.b)||j.a===j.b)throw new Error('Invalid joint endpoints.');number(j.restLength,'rest length',0);number(j.stiffness,'stiffness',0);number(j.damping,'damping',0);}
@@ -509,14 +531,17 @@ export class ObserverSession {
         if(input.pitch!==undefined) o.pitch=clamp(number(input.pitch,'pitch'),-Math.PI/2+.001,Math.PI/2-.001);
         if(input.roll!==undefined) o.roll=number(input.roll,'roll');
         if(!this.state.playing||this.state.scrubTime!==null) {
-            if(this.state.scrubTime===null&&length(input.move??[0,0,0])>0) {o.position=add(o.position,scale(this.movement(input),elapsedSeconds*(input.speed??.5)*6));this.relocated=true;}
+            if(this.state.scrubTime===null&&length(input.move??[0,0,0])>0) {
+                const position=add(o.position,scale(this.movement(input),elapsedSeconds*(input.speed??.5)*6));
+                try {if(this.state.spacetime)assertExterior(this.state.spacetime,position);o.position=position;this.relocated=true;}catch(error){this.state.warnings=[String(error)];}
+            }
             return;
         }
         this.accumulator+=elapsedSeconds*this.state.playbackSpeed;
         if(this.accumulator>5&&!this.backlogPaused) { this.releaseForceGun();this.backlogPaused=true;this.state.playing=false; this.state.warnings=['Simulation backlog exceeded 5 s; paused with all unprocessed time retained. Resume to drain retained time.']; return; }
         if(this.accumulator<1) this.backlogPaused=false;
         let steps=0;
-        while(this.accumulator+1e-12>=FIXED_DT&&steps<30) {
+        while(this.state.playing&&this.accumulator+1e-12>=FIXED_DT&&steps<30) {
             try {this.step(FIXED_DT,input);} catch(error) {this.releaseForceGun();this.state.playing=false;this.state.warnings=[error instanceof Error?error.message:String(error)];break;}
             this.accumulator=Math.max(0,this.accumulator-FIXED_DT);steps++;
         }
@@ -536,6 +561,18 @@ export class ObserverSession {
         const s=this.state,o=s.observer;
         if (!Number.isFinite(dt) || dt < 0) throw new Error('A step interval must be finite and nonnegative.');
         if (dt === 0) return;
+        if(s.spacetime) {
+            if(input.coordinateForcePerMass!==undefined)throw new Error('Minkowski coordinate-force controls are unavailable in the curved metric; use local navigation or free fall.');
+            const desired=scale(this.movement(input),clamp(input.speed??.5,0,MAX_BETA)),delta=sub(scale(desired,gamma(desired)),scale(o.velocity,gamma(o.velocity)));
+            const force=scale(normalize(delta),Math.min(length(delta)/dt,Math.max(0,input.acceleration??1)));
+            const next=advanceStarObserver(s.spacetime,o,dt,force);
+            o.position=next.position;o.velocity=next.velocity;o.properTime+=next.properElapsed;o.capApplied=next.capApplied;
+            s.time+=next.elapsed;s.tick++;s.integratorVersion=COMPACT_STAR_METHOD;
+            for(const e of s.entities){const position=e.id===s.spacetime.sourceId?add(s.spacetime.center,[s.spacetime.radius,0,0]):e.position;e.clockOffset=starMetric(s.spacetime,position).lapse*s.time;e.originTime=s.time;}
+            if(next.stopped){s.playing=false;s.warnings=['Exterior-domain limit reached; paused before entering the star, leaving the optical boundary, or exceeding 0.99c.'];}
+            this.prune();
+            return;
+        }
         if (s.profile === 'playground' && input.coordinateForcePerMass !== undefined) throw new Error('Coordinate force / rest mass is an SR reference control.');
         const accelerated=s.profile==='sr'?s.entities.filter(e=>e.alive&&length(e.coordinateForcePerMass)>0):[];
         const stop=s.time+dt;
@@ -638,6 +675,7 @@ export class ObserverSession {
     /** A profile change preserves the authored scene but declares a fresh preparation. */
     prepareProfile() {
         const s=this.state;
+        if(s.spacetime)s.units='normalized (c = 1)';delete s.spacetime;if(s.experiment==='compact-star')s.experiment='custom';
         s.integratorVersion=INTEGRATOR_VERSION;s.time=0;s.tick=0;s.scrubTime=null;s.segments=[];s.pulses=[];s.preparedEvents=false;s.collisionOccurred=false;
         s.historyStart=-s.historyWindow;s.entities=s.entities.filter(e=>e.alive);this.accumulator=0;this.backlogPaused=false;
         s.observer.properTime=0;s.observer.worldline++;s.observer.worldlineReason='profile preparation';s.observer.worldlineStart=0;s.observer.capApplied=false;

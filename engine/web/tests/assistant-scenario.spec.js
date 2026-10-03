@@ -56,6 +56,10 @@ test('complete scenario dropdown and read-only template preview follow Scale 0 w
     await expect(page.locator('#jev-scenario-select')).toContainText(last.label);
     await page.getByRole('button',{name:'Close JEV console'}).click();
     await openObserverWorkspace(page);
+    await expect(page.locator('[data-observer-assistant]')).toBeHidden();
+    await page.locator('[data-observer-panel-tab="help"]').click();
+    await page.getByLabel('Show JEV button',{exact:true}).check();
+    await page.getByRole('button',{name:'Close controls',exact:true}).click();
     await page.locator('#observer-workspace').getByRole('button',{name:/JEV/}).click();
     await expect(page.locator('[data-jev="scenario-panel"]')).toBeHidden();
 });

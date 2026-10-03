@@ -305,3 +305,5 @@ docs/theory/**/AUDIT_*.md
 # Public Mind's Eye repair conventions and reproducible implementation evidence.
 !engine/web/docs/REF_MINDS_EYE_SR_CONVENTIONS.md
 !engine/web/docs/AUDIT_MINDS_EYE_SR_REPAIR.md
+!engine/web/docs/REF_MINDS_EYE_COMPACT_STAR.md
+!engine/web/docs/REF_MINDS_EYE_TELEMETRY.md
