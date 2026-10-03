@@ -6,6 +6,8 @@ import { traceObserverRay, visibleSegments, segmentBounds, cameraBasis, projectP
 import { referenceLineWeights } from './spectrum.js';
 import { ObserverEnvironment, OBSERVER_ENVIRONMENTS, seededRandom } from './environments.js';
 import { observerVertexShader, observerFragmentShader } from './shaders.js';
+import { compactStarFragmentShader } from './compact-star-shaders.js';
+import { starMetric } from './compact-star.js';
 import { feedbackConfiguration } from './feedback.js';
 import { fractalStyle, boundedFractalDetail } from './fractal-presets.js';
 import { LAYERS } from './catalog.js';
@@ -74,6 +76,7 @@ export class ObserverRenderer {
         this.scene = new THREE.Scene(); this.camera = new THREE.Camera();
         const v3 = () => new THREE.Vector3();
         this.uniforms = {
+            uStarCenter:{value:v3()},uStarRs:{value:0},uStarRadius:{value:.25},uStarEscape:{value:40},
             uFractalStyle: { value: -1 }, uFractalDetail: { value: 0.65 },
             uSegments: { value: this.segmentTexture }, uNodes: { value: this.nodeTexture }, uOrder: { value: this.orderTexture }, uMeshNodes: { value: this.atlas.nodes }, uTriangles: { value: this.atlas.triangles }, uMeshes: { value: this.atlas.meshes }, uPanorama: { value: this.emptyTexture }, uLines: { value: this.emptyTexture },
             uNodeCount: { value: 0 }, uSegmentCount: { value: 0 }, uLineCount: { value: 0 }, uPreset: { value: 0 }, uLayers: { value: 1 }, uDebugMode: { value: 0 }, uSelected: { value: -1 },
@@ -83,7 +86,8 @@ export class ObserverRenderer {
             uFov: { value: 60 }, uAspect: { value: 1 }, uTime: { value: 0 }, uHistoryStart: { value: -60 }, uRadius: { value: 40 }, uDensity: { value: 1 }, uSpacing: { value: 4 }, uOrientation: { value: 0 }, uOpacity: { value: 1 }, uAnimationRate: { value: 0 },
         };
         this.material = new THREE.RawShaderMaterial({ uniforms: this.uniforms, vertexShader: observerVertexShader, fragmentShader: observerFragmentShader, glslVersion: THREE.GLSL3, depthTest: false, depthWrite: false });
-        this.geometry = new THREE.PlaneGeometry(2, 2); this.scene.add(new THREE.Mesh(this.geometry, this.material));
+        this.compactMaterial = new THREE.RawShaderMaterial({uniforms:this.uniforms,vertexShader:observerVertexShader,fragmentShader:compactStarFragmentShader,glslVersion:THREE.GLSL3,depthTest:false,depthWrite:false});
+        this.geometry = new THREE.PlaneGeometry(2, 2);this.mesh=new THREE.Mesh(this.geometry,this.material);this.scene.add(this.mesh);
         this.pickTarget = new THREE.WebGLRenderTarget(1, 1, { type: THREE.FloatType, format: THREE.RGBAFormat, depthBuffer: false, stencilBuffer: false });
         // Exactly two targets. The first pass each frame has feedback disabled,
         // preventing temporal accumulation and read/write texture feedback hazards.
@@ -129,7 +133,7 @@ export class ObserverRenderer {
             for (const texture of this.textures()) texture.needsUpdate = true;
             this.uniforms.uHasFeedback.value = false; this.uniforms.uFeedback.value = this.emptyTexture;
             if (this.environment.texture) this.environment.texture.needsUpdate = true;
-            this.material.needsUpdate = true; this.contextLost = false;
+            this.material.needsUpdate = true;this.compactMaterial.needsUpdate=true; this.contextLost = false;
         });
         this.resize(container.clientWidth || 960, container.clientHeight || 640);
     }
@@ -213,12 +217,13 @@ export class ObserverRenderer {
     }
     /** @param {OpticalSnapshot} snapshot @param {RendererSettings} settings */
     prepare(snapshot, settings) {
+        this.mesh.material=snapshot.spacetime?this.compactMaterial:this.material;
         const requested = Math.max(0.25, Math.min(1.5, settings.renderScale ?? 1));
         const scale = settings.autoQuality === false ? requested : Math.max(0.25, requested * this.qualityFactor);
         if (scale !== this.renderScale) { this.renderScale = scale; this.resize(this.width, this.height); }
         this.diagnostics.requestedScale = requested; this.diagnostics.internalScale = scale; this.diagnostics.gpuTimeMs = this.lastGpuTimeMs; this.diagnostics.adaptiveQuality = settings.autoQuality !== false;
-        const environment = /** @type {import('./environments.js').EnvironmentSettings} */ (snapshot.environment || {});
-        this.environment.update(environment, snapshot.profile === 'sr' && settings.optical !== false ? snapshot.environmentHistory : undefined);
+        const environment = /** @type {import('./environments.js').EnvironmentSettings} */ ({...(snapshot.environment || {}),...(snapshot.spacetime?{preset:'void',anchor:'world',animationRate:0}:{})});
+        this.environment.update(environment, !snapshot.spacetime && snapshot.profile === 'sr' && settings.optical !== false ? snapshot.environmentHistory : undefined);
         const extras = [...this.environment.segments, ...this.benchmarkSegments];
         this.segments = visibleSegments(snapshot, settings, extras);
         this.historiesById.clear(); this.apparentSegmentsById.clear();
@@ -252,10 +257,12 @@ export class ObserverRenderer {
         bvh.order.forEach((value, index) => { orderData[index * 4] = value; });
         this.segmentTexture.needsUpdate = true; this.nodeTexture.needsUpdate = true; this.orderTexture.needsUpdate = true;
         const u = this.uniforms, basis = cameraBasis(observer);
+        if(snapshot.spacetime){const star=snapshot.spacetime;u.uStarCenter.value.fromArray(star.center.map((x,j)=>x-position[j]));u.uStarRs.value=star.rs;u.uStarRadius.value=star.radius;u.uStarEscape.value=star.escapeRadius;}
         u.uNodeCount.value = bvh.nodes.length; u.uSegmentCount.value = this.segments.length; u.uSR.value = sr; u.uOptical.value = optical;
+        if(snapshot.spacetime)u.uOptical.value=true;
         u.uCamera.value.fromArray(position); u.uVelocity.value.fromArray(observer.velocity); u.uForward.value.fromArray(basis.forward); u.uRight.value.fromArray(basis.right); u.uUp.value.fromArray(basis.up);
         u.uTime.value = snapshot.time; u.uHistoryStart.value = snapshot.historyStart - snapshot.time; u.uFov.value = settings.fov || 60; u.uDoppler.value = settings.doppler !== false; u.uBeaming.value = settings.beaming !== false; u.uShading.value = settings.artisticShading !== false;
-        u.uMirrorWorld.value = settings.mirrorWorld === true; this.diagnostics.mirrorWorld = u.uMirrorWorld.value;
+        u.uMirrorWorld.value = !snapshot.spacetime && settings.mirrorWorld === true; this.diagnostics.mirrorWorld = u.uMirrorWorld.value;
         u.uSelected.value = this.segments.findIndex(s => (s.entityId || s.id) === settings.selectedId);
         u.uLayers.value = LAYER_KEYS.reduce((bits, key, i) => bits | ((settings.layers?.[key] ?? key === 'grid') ? 1 << i : 0), 0);
         u.uPreset.value = Math.max(0, OBSERVER_ENVIRONMENTS.findIndex(p => p.id === (environment.preset || 'void'))); u.uCameraShell.value = environment.anchor === 'camera' && u.uPreset.value >= 12;
@@ -266,7 +273,7 @@ export class ObserverRenderer {
         this.diagnostics.fractalStyle = u.uFractalStyle.value; this.diagnostics.fractalDetail = u.uFractalDetail.value;
         u.uHasPanorama.value = !!this.environment.texture; u.uPanorama.value = this.environment.texture || this.emptyTexture;
         this.diagnostics.tracedInstances = this.segments.length; this.diagnostics.staticInstances = this.segments.filter(s => dot(s.velocity, s.velocity) === 0).length; this.diagnostics.movingInstances = this.segments.length - this.diagnostics.staticInstances;
-        this.diagnostics.layerCount = LAYER_KEYS.filter(key => settings.layers?.[key]).length; this.diagnostics.environmentStatus = this.environment.status; this.diagnostics.environmentMessage = this.environment.message;
+        this.diagnostics.layerCount = snapshot.spacetime?0:LAYER_KEYS.filter(key => settings.layers?.[key]).length; this.diagnostics.environmentStatus = this.environment.status; this.diagnostics.environmentMessage = this.environment.message;
     }
     /** @param {OpticalSnapshot} snapshot @param {RendererSettings} settings @param {number} dt */
     render(snapshot, settings = {}, dt = 0) {
@@ -288,7 +295,7 @@ export class ObserverRenderer {
      * @param {OpticalSnapshot} snapshot @param {RendererSettings} settings
      */
     renderFeedback(snapshot, settings) {
-        const configuration = feedbackConfiguration(settings), u = this.uniforms;
+        const configuration = feedbackConfiguration(snapshot.spacetime?{...settings,feedbackEnabled:false}:settings), u = this.uniforms;
         u.uHasFeedback.value = false; u.uFeedback.value = this.emptyTexture;
         this.diagnostics.feedbackEnabled = configuration.enabled;
         this.diagnostics.feedbackPasses = 0; this.diagnostics.feedbackLayers = configuration.enabled ? configuration.layers : 0; this.diagnostics.feedbackDepth = configuration.enabled ? configuration.depth : 0;
@@ -329,14 +336,19 @@ export class ObserverRenderer {
         const pixels = this.readDiagnosticPixel(snapshot, settings, ndcX, ndcY, 1);
         const index = Math.round(Math.abs(pixels[0])) - 1, segment = this.segments[index];
         if (!segment) return null;
-        const doppler = this.readDiagnosticPixel(snapshot, settings, ndcX, ndcY, 2, true)[0];
+        const frequency = this.readDiagnosticPixel(snapshot, settings, ndcX, ndcY, 2, true),doppler=frequency[0];
         const eventOffset = this.readDiagnosticPixel(snapshot, settings, ndcX, ndcY, 4, true);
         const observer = { ...snapshot.observer, ...settings.cameraOverride }, mirrored = pixels[0] < 0;
         const position = observer.position.map((x, j) => x + eventOffset[j]);
+        const star=snapshot.spacetime,clockPosition=star&&index===0?star.center.map((v,i)=>v+(i===0?star.radius:0)):position;
+        // Keep the static surface clock's large Float64 origin outside GPU
+        // textures, just as the Minkowski clock bases. Only its small offset
+        // is read back; multiplying a Float32 lapse by t would amplify error.
+        const clockBase=star?snapshot.time*starMetric(star,clockPosition).lapse:this.clockOrigins[index];
         return { entityId: segment.entityId || segment.id, id: segment.entityId || segment.id, revision: segment.revision, distance: pixels[1],
-            emissionTime: snapshot.time + pixels[2], properTime: this.clockOrigins[index] + pixels[3], position,
+            emissionTime: snapshot.time + pixels[2], properTime: clockBase + pixels[3], position,
             sourcePosition: position.map((x, j) => mirrored && j === 1 ? -x : x), doppler,
-            emissionTimeOffset: pixels[2], properTimeOffset: pixels[3], positionOffset:[...eventOffset].slice(0,3), clockBase: this.clockOrigins[index], segmentIndex: index, mirrored };
+            emissionTimeOffset: pixels[2], properTimeOffset: pixels[3], positionOffset:[...eventOffset].slice(0,3), clockBase, segmentIndex: index, mirrored };
     }
     /** Actual compiled spectral stage, before tone mapping/vignette/overlay lines.
      * @param {OpticalSnapshot} snapshot @param {RendererSettings} settings @param {number} ndcX @param {number} ndcY
@@ -404,6 +416,7 @@ export class ObserverRenderer {
     }
     /** @param {OpticalSnapshot} snapshot @param {RendererSettings} settings */
     getOverlayAnchors(snapshot, settings = {}) {
+        if(snapshot.spacetime)return [];
         if (settings.overlayFilter === 'none') return [];
         this.synchronizeObservationCache(snapshot, settings);
         const candidates = [];
@@ -432,6 +445,7 @@ export class ObserverRenderer {
         const context = this.overlayContext; if (!context) return;
         this.synchronizeObservationCache(snapshot, settings);
         context.clearRect(0, 0, this.width, this.height);
+        if(snapshot.spacetime){this.uniforms.uLineCount.value=0;return;}
         const layers = settings.layers || {}, observer = { ...snapshot.observer, ...settings.cameraOverride };
         const projectionSettings = { ...settings, aspect: this.width / this.height };
         /** Reused mesh vertex arrays have immutable values during this draw.
@@ -594,7 +608,7 @@ export class ObserverRenderer {
     dispose() {
         if (this.disposed) return; this.disposed = true; this.scope.dispose(); this.environment.dispose();
         const gl = /** @type {WebGL2RenderingContext} */ (this.renderer.getContext()); for (const query of this.pendingQueries) gl.deleteQuery(query); this.pendingQueries = [];
-        this.material.dispose(); this.geometry.dispose(); this.pickTarget.dispose(); for (const texture of this.textures()) texture.dispose();
+        this.material.dispose();this.compactMaterial.dispose(); this.geometry.dispose(); this.pickTarget.dispose(); for (const texture of this.textures()) texture.dispose();
         for (const target of this.feedbackTargets) target.dispose();
         this.renderer.dispose(); this.canvas.remove(); this.overlayCanvas.remove(); this.benchmarkSegments = []; this.segments = [];
         this.historiesById.clear(); this.apparentSegmentsById.clear();

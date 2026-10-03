@@ -1,0 +1,73 @@
+{
+  "recorded_at_utc": "2026-10-03T05:37:49.435869+00:00",
+  "model": "Adopted Minkowski SR, Schwarzschild exterior and classical Playground remain separate from native FTD",
+  "source_sha256": {
+    "engine/web/js/observer/telemetry.js": "f7b3322fa117eb4b76a9155529076d03d02166bfd3d01aef02d1ef1194d0b264",
+    "engine/web/js/observer/ui.js": "35505362022fd0d3bc02ea6610fd417bc708089a57e7db61a9ddd6cd024ac2c7",
+    "engine/web/js/observer/workspace.js": "d5d4342f69dd135bd1c3f4c1116436632ceda3811a1182eeb3106dac8dc34bb6",
+    "engine/web/js/observer/input.js": "8ced32796552cc98b19baafc6871f96040534fc7ad553c78ae8a1ddfa364ac4c",
+    "engine/web/js/observer/catalog.js": "8a06dc9b8ff4f1daf35eb6f6687e37a343fe84d39e525c36d2a09838ebde3d62",
+    "engine/web/js/observer/storage.js": "6fc0a66ab83d66bf94995ff51bb64ab7a144b382c734df3cf008d3c1c87aed8a",
+    "engine/web/css/observer.css": "a4bedd99fb31a13b1053b79e0ae1679cd9f0be2dc106eac1dc6021e46188b530",
+    "engine/web/tests/observer-telemetry.node.test.mjs": "abd2acd24715ca853db440f238569c4f41eba733e88a48b455c31578ced39cd3",
+    "engine/web/tests/observer-telemetry.spec.js": "ab55d93e932c561fda7338084810c8339e38b2bc184bc070436dc828fe4db2fd",
+    "engine/web/tests/assistant-console.spec.js": "66b28f00e5f9ac3bae44989bbcef043df637eb869fa4078fe253b80c36619c5f",
+    "engine/web/tests/assistant-scenario.spec.js": "1b2a4e829db23fe1bdaa729ea90df5ee771746a058ec5e405d39cf66a104e844"
+  },
+  "telemetry": {
+    "categories_with_lattice": 9,
+    "rows_with_lattice": 123,
+    "refresh_hz": 10,
+    "si_calibration": "Compact-star reference only; normalized Minkowski units retained"
+  },
+  "verification": {
+    "observer_node_passed": 245,
+    "assistant_node_passed": 230,
+    "observer_browser_unique_passed": 73,
+    "jev_browser_passed": 11,
+    "telemetry_browser_final_passed": 9,
+    "typechecks": [
+      "observer",
+      "assistant"
+    ],
+    "lint": [
+      "scoped ESLint",
+      "observer CSS stylelint"
+    ],
+    "dependency_graph": {
+      "modules": 47,
+      "dependencies": 88,
+      "violations": 0
+    },
+    "blocked_tests": []
+  },
+  "browser_runs": [
+    {
+      "artifacts": "engine/web/validation/telemetry-observer-final",
+      "passed": 70
+    },
+    {
+      "artifacts": "engine/web/validation/telemetry-navigation-final",
+      "passed": 24,
+      "failed": 1,
+      "finding": "JEV popover intercepted the UI button. Moved button beside the exit control."
+    },
+    {
+      "artifacts": "engine/web/validation/telemetry-interface-final",
+      "passed": 9,
+      "failed": 0
+    },
+    {
+      "artifacts": "engine/web/validation/telemetry-jev-final",
+      "passed": 11,
+      "failed": 0
+    }
+  ],
+  "actual_gpu_evidence": "COMPACT_STAR_GPU_EVIDENCE.json",
+  "limitations": [
+    "Schwarzschild vacuum exterior with prescribed fixed emitting surface; no stellar interior, rotation or backreaction.",
+    "Minkowski has no SI length/time calibration; observer mass is unassigned.",
+    "Obsolete pedestal snapshots are explicitly rejected without changing retained session state.",
+    "Native C++/CUDA and theory Python suites were not rerun."
+  ]
+}

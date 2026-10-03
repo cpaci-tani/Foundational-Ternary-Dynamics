@@ -3,6 +3,7 @@
 import { SHAPES, ENVIRONMENT_PRESETS } from './catalog.js';
 import { MAX_GRAVITY_STRENGTH } from './types.js';
 import { migrateObserverSnapshot, normalizeCoordinateForce } from './conventions.js';
+import { validateStarSnapshot } from './compact-star.js';
 /** @typedef {import('./types.js').WorldSnapshot} WorldSnapshot */
 /** @typedef {import('./catalog.js').ObserverSettings} ObserverSettings */
 /** @typedef {{id:string,name:string,kind:string,updatedAt:number,bytes:number,text:string}} StorageRecord */
@@ -146,7 +147,7 @@ export function validateObserverDocument(document) {
         if (key in cameraSettings) finite(cameraSettings[key], `camera ${key}`, min, max);
     }
     for (const key of ['feedbackLayers', 'feedbackDepth']) if (key in cameraSettings && !Number.isInteger(cameraSettings[key])) fail(`camera ${key} must be an integer`);
-    for (const key of ['grounded', 'worldUp', 'invertY', 'reticle', 'doppler', 'beaming', 'optical', 'artisticShading', 'pauseOnInspect', 'liveLink', 'autoQuality', 'mirrorWorld', 'feedbackEnabled', 'forceGunEnabled']) {
+    for (const key of ['grounded', 'worldUp', 'invertY', 'reticle', 'doppler', 'beaming', 'optical', 'artisticShading', 'pauseOnInspect', 'liveLink', 'autoQuality', 'mirrorWorld', 'feedbackEnabled', 'forceGunEnabled', 'showAssistant']) {
         if (key in cameraSettings && typeof cameraSettings[key] !== 'boolean') fail(`camera ${key} must be boolean`);
     }
     if (cameraSettings.axisLocks && (!Array.isArray(cameraSettings.axisLocks) || cameraSettings.axisLocks.length !== 3 || cameraSettings.axisLocks.some((/** @type {unknown} */ value) => typeof value !== 'boolean'))) fail('camera axis locks');
@@ -158,6 +159,8 @@ export function validateObserverDocument(document) {
         for (const value of Object.values(cameraSettings.bindings)) string(value, 'keybinding', 40);
     }
     if (snapshot.scrubTime !== null && snapshot.scrubTime !== undefined) finite(snapshot.scrubTime, 'history cursor', snapshot.historyStart, snapshot.time);
+    validateStarSnapshot(snapshot);
+    if(snapshot.experiment==='compact-star'&&!snapshot.spacetime)fail('compact-star metric provider missing');
     return { snapshot: migrateObserverSnapshot(snapshot), settings: document.settings };
 }
 

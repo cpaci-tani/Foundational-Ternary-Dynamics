@@ -1,0 +1,440 @@
+{
+  "recorded_at_utc": "2026-10-03T05:37:49.435869+00:00",
+  "model": "Adopted Schwarzschild exterior plus local SR; separate from native FTD",
+  "source_sha256": {
+    "engine/web/js/observer/compact-star.js": "1ae6d862316e03743591cba484af8b61eee46139beda1ca845d35a9c0d890980",
+    "engine/web/js/observer/compact-star-shaders.js": "7d7af61c593d210d256766b916d35cbf8a6b701a937fde2d76e09026974506ce",
+    "engine/web/js/observer/renderer.js": "1f5491556bc43c20ec2b4dd851aa2b8aba527d4450a606d872e9258584c889d5",
+    "engine/web/js/observer/session.js": "c4c12cf7d9c32a0cbc6b64bd9f48f181e504b428edbfa2e95330cb658d849115",
+    "engine/web/js/observer/optics.js": "c4a3aa4885cf955800dd5c1bde362b0e104fb8d43d8c28c191a0d78f0d036d46",
+    "engine/web/js/observer/math.js": "2bd616e56812e71ea6dc939ef7069cc8e89ba033f545bae70a6a28591b7e0624",
+    "engine/web/js/observer/shaders.js": "ad05f60ddac07e5795f73f95cf31858584e0158fc9273e7e178b911491c0a180",
+    "engine/web/js/observer/spectrum.js": "3d1ec2a04bf57e2c7c9620d354f1031ddb00509cced3ec6ffbe1ec183961d5e7",
+    "engine/web/js/observer/storage.js": "6fc0a66ab83d66bf94995ff51bb64ab7a144b382c734df3cf008d3c1c87aed8a",
+    "engine/web/js/observer/diagnostics.js": "37b9802b51092d578063ae99159c14ac4b0396b77e178b7d34a46a13799d6faf"
+  },
+  "actual_gpu_readback": {
+    "hits": 39,
+    "misses": 36,
+    "maxima": {
+      "distance": 2.7887927940173363e-05,
+      "emissionTime": 4.2506292611044216e-05,
+      "properTime": 3.440746828875518e-05,
+      "doppler": 7.172430636082083e-07,
+      "position": 2.785335769572156e-05
+    },
+    "failures": [],
+    "normal": {
+      "entityId": "object-5",
+      "id": "object-5",
+      "revision": 1,
+      "distance": 2.7953319549560547,
+      "emissionTime": 4.957594156265259,
+      "properTime": 4.013674389607315,
+      "position": [
+        0,
+        1.6,
+        0.2046680450439453
+      ],
+      "sourcePosition": [
+        0,
+        1.6,
+        0.2046680450439453
+      ],
+      "doppler": 0.8213080763816833,
+      "emissionTimeOffset": -3.042405843734741,
+      "properTimeOffset": -2.4631354808807373,
+      "positionOffset": [
+        0,
+        0,
+        -2.7953319549560547
+      ],
+      "clockBase": 6.476809870488053,
+      "segmentIndex": 0,
+      "mirrored": false
+    },
+    "linear": [
+      0.29984936118125916,
+      0.3700147867202759,
+      0.00015227125550154597
+    ],
+    "unavailable": null,
+    "raw": [
+      0.8213080763816833,
+      0.8096012473106384,
+      0.9857461452484131,
+      0
+    ],
+    "belowSphere": [
+      {
+        "y": -0.22,
+        "cpu": null,
+        "gpu": null
+      },
+      {
+        "y": -0.4,
+        "cpu": null,
+        "gpu": null
+      },
+      {
+        "y": -0.7,
+        "cpu": null,
+        "gpu": null
+      }
+    ],
+    "silhouette": [
+      {
+        "fraction": 0.999,
+        "cpu": {
+          "entityId": "object-5",
+          "id": "object-5",
+          "revision": 1,
+          "distance": 3.089598334174052,
+          "emissionTime": 4.568197575100465,
+          "properTime": 3.6984183930937844,
+          "position": [
+            0.19158842982861812,
+            1.6,
+            -0.07198681818291758
+          ],
+          "sourcePosition": [
+            0.19158842982861812,
+            1.6,
+            -0.07198681818291758
+          ],
+          "restPosition": [
+            0.19158842982861812,
+            0,
+            -0.07198681818291758
+          ],
+          "normal": [
+            0.9361022336342685,
+            0,
+            -0.3517280315598021
+          ],
+          "historical": false,
+          "mirrored": false,
+          "segmentIndex": 0,
+          "doppler": 0.8213079626162949
+        },
+        "gpu": {
+          "entityId": "object-5",
+          "id": "object-5",
+          "revision": 1,
+          "distance": 3.089383125305176,
+          "emissionTime": 4.5685248374938965,
+          "properTime": 3.698683392292862,
+          "position": [
+            0.19167360663414001,
+            1.6,
+            -0.07178783416748047
+          ],
+          "sourcePosition": [
+            0.19167360663414001,
+            1.6,
+            -0.07178783416748047
+          ],
+          "doppler": 0.8213080763816833,
+          "emissionTimeOffset": -3.4314751625061035,
+          "properTimeOffset": -2.7781264781951904,
+          "positionOffset": [
+            0.19167360663414001,
+            0,
+            -3.0717878341674805
+          ],
+          "clockBase": 6.476809870488053,
+          "segmentIndex": 0,
+          "mirrored": false
+        }
+      },
+      {
+        "fraction": 1.001,
+        "cpu": null,
+        "gpu": null
+      }
+    ],
+    "flatFrequency": 1,
+    "baselineOn": [
+      1.9424858093261719,
+      1.532021164894104,
+      0.852086067199707
+    ],
+    "baselineOff": [
+      1.9424858093261719,
+      1.532021164894104,
+      0.852086067199707
+    ],
+    "intensityError": 4.671701059333344e-08,
+    "lateClock": {
+      "cpu": {
+        "entityId": "object-5",
+        "id": "object-5",
+        "revision": 1,
+        "distance": 2.795333876919283,
+        "emissionTime": 9999996.957590934,
+        "properTime": 8096009.874971932,
+        "position": [
+          0,
+          1.6,
+          0.20466612308071738
+        ],
+        "sourcePosition": [
+          0,
+          1.6,
+          0.20466612308071738
+        ],
+        "restPosition": [
+          0,
+          0,
+          0.20466612308071738
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "historical": false,
+        "mirrored": false,
+        "segmentIndex": 0,
+        "doppler": 0.8213079626162949
+      },
+      "gpu": {
+        "entityId": "object-5",
+        "id": "object-5",
+        "revision": 1,
+        "distance": 2.7953319549560547,
+        "emissionTime": 9999996.957594156,
+        "properTime": 8096009.874974585,
+        "position": [
+          0,
+          1.6,
+          0.2046680450439453
+        ],
+        "sourcePosition": [
+          0,
+          1.6,
+          0.2046680450439453
+        ],
+        "doppler": 0.8213080763816833,
+        "emissionTimeOffset": -3.042405843734741,
+        "properTimeOffset": -2.4631354808807373,
+        "positionOffset": [
+          0,
+          0,
+          -2.7953319549560547
+        ],
+        "clockBase": 8096012.338110066,
+        "segmentIndex": 0,
+        "mirrored": false
+      }
+    },
+    "uniforms": {
+      "uStarRs": 0.08613646030426025,
+      "uStarRadius": 0.20466603338718414,
+      "uStarEscape": 40,
+      "uDebugMode": 4,
+      "uStarCenter": {
+        "0": 0,
+        "1": 0,
+        "2": -3
+      },
+      "uForward": {
+        "0": 0,
+        "1": 0,
+        "2": -1
+      }
+    },
+    "entityCount": 1,
+    "segmentCount": 1,
+    "programLinked": true,
+    "programLog": "",
+    "glError": 0,
+    "gpu": {
+      "vendor": "Google Inc. (NVIDIA)",
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "floatReadback": true
+    },
+    "precision": {
+      "bits": 23
+    },
+    "provider": {
+      "kind": "schwarzschild-exterior",
+      "massSolar": 1.4,
+      "radiusKm": 12,
+      "lengthUnitMeters": 48000,
+      "rs": 0.08613646055292395,
+      "radius": 0.20466603908814485,
+      "center": [
+        0,
+        1.6,
+        0
+      ],
+      "sourceId": "object-5",
+      "observerMode": "guided",
+      "escapeRadius": 40
+    },
+    "shader": true,
+    "browser": "147.0.7727.15"
+  },
+  "context_recovery": {
+    "before": {
+      "star": {
+        "entityId": "object-5",
+        "id": "object-5",
+        "revision": 1,
+        "distance": 2.7953319549560547,
+        "emissionTime": -3.042405843734741,
+        "properTime": -2.4631354808807373,
+        "position": [
+          0,
+          1.6,
+          0.2046680450439453
+        ],
+        "sourcePosition": [
+          0,
+          1.6,
+          0.2046680450439453
+        ],
+        "doppler": 0.8213080763816833,
+        "emissionTimeOffset": -3.042405843734741,
+        "properTimeOffset": -2.4631354808807373,
+        "positionOffset": [
+          0,
+          0,
+          -2.7953319549560547
+        ],
+        "clockBase": 0,
+        "segmentIndex": 0,
+        "mirrored": false
+      },
+      "minkowski": {
+        "entityId": "object-6",
+        "id": "object-6",
+        "revision": 1,
+        "distance": 9.5,
+        "emissionTime": -9.5,
+        "properTime": -9.5,
+        "position": [
+          0,
+          1,
+          -1.5
+        ],
+        "sourcePosition": [
+          0,
+          1,
+          -1.5
+        ],
+        "doppler": 1,
+        "emissionTimeOffset": -9.5,
+        "properTimeOffset": -9.5,
+        "positionOffset": [
+          0,
+          0,
+          -9.5
+        ],
+        "clockBase": 0,
+        "segmentIndex": 0,
+        "mirrored": false
+      }
+    },
+    "after": {
+      "star": {
+        "entityId": "object-5",
+        "id": "object-5",
+        "revision": 1,
+        "distance": 2.7953319549560547,
+        "emissionTime": -3.042405843734741,
+        "properTime": -2.4631354808807373,
+        "position": [
+          0,
+          1.6,
+          0.2046680450439453
+        ],
+        "sourcePosition": [
+          0,
+          1.6,
+          0.2046680450439453
+        ],
+        "doppler": 0.8213080763816833,
+        "emissionTimeOffset": -3.042405843734741,
+        "properTimeOffset": -2.4631354808807373,
+        "positionOffset": [
+          0,
+          0,
+          -2.7953319549560547
+        ],
+        "clockBase": 0,
+        "segmentIndex": 0,
+        "mirrored": false
+      },
+      "unchanged": true,
+      "gpu": {
+        "vendor": "Google Inc. (NVIDIA)",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "floatReadback": true
+      }
+    }
+  },
+  "verification": {
+    "observer_node": 245,
+    "assistant_node": 230,
+    "observer_browser_unique_passed": 73,
+    "jev_browser_passed": 11,
+    "full_observer_run": "70 passed; final targeted navigation/lifecycle run 24 passed and one UI interception failure; after fixing the hide-button placement all 9 telemetry tests passed. 73 unique Observer browser regressions passed across these runs.",
+    "blocked_targeted_tests": [],
+    "geometry": "One floating emitting sphere; no pedestal",
+    "command_gpu": "$env:FTD_HARDWARE_WEBGL='1'; npm run test:observer:browser -- --output=../validation/telemetry-observer-final",
+    "scope": "Reference-workspace numerical, session, optical, browser and actual WebGL verification. Native C++/CUDA and theory Python suites were not rerun; native FTD physics is unchanged."
+  },
+  "pedestal_baseline": {
+    "recorded_at_utc": "2026-10-03T00:11:36.711142-05:00",
+    "geometry": "Former sphere plus three pedestal boxes",
+    "hits": 42,
+    "misses": 33,
+    "maxima": {
+      "distance": 2.7887927940173363e-05,
+      "emissionTime": 4.2506292611044216e-05,
+      "properTime": 3.440746828875518e-05,
+      "doppler": 4.255900415195413e-06,
+      "position": 2.785335769572156e-05
+    },
+    "verification": {
+      "observer_node": 234,
+      "assistant_node": 230,
+      "existing_observer_browser": 61,
+      "new_gr_browser": 3,
+      "blocked_targeted_tests": [],
+      "full_browser_run": "63 passed: 61 existing plus first 2 GR tests",
+      "final_focused_runs": "3 GR tests passed; 6 existing authoring and immersion tests also passed after renderer guards changed",
+      "scope": "Native C++/CUDA and theory Python suites not rerun; native FTD is unchanged by this implementation.",
+      "final_clock_run": "6 passed: 3 GR checks and 3 existing Minkowski GPU checks, including GR surface clocks at t=1e7."
+    }
+  },
+  "previous_floating_run": {
+    "recorded_at_utc": "2026-10-03T05:20:41.7118488Z",
+    "source_sha256": {
+      "engine/web/js/observer/compact-star.js": "1ae6d862316e03743591cba484af8b61eee46139beda1ca845d35a9c0d890980",
+      "engine/web/js/observer/compact-star-shaders.js": "7d7af61c593d210d256766b916d35cbf8a6b701a937fde2d76e09026974506ce",
+      "engine/web/js/observer/renderer.js": "1f5491556bc43c20ec2b4dd851aa2b8aba527d4450a606d872e9258584c889d5",
+      "engine/web/js/observer/session.js": "c4c12cf7d9c32a0cbc6b64bd9f48f181e504b428edbfa2e95330cb658d849115",
+      "engine/web/js/observer/optics.js": "c4a3aa4885cf955800dd5c1bde362b0e104fb8d43d8c28c191a0d78f0d036d46",
+      "engine/web/js/observer/math.js": "2bd616e56812e71ea6dc939ef7069cc8e89ba033f545bae70a6a28591b7e0624",
+      "engine/web/js/observer/shaders.js": "ad05f60ddac07e5795f73f95cf31858584e0158fc9273e7e178b911491c0a180",
+      "engine/web/js/observer/spectrum.js": "3d1ec2a04bf57e2c7c9620d354f1031ddb00509cced3ec6ffbe1ec183961d5e7",
+      "engine/web/js/observer/storage.js": "9e1ec153e4411b1ca0e5f62bb2607e83c983d8c31d9dfdb65d6cbeda9f1c53bd",
+      "engine/web/js/observer/diagnostics.js": "0baf4d9c3af25b926b5893d833c96e40b4a422890f8bf24d749e368e7350b4a8"
+    },
+    "verification": {
+      "baseline_compact_star_node": 10,
+      "baseline_gr_browser": 3,
+      "floating_compact_star_node": 11,
+      "floating_gr_browser": 3,
+      "blocked_targeted_tests": [],
+      "geometry": "One floating static emitting sphere; no pedestal",
+      "portable_compatibility": "Current sphere-only snapshots round-trip; obsolete four-entity pedestal saves are explicitly rejected, with no silent history rewrite.",
+      "command_node": "node --test engine/web/tests/observer-compact-star.node.test.mjs",
+      "command_gpu": "FTD_HARDWARE_WEBGL=1 npm --prefix engine/web/tests test -- observer-compact-star.spec.js --workers=1 --output=../validation/floating-star-gpu",
+      "scope": "Focused compact-star reference-workspace verification; previous broad-suite results are retained as pedestal_baseline. Native C++/CUDA and theory Python suites not rerun."
+    }
+  }
+}

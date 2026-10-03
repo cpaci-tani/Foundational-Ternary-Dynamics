@@ -88,6 +88,7 @@ function viewOf(workspace) {
 /** @param {WorldSnapshot} snapshot @param {ReturnType<typeof viewOf>} view @returns {ObservationEnvelope} */
 function envelope(snapshot, view) {
     const actions = OBSERVER_ACTION_DESCRIPTORS.filter(item => {
+        if(snapshot.spacetime&&['observer.create','observer.update','observer.delete','observer.restore','observer.environment','observer.overlay'].includes(item.type))return false;
         if (['observer.impulse', 'observer.forceGun'].includes(item.type)) return snapshot.profile === 'playground';
         if (item.type === 'observer.step') return !snapshot.playing && snapshot.scrubTime === null;
         return true;
@@ -98,6 +99,7 @@ function envelope(snapshot, view) {
         preparationVersion: `${snapshot.epoch}:${snapshot.preparationVersion ?? 0}:${view.version}`, tick: snapshot.tick,
         capabilities: actions.map(item => item.type), actions: clone(actions),
         facts: { running: snapshot.playing, profile: snapshot.profile, physicsEngine: snapshot.physicsEngine,
+            ...(snapshot.spacetime?{spacetime:clone(snapshot.spacetime),velocityConvention:'local static orthonormal frame',authorMassConvention:'generic entity mass is not the GR source mass; spacetime.massSolar fixes nominal GM',navigationConvention:'guided local du/dt control; freefall ignores navigation forces',referenceBoundary:'Schwarzschild exterior, prescribed floating static sphere; no native FTD recovery'}:{}),
             time: snapshot.time, epoch: snapshot.epoch, editVersion: snapshot.preparationVersion ?? 0,
             units: snapshot.units, experiment: snapshot.experiment, historyStart: snapshot.historyStart, scrubTime: snapshot.scrubTime,
             observer: clone(snapshot.observer), entities: snapshot.entities.map(compactEntity),

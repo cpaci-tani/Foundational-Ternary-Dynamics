@@ -2,7 +2,7 @@
 import { FRACTAL_PRESETS } from './fractal-presets.js';
 /** Declarative content for the Observer workspace. Values are presentation defaults. */
 /** @typedef {{id:string,label:string,description:string}} CatalogEntry */
-/** @typedef {{fov:number,sensitivity:number,invertY:boolean,speed:number,acceleration:number,grounded:boolean,worldUp:boolean,roll:number,axisLocks:readonly boolean[],reticle:boolean,doppler:boolean,beaming:boolean,optical:boolean,artisticShading:boolean,renderScale:number,fractalDetail?:number,waveWavelength?:number,waveSeparation?:number,waveAmplitude?:number,wavePhase?:number,polarizationMode?:'linear'|'circular'|'elliptical',autoQuality:boolean,pauseOnInspect:boolean,liveLink:boolean,overlayFilter:string,overlayFields:Readonly<Record<string,boolean>>,layers:Readonly<Record<string,boolean>>,bindings:Readonly<Record<string,string>>,gridSnap:number,scrollZoomSpeed?:number,storageCapMiB?:number,playbackSpeed?:number,mirrorWorld?:boolean,feedbackEnabled?:boolean,feedbackLayers?:number,feedbackDepth?:number,feedbackStrength?:number,feedbackScale?:number,forceGunEnabled?:boolean,forceGunSensitivity?:'delicate'|'normal'|'strong',forceGunMultiplier?:number}} ObserverSettings */
+/** @typedef {{fov:number,sensitivity:number,invertY:boolean,speed:number,acceleration:number,grounded:boolean,worldUp:boolean,roll:number,axisLocks:readonly boolean[],reticle:boolean,doppler:boolean,beaming:boolean,optical:boolean,artisticShading:boolean,showAssistant?:boolean,renderScale:number,fractalDetail?:number,waveWavelength?:number,waveSeparation?:number,waveAmplitude?:number,wavePhase?:number,polarizationMode?:'linear'|'circular'|'elliptical',autoQuality:boolean,pauseOnInspect:boolean,liveLink:boolean,overlayFilter:string,overlayFields:Readonly<Record<string,boolean>>,layers:Readonly<Record<string,boolean>>,bindings:Readonly<Record<string,string>>,gridSnap:number,scrollZoomSpeed?:number,storageCapMiB?:number,playbackSpeed?:number,mirrorWorld?:boolean,feedbackEnabled?:boolean,feedbackLayers?:number,feedbackDepth?:number,feedbackStrength?:number,feedbackScale?:number,forceGunEnabled?:boolean,forceGunSensitivity?:'delicate'|'normal'|'strong',forceGunMultiplier?:number}} ObserverSettings */
 /** @param {string} id @param {string} label @param {string} [description] @returns {Readonly<CatalogEntry>} */
 const named = (id, label, description = '') => Object.freeze({ id, label, description });
 
@@ -46,6 +46,7 @@ export const ENVIRONMENT_PRESETS = Object.freeze([
 ]);
 
 export const EXPERIMENTS = Object.freeze([
+    named('compact-star', 'A floating compact star', 'A 1.4-solar-mass, 12 km star displayed at tabletop scale. Schwarzschild light bending, gravitational redshift, local SR and free fall.'),
     named('baseline', 'A quiet frame', 'Start with a plane, a clock and simple landmarks.'),
     named('clocks', 'Separated clocks', 'Compare clocks at separated locations and their delayed appearance.'),
     named('moving-shapes', 'Passing geometry', 'Observe moving geometric objects through their arriving light.'),
@@ -81,7 +82,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
     grounded: false, worldUp: true, roll: 0, axisLocks: Object.freeze([false, false, false]),
     mirrorWorld: true, feedbackEnabled: true, feedbackLayers: 2, feedbackDepth: 3, feedbackStrength: 0.45, feedbackScale: 0.6,
     forceGunEnabled: true, forceGunSensitivity: 'normal', forceGunMultiplier: 1,
-    reticle: true, doppler: true, beaming: false, optical: true, artisticShading: true,
+    reticle: true, doppler: true, beaming: false, optical: true, artisticShading: true, showAssistant: false,
     renderScale: 1, fractalDetail: 0.65, autoQuality: true, pauseOnInspect: true, liveLink: false, overlayFilter: 'selected', gridSnap: 0,
     waveWavelength: 4, waveSeparation: 4, waveAmplitude: 0.65, wavePhase: 0, polarizationMode: 'circular',
     overlayFields: Object.freeze({ name: true, position: true, velocity: true, properTime: true, distance: true, emissionTime: true }),

@@ -71,6 +71,10 @@ test('shared console moves with workspace, releases input, restores focus and ne
     await page.screenshot({path:testInfo.outputPath('jev-console.png')});
     await page.getByRole('button',{name:'Close JEV console'}).click();
     await openObserverWorkspace(page);
+    await expect(page.locator('[data-observer-assistant]')).toBeHidden();
+    await page.locator('[data-observer-panel-tab="help"]').click();
+    await page.getByLabel('Show JEV button',{exact:true}).check();
+    await page.getByRole('button',{name:'Close controls',exact:true}).click();
     await page.locator('#observer-workspace').getByRole('button',{name:/JEV/,exact:false}).click();
     await expect(page.locator('#observer-workspace .jev-console')).toBeVisible();
     expect(await page.evaluate(()=>document.pointerLockElement)).toBeNull();
