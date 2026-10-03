@@ -160,7 +160,7 @@ export function validateObserverDocument(document) {
     }
     if (snapshot.scrubTime !== null && snapshot.scrubTime !== undefined) finite(snapshot.scrubTime, 'history cursor', snapshot.historyStart, snapshot.time);
     validateStarSnapshot(snapshot);
-    if(snapshot.experiment==='compact-star'&&!snapshot.spacetime)fail('compact-star metric provider missing');
+    if(['compact-star','black-hole'].includes(snapshot.experiment)&&!snapshot.spacetime)fail('Schwarzschild metric provider missing');
     return { snapshot: migrateObserverSnapshot(snapshot), settings: document.settings };
 }
 

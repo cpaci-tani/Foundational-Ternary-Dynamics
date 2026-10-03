@@ -7,7 +7,9 @@ import { add, sub, scale, dot, length, normalize, gamma, cameraBasis, observerRa
 export const LIGHT_SPEED = 299792458;
 export const NOMINAL_SOLAR_GM = 1.3271244e20;
 export const COMPACT_STAR_METHOD = 'gr-schwarzschild-exterior-rk4-v1';
-/** @typedef {{kind:'schwarzschild-exterior',massSolar:number,radiusKm:number,lengthUnitMeters:number,rs:number,radius:number,center:number[],sourceId:string,observerMode:'guided'|'freefall',escapeRadius:number}} CompactStar */
+export const BLACK_HOLE_METHOD = 'gr-schwarzschild-black-hole-rk4-v1';
+/** The black-hole radiusKm/radius are horizon coordinates, never emitting surfaces.
+ * @typedef {{kind:'schwarzschild-exterior'|'schwarzschild-black-hole',massSolar:number,radiusKm:number,lengthUnitMeters:number,rs:number,radius:number,center:number[],sourceId:string,observerMode:'guided'|'freefall',escapeRadius:number,observerBoundary?:number}} CompactStar */
 /** @param {number} [massSolar] @param {number} [radiusKm] @returns {CompactStar} */
 export function compactStar(massSolar=1.4, radiusKm=12) {
     if (!Number.isFinite(massSolar)||massSolar<0||massSolar>10||!Number.isFinite(radiusKm)||radiusKm<1e-8||radiusKm>100) throw new Error('Mass must be 0–10 solar masses; radius must be positive and at most 100 km.');
@@ -15,6 +17,14 @@ export function compactStar(massSolar=1.4, radiusKm=12) {
     if (.25<=1.5*rs) throw new Error('This exterior experiment requires the surface outside the photon sphere (R > 1.5 Schwarzschild radii).');
     const radius=(.25-rs/2+Math.sqrt(.25*(.25-rs)))/2;
     return {kind:'schwarzschild-exterior',massSolar,radiusKm,lengthUnitMeters,rs,radius,center:[0,1.6,0],sourceId:'',observerMode:'guided',escapeRadius:40};
+}
+/** Adopted nonrotating, uncharged black hole. The exterior isotropic chart ends
+ * at rho=rs/4; observerBoundary is a declared numerical guard outside it.
+ * @param {number} [massSolar] @returns {CompactStar} */
+export function blackHole(massSolar=10) {
+    if(!Number.isFinite(massSolar)||massSolar<=0||massSolar>1e6)throw new Error('Black-hole mass must be positive and at most one million nominal solar masses.');
+    const rs=.25,lengthUnitMeters=2*NOMINAL_SOLAR_GM*massSolar/LIGHT_SPEED**2/rs,radius=rs/4;
+    return {kind:'schwarzschild-black-hole',massSolar,radiusKm:rs*lengthUnitMeters/1000,lengthUnitMeters,rs,radius,center:[0,1.6,0],sourceId:'',observerMode:'guided',escapeRadius:40,observerBoundary:radius*1.01};
 }
 /** @param {CompactStar} star @param {number[]} position */
 export function starMetric(star, position) {
@@ -28,7 +38,8 @@ export function starMetric(star, position) {
 /** @param {CompactStar} star @param {number[]} position */
 export function assertExterior(star,position) {
     const rho=length(sub(position,star.center));
-    if(!Number.isFinite(rho)||rho<=star.radius+1e-7||rho>=star.escapeRadius) throw new Error('Observer must remain outside the stellar surface and inside the 40-unit optical boundary.');
+    const inner=star.observerBoundary??star.radius+1e-7;
+    if(!Number.isFinite(rho)||rho<=inner||rho>=star.escapeRadius) throw new Error(star.kind==='schwarzschild-black-hole'?'Observer must remain outside the black-hole exterior numerical guard and inside the 40-unit optical boundary. This chart does not cross the horizon.':'Observer must remain outside the stellar surface and inside the 40-unit optical boundary.');
 }
 /** @param {CompactStar} star */
 export function starApparatus(star) {
@@ -62,20 +73,25 @@ export function advanceStarObserver(star,observer,dt,force=[0,0,0]) {
     };
     // Substeps resolve close approaches; a surface event is bracketed and refined.
     let y=y0,elapsed=0,stopped=false;
+    /** @type {'inner-boundary'|'outer-boundary'|'speed-limit'|null} */ let stoppedReason=null;
+    const innerBoundary=star.observerBoundary===undefined?star.radius+2e-7:star.observerBoundary+1e-8;
     while(elapsed<dt-1e-14){
         const m=starMetric(star,y.slice(0,3)),h=Math.min(dt-elapsed,.002,m.rho*.02);
         let next=rk4(y,h,derivative),used=h;
-        const boundary=length(sub(next.slice(0,3),star.center))<=star.radius+2e-7||length(sub(next.slice(0,3),star.center))>=star.escapeRadius-1e-6;
+        const nextRho=length(sub(next.slice(0,3),star.center)),boundary=nextRho<=innerBoundary||nextRho>=star.escapeRadius-1e-6;
         const v=scale(next.slice(3,6),guided?1:1/starMetric(star,next.slice(0,3)).spatial);
         if(boundary||length(v)/Math.sqrt(1+dot(v,v))>MAX_BETA){
+            stoppedReason=nextRho<=innerBoundary?'inner-boundary':nextRho>=star.escapeRadius-1e-6?'outer-boundary':'speed-limit';
             let lo=0,hi=h;
-            for(let i=0;i<40;i++){const mid=(lo+hi)/2,p=rk4(y,mid,derivative),m=starMetric(star,p.slice(0,3)),u=scale(p.slice(3,6),guided?1:1/m.spatial);if(m.rho<=star.radius+2e-7||m.rho>=star.escapeRadius-1e-6||length(u)/Math.sqrt(1+dot(u,u))>MAX_BETA)hi=mid;else lo=mid;}
+            for(let i=0;i<40;i++){const mid=(lo+hi)/2,p=rk4(y,mid,derivative),m=starMetric(star,p.slice(0,3)),u=scale(p.slice(3,6),guided?1:1/m.spatial);if(m.rho<=innerBoundary||m.rho>=star.escapeRadius-1e-6||length(u)/Math.sqrt(1+dot(u,u))>MAX_BETA)hi=mid;else lo=mid;}
+            const eventRho=starMetric(star,rk4(y,hi,derivative).slice(0,3)).rho;
+            stoppedReason=eventRho<=innerBoundary?'inner-boundary':eventRho>=star.escapeRadius-1e-6?'outer-boundary':'speed-limit';
             used=lo;next=rk4(y,lo,derivative);stopped=true;
         }
         y=next;elapsed+=used;if(stopped)break;
     }
     const m=starMetric(star,y.slice(0,3)),u=scale(y.slice(3,6),guided?1:1/m.spatial);
-    return {position:y.slice(0,3),velocity:scale(u,1/Math.sqrt(1+dot(u,u))),properElapsed:y[6],elapsed,stopped,capApplied:guided&&kick.capApplied};
+    return {position:y.slice(0,3),velocity:scale(u,1/Math.sqrt(1+dot(u,u))),properElapsed:y[6],elapsed,stopped,stoppedReason,capApplied:guided&&kick.capApplied};
 }
 /** @param {number[]} p @param {{shape:string,position:number[],size:number[]}} entity */
 export function starSurfaceDistance(p,entity) {
@@ -99,7 +115,14 @@ export function traceStarPath(star,origin,direction,entities,epsilon=1e-7) {
         if(nearest<=epsilon)return {status:'hit',index,position:p,direction:y.slice(3,6),delay:y[6],distance:arc,steps:step};
         if(m.rho>=star.escapeRadius)return {status:'escaped',index:-1,position:p,direction:y.slice(3,6),delay:y[6],distance:arc,steps:step};
         const h=Math.min(.04*m.rho,.5,Math.max(epsilon*.1,.8*nearest));
-        y=rk4(y,h,derivative);y.splice(3,3,...normalize(y.slice(3,6)));arc+=h;
+        let next=rk4(y,h,derivative);
+        if(length(sub(next.slice(0,3),star.center))>=star.escapeRadius){
+            let lo=0,hi=h;
+            for(let i=0;i<40;i++){const mid=(lo+hi)/2,state=rk4(y,mid,derivative);if(length(sub(state.slice(0,3),star.center))>=star.escapeRadius)hi=mid;else lo=mid;}
+            const used=(lo+hi)/2;next=rk4(y,used,derivative);next.splice(3,3,...normalize(next.slice(3,6)));arc+=used;
+            return {status:'escaped',index:-1,position:next.slice(0,3),direction:next.slice(3,6),delay:next[6],distance:arc,steps:step+1};
+        }
+        y=next;y.splice(3,3,...normalize(y.slice(3,6)));arc+=h;
     }
     return {status:'budget-exhausted',index:-1,position:y.slice(0,3),direction:y.slice(3,6),delay:y[6],distance:arc,steps:768};
 }
@@ -120,6 +143,13 @@ export function traceCompactStar(snapshot,settings,ndcX,ndcY) {
  * @param {import('./types.js').WorldSnapshot} snapshot */
 export function validateStarSnapshot(snapshot) {
     const s=snapshot.spacetime;if(!s)return;
+    if(s.kind==='schwarzschild-black-hole'){
+        const canonical=blackHole(s.massSolar);
+        if(snapshot.profile!=='sr'||snapshot.experiment!=='black-hole'||snapshot.integratorVersion!==BLACK_HOLE_METHOD||!['guided','freefall'].includes(s.observerMode))throw new Error('Invalid black-hole exterior reference provider.');
+        for(const key of ['radiusKm','lengthUnitMeters','rs','radius','escapeRadius','center','observerBoundary','sourceId'])if(JSON.stringify(s[/** @type {keyof CompactStar} */(key)])!==JSON.stringify(canonical[/** @type {keyof CompactStar} */(key)]))throw new Error('Imported black-hole metric differs from its physical parameters.');
+        if(snapshot.entities.length||snapshot.segments.length||snapshot.pulses?.length||snapshot.joints?.length||snapshot.scrubTime!==null)throw new Error('The black-hole exterior has no emitting horizon, authored objects or Minkowski histories.');
+        assertExterior(s,snapshot.observer.position);return;
+    }
     const canonical=compactStar(s.massSolar,s.radiusKm);
     if(snapshot.profile!=='sr'||snapshot.experiment!=='compact-star'||s.kind!==canonical.kind||!['guided','freefall'].includes(s.observerMode))throw new Error('Invalid compact-star reference provider.');
     if(snapshot.integratorVersion!==COMPACT_STAR_METHOD)throw new Error('Unknown compact-star evolution method.');

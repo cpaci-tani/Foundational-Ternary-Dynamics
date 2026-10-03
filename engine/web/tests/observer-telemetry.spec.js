@@ -68,7 +68,16 @@ test('live telemetry permits captured navigation while category keyboard control
         return {position:w.snapshot.observer.position,forward:w.settings.bindings.forward};
     });
     const speedBefore=await speed.textContent();
-    await page.locator('.observer-canvas').click({position:{x:280,y:360}});
+    const panelBounds=await panel.boundingBox();
+    const canvasBounds=await page.locator('.observer-canvas').boundingBox();
+    const toolbarBounds=await page.locator('.observer-toolbar').boundingBox();
+    expect(panelBounds).not.toBeNull();expect(canvasBounds).not.toBeNull();expect(toolbarBounds).not.toBeNull();
+    const sceneTop=panelBounds.y+panelBounds.height;
+    expect(toolbarBounds.y-sceneTop).toBeGreaterThan(12);
+    await page.locator('.observer-canvas').click({position:{
+        x:canvasBounds.width/2,
+        y:(sceneTop+toolbarBounds.y)/2-canvasBounds.y,
+    }});
     await expect.poll(()=>page.evaluate(()=>document.pointerLockElement===window.__FTD_DEV__.registry.get('observerWorkspace').renderer.canvas)).toBe(true);
     try{
         await page.keyboard.down(before.forward);
@@ -190,29 +199,101 @@ test('minimal interface toggle hides scene UI without pausing and hidden shortcu
     await page.getByRole('button',{name:'Close controls',exact:true}).click();await playback(page,true);
 });
 
-for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
-    test(`telemetry categories remain reachable at ${viewport.width}×${viewport.height}`,async({page})=>{
-        await page.setViewportSize(viewport);await ready(page);
+test('telemetry drops down into a wide category grid with readable values and restores narrow controls',async({page},info)=>{
+    await page.setViewportSize({width:1440,height:900});await ready(page);
+    for(const viewport of [{width:1440,height:900},{width:1920,height:1080}]){
+        await page.setViewportSize(viewport);
         await page.locator('[data-observer-panel-tab="telemetry"]').click();
         const panel=page.locator('[data-observer-panel="telemetry"]');
         await expect(panel).toBeVisible();
-        expect(await panel.locator('[data-observer-telemetry-section]').count()).toBeGreaterThanOrEqual(6);
-        expect(await panel.locator('[data-observer-telemetry]').count()).toBeGreaterThanOrEqual(40);
-        const last=panel.locator('[data-observer-telemetry-section]').last();
-        const summary=last.locator('summary');await summary.scrollIntoViewIfNeeded();
-        if(await last.getAttribute('open')===null)await summary.click();
-        await expect(last.locator('[data-observer-telemetry]').first()).toBeVisible();
+        expect(await panel.locator('[data-observer-telemetry-section]').count()).toBe(9);
+        expect(await panel.locator('[data-observer-telemetry]').count()).toBe(123);
+        const bounds=await panel.boundingBox();expect(bounds).not.toBeNull();
+        expect(bounds.width).toBeGreaterThanOrEqual(1000);
+        expect(bounds.width).toBeGreaterThan(bounds.height*1.4);
+        expect(Math.abs(bounds.x+bounds.width/2-viewport.width/2)).toBeLessThanOrEqual(2);
+        expect(bounds.y).toBeLessThan(viewport.height*.2);
+        const columns=await panel.locator('[data-observer-telemetry-section]').evaluateAll(groups=>
+            new Set(groups.map(group=>Math.round(group.getBoundingClientRect().left))).size);
+        expect(columns).toBeGreaterThanOrEqual(3);
+        const contrast=await panel.locator('[data-observer-telemetry="coordinate-time"]').evaluate(output=>{
+            const card=output.closest('.observer-telemetry-reading');
+            const label=card.querySelector('dt');
+            const value=output.firstElementChild??output;
+            const style=element=>window.getComputedStyle(element);
+            const rgb=color=>color.match(/[\d.]+/g).map(Number);
+            const luminance=color=>rgb(color).slice(0,3).map(channel=>{
+                const normalized=channel/255;
+                return normalized<=.04045?normalized/12.92:((normalized+.055)/1.055)**2.4;
+            }).reduce((sum,channel,index)=>sum+channel*[.2126,.7152,.0722][index],0);
+            const background=style(card).backgroundColor;
+            const bg=luminance(background),v=luminance(style(value).color),l=luminance(style(label).color);
+            const ratio=foreground=>(Math.max(foreground,bg)+.05)/(Math.min(foreground,bg)+.05);
+            return {alpha:rgb(background)[3]??1,value:ratio(v),label:ratio(l),valueLuminance:v,labelLuminance:l,
+                valueSize:parseFloat(style(value).fontSize),labelSize:parseFloat(style(label).fontSize)};
+        });
+        expect(contrast.alpha).toBe(1);
+        expect(contrast.value).toBeGreaterThanOrEqual(4.5);
+        expect(contrast.label).toBeGreaterThanOrEqual(4.5);
+        expect(contrast.valueLuminance).toBeGreaterThan(contrast.labelLuminance);
+        expect(contrast.valueSize).toBeGreaterThan(contrast.labelSize);
+        await page.screenshot({path:info.outputPath(`telemetry-landscape-${viewport.width}.png`)});
+        await page.locator('[data-observer-panel-tab="camera"]').click();
+        const controls=page.locator('[data-observer-panel="camera"]');
+        await expect(controls).toBeVisible();
+        const narrow=await controls.boundingBox();expect(narrow).not.toBeNull();
+        expect(narrow.width).toBeLessThanOrEqual(460);
+        expect(viewport.width-narrow.x-narrow.width).toBeLessThanOrEqual(32);
+        await page.getByRole('button',{name:'Close controls',exact:true}).click();
+    }
+    await page.locator('[data-observer-panel-tab="telemetry"]').click();
+    await page.getByRole('button',{name:'Close controls',exact:true}).click();
+    await expect(page.locator('[data-observer-panel="telemetry"]')).toBeHidden();
+    await expect(page.locator('[data-observer-panel-tab="telemetry"]')).toHaveAttribute('aria-expanded','false');
+    await page.locator('[data-observer-panel-tab="world"]').click();
+    expect((await page.locator('[data-observer-panel="world"]').boundingBox()).width).toBeLessThanOrEqual(460);
+});
+
+test('telemetry categories and controls remain reachable on mobile and a short desktop without horizontal overflow',async({page},info)=>{
+    await page.setViewportSize({width:390,height:844});await ready(page);
+    for(const viewport of [{width:390,height:844},{width:1280,height:600}]){
+        await page.setViewportSize(viewport);
+        await page.locator('[data-observer-panel-tab="telemetry"]').click();
+        const panel=page.locator('[data-observer-panel="telemetry"]');
+        await expect(panel).toBeVisible();
+        expect(await panel.locator('[data-observer-telemetry-section]').count()).toBe(9);
+        expect(await panel.locator('[data-observer-telemetry]').count()).toBe(123);
         const bounds=await panel.boundingBox();expect(bounds).not.toBeNull();
         expect(bounds.x).toBeGreaterThanOrEqual(0);expect(bounds.y).toBeGreaterThanOrEqual(0);
         expect(bounds.x+bounds.width).toBeLessThanOrEqual(viewport.width+1);
         expect(bounds.y+bounds.height).toBeLessThanOrEqual(viewport.height+1);
-        const toggle=await page.locator('[data-observer-ui-toggle]').boundingBox();expect(toggle).not.toBeNull();
-        expect(toggle.x).toBeGreaterThanOrEqual(0);expect(toggle.x+toggle.width).toBeLessThanOrEqual(viewport.width+1);
-    });
-}
+        expect(await panel.evaluate(element=>{
+            const body=element.querySelector('.observer-panel-body');
+            return {panel:element.scrollWidth-element.clientWidth,body:body.scrollWidth-body.clientWidth,
+                document:document.documentElement.scrollWidth-window.innerWidth};
+        })).toEqual({panel:0,body:0,document:0});
+        const groups=panel.locator('[data-observer-telemetry-section]');
+        for(let i=0;i<await groups.count();i++){
+            const group=groups.nth(i),summary=group.locator('summary');
+            await summary.scrollIntoViewIfNeeded();await expect(summary).toBeInViewport();
+            if(await group.getAttribute('open')===null)await summary.click();
+            const last=group.locator('[data-observer-telemetry]').last();
+            await last.scrollIntoViewIfNeeded();await expect(last).toBeInViewport();
+        }
+        await expect(page.getByRole('button',{name:'Close controls',exact:true})).toBeInViewport();
+        await expect(page.getByRole('button',{name:'Hide interface',exact:true})).toBeInViewport();
+        await panel.locator('[data-observer-telemetry-section]').first().locator('summary').scrollIntoViewIfNeeded();
+        await page.screenshot({path:info.outputPath(`telemetry-responsive-${viewport.width}x${viewport.height}.png`)});
+        await page.getByRole('button',{name:'Close controls',exact:true}).click();
+        await expect(panel).toBeHidden();
+        await page.getByRole('button',{name:'Hide interface',exact:true}).click();
+        await expect(page.getByRole('button',{name:'Show interface',exact:true})).toBeInViewport();
+        await page.getByRole('button',{name:'Show interface',exact:true}).click();
+    }
+});
 
-test('floating compact star exposes physical GR quantities and clears received-light readings on a miss',async({page})=>{
-    await ready(page);
+test('floating compact star exposes physical GR quantities and clears received-light readings on a miss',async({page},info)=>{
+    await page.setViewportSize({width:1440,height:900});await ready(page);
     await page.locator('[data-observer-panel-tab="experiments"]').click();
     await page.locator('[data-observer-action="experiment"][data-value="compact-star"]').click();
     await page.evaluate(async()=>{
@@ -232,6 +313,7 @@ test('floating compact star exposes physical GR quantities and clears received-l
     await expect(field('frequency-ratio')).not.toHaveText('—');
     const prior=await field('frequency-ratio').textContent();
     expect(prior).toMatch(/0\.82/);
+    await page.screenshot({path:info.outputPath('telemetry-compact-star-landscape.png')});
     await page.evaluate(()=>{
         const w=window.__FTD_DEV__.registry.get('observerWorkspace');
         w.input.setPose({yaw:0,pitch:1.4,roll:0});

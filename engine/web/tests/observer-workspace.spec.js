@@ -1,3 +1,4 @@
+/* global window, document, requestAnimationFrame */
 import { test, expect } from '@playwright/test';
 import { gotoAndReady, openObserverWorkspace } from './_helpers.js';
 
@@ -136,6 +137,11 @@ test('reticle, inspector, author edits and view controls preserve complete retai
     await page.waitForFunction(() => window.__FTD_DEV__.registry.get('observerWorkspace').panelOpen);
     expect(await page.evaluate(() => window.__FTD_DEV__.registry.get('observerWorkspace').snapshot.playing)).toBe(false);
     await page.keyboard.press('Escape');
+    // A visible keyboard tooltip consumes Escape before its containing drawer.
+    await expect(page.locator('#observer-explanation')).toBeHidden();
+    if (await page.evaluate(() => window.__FTD_DEV__.registry.get('observerWorkspace').panelOpen)) {
+        await page.keyboard.press('Escape');
+    }
     await page.waitForFunction(() => !window.__FTD_DEV__.registry.get('observerWorkspace').panelOpen);
     const zoomStart = await page.evaluate(() => window.__FTD_DEV__.registry.get('observerWorkspace').snapshot.observer.position[2]);
     await page.locator('.observer-canvas').hover({ position: { x: 600, y: 320 } });

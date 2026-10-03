@@ -1,0 +1,4572 @@
+{
+  "recorded_at_utc": "2026-10-03T07:33:36.500757+00:00",
+  "scope": "FTD Mind's Eye landscape telemetry, informative math tooltips, bounded Schwarzschild black-hole horizon experiment and finite-sky optical event repair",
+  "model": "Adopted Minkowski SR, Schwarzschild vacuum exterior, and classical Playground remain separate from native FTD. No G-star corrections.",
+  "source_sha256": {
+    ".gitignore": "0083b5760ac3fadca1ab3382536b89c2c9705840cb241b52bd40fa85f7381b63",
+    "package.json": "f387b11fd8b2e0d7fa9dfae9bfa6b9f3c1f8b68320b06db445fbf042c9df255f",
+    "engine/web/css/observer.css": "6f6417dd5965ee10e43116f2bb20e3b698d35b5ed73ded3823029c494433bacd",
+    "engine/web/docs/REF_MINDS_EYE_BLACK_HOLE.md": "b30af3694453d407d685f82377c73099967111b0303b85e334c8518eff8cd75a",
+    "engine/web/docs/REF_MINDS_EYE_TELEMETRY.md": "4fb389176464fcab8a556f87e1614f3a0698f1649f5c8dd368c548b314bbfe80",
+    "engine/web/js/assistant/observer-control.js": "35e2e1b84fc5cc9def385581a199b5ee249db4c90434f6a1ba87835f25583484",
+    "engine/web/js/observer/black-hole.js": "91c7cc6f1cdfd41ba6ffe8239b2e4f2497f27902d2bb08d605e4923ef4da604d",
+    "engine/web/js/observer/black-hole-shaders.js": "1638fe5d831388f41a2e280d01d698483a4bacd206651deab52d87ec45d08143",
+    "engine/web/js/observer/catalog.js": "480d102a44236266139fc0eaeeec320784631a73c4e6c8acec286f9dd2ad4f11",
+    "engine/web/js/observer/compact-star.js": "666f1ea335e0101df85c5480dd4e64ce9ae7ee921d7425a27aaaa53c87fe600f",
+    "engine/web/js/observer/compact-star-shaders.js": "50a3e9d5dc76fda981098809eb99cda27b6b570de565e24d2ce19df351d621c3",
+    "engine/web/js/observer/diagnostics.js": "64dace1224ba037d71fb17cde70d694f1883d704a7c30be7f559c797a0332dab",
+    "engine/web/js/observer/input.js": "8ced32796552cc98b19baafc6871f96040534fc7ad553c78ae8a1ddfa364ac4c",
+    "engine/web/js/observer/math.js": "2bd616e56812e71ea6dc939ef7069cc8e89ba033f545bae70a6a28591b7e0624",
+    "engine/web/js/observer/optics.js": "946fe8885e641266e794cd12bd5587e16d1ba0a7f3b3315f7e4aa518ba9561b2",
+    "engine/web/js/observer/renderer.js": "fdedb8b722f6a7709e2e1a90928f163ec40a0fdae247bdb38260a67df4c110c2",
+    "engine/web/js/observer/session.js": "b727bf4aae65c7c1738442535148a90beca318ce7cfd100e245e6a1a1f81878b",
+    "engine/web/js/observer/shaders.js": "ad05f60ddac07e5795f73f95cf31858584e0158fc9273e7e178b911491c0a180",
+    "engine/web/js/observer/spectrum.js": "3d1ec2a04bf57e2c7c9620d354f1031ddb00509cced3ec6ffbe1ec183961d5e7",
+    "engine/web/js/observer/storage.js": "f48c543d57a9abf83c7a256912d73e0d770e49769182e82c1afc4f8fc140fd62",
+    "engine/web/js/observer/telemetry.js": "8e607e8672c87f148320423aa3f3b4500e741b74fe4adb2b41ed1db27d838408",
+    "engine/web/js/observer/tooltip-content.js": "0b1a99afa87fd312a8f79de2a545c9b8ac40bb13b6b51fcc2a822f34be893d13",
+    "engine/web/js/observer/tooltips.js": "f63ded05e581a6f9fdeb299dd91a574f4bde235c786e20861b608c0424f4e89c",
+    "engine/web/js/observer/ui.js": "91b4215559c979889c94f68be96b6cd8909723b0c630f8f2450190b345349fcf",
+    "engine/web/js/observer/workspace.js": "d5d4342f69dd135bd1c3f4c1116436632ceda3811a1182eeb3106dac8dc34bb6",
+    "engine/web/tests/observer-black-hole.node.test.mjs": "a5b6d939922b4c0efcb62d3f676e0e03913ff1b7a2c62b30423a82f4ef540e40",
+    "engine/web/tests/observer-black-hole-telemetry.node.test.mjs": "608dbf18c788573f29d1d74736c1634c5065265ed7aae1e56fe24709a52d2f90",
+    "engine/web/tests/observer-black-hole.spec.js": "9e29f6c3c9348934c3ee1a87a1b82f42d0a60d57ae644ff46d923e7df0906328",
+    "engine/web/tests/observer-compact-star.node.test.mjs": "b976ff9b7d34ef33c108fb798bf732a73d8b5ee973697559eca7c47e1482c07a",
+    "engine/web/tests/observer-compact-star.spec.js": "48540c682ce392332d1729b55ed8977c3641f273bb349a1286789796eaf18a57",
+    "engine/web/tests/observer-sr-gpu.spec.js": "64d901f04ca40b9e811ec0f89d3b17e4b61a68597388f0514126bfc966610bbe",
+    "engine/web/tests/observer-sr-spectral.spec.js": "c3c9fa62cfafc9bc4a602413a5f9b2b547bbeb66bf2578905fef5a4f75de6e95",
+    "engine/web/tests/observer-telemetry.node.test.mjs": "abd2acd24715ca853db440f238569c4f41eba733e88a48b455c31578ced39cd3",
+    "engine/web/tests/observer-telemetry.spec.js": "696258fab5d0427b96272dabb9c4249ba5d507f6c21c0c143155bbc3e22d2cfa",
+    "engine/web/tests/observer-tooltips.spec.js": "caac69d77716b44eb723fa04a1c760ca85df40a1314a10ee466a243a1e20ee6f",
+    "engine/web/tests/observer-workspace.spec.js": "fa8fe1212095137a85f6af4ea80a21a9e745b95d5ef9a5f49a85e084b6d7b590",
+    "engine/web/tests/observer-sr-harness.html": "baf2742122b3b7375c033fe2083f5a7681698eeb6a118e373b7b72039de98faf",
+    "engine/web/tests/playwright.config.js": "0baec3d7feb3f4424e8891f7394d99e07e40aee2c7991fc7f0430f717858d1e7"
+  },
+  "verification": {
+    "observer_node_passed": 259,
+    "assistant_node_passed": 230,
+    "observer_browser_unique_cases_passed": 85,
+    "unresolved_failed_cases": 0,
+    "browser_runs": [
+      {
+        "name": "browser-final-attempt-3",
+        "stats": {
+          "startTime": "2026-10-03T07:22:00.910Z",
+          "duration": 336560.303,
+          "expected": 84,
+          "skipped": 0,
+          "unexpected": 1,
+          "flaky": 0
+        }
+      },
+      {
+        "name": "tooltips-final-attempt-2",
+        "stats": {
+          "startTime": "2026-10-03T07:29:36.616Z",
+          "duration": 39641.774,
+          "expected": 7,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      },
+      {
+        "name": "tooltips-final-attempt-3",
+        "stats": {
+          "startTime": "2026-10-03T07:30:31.662Z",
+          "duration": 39123.683000000005,
+          "expected": 7,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      },
+      {
+        "name": "ui-integration-final",
+        "stats": {
+          "startTime": "2026-10-03T07:31:52.311Z",
+          "duration": 85958.954,
+          "expected": 17,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      }
+    ],
+    "hardware_webgl_env": "FTD_HARDWARE_WEBGL=1",
+    "browser_coverage": "Broad run: 84 passed, one HUD-placement failure. Final unchanged real-mouse tooltip suite passed twice; affected authoring/telemetry/workspace suite passed. Combined final coverage: all 85 unique cases passed.",
+    "typechecks": [
+      "Observer",
+      "assistant"
+    ],
+    "lint": [
+      "scoped ESLint including all new and changed browser regressions",
+      "Observer CSS Stylelint"
+    ],
+    "dependency_graph": {
+      "modules": 511,
+      "dependencies": 1168,
+      "violations": 0
+    },
+    "whitespace_check": "git diff --check passed",
+    "blocked_tests": [],
+    "not_rerun": [
+      "Native C++/CUDA and theory Python suites outside this web-only change",
+      "Manual hosted Python compatibility matrix and exhaustive certificate campaigns"
+    ]
+  },
+  "before_change_evidence": {
+    "root_star_and_telemetry_node_controls_passed": 21,
+    "independent_star_and_sr_controls_passed": 59,
+    "reproduced_gr_bug": {
+      "initial_isotropic_radius": 3,
+      "expected_sky_radius": 40,
+      "old_endpoint_radius": 40.304269568,
+      "old_delay": 37.529044661,
+      "analytic_delay": 37.224121738,
+      "excess_delay": 0.304922923
+    }
+  },
+  "telemetry_and_tooltips": {
+    "normal_rows_with_lattice": 123,
+    "normal_categories": 9,
+    "black_hole_rows_with_lattice": 135,
+    "black_hole_categories": 10,
+    "refresh_hz": 10,
+    "panel_routes": [
+      {
+        "profile": "sr",
+        "panel": "telemetry",
+        "count": 398,
+        "missing": []
+      },
+      {
+        "profile": "sr",
+        "panel": "objects",
+        "count": 164,
+        "missing": []
+      },
+      {
+        "profile": "sr",
+        "panel": "forcegun",
+        "count": 105,
+        "missing": []
+      },
+      {
+        "profile": "sr",
+        "panel": "world",
+        "count": 151,
+        "missing": []
+      },
+      {
+        "profile": "sr",
+        "panel": "camera",
+        "count": 137,
+        "missing": []
+      },
+      {
+        "profile": "sr",
+        "panel": "layers",
+        "count": 157,
+        "missing": []
+      },
+      {
+        "profile": "sr",
+        "panel": "phenomena",
+        "count": 133,
+        "missing": []
+      },
+      {
+        "profile": "sr",
+        "panel": "experiments",
+        "count": 122,
+        "missing": []
+      },
+      {
+        "profile": "sr",
+        "panel": "storage",
+        "count": 107,
+        "missing": []
+      },
+      {
+        "profile": "sr",
+        "panel": "lattice",
+        "count": 108,
+        "missing": []
+      },
+      {
+        "profile": "sr",
+        "panel": "help",
+        "count": 122,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "telemetry",
+        "count": 399,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "objects",
+        "count": 186,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "forcegun",
+        "count": 103,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "world",
+        "count": 162,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "camera",
+        "count": 138,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "layers",
+        "count": 158,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "phenomena",
+        "count": 134,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "experiments",
+        "count": 123,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "storage",
+        "count": 108,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "lattice",
+        "count": 109,
+        "missing": []
+      },
+      {
+        "profile": "playground",
+        "panel": "help",
+        "count": 123,
+        "missing": []
+      }
+    ],
+    "tooltip_missing_controls_or_information": 0,
+    "math_rendering": "KaTeX when available, native semantic MathML fallback",
+    "accessibility_controls": [
+      "hover",
+      "keyboard focus",
+      "aria-describedby cleanup",
+      "Escape dismisses tooltip before drawer",
+      "pointer-transparent HUD hover",
+      "pointer-lock/hide/disposal dismissal",
+      "popup cannot intercept neighboring clicks"
+    ],
+    "responsive_tests": [
+      "1440x900 desktop",
+      "1920x1080 desktop",
+      "390x844 mobile",
+      "1280x600 short desktop",
+      "internal scrolling without horizontal page overflow",
+      "contrasting numbers versus titles and units"
+    ],
+    "visual_qa_only": [
+      {
+        "local_artifact": "engine/web/validation/minds-eye-horizon/tooltips-final-attempt-3/observer-tooltips-black-ho-783dc-zon-sky-and-shadow-geometry-chromium/black-hole-math-tooltip.png",
+        "sha256": "f02c4007328c39a71e09b8386dc12c3ed5d5a23eb31b04bc4c25114baafc654d",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "local_artifact": "engine/web/validation/minds-eye-horizon/tooltips-final-attempt-3/observer-tooltips-hover-an-86e11--an-offline-MathML-fallback-chromium/observer-keyboard-math-tooltip.png",
+        "sha256": "c9f4acb56ac1319ab6fdaf9a81965e09484b26fe81014249f13883af4276e397",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "local_artifact": "engine/web/validation/minds-eye-horizon/tooltips-final-attempt-3/observer-tooltips-narrow-s-9eefd-and-preserve-readable-notes-chromium/mobile-math-tooltip.png",
+        "sha256": "30e2381097090b63281c050cb1598a97b8341eaf125f9aeed97e3cf91c9086a1",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  "actual_gpu": {
+    "method": "Compiled production WebGL materials, EXT_color_buffer_float render targets, real framebuffer readback and real context loss/restoration. Screenshots and CPU shader translations are not GPU verification.",
+    "hardware": {
+      "vendor": "Google Inc. (NVIDIA)",
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "floatReadback": true
+    },
+    "browser": "147.0.7727.15",
+    "black_hole_shadow_rays": 20,
+    "captured": 10,
+    "escaped": 10,
+    "sampled_isotropic_radii": [
+      0.11,
+      0.15,
+      0.4,
+      1,
+      3
+    ],
+    "critical_angle_brackets": "99% and 101% of the local static critical angle, both horizontal signs; complementary escape cone below photon sphere",
+    "max_shadow_escape_boundary_radius_error": 4.996221534270262e-06,
+    "max_shadow_escape_impact_invariant_error": 1.0397822227781184e-05,
+    "max_shadow_escape_delay_vs_cpu_error": 4.185549496327212e-05,
+    "finite_shell_independent_quadrature_rays": 4,
+    "max_finite_shell_delay_error": 5.7372555211543386e-05,
+    "max_finite_shell_coordinate_arclength_error": 5.358312327530257e-05,
+    "max_finite_shell_frequency_error": 2.7116581868824596e-08,
+    "local_sr_motion_controls": 3,
+    "max_local_sr_frequency_error": 5.423316373764919e-08,
+    "D1_color_baseline_difference": 0.0,
+    "near_critical_precision_guard": {
+      "fractional_band": 1e-05,
+      "gpu_status": 3,
+      "cpu_status": "captured",
+      "source_clock": null,
+      "ray_is_unresolved_not_dark_shadow": true
+    },
+    "retained_stellar_controls": {
+      "hits": 39,
+      "misses": 36,
+      "maxima": {
+        "distance": 2.7887927940173363e-05,
+        "emissionTime": 4.2506292611044216e-05,
+        "properTime": 3.440746828875518e-05,
+        "doppler": 7.172430636082083e-07,
+        "position": 2.785335769572156e-05
+      },
+      "D4_intensity_error": 4.671701059333344e-08,
+      "failures": [],
+      "program_linked": true,
+      "gl_error": 0
+    },
+    "retained_sr_controls": {
+      "hits": 698,
+      "misses": 18,
+      "silhouette_boundary_cases": 4,
+      "maxima": {
+        "distance": 2.206649595137833e-05,
+        "emissionTime": 2.2066757082939148e-05,
+        "properTime": 1.8854203919005386e-05,
+        "doppler": 7.705536651803069e-07,
+        "position": 2.1463260054588318e-05,
+        "relativeDistance": 2.6001457956325554e-06,
+        "relativeDoppler": 7.705536651803069e-07
+      },
+      "failures": [],
+      "spectral_samples": 192,
+      "spectral_max_relative_error": 1.238968328709511e-06
+    },
+    "raw_framebuffer_and_control_evidence": {
+      "black-hole-shadow-gpu.json": {
+        "hole": {
+          "kind": "schwarzschild-black-hole",
+          "massSolar": 10,
+          "radiusKm": 29.5325007610025,
+          "lengthUnitMeters": 118130.00304401,
+          "rs": 0.25,
+          "radius": 0.0625,
+          "center": [
+            0,
+            1.6,
+            0
+          ],
+          "sourceId": "",
+          "observerMode": "guided",
+          "escapeRadius": 40,
+          "observerBoundary": 0.063125
+        },
+        "critical": 0.649519052838329,
+        "rays": [
+          {
+            "rho": 3,
+            "fraction": 0.99,
+            "sign": -1,
+            "expected": 1,
+            "cpu": {
+              "status": "captured",
+              "position": [
+                0.06396650787657789,
+                1.6,
+                -0.22384959190468176
+              ],
+              "direction": [
+                0.9135171691181181,
+                0,
+                0.40680017419664394
+              ],
+              "delay": 5.11378923007306,
+              "distance": 3.576348648394071,
+              "steps": 310,
+              "impactParameter": 0.6431099368262359,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": -0.05393014167766668,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.19731316271009364,
+                0,
+                -0.9803405101398901
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.576715555696156,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": null,
+              "doppler": null,
+              "emissionTime": null,
+              "properTime": null,
+              "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+            },
+            "path": [
+              1,
+              3.5763518810272217,
+              5.113790512084961,
+              0.6431103348731995
+            ],
+            "point": [
+              0.06396901607513428,
+              0,
+              -3.2238526344299316,
+              1
+            ],
+            "direction": [
+              0.9135209918022156,
+              0,
+              0.4067913591861725,
+              0.6431113481521606
+            ],
+            "frequency": [
+              0,
+              0,
+              0.9591836333274841,
+              1
+            ],
+            "color": [
+              0,
+              0,
+              0
+            ],
+            "endRho": 0.23281330923905832,
+            "initialImpact": 0.6431099368262356,
+            "finalImpact": 0.6431113482619547,
+            "hit": null
+          },
+          {
+            "rho": 3,
+            "fraction": 0.99,
+            "sign": 1,
+            "expected": 1,
+            "cpu": {
+              "status": "captured",
+              "position": [
+                -0.06396650787657789,
+                1.6,
+                -0.22384959190468176
+              ],
+              "direction": [
+                -0.9135171691181181,
+                0,
+                0.40680017419664394
+              ],
+              "delay": 5.11378923007306,
+              "distance": 3.576348648394071,
+              "steps": 310,
+              "impactParameter": 0.6431099368262359,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": 0.05393014167766668,
+              "ndcY": 0,
+              "initialDirection": [
+                0.19731316271009364,
+                0,
+                -0.9803405101398901
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.576715555696156,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": null,
+              "doppler": null,
+              "emissionTime": null,
+              "properTime": null,
+              "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+            },
+            "path": [
+              1,
+              3.5763518810272217,
+              5.113790512084961,
+              0.6431103348731995
+            ],
+            "point": [
+              -0.06396901607513428,
+              0,
+              -3.2238526344299316,
+              1
+            ],
+            "direction": [
+              -0.9135209918022156,
+              0,
+              0.4067913591861725,
+              0.6431113481521606
+            ],
+            "frequency": [
+              0,
+              0,
+              0.9591836333274841,
+              1
+            ],
+            "color": [
+              0,
+              0,
+              0
+            ],
+            "endRho": 0.23281330923905832,
+            "initialImpact": 0.6431099368262356,
+            "finalImpact": 0.6431113482619547,
+            "hit": null
+          },
+          {
+            "rho": 3,
+            "fraction": 1.01,
+            "sign": -1,
+            "expected": 2,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -30.673215223800593,
+                1.6,
+                25.673992050991966
+              ],
+              "direction": [
+                -0.7771881447794419,
+                0,
+                0.6292682954148331
+              ],
+              "delay": 48.01405910627318,
+              "distance": 44.31597767813466,
+              "steps": 835,
+              "impactParameter": 0.6559255545724825,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": -0.0550497387623216,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.2012451344069931,
+                0,
+                -0.9795409107727515
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 1.039300295416072,
+              "emissionTime": -48.01405910627318,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              44.31596374511719,
+              48.0140266418457,
+              0.655925989151001
+            ],
+            "point": [
+              -30.671335220336914,
+              0,
+              22.67623519897461,
+              2
+            ],
+            "direction": [
+              -0.7771422266960144,
+              0,
+              0.6293250322341919,
+              0.6559330224990845
+            ],
+            "frequency": [
+              1.0393003225326538,
+              0.9968799352645874,
+              0.9591836333274841,
+              2
+            ],
+            "color": [
+              0.0156666599214077,
+              0.03155739977955818,
+              0.042100001126527786
+            ],
+            "endRho": 39.999998227391735,
+            "initialImpact": 0.6559255545724823,
+            "finalImpact": 0.6559327768854201,
+            "hit": null
+          },
+          {
+            "rho": 3,
+            "fraction": 1.01,
+            "sign": 1,
+            "expected": 2,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                30.673215223800593,
+                1.6,
+                25.673992050991966
+              ],
+              "direction": [
+                0.7771881447794419,
+                0,
+                0.6292682954148331
+              ],
+              "delay": 48.01405910627318,
+              "distance": 44.31597767813466,
+              "steps": 835,
+              "impactParameter": 0.6559255545724825,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": 0.0550497387623216,
+              "ndcY": 0,
+              "initialDirection": [
+                0.2012451344069931,
+                0,
+                -0.9795409107727515
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 1.039300295416072,
+              "emissionTime": -48.01405910627318,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              44.31596374511719,
+              48.0140266418457,
+              0.655925989151001
+            ],
+            "point": [
+              30.671335220336914,
+              0,
+              22.67623519897461,
+              2
+            ],
+            "direction": [
+              0.7771422266960144,
+              0,
+              0.6293250322341919,
+              0.6559330224990845
+            ],
+            "frequency": [
+              1.0393003225326538,
+              0.9968799352645874,
+              0.9591836333274841,
+              2
+            ],
+            "color": [
+              0.0156666599214077,
+              0.03155739977955818,
+              0.042100001126527786
+            ],
+            "endRho": 39.999998227391735,
+            "initialImpact": 0.6559255545724823,
+            "finalImpact": 0.6559327768854201,
+            "hit": null
+          },
+          {
+            "rho": 1,
+            "fraction": 0.99,
+            "sign": -1,
+            "expected": 1,
+            "cpu": {
+              "status": "captured",
+              "position": [
+                -0.01715205807182897,
+                1.6,
+                -0.23238711637906623
+              ],
+              "direction": [
+                0.9981417703894301,
+                0,
+                0.060934441852324175
+              ],
+              "delay": 2.7148532731614976,
+              "distance": 1.4760906129448172,
+              "steps": 235,
+              "impactParameter": 0.643640458526042,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                1
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": -0.15597062967963551,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.5030692775778549,
+                0,
+                -0.8642460887717661
+              ],
+              "observerLapse": 0.8823529411764706,
+              "endLapse": 0.5770156923144827,
+              "receiverLapse": 0.8823529411764706,
+              "emissionLapse": null,
+              "doppler": null,
+              "emissionTime": null,
+              "properTime": null,
+              "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+            },
+            "path": [
+              1,
+              1.476091742515564,
+              2.7148540019989014,
+              0.6436408162117004
+            ],
+            "point": [
+              -0.017151987180113792,
+              0,
+              -1.2323877811431885,
+              1
+            ],
+            "direction": [
+              0.998141884803772,
+              0,
+              0.06093159317970276,
+              0.6436406970024109
+            ],
+            "frequency": [
+              0,
+              0,
+              0.8823529481887817,
+              1
+            ],
+            "color": [
+              0,
+              0,
+              0
+            ],
+            "endRho": 0.23301989504950268,
+            "initialImpact": 0.643640458526042,
+            "finalImpact": 0.6436407120033085,
+            "hit": null
+          },
+          {
+            "rho": 1,
+            "fraction": 0.99,
+            "sign": 1,
+            "expected": 1,
+            "cpu": {
+              "status": "captured",
+              "position": [
+                0.01715205807182897,
+                1.6,
+                -0.23238711637906623
+              ],
+              "direction": [
+                -0.9981417703894301,
+                0,
+                0.060934441852324175
+              ],
+              "delay": 2.7148532731614976,
+              "distance": 1.4760906129448172,
+              "steps": 235,
+              "impactParameter": 0.643640458526042,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                1
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": 0.15597062967963551,
+              "ndcY": 0,
+              "initialDirection": [
+                0.5030692775778549,
+                0,
+                -0.8642460887717661
+              ],
+              "observerLapse": 0.8823529411764706,
+              "endLapse": 0.5770156923144827,
+              "receiverLapse": 0.8823529411764706,
+              "emissionLapse": null,
+              "doppler": null,
+              "emissionTime": null,
+              "properTime": null,
+              "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+            },
+            "path": [
+              1,
+              1.476091742515564,
+              2.7148540019989014,
+              0.6436408162117004
+            ],
+            "point": [
+              0.017151987180113792,
+              0,
+              -1.2323877811431885,
+              1
+            ],
+            "direction": [
+              -0.998141884803772,
+              0,
+              0.06093159317970276,
+              0.6436406970024109
+            ],
+            "frequency": [
+              0,
+              0,
+              0.8823529481887817,
+              1
+            ],
+            "color": [
+              0,
+              0,
+              0
+            ],
+            "endRho": 0.23301989504950268,
+            "initialImpact": 0.643640458526042,
+            "finalImpact": 0.6436407120033085,
+            "hit": null
+          },
+          {
+            "rho": 1,
+            "fraction": 1.01,
+            "sign": -1,
+            "expected": 2,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -21.274393108014543,
+                1.6,
+                33.8732962359093
+              ],
+              "direction": [
+                -0.5455778154193193,
+                0,
+                0.8380601692732349
+              ],
+              "delay": 45.641265762965666,
+              "distance": 42.22037429406075,
+              "steps": 763,
+              "impactParameter": 0.655379231665845,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                1
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": -0.15981496095878023,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.5122443007524619,
+                0,
+                -0.858839785027814
+              ],
+              "observerLapse": 0.8823529411764706,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.8823529411764706,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 1.1297971918876757,
+              "emissionTime": -45.641265762965666,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              42.220367431640625,
+              45.6412239074707,
+              0.6553794741630554
+            ],
+            "point": [
+              -21.272241592407227,
+              0,
+              32.8746452331543,
+              2
+            ],
+            "direction": [
+              -0.5455243587493896,
+              0,
+              0.8380948901176453,
+              0.6553686857223511
+            ],
+            "frequency": [
+              1.1297972202301025,
+              0.9968799352645874,
+              0.8823529481887817,
+              2
+            ],
+            "color": [
+              0.0033495286479592323,
+              0.02907566726207733,
+              0.03245672583580017
+            ],
+            "endRho": 39.9999981504725,
+            "initialImpact": 0.6553792316658451,
+            "finalImpact": 0.6553688338436173,
+            "hit": null
+          },
+          {
+            "rho": 1,
+            "fraction": 1.01,
+            "sign": 1,
+            "expected": 2,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                21.274393108014543,
+                1.6,
+                33.8732962359093
+              ],
+              "direction": [
+                0.5455778154193193,
+                0,
+                0.8380601692732349
+              ],
+              "delay": 45.641265762965666,
+              "distance": 42.22037429406075,
+              "steps": 763,
+              "impactParameter": 0.655379231665845,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                1
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": 0.15981496095878023,
+              "ndcY": 0,
+              "initialDirection": [
+                0.5122443007524619,
+                0,
+                -0.858839785027814
+              ],
+              "observerLapse": 0.8823529411764706,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.8823529411764706,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 1.1297971918876757,
+              "emissionTime": -45.641265762965666,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              42.220367431640625,
+              45.6412239074707,
+              0.6553794741630554
+            ],
+            "point": [
+              21.272241592407227,
+              0,
+              32.8746452331543,
+              2
+            ],
+            "direction": [
+              0.5455243587493896,
+              0,
+              0.8380948901176453,
+              0.6553686857223511
+            ],
+            "frequency": [
+              1.1297972202301025,
+              0.9968799352645874,
+              0.8823529481887817,
+              2
+            ],
+            "color": [
+              0.0033495286479592323,
+              0.02907566726207733,
+              0.03245672583580017
+            ],
+            "endRho": 39.9999981504725,
+            "initialImpact": 0.6553792316658451,
+            "finalImpact": 0.6553688338436173,
+            "hit": null
+          },
+          {
+            "rho": 0.4,
+            "fraction": 0.99,
+            "sign": -1,
+            "expected": 1,
+            "cpu": {
+              "status": "captured",
+              "position": [
+                -0.16449122577842734,
+                1.6,
+                -0.16489766482741694
+              ],
+              "direction": [
+                0.7795440592969475,
+                0,
+                -0.6263473953125671
+              ],
+              "delay": 1.624636218567023,
+              "distance": 0.6988032059022973,
+              "steps": 162,
+              "impactParameter": 0.6457838944655812,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.4
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": -0.4995186484726923,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.8812228848332964,
+                0,
+                -0.4727009913741276
+              ],
+              "observerLapse": 0.7297297297297297,
+              "endLapse": 0.5768640007019712,
+              "receiverLapse": 0.7297297297297297,
+              "emissionLapse": null,
+              "doppler": null,
+              "emissionTime": null,
+              "properTime": null,
+              "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+            },
+            "path": [
+              1,
+              0.6988034248352051,
+              1.6246365308761597,
+              0.6457839608192444
+            ],
+            "point": [
+              -0.16449131071567535,
+              0,
+              -0.5648975968360901,
+              1
+            ],
+            "direction": [
+              0.7795440554618835,
+              0,
+              -0.6263474225997925,
+              0.6457839608192444
+            ],
+            "frequency": [
+              0,
+              0,
+              0.7297297120094299,
+              1
+            ],
+            "color": [
+              0,
+              0,
+              0
+            ],
+            "endRho": 0.23291330735550203,
+            "initialImpact": 0.645783894465581,
+            "finalImpact": 0.6457838731105751,
+            "hit": null
+          },
+          {
+            "rho": 0.4,
+            "fraction": 0.99,
+            "sign": 1,
+            "expected": 1,
+            "cpu": {
+              "status": "captured",
+              "position": [
+                0.16449122577842734,
+                1.6,
+                -0.16489766482741694
+              ],
+              "direction": [
+                -0.7795440592969475,
+                0,
+                -0.6263473953125671
+              ],
+              "delay": 1.624636218567023,
+              "distance": 0.6988032059022973,
+              "steps": 162,
+              "impactParameter": 0.6457838944655812,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.4
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": 0.4995186484726923,
+              "ndcY": 0,
+              "initialDirection": [
+                0.8812228848332964,
+                0,
+                -0.4727009913741276
+              ],
+              "observerLapse": 0.7297297297297297,
+              "endLapse": 0.5768640007019712,
+              "receiverLapse": 0.7297297297297297,
+              "emissionLapse": null,
+              "doppler": null,
+              "emissionTime": null,
+              "properTime": null,
+              "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+            },
+            "path": [
+              1,
+              0.6988034248352051,
+              1.6246365308761597,
+              0.6457839608192444
+            ],
+            "point": [
+              0.16449131071567535,
+              0,
+              -0.5648975968360901,
+              1
+            ],
+            "direction": [
+              -0.7795440554618835,
+              0,
+              -0.6263474225997925,
+              0.6457839608192444
+            ],
+            "frequency": [
+              0,
+              0,
+              0.7297297120094299,
+              1
+            ],
+            "color": [
+              0,
+              0,
+              0
+            ],
+            "endRho": 0.23291330735550203,
+            "initialImpact": 0.645783894465581,
+            "finalImpact": 0.6457838731105751,
+            "hit": null
+          },
+          {
+            "rho": 0.4,
+            "fraction": 1.01,
+            "sign": -1,
+            "expected": 2,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -1.727395963627448,
+                1.6,
+                39.962683883653725
+              ],
+              "direction": [
+                -0.05939180098255691,
+                0,
+                0.9982347489323583
+              ],
+              "delay": 44.679635171263755,
+              "distance": 41.4760059017095,
+              "steps": 705,
+              "impactParameter": 0.6531771365521765,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.4
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": -0.5267550882486774,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.8913115447947098,
+                0,
+                -0.45339136528574114
+              ],
+              "observerLapse": 0.7297297297297297,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.7297297297297297,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 1.3660946437857515,
+              "emissionTime": -44.679635171263755,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              41.47605895996094,
+              44.6796760559082,
+              0.6531772613525391
+            ],
+            "point": [
+              -1.7266422510147095,
+              0,
+              39.56271743774414,
+              2
+            ],
+            "direction": [
+              -0.0593729168176651,
+              0,
+              0.998235821723938,
+              0.6531749963760376
+            ],
+            "frequency": [
+              1.366094708442688,
+              0.9968799352645874,
+              0.7297297120094299,
+              2
+            ],
+            "color": [
+              9.584236977389082e-07,
+              0.00023970093752723187,
+              0.05694267526268959
+            ],
+            "endRho": 40.00000098089959,
+            "initialImpact": 0.6531771365521765,
+            "finalImpact": 0.6531749833004643,
+            "hit": null
+          },
+          {
+            "rho": 0.4,
+            "fraction": 1.01,
+            "sign": 1,
+            "expected": 2,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                1.727395963627448,
+                1.6,
+                39.962683883653725
+              ],
+              "direction": [
+                0.05939180098255691,
+                0,
+                0.9982347489323583
+              ],
+              "delay": 44.679635171263755,
+              "distance": 41.4760059017095,
+              "steps": 705,
+              "impactParameter": 0.6531771365521765,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.4
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 0,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": 0.5267550882486774,
+              "ndcY": 0,
+              "initialDirection": [
+                0.8913115447947098,
+                0,
+                -0.45339136528574114
+              ],
+              "observerLapse": 0.7297297297297297,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.7297297297297297,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 1.3660946437857515,
+              "emissionTime": -44.679635171263755,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              41.47605895996094,
+              44.6796760559082,
+              0.6531772613525391
+            ],
+            "point": [
+              1.7266422510147095,
+              0,
+              39.56271743774414,
+              2
+            ],
+            "direction": [
+              0.0593729168176651,
+              0,
+              0.998235821723938,
+              0.6531749963760376
+            ],
+            "frequency": [
+              1.366094708442688,
+              0.9968799352645874,
+              0.7297297120094299,
+              2
+            ],
+            "color": [
+              9.584236977389082e-07,
+              0.00023970093752723187,
+              0.05694267526268959
+            ],
+            "endRho": 40.00000098089959,
+            "initialImpact": 0.6531771365521765,
+            "finalImpact": 0.6531749833004643,
+            "hit": null
+          },
+          {
+            "rho": 0.15,
+            "fraction": 0.99,
+            "sign": -1,
+            "expected": 2,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -13.860849673215691,
+                1.6,
+                37.521685014622044
+              ],
+              "direction": [
+                -0.3314260561262181,
+                0,
+                0.9434811971208652
+              ],
+              "delay": 44.4070190805755,
+              "distance": 41.12836226273264,
+              "steps": 680,
+              "impactParameter": 0.6458091180726677,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.15
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": -0.504951266449295,
+              "ndcY": 0,
+              "initialDirection": [
+                0.8833375276711432,
+                0,
+                0.46873746618745177
+              ],
+              "observerLapse": 0.41176470588235287,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.41176470588235287,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 2.420993982616448,
+              "emissionTime": -44.4070190805755,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              41.12834167480469,
+              44.40700912475586,
+              0.6458090543746948
+            ],
+            "point": [
+              -13.859275817871094,
+              0,
+              37.37226104736328,
+              2
+            ],
+            "direction": [
+              -0.33138659596443176,
+              0,
+              0.943494975566864,
+              0.6458035707473755
+            ],
+            "frequency": [
+              2.4209940433502197,
+              0.9968799352645874,
+              0.4117647409439087,
+              2
+            ],
+            "color": [
+              9.74548349346089e-24,
+              9.855294572298338e-22,
+              2.4512485513334802e-15
+            ],
+            "endRho": 39.999995003778466,
+            "initialImpact": 0.6458091180726678,
+            "finalImpact": 0.6458048679801215,
+            "hit": null
+          },
+          {
+            "rho": 0.15,
+            "fraction": 0.99,
+            "sign": 1,
+            "expected": 2,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                13.860849673212428,
+                1.6,
+                37.52168501462338
+              ],
+              "direction": [
+                0.3314260561261352,
+                0,
+                0.9434811971208944
+              ],
+              "delay": 44.40701908057568,
+              "distance": 41.128362262732765,
+              "steps": 680,
+              "impactParameter": 0.6458091180726678,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.15
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": 0.504951266449295,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.8833375276711434,
+                0,
+                0.46873746618745155
+              ],
+              "observerLapse": 0.41176470588235287,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.41176470588235287,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 2.420993982616448,
+              "emissionTime": -44.40701908057568,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              41.12834167480469,
+              44.40700912475586,
+              0.6458090543746948
+            ],
+            "point": [
+              13.859275817871094,
+              0,
+              37.37226104736328,
+              2
+            ],
+            "direction": [
+              0.33138659596443176,
+              0,
+              0.943494975566864,
+              0.6458035707473755
+            ],
+            "frequency": [
+              2.4209940433502197,
+              0.9968799352645874,
+              0.4117647409439087,
+              2
+            ],
+            "color": [
+              9.74548349346089e-24,
+              9.855294572298338e-22,
+              2.4512485513334802e-15
+            ],
+            "endRho": 39.999995003778466,
+            "initialImpact": 0.6458091180726678,
+            "finalImpact": 0.6458048679801215,
+            "hit": null
+          },
+          {
+            "rho": 0.15,
+            "fraction": 1.01,
+            "sign": -1,
+            "expected": 1,
+            "cpu": {
+              "status": "captured",
+              "position": [
+                0.1905724247187028,
+                1.6,
+                -0.0889865807755407
+              ],
+              "direction": [
+                -0.42329611068911993,
+                0,
+                -0.9059913921641112
+              ],
+              "delay": 1.371582171538504,
+              "distance": 0.39337696120452054,
+              "steps": 137,
+              "impactParameter": 0.6531512694902977,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.15
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": -0.5327834627158695,
+              "ndcY": 0,
+              "initialDirection": [
+                0.8933801202879705,
+                0,
+                0.449301636625387
+              ],
+              "observerLapse": 0.41176470588235287,
+              "endLapse": 0.5418302650512263,
+              "receiverLapse": 0.41176470588235287,
+              "emissionLapse": null,
+              "doppler": null,
+              "emissionTime": null,
+              "properTime": null,
+              "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+            },
+            "path": [
+              1,
+              0.393376886844635,
+              1.3715825080871582,
+              0.653151273727417
+            ],
+            "point": [
+              0.19057224690914154,
+              0,
+              -0.2389865219593048,
+              1
+            ],
+            "direction": [
+              -0.4232975244522095,
+              0,
+              -0.9059906601905823,
+              0.653151273727417
+            ],
+            "frequency": [
+              0,
+              0,
+              0.4117647409439087,
+              1
+            ],
+            "color": [
+              0,
+              0,
+              0
+            ],
+            "endRho": 0.21032446929069534,
+            "initialImpact": 0.6531512694902978,
+            "finalImpact": 0.6531512880565193,
+            "hit": null
+          },
+          {
+            "rho": 0.15,
+            "fraction": 1.01,
+            "sign": 1,
+            "expected": 1,
+            "cpu": {
+              "status": "captured",
+              "position": [
+                -0.190572424718702,
+                1.6,
+                -0.08898658077554039
+              ],
+              "direction": [
+                0.423296110689124,
+                0,
+                -0.9059913921641093
+              ],
+              "delay": 1.3715821715385041,
+              "distance": 0.39337696120451987,
+              "steps": 137,
+              "impactParameter": 0.6531512694902978,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.15
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": 0.5327834627158695,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.8933801202879708,
+                0,
+                0.4493016366253868
+              ],
+              "observerLapse": 0.41176470588235287,
+              "endLapse": 0.5418302650512247,
+              "receiverLapse": 0.41176470588235287,
+              "emissionLapse": null,
+              "doppler": null,
+              "emissionTime": null,
+              "properTime": null,
+              "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+            },
+            "path": [
+              1,
+              0.393376886844635,
+              1.3715825080871582,
+              0.653151273727417
+            ],
+            "point": [
+              -0.19057224690914154,
+              0,
+              -0.2389865219593048,
+              1
+            ],
+            "direction": [
+              0.4232975244522095,
+              0,
+              -0.9059906601905823,
+              0.653151273727417
+            ],
+            "frequency": [
+              0,
+              0,
+              0.4117647409439087,
+              1
+            ],
+            "color": [
+              0,
+              0,
+              0
+            ],
+            "endRho": 0.21032446929069534,
+            "initialImpact": 0.6531512694902978,
+            "finalImpact": 0.6531512880565193,
+            "hit": null
+          },
+          {
+            "rho": 0.11,
+            "fraction": 0.99,
+            "sign": -1,
+            "expected": 2,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -12.502813756776499,
+                1.6,
+                37.995784610445476
+              ],
+              "direction": [
+                -0.2973280535099895,
+                0,
+                0.9547753812263705
+              ],
+              "delay": 44.59154854367178,
+              "distance": 41.10783022945084,
+              "steps": 691,
+              "impactParameter": 0.6441781040208053,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.11
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": -0.23271961260044502,
+              "ndcY": 0,
+              "initialDirection": [
+                0.6557298521031607,
+                0,
+                0.7549956033386996
+              ],
+              "observerLapse": 0.27536231884057966,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.27536231884057966,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 3.6202479678134503,
+              "emissionTime": -44.59154854367178,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              41.10782241821289,
+              44.5915641784668,
+              0.6441782116889954
+            ],
+            "point": [
+              -12.501039505004883,
+              0,
+              37.88636779785156,
+              2
+            ],
+            "direction": [
+              -0.2972835600376129,
+              0,
+              0.9547892212867737,
+              0.6441737413406372
+            ],
+            "frequency": [
+              3.6202478408813477,
+              0.9968799352645874,
+              0.2753623425960541,
+              2
+            ],
+            "color": [
+              7.21152755068456e-35,
+              1.6188959856991132e-34,
+              7.803183827673715e-29
+            ],
+            "endRho": 39.99999943169129,
+            "initialImpact": 0.6441781040208053,
+            "finalImpact": 0.6441742610049632,
+            "hit": null
+          },
+          {
+            "rho": 0.11,
+            "fraction": 0.99,
+            "sign": 1,
+            "expected": 2,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                12.502813756773387,
+                1.6,
+                37.995784610446535
+              ],
+              "direction": [
+                0.29732805350991093,
+                0,
+                0.9547753812263949
+              ],
+              "delay": 44.59154854367184,
+              "distance": 41.10783022945087,
+              "steps": 691,
+              "impactParameter": 0.6441781040208054,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.11
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": 0.23271961260044502,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.6557298521031608,
+                0,
+                0.7549956033386995
+              ],
+              "observerLapse": 0.27536231884057966,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.27536231884057966,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 3.6202479678134503,
+              "emissionTime": -44.59154854367184,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              41.10782241821289,
+              44.5915641784668,
+              0.6441782116889954
+            ],
+            "point": [
+              12.501039505004883,
+              0,
+              37.88636779785156,
+              2
+            ],
+            "direction": [
+              0.2972835600376129,
+              0,
+              0.9547892212867737,
+              0.6441737413406372
+            ],
+            "frequency": [
+              3.6202478408813477,
+              0.9968799352645874,
+              0.2753623425960541,
+              2
+            ],
+            "color": [
+              7.21152755068456e-35,
+              1.6188959856991132e-34,
+              7.803183827673715e-29
+            ],
+            "endRho": 39.99999943169129,
+            "initialImpact": 0.6441781040208053,
+            "finalImpact": 0.6441742610049632,
+            "hit": null
+          },
+          {
+            "rho": 0.11,
+            "fraction": 1.01,
+            "sign": -1,
+            "expected": 1,
+            "cpu": {
+              "status": "captured",
+              "position": [
+                0.1604867001704204,
+                1.6,
+                -0.12907925597124523
+              ],
+              "direction": [
+                -0.6279211662509379,
+                0,
+                -0.7782769487618545
+              ],
+              "delay": 1.6865356258966997,
+              "distance": 0.42086657144564077,
+              "steps": 160,
+              "impactParameter": 0.6548261084552367,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.11
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": -0.23959772810918256,
+              "ndcY": 0,
+              "initialDirection": [
+                0.6665688022776578,
+                0,
+                0.7454435135073137
+              ],
+              "observerLapse": 0.27536231884057966,
+              "endLapse": 0.5343725009309106,
+              "receiverLapse": 0.27536231884057966,
+              "emissionLapse": null,
+              "doppler": null,
+              "emissionTime": null,
+              "properTime": null,
+              "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+            },
+            "path": [
+              1,
+              0.4208659529685974,
+              1.6865360736846924,
+              0.6548261642456055
+            ],
+            "point": [
+              0.1604861319065094,
+              0,
+              -0.23907889425754547,
+              1
+            ],
+            "direction": [
+              -0.6279243230819702,
+              0,
+              -0.7782743573188782,
+              0.654826283454895
+            ],
+            "frequency": [
+              0,
+              0,
+              0.2753623425960541,
+              1
+            ],
+            "color": [
+              0,
+              0,
+              0
+            ],
+            "endRho": 0.20595426549859108,
+            "initialImpact": 0.6548261084552367,
+            "finalImpact": 0.6548263524950959,
+            "hit": null
+          },
+          {
+            "rho": 0.11,
+            "fraction": 1.01,
+            "sign": 1,
+            "expected": 1,
+            "cpu": {
+              "status": "captured",
+              "position": [
+                -0.1604867001704203,
+                1.6,
+                -0.12907925597124517
+              ],
+              "direction": [
+                0.6279211662509384,
+                0,
+                -0.7782769487618542
+              ],
+              "delay": 1.6865356258967001,
+              "distance": 0.42086657144564066,
+              "steps": 160,
+              "impactParameter": 0.6548261084552369,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                0.11
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 150,
+              "cameraAspect": 1,
+              "ndcX": 0.23959772810918256,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.666568802277658,
+                0,
+                0.7454435135073137
+              ],
+              "observerLapse": 0.27536231884057966,
+              "endLapse": 0.5343725009309104,
+              "receiverLapse": 0.27536231884057966,
+              "emissionLapse": null,
+              "doppler": null,
+              "emissionTime": null,
+              "properTime": null,
+              "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+            },
+            "path": [
+              1,
+              0.4208659529685974,
+              1.6865360736846924,
+              0.6548261642456055
+            ],
+            "point": [
+              -0.1604861319065094,
+              0,
+              -0.23907889425754547,
+              1
+            ],
+            "direction": [
+              0.6279243230819702,
+              0,
+              -0.7782743573188782,
+              0.654826283454895
+            ],
+            "frequency": [
+              0,
+              0,
+              0.2753623425960541,
+              1
+            ],
+            "color": [
+              0,
+              0,
+              0
+            ],
+            "endRho": 0.20595426549859108,
+            "initialImpact": 0.6548261084552367,
+            "finalImpact": 0.6548263524950959,
+            "hit": null
+          }
+        ],
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        },
+        "linked": true,
+        "programLog": "",
+        "glError": 0,
+        "entityCount": 0,
+        "segmentCount": 0,
+        "browser": "147.0.7727.15"
+      },
+      "black-hole-finite-shell-gpu.json": {
+        "rays": [
+          {
+            "x": 0,
+            "impact": 0,
+            "exactDelay": 37.65610720788898,
+            "exactDistance": 37.00000000000017,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -4.709128587990675e-15,
+                1.6,
+                40.0000000000001
+              ],
+              "direction": [
+                -1.2764490476668792e-16,
+                0,
+                1
+              ],
+              "delay": 37.65610720810681,
+              "distance": 37.0000000000001,
+              "steps": 209,
+              "impactParameter": 3.991535662480245e-16,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 60,
+              "cameraAspect": 1,
+              "ndcX": 0,
+              "ndcY": 0,
+              "initialDirection": [
+                -1.2246467991473532e-16,
+                0,
+                1
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 1.039300295416072,
+              "emissionTime": -37.65610720810681,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              36.99999237060547,
+              37.656105041503906,
+              3.9915360907240955e-16
+            ],
+            "frequency": [
+              1.0393003225326538,
+              0.9968799352645874,
+              0.9591836333274841,
+              2
+            ],
+            "expectedFrequency": 1.039300295416072
+          },
+          {
+            "x": 0.12,
+            "impact": 0.22527342790928667,
+            "exactDelay": 37.66360107372709,
+            "exactDistance": 37.00717180822093,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -2.6581161657145476,
+                1.6,
+                39.911582509962805
+              ],
+              "direction": [
+                -0.07203625220032857,
+                0,
+                0.9974020144199283
+              ],
+              "delay": 37.66360107394732,
+              "distance": 37.00717180822433,
+              "steps": 209,
+              "impactParameter": 0.22527342790928706,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 60,
+              "cameraAspect": 1,
+              "ndcX": 0.12,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.06911635163761382,
+                0,
+                0.9976086055845277
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 1.039300295416072,
+              "emissionTime": -37.66360107394732,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              37.007118225097656,
+              37.663543701171875,
+              0.22527341544628143
+            ],
+            "frequency": [
+              1.0393003225326538,
+              0.9968799352645874,
+              0.9591836333274841,
+              2
+            ],
+            "expectedFrequency": 1.039300295416072
+          },
+          {
+            "x": 0.3,
+            "impact": 0.55625147695422,
+            "exactDelay": 37.70211094548421,
+            "exactDistance": 37.04402146321738,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -6.568408863020631,
+                1.6,
+                39.45701464895943
+              ],
+              "direction": [
+                -0.17782662039174824,
+                0,
+                0.9840618339718543
+              ],
+              "delay": 37.70211094571661,
+              "distance": 37.04402146323743,
+              "steps": 210,
+              "impactParameter": 0.5562514769542203,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 60,
+              "cameraAspect": 1,
+              "ndcX": 0.3,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.17066403719657236,
+                0,
+                0.9853292781642932
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 1.039300295416072,
+              "emissionTime": -37.70211094571661,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              37.044002532958984,
+              37.70209503173828,
+              0.5562514662742615
+            ],
+            "frequency": [
+              1.0393003225326538,
+              0.9968799352645874,
+              0.9591836333274841,
+              2
+            ],
+            "expectedFrequency": 1.039300295416072
+          },
+          {
+            "x": 0.6,
+            "impact": 1.0668682084597014,
+            "exactDelay": 37.82922924842082,
+            "exactDistance": 37.165596543282724,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -12.628731262363619,
+                1.6,
+                37.95411896886812
+              ],
+              "direction": [
+                -0.3407572680159752,
+                0,
+                0.9401513092552118
+              ],
+              "delay": 37.829229248684676,
+              "distance": 37.165596543347796,
+              "steps": 211,
+              "impactParameter": 1.0668682084597019,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 60,
+              "cameraAspect": 1,
+              "ndcX": 0.6,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.32732683535398865,
+                0,
+                0.9449111825230682
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 1.039300295416072,
+              "emissionTime": -37.829229248684676,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              37.16559982299805,
+              37.829227447509766,
+              1.0668683052062988
+            ],
+            "frequency": [
+              1.0393003225326538,
+              0.9968799352645874,
+              0.9591836333274841,
+              2
+            ],
+            "expectedFrequency": 1.039300295416072
+          }
+        ],
+        "motion": [
+          {
+            "velocity": [
+              0,
+              0,
+              0.6
+            ],
+            "expected": 2.078600590832144,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -9.41825717598135e-15,
+                1.6,
+                40.0000000000001
+              ],
+              "direction": [
+                -2.5528980953337584e-16,
+                0,
+                1
+              ],
+              "delay": 37.65610720810681,
+              "distance": 37.0000000000001,
+              "steps": 209,
+              "impactParameter": 7.98307132496049e-16,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                0.6
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 60,
+              "cameraAspect": 1,
+              "ndcX": 0,
+              "ndcY": 0,
+              "initialDirection": [
+                -2.4492935982947064e-16,
+                0,
+                1
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 2.078600590832144,
+              "emissionTime": -37.65610720810681,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              37.000003814697266,
+              37.65611267089844,
+              7.983071122657007e-16
+            ],
+            "frequency": [
+              2.0786006450653076,
+              0.9968799352645874,
+              0.9591836333274841,
+              2
+            ]
+          },
+          {
+            "velocity": [
+              0,
+              0,
+              -0.6
+            ],
+            "expected": 0.519650147708036,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -2.3545642939953377e-15,
+                1.6,
+                40.0000000000001
+              ],
+              "direction": [
+                -6.382245238334396e-17,
+                0,
+                1
+              ],
+              "delay": 37.65610720810681,
+              "distance": 37.0000000000001,
+              "steps": 209,
+              "impactParameter": 1.9957678312401224e-16,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0,
+                0,
+                -0.6
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 60,
+              "cameraAspect": 1,
+              "ndcX": 0,
+              "ndcY": 0,
+              "initialDirection": [
+                -6.123233995736766e-17,
+                0,
+                1
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 0.519650147708036,
+              "emissionTime": -37.65610720810681,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              36.99999237060547,
+              37.656105041503906,
+              1.9957680453620478e-16
+            ],
+            "frequency": [
+              0.5196501612663269,
+              0.9968799352645874,
+              0.9591836333274841,
+              2
+            ]
+          },
+          {
+            "velocity": [
+              0.3,
+              0,
+              0
+            ],
+            "expected": 0.9914292938416035,
+            "cpu": {
+              "status": "escaped",
+              "position": [
+                -11.568151060315087,
+                1.6,
+                38.29070227934891
+              ],
+              "direction": [
+                -0.3123731149067004,
+                0,
+                0.9499594923382183
+              ],
+              "delay": 37.80078717570238,
+              "distance": 37.1384032442254,
+              "steps": 211,
+              "impactParameter": 0.9778008643617022,
+              "source": "Float64 CPU geodesic",
+              "observationTime": 0,
+              "observerPosition": [
+                0,
+                1.6,
+                3
+              ],
+              "observerVelocity": [
+                0.3,
+                0,
+                0
+              ],
+              "observerYaw": 3.141592653589793,
+              "observerPitch": 0,
+              "observerRoll": 0,
+              "cameraFov": 60,
+              "cameraAspect": 1,
+              "ndcX": 0,
+              "ndcY": 0,
+              "initialDirection": [
+                -0.3000000000000001,
+                0,
+                0.9539392014169458
+              ],
+              "observerLapse": 0.9591836734693878,
+              "endLapse": 0.9968798751950079,
+              "receiverLapse": 0.9591836734693878,
+              "emissionLapse": 0.9968798751950079,
+              "doppler": 0.9914292938416032,
+              "emissionTime": -37.80078717570238,
+              "properTime": null,
+              "termination": "Static finite sky boundary"
+            },
+            "path": [
+              2,
+              37.138389587402344,
+              37.80076599121094,
+              0.9778010249137878
+            ],
+            "frequency": [
+              0.9914292693138123,
+              0.9968799352645874,
+              0.9591836333274841,
+              2
+            ]
+          }
+        ],
+        "baselineFrequency": [
+          1,
+          0.9968799352645874,
+          0.9591836333274841,
+          2
+        ],
+        "baselineOn": [
+          0.19331467151641846,
+          0.34595102071762085,
+          0.545479416847229
+        ],
+        "baselineOff": [
+          0.19331467151641846,
+          0.34595102071762085,
+          0.545479416847229
+        ],
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        },
+        "hole": {
+          "kind": "schwarzschild-black-hole",
+          "massSolar": 10,
+          "radiusKm": 29.5325007610025,
+          "lengthUnitMeters": 118130.00304401,
+          "rs": 0.25,
+          "radius": 0.0625,
+          "center": [
+            0,
+            1.6,
+            0
+          ],
+          "sourceId": "",
+          "observerMode": "guided",
+          "escapeRadius": 40,
+          "observerBoundary": 0.063125
+        },
+        "radialExact": 37.65610720788894,
+        "browser": "147.0.7727.15"
+      },
+      "black-hole-unresolved-gpu.json": {
+        "impact": 0.6495177538002234,
+        "critical": 0.649519052838329,
+        "cpu": {
+          "status": "captured",
+          "position": [
+            0.2019688946898817,
+            1.6,
+            0.11668174997867294
+          ],
+          "direction": [
+            0.4985083529817245,
+            0,
+            -0.866884895477738
+          ],
+          "delay": 5.4801268298147185,
+          "distance": 2.5016522854598593,
+          "steps": 518,
+          "impactParameter": 0.6495177538002233,
+          "source": "Float64 CPU geodesic",
+          "observationTime": 0,
+          "observerPosition": [
+            0,
+            1.6,
+            1
+          ],
+          "observerVelocity": [
+            0,
+            0,
+            0
+          ],
+          "observerYaw": 0,
+          "observerPitch": 0,
+          "observerRoll": 0,
+          "cameraFov": 150,
+          "cameraAspect": 1,
+          "ndcX": 0.15788633897724613,
+          "ndcY": 0,
+          "initialDirection": [
+            0.5076629706071356,
+            0,
+            -0.8615557487907202
+          ],
+          "observerLapse": 0.8823529411764706,
+          "endLapse": 0.5773472711731948,
+          "receiverLapse": 0.8823529411764706,
+          "emissionLapse": null,
+          "doppler": null,
+          "emissionTime": null,
+          "properTime": null,
+          "termination": "Inward null ray below the photon sphere; no inner radial turning point"
+        },
+        "path": [
+          3,
+          2.5156688690185547,
+          5.519092559814453,
+          0.6495180726051331
+        ],
+        "frequency": [
+          0,
+          0,
+          0.8823529481887817,
+          3
+        ],
+        "color": [
+          0.12999999523162842,
+          0.04500000178813934,
+          0.00800000037997961
+        ],
+        "hit": null,
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        }
+      },
+      "black-hole-context-gpu.json": {
+        "before": {
+          "capture": [
+            1,
+            2.770237445831299,
+            3.5450804233551025,
+            0
+          ],
+          "star": {
+            "entityId": "object-5",
+            "id": "object-5",
+            "revision": 1,
+            "distance": 2.7953319549560547,
+            "emissionTime": -3.042405843734741,
+            "properTime": -2.4631354808807373,
+            "position": [
+              0,
+              1.6,
+              0.2046680450439453
+            ],
+            "sourcePosition": [
+              0,
+              1.6,
+              0.2046680450439453
+            ],
+            "doppler": 0.8213080763816833,
+            "emissionTimeOffset": -3.042405843734741,
+            "properTimeOffset": -2.4631354808807373,
+            "positionOffset": [
+              0,
+              0,
+              -2.7953319549560547
+            ],
+            "clockBase": 0,
+            "segmentIndex": 0,
+            "mirrored": false
+          },
+          "sr": {
+            "entityId": "object-6",
+            "id": "object-6",
+            "revision": 1,
+            "distance": 9.5,
+            "emissionTime": -9.5,
+            "properTime": -9.5,
+            "position": [
+              0,
+              1,
+              -1.5
+            ],
+            "sourcePosition": [
+              0,
+              1,
+              -1.5
+            ],
+            "doppler": 1,
+            "emissionTimeOffset": -9.5,
+            "properTimeOffset": -9.5,
+            "positionOffset": [
+              0,
+              0,
+              -9.5
+            ],
+            "clockBase": 0,
+            "segmentIndex": 0,
+            "mirrored": false
+          },
+          "gpu": {
+            "vendor": "Google Inc. (NVIDIA)",
+            "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "floatReadback": true
+          }
+        },
+        "after": {
+          "capture": [
+            1,
+            2.770237445831299,
+            3.5450804233551025,
+            0
+          ],
+          "hit": null,
+          "unchanged": true,
+          "gpu": {
+            "vendor": "Google Inc. (NVIDIA)",
+            "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "floatReadback": true
+          }
+        }
+      },
+      "black-hole-session-browser.json": {
+        "snapshot": {
+          "schemaVersion": 1,
+          "integratorVersion": "gr-schwarzschild-black-hole-rk4-v1",
+          "sessionId": "98b527ba-b4e6-4fdb-8263-f191dcad6aaa",
+          "epoch": 2,
+          "revision": 6,
+          "preparationVersion": 6,
+          "tick": 37,
+          "time": 0.30833333333333346,
+          "profile": "sr",
+          "playing": false,
+          "observer": {
+            "position": [
+              0,
+              1.6,
+              2.999702020299302
+            ],
+            "velocity": [
+              0,
+              0,
+              0
+            ],
+            "properTime": 0.29574737259789796,
+            "yaw": 0,
+            "pitch": 0,
+            "roll": 0,
+            "worldline": 3,
+            "worldlineReason": "preparation",
+            "worldlineStart": 0,
+            "capApplied": false
+          },
+          "entities": [],
+          "segments": [],
+          "historyStart": -59.69166666666667,
+          "historyWindow": 60,
+          "environment": {
+            "preset": "void",
+            "seed": 1,
+            "radius": 40,
+            "density": 1,
+            "spacing": 4,
+            "orientation": 0,
+            "opacity": 1,
+            "color": [
+              0.2,
+              0.7,
+              1
+            ],
+            "animationRate": 0,
+            "anchor": "world"
+          },
+          "environmentHistory": [
+            {
+              "start": -60,
+              "end": null,
+              "revision": 1,
+              "environment": {
+                "preset": "void",
+                "seed": 1,
+                "radius": 40,
+                "density": 1,
+                "spacing": 4,
+                "orientation": 0,
+                "opacity": 1,
+                "color": [
+                  0.2,
+                  0.7,
+                  1
+                ],
+                "animationRate": 0,
+                "anchor": "world"
+              }
+            }
+          ],
+          "playbackSpeed": 1,
+          "units": "isotropic exterior coordinates; c=1; scaled black hole",
+          "warnings": [],
+          "backlogSeconds": 0.008321666666666496,
+          "experiment": "black-hole",
+          "preparedEvents": true,
+          "scrubTime": null,
+          "pulses": [],
+          "joints": [],
+          "gravity": [
+            0,
+            -9.81,
+            0
+          ],
+          "gravityMode": "plane",
+          "gravityStrength": 9.81,
+          "objectCollisions": true,
+          "planeCollision": true,
+          "physicsEngine": "Schwarzschild black-hole exterior + local SR",
+          "collisionOccurred": false,
+          "spacetime": {
+            "kind": "schwarzschild-black-hole",
+            "massSolar": 10,
+            "radiusKm": 29.5325007610025,
+            "lengthUnitMeters": 118130.00304401,
+            "rs": 0.25,
+            "radius": 0.0625,
+            "center": [
+              0,
+              1.6,
+              0
+            ],
+            "sourceId": "",
+            "observerMode": "guided",
+            "escapeRadius": 40,
+            "observerBoundary": 0.063125
+          }
+        },
+        "restored": {
+          "schemaVersion": 1,
+          "integratorVersion": "gr-schwarzschild-black-hole-rk4-v1",
+          "sessionId": "98b527ba-b4e6-4fdb-8263-f191dcad6aaa",
+          "epoch": 2,
+          "revision": 6,
+          "preparationVersion": 6,
+          "tick": 37,
+          "time": 0.30833333333333346,
+          "profile": "sr",
+          "playing": false,
+          "observer": {
+            "position": [
+              0,
+              1.6,
+              2.999702020299302
+            ],
+            "velocity": [
+              0,
+              0,
+              0
+            ],
+            "properTime": 0.29574737259789796,
+            "yaw": 0,
+            "pitch": 0,
+            "roll": 0,
+            "worldline": 3,
+            "worldlineReason": "preparation",
+            "worldlineStart": 0,
+            "capApplied": false
+          },
+          "entities": [],
+          "segments": [],
+          "historyStart": -59.69166666666667,
+          "historyWindow": 60,
+          "environment": {
+            "preset": "void",
+            "seed": 1,
+            "radius": 40,
+            "density": 1,
+            "spacing": 4,
+            "orientation": 0,
+            "opacity": 1,
+            "color": [
+              0.2,
+              0.7,
+              1
+            ],
+            "animationRate": 0,
+            "anchor": "world"
+          },
+          "environmentHistory": [
+            {
+              "start": -60,
+              "end": null,
+              "revision": 1,
+              "environment": {
+                "preset": "void",
+                "seed": 1,
+                "radius": 40,
+                "density": 1,
+                "spacing": 4,
+                "orientation": 0,
+                "opacity": 1,
+                "color": [
+                  0.2,
+                  0.7,
+                  1
+                ],
+                "animationRate": 0,
+                "anchor": "world"
+              }
+            }
+          ],
+          "playbackSpeed": 1,
+          "units": "isotropic exterior coordinates; c=1; scaled black hole",
+          "warnings": [],
+          "backlogSeconds": 0.008321666666666496,
+          "experiment": "black-hole",
+          "preparedEvents": true,
+          "scrubTime": null,
+          "pulses": [],
+          "joints": [],
+          "gravity": [
+            0,
+            -9.81,
+            0
+          ],
+          "gravityMode": "plane",
+          "gravityStrength": 9.81,
+          "objectCollisions": true,
+          "planeCollision": true,
+          "physicsEngine": "Schwarzschild black-hole exterior + local SR",
+          "collisionOccurred": false,
+          "spacetime": {
+            "kind": "schwarzschild-black-hole",
+            "massSolar": 10,
+            "radiusKm": 29.5325007610025,
+            "lengthUnitMeters": 118130.00304401,
+            "rs": 0.25,
+            "radius": 0.0625,
+            "center": [
+              0,
+              1.6,
+              0
+            ],
+            "sourceId": "",
+            "observerMode": "guided",
+            "escapeRadius": 40,
+            "observerBoundary": 0.063125
+          }
+        },
+        "rejected": {
+          "id": 51,
+          "ok": false,
+          "error": "Observer must remain outside the black-hole exterior numerical guard and inside the 40-unit optical boundary. This chart does not cross the horizon.",
+          "snapshot": {
+            "schemaVersion": 1,
+            "integratorVersion": "gr-schwarzschild-black-hole-rk4-v1",
+            "sessionId": "98b527ba-b4e6-4fdb-8263-f191dcad6aaa",
+            "epoch": 2,
+            "revision": 6,
+            "preparationVersion": 6,
+            "tick": 37,
+            "time": 0.30833333333333346,
+            "profile": "sr",
+            "playing": false,
+            "observer": {
+              "position": [
+                0,
+                1.6,
+                2.999702020299302
+              ],
+              "velocity": [
+                0,
+                0,
+                0
+              ],
+              "properTime": 0.29574737259789796,
+              "yaw": 0,
+              "pitch": 0,
+              "roll": 0,
+              "worldline": 3,
+              "worldlineReason": "preparation",
+              "worldlineStart": 0,
+              "capApplied": false
+            },
+            "entities": [],
+            "segments": [],
+            "historyStart": -59.69166666666667,
+            "historyWindow": 60,
+            "environment": {
+              "preset": "void",
+              "seed": 1,
+              "radius": 40,
+              "density": 1,
+              "spacing": 4,
+              "orientation": 0,
+              "opacity": 1,
+              "color": [
+                0.2,
+                0.7,
+                1
+              ],
+              "animationRate": 0,
+              "anchor": "world"
+            },
+            "environmentHistory": [
+              {
+                "start": -60,
+                "end": null,
+                "revision": 1,
+                "environment": {
+                  "preset": "void",
+                  "seed": 1,
+                  "radius": 40,
+                  "density": 1,
+                  "spacing": 4,
+                  "orientation": 0,
+                  "opacity": 1,
+                  "color": [
+                    0.2,
+                    0.7,
+                    1
+                  ],
+                  "animationRate": 0,
+                  "anchor": "world"
+                }
+              }
+            ],
+            "playbackSpeed": 1,
+            "units": "isotropic exterior coordinates; c=1; scaled black hole",
+            "warnings": [],
+            "backlogSeconds": 0.008321666666666496,
+            "experiment": "black-hole",
+            "preparedEvents": true,
+            "scrubTime": null,
+            "pulses": [],
+            "joints": [],
+            "gravity": [
+              0,
+              -9.81,
+              0
+            ],
+            "gravityMode": "plane",
+            "gravityStrength": 9.81,
+            "objectCollisions": true,
+            "planeCollision": true,
+            "physicsEngine": "Schwarzschild black-hole exterior + local SR",
+            "collisionOccurred": false,
+            "spacetime": {
+              "kind": "schwarzschild-black-hole",
+              "massSolar": 10,
+              "radiusKm": 29.5325007610025,
+              "lengthUnitMeters": 118130.00304401,
+              "rs": 0.25,
+              "radius": 0.0625,
+              "center": [
+                0,
+                1.6,
+                0
+              ],
+              "sourceId": "",
+              "observerMode": "guided",
+              "escapeRadius": 40,
+              "observerBoundary": 0.063125
+            }
+          },
+          "forceGun": null
+        },
+        "afterPosition": [
+          0,
+          1.6,
+          2.999702020299302
+        ],
+        "loaded": {
+          "id": 52,
+          "ok": true,
+          "snapshot": {
+            "schemaVersion": 1,
+            "integratorVersion": "gr-schwarzschild-black-hole-rk4-v1",
+            "sessionId": "98b527ba-b4e6-4fdb-8263-f191dcad6aaa",
+            "epoch": 3,
+            "revision": 7,
+            "preparationVersion": 7,
+            "tick": 37,
+            "time": 0.30833333333333346,
+            "profile": "sr",
+            "playing": false,
+            "observer": {
+              "position": [
+                0,
+                1.6,
+                2.999702020299302
+              ],
+              "velocity": [
+                0,
+                0,
+                0
+              ],
+              "properTime": 0.29574737259789796,
+              "yaw": 0,
+              "pitch": 0,
+              "roll": 0,
+              "worldline": 3,
+              "worldlineReason": "preparation",
+              "worldlineStart": 0,
+              "capApplied": false
+            },
+            "entities": [],
+            "segments": [],
+            "historyStart": -59.69166666666667,
+            "historyWindow": 60,
+            "environment": {
+              "preset": "void",
+              "seed": 1,
+              "radius": 40,
+              "density": 1,
+              "spacing": 4,
+              "orientation": 0,
+              "opacity": 1,
+              "color": [
+                0.2,
+                0.7,
+                1
+              ],
+              "animationRate": 0,
+              "anchor": "world"
+            },
+            "environmentHistory": [
+              {
+                "start": -60,
+                "end": null,
+                "revision": 1,
+                "environment": {
+                  "preset": "void",
+                  "seed": 1,
+                  "radius": 40,
+                  "density": 1,
+                  "spacing": 4,
+                  "orientation": 0,
+                  "opacity": 1,
+                  "color": [
+                    0.2,
+                    0.7,
+                    1
+                  ],
+                  "animationRate": 0,
+                  "anchor": "world"
+                }
+              }
+            ],
+            "playbackSpeed": 1,
+            "units": "isotropic exterior coordinates; c=1; scaled black hole",
+            "warnings": [],
+            "backlogSeconds": 0,
+            "experiment": "black-hole",
+            "preparedEvents": true,
+            "scrubTime": null,
+            "pulses": [],
+            "joints": [],
+            "gravity": [
+              0,
+              -9.81,
+              0
+            ],
+            "gravityMode": "plane",
+            "gravityStrength": 9.81,
+            "objectCollisions": true,
+            "planeCollision": true,
+            "physicsEngine": "Schwarzschild black-hole exterior + local SR",
+            "collisionOccurred": false,
+            "spacetime": {
+              "kind": "schwarzschild-black-hole",
+              "massSolar": 10,
+              "radiusKm": 29.5325007610025,
+              "lengthUnitMeters": 118130.00304401,
+              "rs": 0.25,
+              "radius": 0.0625,
+              "center": [
+                0,
+                1.6,
+                0
+              ],
+              "sourceId": "",
+              "observerMode": "guided",
+              "escapeRadius": 40,
+              "observerBoundary": 0.063125
+            }
+          },
+          "forceGun": null
+        },
+        "corruptLoad": {
+          "id": 53,
+          "ok": false,
+          "error": "Imported black-hole metric differs from its physical parameters.",
+          "snapshot": {
+            "schemaVersion": 1,
+            "integratorVersion": "gr-schwarzschild-black-hole-rk4-v1",
+            "sessionId": "98b527ba-b4e6-4fdb-8263-f191dcad6aaa",
+            "epoch": 3,
+            "revision": 7,
+            "preparationVersion": 7,
+            "tick": 37,
+            "time": 0.30833333333333346,
+            "profile": "sr",
+            "playing": false,
+            "observer": {
+              "position": [
+                0,
+                1.6,
+                2.999702020299302
+              ],
+              "velocity": [
+                0,
+                0,
+                0
+              ],
+              "properTime": 0.29574737259789796,
+              "yaw": 0,
+              "pitch": 0,
+              "roll": 0,
+              "worldline": 3,
+              "worldlineReason": "preparation",
+              "worldlineStart": 0,
+              "capApplied": false
+            },
+            "entities": [],
+            "segments": [],
+            "historyStart": -59.69166666666667,
+            "historyWindow": 60,
+            "environment": {
+              "preset": "void",
+              "seed": 1,
+              "radius": 40,
+              "density": 1,
+              "spacing": 4,
+              "orientation": 0,
+              "opacity": 1,
+              "color": [
+                0.2,
+                0.7,
+                1
+              ],
+              "animationRate": 0,
+              "anchor": "world"
+            },
+            "environmentHistory": [
+              {
+                "start": -60,
+                "end": null,
+                "revision": 1,
+                "environment": {
+                  "preset": "void",
+                  "seed": 1,
+                  "radius": 40,
+                  "density": 1,
+                  "spacing": 4,
+                  "orientation": 0,
+                  "opacity": 1,
+                  "color": [
+                    0.2,
+                    0.7,
+                    1
+                  ],
+                  "animationRate": 0,
+                  "anchor": "world"
+                }
+              }
+            ],
+            "playbackSpeed": 1,
+            "units": "isotropic exterior coordinates; c=1; scaled black hole",
+            "warnings": [],
+            "backlogSeconds": 0,
+            "experiment": "black-hole",
+            "preparedEvents": true,
+            "scrubTime": null,
+            "pulses": [],
+            "joints": [],
+            "gravity": [
+              0,
+              -9.81,
+              0
+            ],
+            "gravityMode": "plane",
+            "gravityStrength": 9.81,
+            "objectCollisions": true,
+            "planeCollision": true,
+            "physicsEngine": "Schwarzschild black-hole exterior + local SR",
+            "collisionOccurred": false,
+            "spacetime": {
+              "kind": "schwarzschild-black-hole",
+              "massSolar": 10,
+              "radiusKm": 29.5325007610025,
+              "lengthUnitMeters": 118130.00304401,
+              "rs": 0.25,
+              "radius": 0.0625,
+              "center": [
+                0,
+                1.6,
+                0
+              ],
+              "sourceId": "",
+              "observerMode": "guided",
+              "escapeRadius": 40,
+              "observerBoundary": 0.063125
+            }
+          },
+          "forceGun": null
+        },
+        "importError": "Observer must remain outside the black-hole exterior numerical guard and inside the 40-unit optical boundary. This chart does not cross the horizon.",
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        }
+      },
+      "compact-star-gpu-evidence.json": {
+        "hits": 39,
+        "misses": 36,
+        "maxima": {
+          "distance": 2.7887927940173363e-05,
+          "emissionTime": 4.2506292611044216e-05,
+          "properTime": 3.440746828875518e-05,
+          "doppler": 7.172430636082083e-07,
+          "position": 2.785335769572156e-05
+        },
+        "failures": [],
+        "normal": {
+          "entityId": "object-5",
+          "id": "object-5",
+          "revision": 1,
+          "distance": 2.7953319549560547,
+          "emissionTime": 4.957594156265259,
+          "properTime": 4.013674389607315,
+          "position": [
+            0,
+            1.6,
+            0.2046680450439453
+          ],
+          "sourcePosition": [
+            0,
+            1.6,
+            0.2046680450439453
+          ],
+          "doppler": 0.8213080763816833,
+          "emissionTimeOffset": -3.042405843734741,
+          "properTimeOffset": -2.4631354808807373,
+          "positionOffset": [
+            0,
+            0,
+            -2.7953319549560547
+          ],
+          "clockBase": 6.476809870488053,
+          "segmentIndex": 0,
+          "mirrored": false
+        },
+        "linear": [
+          0.29984936118125916,
+          0.3700147867202759,
+          0.00015227125550154597
+        ],
+        "unavailable": null,
+        "raw": [
+          0.8213080763816833,
+          0.8096012473106384,
+          0.9857461452484131,
+          0
+        ],
+        "belowSphere": [
+          {
+            "y": -0.22,
+            "cpu": null,
+            "gpu": null
+          },
+          {
+            "y": -0.4,
+            "cpu": null,
+            "gpu": null
+          },
+          {
+            "y": -0.7,
+            "cpu": null,
+            "gpu": null
+          }
+        ],
+        "silhouette": [
+          {
+            "fraction": 0.999,
+            "cpu": {
+              "entityId": "object-5",
+              "id": "object-5",
+              "revision": 1,
+              "distance": 3.089598334174052,
+              "emissionTime": 4.568197575100465,
+              "properTime": 3.6984183930937844,
+              "position": [
+                0.19158842982861812,
+                1.6,
+                -0.07198681818291758
+              ],
+              "sourcePosition": [
+                0.19158842982861812,
+                1.6,
+                -0.07198681818291758
+              ],
+              "restPosition": [
+                0.19158842982861812,
+                0,
+                -0.07198681818291758
+              ],
+              "normal": [
+                0.9361022336342685,
+                0,
+                -0.3517280315598021
+              ],
+              "historical": false,
+              "mirrored": false,
+              "segmentIndex": 0,
+              "doppler": 0.8213079626162949
+            },
+            "gpu": {
+              "entityId": "object-5",
+              "id": "object-5",
+              "revision": 1,
+              "distance": 3.089383125305176,
+              "emissionTime": 4.5685248374938965,
+              "properTime": 3.698683392292862,
+              "position": [
+                0.19167360663414001,
+                1.6,
+                -0.07178783416748047
+              ],
+              "sourcePosition": [
+                0.19167360663414001,
+                1.6,
+                -0.07178783416748047
+              ],
+              "doppler": 0.8213080763816833,
+              "emissionTimeOffset": -3.4314751625061035,
+              "properTimeOffset": -2.7781264781951904,
+              "positionOffset": [
+                0.19167360663414001,
+                0,
+                -3.0717878341674805
+              ],
+              "clockBase": 6.476809870488053,
+              "segmentIndex": 0,
+              "mirrored": false
+            }
+          },
+          {
+            "fraction": 1.001,
+            "cpu": null,
+            "gpu": null
+          }
+        ],
+        "flatFrequency": 1,
+        "baselineOn": [
+          1.9424858093261719,
+          1.532021164894104,
+          0.852086067199707
+        ],
+        "baselineOff": [
+          1.9424858093261719,
+          1.532021164894104,
+          0.852086067199707
+        ],
+        "intensityError": 4.671701059333344e-08,
+        "lateClock": {
+          "cpu": {
+            "entityId": "object-5",
+            "id": "object-5",
+            "revision": 1,
+            "distance": 2.795333876919283,
+            "emissionTime": 9999996.957590934,
+            "properTime": 8096009.874971932,
+            "position": [
+              0,
+              1.6,
+              0.20466612308071738
+            ],
+            "sourcePosition": [
+              0,
+              1.6,
+              0.20466612308071738
+            ],
+            "restPosition": [
+              0,
+              0,
+              0.20466612308071738
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "historical": false,
+            "mirrored": false,
+            "segmentIndex": 0,
+            "doppler": 0.8213079626162949
+          },
+          "gpu": {
+            "entityId": "object-5",
+            "id": "object-5",
+            "revision": 1,
+            "distance": 2.7953319549560547,
+            "emissionTime": 9999996.957594156,
+            "properTime": 8096009.874974585,
+            "position": [
+              0,
+              1.6,
+              0.2046680450439453
+            ],
+            "sourcePosition": [
+              0,
+              1.6,
+              0.2046680450439453
+            ],
+            "doppler": 0.8213080763816833,
+            "emissionTimeOffset": -3.042405843734741,
+            "properTimeOffset": -2.4631354808807373,
+            "positionOffset": [
+              0,
+              0,
+              -2.7953319549560547
+            ],
+            "clockBase": 8096012.338110066,
+            "segmentIndex": 0,
+            "mirrored": false
+          }
+        },
+        "uniforms": {
+          "uStarRs": 0.08613646030426025,
+          "uStarRadius": 0.20466603338718414,
+          "uStarEscape": 40,
+          "uDebugMode": 4,
+          "uStarCenter": {
+            "0": 0,
+            "1": 0,
+            "2": -3
+          },
+          "uForward": {
+            "0": 0,
+            "1": 0,
+            "2": -1
+          }
+        },
+        "entityCount": 1,
+        "segmentCount": 1,
+        "programLinked": true,
+        "programLog": "",
+        "glError": 0,
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        },
+        "precision": {
+          "bits": 23
+        },
+        "provider": {
+          "kind": "schwarzschild-exterior",
+          "massSolar": 1.4,
+          "radiusKm": 12,
+          "lengthUnitMeters": 48000,
+          "rs": 0.08613646055292395,
+          "radius": 0.20466603908814485,
+          "center": [
+            0,
+            1.6,
+            0
+          ],
+          "sourceId": "object-5",
+          "observerMode": "guided",
+          "escapeRadius": 40
+        },
+        "shader": true,
+        "browser": "147.0.7727.15"
+      },
+      "compact-star-context-evidence.json": {
+        "before": {
+          "star": {
+            "entityId": "object-5",
+            "id": "object-5",
+            "revision": 1,
+            "distance": 2.7953319549560547,
+            "emissionTime": -3.042405843734741,
+            "properTime": -2.4631354808807373,
+            "position": [
+              0,
+              1.6,
+              0.2046680450439453
+            ],
+            "sourcePosition": [
+              0,
+              1.6,
+              0.2046680450439453
+            ],
+            "doppler": 0.8213080763816833,
+            "emissionTimeOffset": -3.042405843734741,
+            "properTimeOffset": -2.4631354808807373,
+            "positionOffset": [
+              0,
+              0,
+              -2.7953319549560547
+            ],
+            "clockBase": 0,
+            "segmentIndex": 0,
+            "mirrored": false
+          },
+          "minkowski": {
+            "entityId": "object-6",
+            "id": "object-6",
+            "revision": 1,
+            "distance": 9.5,
+            "emissionTime": -9.5,
+            "properTime": -9.5,
+            "position": [
+              0,
+              1,
+              -1.5
+            ],
+            "sourcePosition": [
+              0,
+              1,
+              -1.5
+            ],
+            "doppler": 1,
+            "emissionTimeOffset": -9.5,
+            "properTimeOffset": -9.5,
+            "positionOffset": [
+              0,
+              0,
+              -9.5
+            ],
+            "clockBase": 0,
+            "segmentIndex": 0,
+            "mirrored": false
+          }
+        },
+        "after": {
+          "star": {
+            "entityId": "object-5",
+            "id": "object-5",
+            "revision": 1,
+            "distance": 2.7953319549560547,
+            "emissionTime": -3.042405843734741,
+            "properTime": -2.4631354808807373,
+            "position": [
+              0,
+              1.6,
+              0.2046680450439453
+            ],
+            "sourcePosition": [
+              0,
+              1.6,
+              0.2046680450439453
+            ],
+            "doppler": 0.8213080763816833,
+            "emissionTimeOffset": -3.042405843734741,
+            "properTimeOffset": -2.4631354808807373,
+            "positionOffset": [
+              0,
+              0,
+              -2.7953319549560547
+            ],
+            "clockBase": 0,
+            "segmentIndex": 0,
+            "mirrored": false
+          },
+          "unchanged": true,
+          "gpu": {
+            "vendor": "Google Inc. (NVIDIA)",
+            "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "floatReadback": true
+          }
+        }
+      },
+      "sr-gpu-evidence.json": {
+        "hits": 698,
+        "misses": 18,
+        "boundaries": 4,
+        "boundaryCases": [
+          {
+            "shape": "plane",
+            "beta": 0.6,
+            "translation": 0,
+            "mirrored": false,
+            "x": 0,
+            "cpu": {
+              "entityId": "parity",
+              "id": "parity",
+              "revision": 7,
+              "distance": 8.000000000000155,
+              "emissionTime": 1.9999999999998455,
+              "properTime": -6.7381134651801515,
+              "position": [
+                -5.4975283254226355,
+                3.7035311350369415,
+                0.2309250088760395
+              ],
+              "sourcePosition": [
+                -5.4975283254226355,
+                3.7035311350369415,
+                0.2309250088760395
+              ],
+              "restPosition": [
+                -3.191891195797325e-14,
+                -4.336808689942018e-18,
+                -1.4988010832439613e-13
+              ],
+              "normal": [
+                0.09537450575679465,
+                0.9810316271289851,
+                0.1687621113410926
+              ],
+              "historical": true,
+              "segmentIndex": 0,
+              "mirrored": false,
+              "doppler": 0.7417941970317781
+            },
+            "gpu": {
+              "entityId": "parity",
+              "id": "parity",
+              "revision": 7,
+              "distance": 8.00001335144043,
+              "emissionTime": 1.9999866485595703,
+              "properTime": -6.7381272315979,
+              "position": [
+                -5.497537612915039,
+                3.703532338142395,
+                0.23091506958007812
+              ],
+              "sourcePosition": [
+                -5.497537612915039,
+                3.703532338142395,
+                0.23091506958007812
+              ],
+              "doppler": 0.7417941689491272,
+              "emissionTimeOffset": -8.00001335144043,
+              "properTimeOffset": -7.7381272315979,
+              "positionOffset": [
+                -5.497537612915039,
+                0.703532338142395,
+                -5.769084930419922
+              ],
+              "clockBase": 1,
+              "segmentIndex": 0,
+              "mirrored": false
+            }
+          },
+          {
+            "shape": "disk",
+            "beta": 0.6,
+            "translation": 0,
+            "mirrored": false,
+            "x": 0,
+            "cpu": {
+              "entityId": "parity",
+              "id": "parity",
+              "revision": 7,
+              "distance": 8.000000000000155,
+              "emissionTime": 1.9999999999998455,
+              "properTime": -6.7381134651801515,
+              "position": [
+                -5.4975283254226355,
+                3.7035311350369415,
+                0.2309250088760395
+              ],
+              "sourcePosition": [
+                -5.4975283254226355,
+                3.7035311350369415,
+                0.2309250088760395
+              ],
+              "restPosition": [
+                -3.191891195797325e-14,
+                -4.336808689942018e-18,
+                -1.4988010832439613e-13
+              ],
+              "normal": [
+                0.09537450575679465,
+                0.9810316271289851,
+                0.1687621113410926
+              ],
+              "historical": true,
+              "segmentIndex": 0,
+              "mirrored": false,
+              "doppler": 0.7417941970317781
+            },
+            "gpu": {
+              "entityId": "parity",
+              "id": "parity",
+              "revision": 7,
+              "distance": 8.00001335144043,
+              "emissionTime": 1.9999866485595703,
+              "properTime": -6.7381272315979,
+              "position": [
+                -5.497537612915039,
+                3.703532338142395,
+                0.23091506958007812
+              ],
+              "sourcePosition": [
+                -5.497537612915039,
+                3.703532338142395,
+                0.23091506958007812
+              ],
+              "doppler": 0.7417941689491272,
+              "emissionTimeOffset": -8.00001335144043,
+              "properTimeOffset": -7.7381272315979,
+              "positionOffset": [
+                -5.497537612915039,
+                0.703532338142395,
+                -5.769084930419922
+              ],
+              "clockBase": 1,
+              "segmentIndex": 0,
+              "mirrored": false
+            }
+          },
+          {
+            "shape": "plane",
+            "beta": 0.6,
+            "translation": 10000000,
+            "mirrored": false,
+            "x": 0,
+            "cpu": {
+              "entityId": "parity",
+              "id": "parity",
+              "revision": 7,
+              "distance": 8.000000026027605,
+              "emissionTime": 10000001.999999974,
+              "properTime": 9999993.26188651,
+              "position": [
+                9999994.502471657,
+                3.703531137325832,
+                0.23092499010675027
+              ],
+              "sourcePosition": [
+                9999994.502471657,
+                3.703531137325832,
+                0.23092499010675027
+              ],
+              "restPosition": [
+                -4.737339409643937e-09,
+                0,
+                -2.4989514901818666e-08
+              ],
+              "normal": [
+                0.09537450575679465,
+                0.9810316271289851,
+                0.1687621113410926
+              ],
+              "historical": true,
+              "segmentIndex": 0,
+              "mirrored": false,
+              "doppler": 0.7417941970317781
+            },
+            "gpu": {
+              "entityId": "parity",
+              "id": "parity",
+              "revision": 7,
+              "distance": 8.00001335144043,
+              "emissionTime": 10000001.999986649,
+              "properTime": 9999993.261872768,
+              "position": [
+                9999994.502462387,
+                3.703532338142395,
+                0.23091506958007812
+              ],
+              "sourcePosition": [
+                9999994.502462387,
+                3.703532338142395,
+                0.23091506958007812
+              ],
+              "doppler": 0.7417941689491272,
+              "emissionTimeOffset": -8.00001335144043,
+              "properTimeOffset": -7.7381272315979,
+              "positionOffset": [
+                -5.497537612915039,
+                0.703532338142395,
+                -5.769084930419922
+              ],
+              "clockBase": 10000001,
+              "segmentIndex": 0,
+              "mirrored": false
+            }
+          },
+          {
+            "shape": "disk",
+            "beta": 0.6,
+            "translation": 10000000,
+            "mirrored": false,
+            "x": 0,
+            "cpu": {
+              "entityId": "parity",
+              "id": "parity",
+              "revision": 7,
+              "distance": 8.000000026027605,
+              "emissionTime": 10000001.999999974,
+              "properTime": 9999993.26188651,
+              "position": [
+                9999994.502471657,
+                3.703531137325832,
+                0.23092499010675027
+              ],
+              "sourcePosition": [
+                9999994.502471657,
+                3.703531137325832,
+                0.23092499010675027
+              ],
+              "restPosition": [
+                -4.737339409643937e-09,
+                0,
+                -2.4989514901818666e-08
+              ],
+              "normal": [
+                0.09537450575679465,
+                0.9810316271289851,
+                0.1687621113410926
+              ],
+              "historical": true,
+              "segmentIndex": 0,
+              "mirrored": false,
+              "doppler": 0.7417941970317781
+            },
+            "gpu": {
+              "entityId": "parity",
+              "id": "parity",
+              "revision": 7,
+              "distance": 8.00001335144043,
+              "emissionTime": 10000001.999986649,
+              "properTime": 9999993.261872768,
+              "position": [
+                9999994.502462387,
+                3.703532338142395,
+                0.23091506958007812
+              ],
+              "sourcePosition": [
+                9999994.502462387,
+                3.703532338142395,
+                0.23091506958007812
+              ],
+              "doppler": 0.7417941689491272,
+              "emissionTimeOffset": -8.00001335144043,
+              "properTimeOffset": -7.7381272315979,
+              "positionOffset": [
+                -5.497537612915039,
+                0.703532338142395,
+                -5.769084930419922
+              ],
+              "clockBase": 10000001,
+              "segmentIndex": 0,
+              "mirrored": false
+            }
+          }
+        ],
+        "failures": [],
+        "maxima": {
+          "distance": 2.206649595137833e-05,
+          "emissionTime": 2.2066757082939148e-05,
+          "properTime": 1.8854203919005386e-05,
+          "doppler": 7.705536651803069e-07,
+          "position": 2.1463260054588318e-05,
+          "relativeDistance": 2.6001457956325554e-06,
+          "relativeDoppler": 7.705536651803069e-07
+        },
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        },
+        "precision": {
+          "bits": 23,
+          "rangeMin": 127,
+          "rangeMax": 127
+        },
+        "browser": "147.0.7727.15"
+      },
+      "sr-accelerated-event.json": {
+        "cpu": {
+          "entityId": "object-5",
+          "id": "object-5",
+          "revision": 109,
+          "distance": 0.09565109138610937,
+          "emissionTime": 0.9043489086138895,
+          "properTime": 0.8760965386591321,
+          "position": [
+            0.194887997612662,
+            3,
+            0.00018224194722284148
+          ],
+          "sourcePosition": [
+            0.194887997612662,
+            3,
+            0.00018224194722284148
+          ],
+          "restPosition": [
+            -8.238854697366947e-05,
+            0,
+            0.00018224194722283755
+          ],
+          "normal": [
+            -0.411942734868335,
+            0,
+            0.9112097361141379
+          ],
+          "historical": true,
+          "segmentIndex": 108,
+          "mirrored": false,
+          "doppler": 0.9112097361141634
+        },
+        "gpu": {
+          "entityId": "object-5",
+          "id": "object-5",
+          "revision": 109,
+          "distance": 0.09565109014511108,
+          "emissionTime": 0.9043489098548878,
+          "properTime": 0.8760965765592603,
+          "position": [
+            0.194887997612662,
+            3,
+            0.00018224318822113172
+          ],
+          "sourcePosition": [
+            0.194887997612662,
+            3,
+            0.00018224318822113172
+          ],
+          "doppler": 0.911209762096405,
+          "emissionTimeOffset": -0.09565109014511108,
+          "properTimeOffset": -0.08712422847747803,
+          "positionOffset": [
+            0,
+            0,
+            -0.09565109014511108
+          ],
+          "clockBase": 0.9632208050367383,
+          "segmentIndex": 108,
+          "mirrored": false
+        },
+        "segment": {
+          "entityId": "object-5",
+          "revision": 109,
+          "start": 0.8999999999999992,
+          "end": 0.9083333333333325,
+          "originTime": 0.8999999999999992,
+          "position": [
+            0.19317156955071055,
+            3,
+            0
+          ],
+          "velocity": [
+            0.41194273486827804,
+            0,
+            0
+          ],
+          "size": [
+            0.0004,
+            0.0004,
+            0.0004
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "shape": "beacon",
+          "color": [
+            0.15,
+            0.7,
+            1
+          ],
+          "emission": 1,
+          "clockOffset": 0.8720998314253223,
+          "name": "Geometric object",
+          "mass": 1,
+          "spectral": "white",
+          "integratorVersion": "sr-coordinate-force-kdk-v2",
+          "capApplied": false
+        }
+      },
+      "sr-conditioning-evidence.json": {
+        "rows": [
+          {
+            "delta": -0.0001,
+            "cpu": {
+              "entityId": "sphere",
+              "id": "sphere",
+              "revision": 1,
+              "distance": 5.8903666722041015,
+              "emissionTime": -5.8903666722041015,
+              "properTime": -5.8903666722041015,
+              "position": [
+                0.9814017647396669,
+                3,
+                0.19196503891559846
+              ],
+              "sourcePosition": [
+                0.9814017647396669,
+                3,
+                0.19196503891559846
+              ],
+              "restPosition": [
+                0.9814017647396669,
+                0,
+                0.19196503891559846
+              ],
+              "normal": [
+                0.9814017647396671,
+                0,
+                0.19196503891559852
+              ],
+              "historical": false,
+              "segmentIndex": 0,
+              "mirrored": false,
+              "doppler": 1
+            },
+            "gpu": {
+              "entityId": "sphere",
+              "id": "sphere",
+              "revision": 1,
+              "distance": 5.890320301055908,
+              "emissionTime": -5.890320301055908,
+              "properTime": -5.890320301055908,
+              "position": [
+                0.9813939332962036,
+                3,
+                0.19201087951660156
+              ],
+              "sourcePosition": [
+                0.9813939332962036,
+                3,
+                0.19201087951660156
+              ],
+              "doppler": 1,
+              "emissionTimeOffset": -5.890320301055908,
+              "properTimeOffset": -5.890320301055908,
+              "positionOffset": [
+                0.9813939332962036,
+                0,
+                -5.807989120483398
+              ],
+              "clockBase": 0,
+              "segmentIndex": 0,
+              "mirrored": false
+            }
+          },
+          {
+            "delta": 0,
+            "cpu": {
+              "entityId": "sphere",
+              "id": "sphere",
+              "revision": 1,
+              "distance": 5.916079783099616,
+              "emissionTime": -5.916079783099616,
+              "properTime": -5.916079783099616,
+              "position": [
+                0.9860132971832694,
+                3,
+                0.16666666666666607
+              ],
+              "sourcePosition": [
+                0.9860132971832694,
+                3,
+                0.16666666666666607
+              ],
+              "restPosition": [
+                0.9860132971832694,
+                0,
+                0.16666666666666607
+              ],
+              "normal": [
+                0.9860132971832694,
+                0,
+                0.16666666666666607
+              ],
+              "historical": false,
+              "segmentIndex": 0,
+              "mirrored": false,
+              "doppler": 1
+            },
+            "gpu": null
+          },
+          {
+            "delta": 0.0001,
+            "cpu": null,
+            "gpu": null
+          }
+        ],
+        "distances": [
+          {
+            "expected": 0.009000000000000001,
+            "cpu": {
+              "entityId": "sphere",
+              "id": "sphere",
+              "revision": 1,
+              "distance": 0.008999999999999788,
+              "emissionTime": -0.008999999999999788,
+              "properTime": -0.008999999999999788,
+              "position": [
+                0,
+                3,
+                5.9910000000000005
+              ],
+              "sourcePosition": [
+                0,
+                3,
+                5.9910000000000005
+              ],
+              "restPosition": [
+                0,
+                0,
+                0.001
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ],
+              "historical": false,
+              "segmentIndex": 0,
+              "mirrored": false,
+              "doppler": 1
+            },
+            "gpu": {
+              "entityId": "sphere",
+              "id": "sphere",
+              "revision": 1,
+              "distance": 0.009000007063150406,
+              "emissionTime": -0.009000007063150406,
+              "properTime": -0.009000007063150406,
+              "position": [
+                0,
+                3,
+                5.99099999293685
+              ],
+              "sourcePosition": [
+                0,
+                3,
+                5.99099999293685
+              ],
+              "doppler": 1,
+              "emissionTimeOffset": -0.009000007063150406,
+              "properTimeOffset": -0.009000007063150406,
+              "positionOffset": [
+                0,
+                0,
+                -0.009000007063150406
+              ],
+              "clockBase": 0,
+              "segmentIndex": 0,
+              "mirrored": false
+            }
+          },
+          {
+            "expected": 49,
+            "cpu": {
+              "entityId": "sphere",
+              "id": "sphere",
+              "revision": 1,
+              "distance": 49,
+              "emissionTime": -49,
+              "properTime": -49,
+              "position": [
+                0,
+                3,
+                -43
+              ],
+              "sourcePosition": [
+                0,
+                3,
+                -43
+              ],
+              "restPosition": [
+                0,
+                0,
+                1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ],
+              "historical": false,
+              "segmentIndex": 0,
+              "mirrored": false,
+              "doppler": 1
+            },
+            "gpu": {
+              "entityId": "sphere",
+              "id": "sphere",
+              "revision": 1,
+              "distance": 49,
+              "emissionTime": -49,
+              "properTime": -49,
+              "position": [
+                0,
+                3,
+                -43
+              ],
+              "sourcePosition": [
+                0,
+                3,
+                -43
+              ],
+              "doppler": 1,
+              "emissionTimeOffset": -49,
+              "properTimeOffset": -49,
+              "positionOffset": [
+                0,
+                0,
+                -49
+              ],
+              "clockBase": 0,
+              "segmentIndex": 0,
+              "mirrored": false
+            }
+          }
+        ]
+      },
+      "sr-spectral-evidence.json": {
+        "failures": [],
+        "samples": 192,
+        "maxRelativeError": 1.238968328709511e-06,
+        "paths": [
+          {
+            "pitch": 0.3,
+            "off": [
+              0.01710236631333828,
+              0.0245966799557209,
+              0.04374244064092636
+            ],
+            "on": [
+              0.01710236631333828,
+              0.0245966799557209,
+              0.04374244064092636
+            ]
+          },
+          {
+            "pitch": -0.6,
+            "off": [
+              0.1602652221918106,
+              0.33007287979125977,
+              0.4169839322566986
+            ],
+            "on": [
+              0.1602652221918106,
+              0.33007287979125977,
+              0.4169839322566986
+            ]
+          }
+        ],
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        }
+      }
+    },
+    "local_artifact_sha256": {
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-black-hole-actual-87f03-c-critical-impact-parameter-chromium/black-hole-shadow-gpu.json": "0156abdb83d39790b448e6fd6a2cc858d93e999fdf474f049cc1b7c4c7ad76fb",
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-black-hole-actual-bb519-dent-Schwarzschild-controls-chromium/black-hole-finite-shell-gpu.json": "ed51e3ffa3c0f7ff4cffb4b16b46bfdcf9a1ecbfbd961555ff7ce1d4a01d0471",
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-black-hole-actual-3a34a-rizon-clock-or-shadow-color-chromium/black-hole-unresolved-gpu.json": "4e2870443a79fb24cdf8018939e08c54a4b8bc429043849ef4c25eeae9be0260",
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-black-hole-black--8ce0b-l-graphics-context-recovery-chromium/black-hole-context-gpu.json": "9981b05caa3bc607b62e6bc1f3edb1f612eab762738ac50ecf8ef9ba40e2b079",
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-black-hole-public-a9d41-d-portable-model-boundaries-chromium/black-hole-session-browser.json": "f019712ddd3f6ca682bab5ef85ada437c2edf21ae8885e26223fadc369bff08e",
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-compact-star-Schw-ca4b7-ler-match-Float64-geodesics-chromium/compact-star-gpu-evidence.json": "c070146b7e5b75185f4506d115216209194c964ae2448b4937ca330c7655cea0",
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-compact-star-GR-G-2867d-d-a-real-WebGL-context-loss-chromium/compact-star-context-evidence.json": "b1009e4438fd64cb9792a3e2d23263b97b1acf34569e90f6149eab65282dbb55",
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-sr-gpu-compiled-G-08144-agree-with-Float64-geometry-chromium/sr-gpu-evidence.json": "fbc3d057362d611d16d28018e2a467886d93bd3f5a56018dc0329f71428172d2",
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-sr-gpu-actual-acc-29214-ical-CPU-GPU-clock-evidence-chromium/sr-accelerated-event.json": "09db2e0dc102d295fc13f9dbbc9827bcac8e533e87b50ba792ea6a6daba0f004",
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-sr-gpu-sphere-sil-3b22d--geometric-precision-budget-chromium/sr-conditioning-evidence.json": "9d86bea860d55635be45ed9a65e2c229a9726542633f5005bf17dc87126423f7",
+      "engine/web/validation/minds-eye-horizon/browser-final-attempt-3/observer-sr-spectral-compi-b0f64-eline-on-every-display-path-chromium/sr-spectral-evidence.json": "56feba2a896c4e84c9cb4057e27f13a97f2eb39b75e9733211b30aa77852a8a1"
+    }
+  },
+  "intermediate_findings_resolved": [
+    {
+      "run": "gpu-attempt-1",
+      "finding": "768 steps did not resolve a one-percent-outside-shadow ray",
+      "repair": "1536-step budget; unresolved remains explicit"
+    },
+    {
+      "run": "browser-final-attempt-1",
+      "finding": "Tooltip popup intercepted an adjacent Save world click; broad run stopped",
+      "repair": "Pointer-transparent popup with geometry-based hover persistence and placement; normal-click regression"
+    },
+    {
+      "run": "tooltips-final-attempt-1",
+      "finding": "Test setup used Locator.hover for pointer-transparent HUD and counted an unrelated dashboard tooltip",
+      "repair": "Real mouse motion at HUD bounds; Observer-scoped disposal check"
+    },
+    {
+      "run": "browser-final-attempt-2",
+      "passed": 83,
+      "failed": 2,
+      "finding": "Near-critical test assumed aspect 1 while harness used 1.6; old drawer test assumed Escape bypassed the new visible tooltip",
+      "repair": "Square renderer and explicit tooltip-before-drawer Escape behavior"
+    },
+    {
+      "run": "browser-final-attempt-3",
+      "passed": 84,
+      "failed": 1,
+      "finding": "Worldline popup overlapped the adjacent history readout and retained its explanation",
+      "repair": "Place pointer-transparent HUD explanations beside the information cluster; unchanged actual mouse regression passed twice, then affected UI integration checks passed"
+    },
+    {
+      "review": "Independent final mathematics and provenance audit",
+      "finding": "Escaped sky witness implied a proper source clock with no declared origin; copy conflated source hits with sky witnesses",
+      "repair": "properTime:null, explicit prescribed-sky provenance, distinct gravitational/local SR factor equations"
+    }
+  ],
+  "ci_repair_baseline": {
+    "commit": "aa2ddf5dee73c1b42432b686793b3648a5a14199",
+    "hosted_workflows": {
+      "CI": "https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/actions/runs/37102611976",
+      "Web Source Gate": "https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/actions/runs/37102611972",
+      "Engine CPU Source Gate": "https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/actions/runs/37102611964",
+      "Deploy to GitHub Pages": "https://github.com/cpaci-tani/Foundational-Ternary-Dynamics/actions/runs/37102611965"
+    },
+    "all_conclusions": "success",
+    "python_3_12": {
+      "passed": 7361,
+      "skipped": 154,
+      "deselected": 1758,
+      "seconds": 1039.31
+    },
+    "compute_policy": "Automatic Python 3.12 budget, path routing, concurrency/timeouts/caches and reuse of completed identical successful PR Git trees. Manual compatibility/exhaustive lanes retained."
+  },
+  "unrelated_workspace_preservation": {
+    "paths": 24,
+    "recorded_raw_contents_unchanged": true
+  },
+  "limitations": [
+    "Nonrotating uncharged vacuum exterior; no Kerr/frame dragging, charge, accretion, atmosphere, Hawking radiation, interior or backreaction.",
+    "Observer chart is exterior only; an explicit guard or 0.99c local navigation limit stops integration. This is not a physical horizon impact or horizon crossing.",
+    "Fixed finite stationary sky boundary is a prescribed source at all reference coordinate times with no source entity, source proper clock or retained entity history.",
+    "Near-critical precision/step limits remain unresolved. Fixed-case errors do not constitute a uniform numerical accuracy proof.",
+    "Live black-hole optical telemetry is labeled Float64 CPU geodesic; hardware certification comes from separate production GPU readback regressions."
+  ]
+}

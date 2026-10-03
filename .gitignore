@@ -307,3 +307,4 @@ docs/theory/**/AUDIT_*.md
 !engine/web/docs/AUDIT_MINDS_EYE_SR_REPAIR.md
 !engine/web/docs/REF_MINDS_EYE_COMPACT_STAR.md
 !engine/web/docs/REF_MINDS_EYE_TELEMETRY.md
+!engine/web/docs/REF_MINDS_EYE_BLACK_HOLE.md
