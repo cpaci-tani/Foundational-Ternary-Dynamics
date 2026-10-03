@@ -1,6 +1,7 @@
 /** Actual WebGL2 Schwarzschild null-geodesic integration. Paired Float64 oracle
  * lives in compact-star.js; GPU parity is measured by float-target readback.
  */
+import {LINE_SPECTRUM_GLSL} from './spectrum-shaders.js';
 export const SCHWARZSCHILD_GLSL = `
 uniform vec3 uStarCenter;
 uniform float uStarRs,uStarRadius,uStarEscape;
@@ -85,7 +86,7 @@ vec4 tex(sampler2D s,int i){ivec2 size=textureSize(s,0);return texelFetch(s,ivec
 vec4 record(int i,int field){return tex(uSegments,i*8+field);}
 float gm(vec3 v){return inversesqrt(max(1.-dot(v,v),.000001));}
 vec3 boostSpace(vec3 x,float t,vec3 v){float g=gm(v);return x+(g*g/(g+1.)*dot(v,x)+g*t)*v;}
-vec3 spectrum(float wavelength){return vec3(exp(-.5*pow((wavelength-610.)/35.,2.)),exp(-.5*pow((wavelength-545.)/30.,2.)),exp(-.5*pow((wavelength-455.)/25.,2.)));}
+${LINE_SPECTRUM_GLSL}
 vec3 shifted(vec3 color,float factor){float D=uOptical&&uDoppler?factor:1.;return color.r*spectrum(610./D)+color.g*spectrum(545./D)+color.b*spectrum(455./D);}
 ${COMPACT_STAR_GLSL}
 void main(){

@@ -1,6 +1,7 @@
 /** Production Schwarzschild black-hole null rays. A captured ray has no
  * emitting horizon. Unresolved rays have their own diagnostic color/status. */
 import {SCHWARZSCHILD_GLSL} from './compact-star-shaders.js';
+import {LINE_SPECTRUM_GLSL} from './spectrum-shaders.js';
 export const blackHoleFragmentShader=`
 precision highp float;
 precision highp int;
@@ -13,7 +14,7 @@ uniform vec3 uVelocity,uForward,uRight,uUp;
 uniform float uFov,uAspect;
 float gm(vec3 v){return inversesqrt(max(1.-dot(v,v),.000001));}
 vec3 boostSpace(vec3 x,float t,vec3 v){float g=gm(v);return x+(g*g/(g+1.)*dot(v,x)+g*t)*v;}
-vec3 spectrum(float wavelength){return vec3(exp(-.5*pow((wavelength-610.)/35.,2.)),exp(-.5*pow((wavelength-545.)/30.,2.)),exp(-.5*pow((wavelength-455.)/25.,2.)));}
+${LINE_SPECTRUM_GLSL}
 vec3 shifted(vec3 color,float factor){float D=uOptical&&uDoppler?factor:1.;return color.r*spectrum(610./D)+color.g*spectrum(545./D)+color.b*spectrum(455./D);}
 ${SCHWARZSCHILD_GLSL}
 vec4 renderBlackHole(vec3 restDirection){

@@ -139,3 +139,12 @@ The numerical tolerances and executed results are recorded separately with
 source hashes; fixed cases do not provide a universal integration-error bound.
 See [the horizon and tooltip verification record](MINDS_EYE_HORIZON_EVIDENCE.json)
 for the executed Node/browser suites and production hardware framebuffer data.
+
+The subsequent [Gaussian portability correction](MINDS_EYE_GAUSSIAN_PORTABILITY_EVIDENCE.json)
+replaces signed-base `pow(z, 2.)` with `z*z` in one shared display-response function
+used by the Minkowski, stellar and black-hole materials.
+[GLSL ES section 8.2](https://registry.khronos.org/OpenGL/specs/es/3.2/GLSL_ES_Specification_3.20.html#exponential-functions)
+leaves negative-base `pow` undefined even for that exponent. The earlier hardware
+pass does not establish language portability. The correction preserves the
+reference wavelengths, response widths and physical frequency calculation;
+source-domain checks and real GPU probes cover both signs of the offsets.
