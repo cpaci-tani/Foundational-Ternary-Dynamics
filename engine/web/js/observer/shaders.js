@@ -1,5 +1,6 @@
 /** WebGL2 first-hit ray tracing. Optical rays and picking execute this same program. */
 import { FRACTAL_GLSL } from './fractal-shaders.js';
+import { LINE_SPECTRUM_GLSL } from './spectrum-shaders.js';
 export const observerVertexShader = `
 precision highp float;
 in vec3 position;
@@ -96,7 +97,7 @@ bool segmentHit(int index,vec3 rayOrigin,vec3 direction,float timeSlope,inout fl
     return true;
 }
 float hash(vec3 p){p=fract(p*.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}
-vec3 spectrum(float wavelength){return vec3(exp(-.5*pow((wavelength-610.)/35.,2.)),exp(-.5*pow((wavelength-545.)/30.,2.)),exp(-.5*pow((wavelength-455.)/25.,2.)));}
+${LINE_SPECTRUM_GLSL}
 vec3 shifted(vec3 color,float factor){float D=uOptical&&uDoppler?factor:1.;return color.r*spectrum(610./D)+color.g*spectrum(545./D)+color.b*spectrum(455./D);}
 float line(float coordinate,float width){return 1.-smoothstep(width,width*2.,abs(coordinate));}
 ${FRACTAL_GLSL}

@@ -2,6 +2,20 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {REFERENCE_WAVELENGTHS_NM,referenceLineWeights,spectrumToLinearDisplay,displayLineSpectrum} from '../js/observer/spectrum.js';
 import {dopplerFactor} from '../js/observer/math.js';
+import {observerFragmentShader} from '../js/observer/shaders.js';
+import {compactStarFragmentShader} from '../js/observer/compact-star-shaders.js';
+import {blackHoleFragmentShader} from '../js/observer/black-hole-shaders.js';
+
+test('production Gaussian display responses avoid pow on signed wavelength offsets',()=>{
+    // GLSL ES 3.20 section 8.2 leaves pow(x,y) undefined for x<0, including y=2.
+    // This language-domain control is required even when a GPU happens to pass.
+    for(const [name,shader] of Object.entries({Minkowski:observerFragmentShader,star:compactStarFragmentShader,blackHole:blackHoleFragmentShader})){
+        const definitions=[...shader.matchAll(/vec3\s+spectrum\s*\(float\s+wavelength\)\s*\{([^}]*)\}/g)];
+        assert.equal(definitions.length,1,`${name} has one production display response`);
+        const body=definitions[0][1].replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g,'');
+        assert.doesNotMatch(body,/\bpow\s*\(/,`${name}: Gaussian offsets can be negative`);
+    }
+});
 
 test('reference wavelengths and frequency ratios transform before approximate RGB display',()=>{
     const c=299792458;
