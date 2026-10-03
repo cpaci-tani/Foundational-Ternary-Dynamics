@@ -23,6 +23,37 @@ def test_registered_twelve_intervals_equal_predecessor_and_cover_all_eight_direc
     assert not report['interacting_fluid_continuum_recovered']
 
 
+@pytest.mark.parametrize("module", [Q, OLD], ids=["recorded", "routing"])
+@pytest.mark.parametrize("ambient_precision", [79, 257])
+@pytest.mark.parametrize("fail", [False, True], ids=["success", "exception"])
+def test_certificate_uses_exact_precision_and_restores_caller_context(
+        module, ambient_precision, fail, monkeypatch):
+    previous_precision = flint.ctx.prec
+    original_bound = module.heat_error_bound
+    observed_precision = []
+
+    def check_precision(*args):
+        observed_precision.append(flint.ctx.prec)
+        if fail:
+            raise RuntimeError("comparison interrupted")
+        return original_bound(*args)
+
+    monkeypatch.setattr(module, "heat_error_bound", check_precision)
+    flint.ctx.prec = ambient_precision
+    try:
+        if fail:
+            with pytest.raises(RuntimeError, match="comparison interrupted"):
+                module.certificate()
+        else:
+            report = module.certificate()
+            assert report["precision_bits"] == 192
+            assert len(report["probes"]) == 12
+        assert observed_precision == [192] * (1 if fail else 12)
+        assert flint.ctx.prec == ambient_precision
+    finally:
+        flint.ctx.prec = previous_precision
+
+
 @pytest.mark.parametrize("code", range(8))
 def test_exact_signed_freshness_inequality_and_word_probability(code):
     D = R.CORNERS[code]

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "evidence": "Baseline CI run 37088422440 and the complete local Python 3.12 regression run on 2026-10-03 identify these costly finite certificates. Local 24-worker timings measure contention and are not hosted-runtime estimates. This boundary changes hosted scheduling only.",
+  "functions": [
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_alignment.py::test_complete_finite_certificate_and_unchanged_original_identity",
+      "reason": "Exhausts 55,008 collision rows, 110,016 polarity checks and 48 cubic transformations."
+    },
+    {
+      "node": "scripts/tests/test_gstar_matrix_models.py::test_full_suite_subprocess",
+      "reason": "Runs the complete 155-check symbolic proof subprocess; inline algebraic identities stay automatic."
+    },
+    {
+      "node": "scripts/tests/test_minimal_many_body_matter_network.py::test_exact_minimal_many_body_matter_network_certificate",
+      "reason": "Runs the complete many-body finite certificate."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_credit_exchange_binding.py::test_all_cubic_actions_balanced_compositions_backgrounds_and_nineteen_phases",
+      "reason": "Exhaustive charge, triad, phase and cubic-action product."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_credit_exchange_binding.py::test_signed_unit_translations_and_C_all_phases",
+      "reason": "Exhaustive charge, triad, phase and signed-translation product."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_credit_exchange_binding.py::test_actual_credit_exchange_state_and_events_all_cubic_actions_and_C",
+      "reason": "Exhaustive complete-state credit-exchange cubic-action product."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_credit_exchange_binding.py::test_every_hop_account_case_and_attempt_eligibility",
+      "reason": "Exhaustive hop/account/attempt eligibility matrix."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_credit_exchange_binding.py::test_constructive_38_charged_tick_complete_translation_all_directions_and_roles",
+      "reason": "Full 38-tick translation histories across charge, triad, direction and role choices."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_sparse_credit_exchange_q4.py::test_all_topology_background_phase_parity",
+      "reason": "Full topology/background/19-phase dense-versus-sparse matrix."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_sparse_credit_exchange_q4.py::test_all_attempts_headings_local_branches",
+      "reason": "Full attempt/heading/19-phase dense-versus-sparse matrix."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_sparse_credit_exchange_q4.py::test_all_768_labelled_actions",
+      "reason": "Exhaustive 768 labelled cubic actions over every phase."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_balanced_matching.py::test_full_spatial_and_balanced_compositions_all_backgrounds_and_phases",
+      "reason": "Full charge/triad/12-phase/cubic-action composition matrix."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_balanced_matching.py::test_every_signed_unit_translation_and_C_composition_all_phases",
+      "reason": "Full charge/triad/12-phase signed-translation matrix."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_balanced_matching.py::test_all_hop_classes_in_physical_polarity_and_background",
+      "reason": "Full hop/polarity/background finite matrix."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_staged_alignment.py::test_locked_56_microtick_formation_histories",
+      "reason": "Full 56-microtick witness/background/polarity/placement histories."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/test_staged_alignment.py::test_locked_separated_same_flag_nonrestoring_control",
+      "reason": "Full 56-microtick background/polarity/placement negative-control histories."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/hydro/test_invariants.py::test_census_reports_isotropy_and_dimension",
+      "reason": "Full 2^24-state collision census and exact nullspace; local parallel call took 194 seconds. The independent fixed-kernel invariant test remains automatic."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/hydro/test_campaign.py::test_noiseless_prediction_trajectory_passes_acceptance_for_every_powered_l32_m1_shear_cell",
+      "reason": "All powered L32/m1 shear-cell predicted histories; local parallel call took 188 seconds."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/hydro/test_campaign.py::test_power_calculation_flags_low_amplitude_high_epsilon_cells_as_underpowered",
+      "reason": "Complete finite campaign power table; local parallel call took 186 seconds. Ordinary acceptance/threshold/control tests remain automatic."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/hydro/test_campaign.py::test_k4_systematic_reported_and_nonzero_for_cells_with_an_exact_reference",
+      "reason": "Complete power-table comparison against exact-reference cells; local parallel call took 173 seconds."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/hydro/test_tables.py::test_no_admissible_pair_left_unpaired",
+      "reason": "Exhaustive unpaired census of the 2^24-entry collision table; local parallel call took 157 seconds. Hash/singleton/two-body/local-collision tests remain automatic."
+    },
+    {
+      "node": "scripts/tests/phi_v2_lattice/hydro/test_tables.py::test_involution_conservation_and_equivariance",
+      "reason": "Exhaustive whole-table involution/conservation/equivariance certificate; local parallel call took 74 seconds."
+    }
+  ]
+}

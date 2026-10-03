@@ -181,19 +181,23 @@ def kick_full_endpoint(state, v):
     return result
 
 
-def test_preimplementation_spec_and_frozen_dependency_identities():
+def test_frozen_dependency_identities():
     expected = ((B.__file__, "5bd68b23b7dfa089103e4c593cbb4a739d0ed395e828112ab84d2dc5bc7e2c62"),
                 (M.__file__, "f81c72673159142158f863d06e8d5b3847d4e239f8df8752c2efbbf0e6a97172"),
                 (OLD.__file__, "33203442187324ebf8d0f4c47668ffe0f3c5aa2d918284dab46fdb4aa6991740"),
                 (R.__file__, "b2eec1c5d7fb4f180df56626b24e531e1eb2c3c238b09e966f11a8c94abacb52"))
     for filename, expected_hash in expected:
         assert hashlib.sha256(Path(filename).read_bytes()).hexdigest() == expected_hash
-    spec = Path(E.__file__).parents[2] / "engine/docs/SPEC_STRICT_CREDIT_EXCHANGE_BINDING_V1.md"
-    assert hashlib.sha256(spec.read_bytes()).hexdigest() == "13141e269ff91458b96744f3ec2b2ea87cc4ee13b3d7f3fe75df80308ea8e106"
     assert E.seed_background is M.seed_background and E.seed_charge_frame is B.seed_charge_frame
     assert E.FRAME_HASH == M.FRAME_HASH and len(E.TRIADS) == 48
     with pytest.raises(TypeError):
         E.RULE_DESCRIPTION["law"] = "foreign"
+
+
+def test_retained_preimplementation_spec_identity():
+    # This frozen local-only document is a retained-evidence prerequisite.
+    spec = Path(E.__file__).parents[2] / "engine/docs/SPEC_STRICT_CREDIT_EXCHANGE_BINDING_V1.md"
+    assert hashlib.sha256(spec.read_bytes()).hexdigest() == "13141e269ff91458b96744f3ec2b2ea87cc4ee13b3d7f3fe75df80308ea8e106"
 
 
 @pytest.mark.parametrize("eta,code", product(range(2), range(48)))

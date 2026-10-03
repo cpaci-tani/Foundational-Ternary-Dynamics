@@ -61,7 +61,10 @@ def predict_densities(initial, cycles, corner_direction):
 
 def certificate():
     rows = []
-    with flint.ctx.workprec(192):
+    # ctx.workprec was added in python-flint 0.7; Python 3.10 uses 0.6.
+    saved_precision = flint.ctx.prec
+    flint.ctx.prec = 192
+    try:
         for m in SPACINGS:
             for wave in PROBES:
                 norm2 = sum(x * x for x in wave)
@@ -79,6 +82,8 @@ def certificate():
                              "heat_expectation_enclosure": str(continuum),
                              "absolute_error_enclosure": str(error), "complete_error_bound": str(bound),
                              "certified_below_bound": True})
+    finally:
+        flint.ctx.prec = saved_precision
     return {"schema": "strict-recorded-routing-continuum-1", "law_id": R.LAW_ID,
             "scope": "conditional constant recorded D; full prepared ensemble at L>3T; weak C4 heat comparison",
             "corner_vectors": [list(d) for d in R.CORNERS], "directions_covered_per_probe": 8,

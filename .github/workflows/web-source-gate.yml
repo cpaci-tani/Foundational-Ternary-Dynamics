@@ -5,6 +5,7 @@ on:
     branches: [main, develop]
     paths:
       - '.github/workflows/web-source-gate.yml'
+      - 'scripts/ci/**'
       - '.dependency-cruiser.json'
       - '.stylelintrc.json'
       - 'package.json'
@@ -15,26 +16,53 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/web-source-gate.yml'
+      - 'scripts/ci/**'
       - '.dependency-cruiser.json'
       - '.stylelintrc.json'
       - 'package.json'
       - 'package-lock.json'
       - 'tsconfig*.json'
       - 'engine/web/**'
+  workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
+
+concurrency:
+  group: web-source-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  source-and-shell:
+  changes:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 3
+    outputs:
+      run: ${{ steps.paths.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Route changes and reuse successful identical PR checks
+        id: paths
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/ci/ci_changes.py --workflow web-source-gate.yml --scope web
+
+  source-and-shell:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            engine/web/tests/package-lock.json
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'

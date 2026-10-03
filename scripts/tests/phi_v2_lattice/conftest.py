@@ -15,6 +15,9 @@ _HISTORICAL_MODULES = {
         "historical topology/source pins and retained native audit/build evidence",
 }
 _HISTORICAL_FUNCTIONS = {
+    "test_credit_exchange_binding.py": {
+        "test_retained_preimplementation_spec_identity",
+    },
     "test_recovery_wave7_evidence.py": {
         "test_frozen_census_reduces_every_retained_count",
         "test_rehashed_census_cannot_change_observable_or_law",

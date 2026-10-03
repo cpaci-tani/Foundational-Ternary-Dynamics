@@ -32,6 +32,21 @@ python -m pytest scripts/tests/
 python scripts/proofs/proof_master_verification.py
 ```
 
+Hosted CI routes checks by changed files and runs Python 3.12 without coverage
+instrumentation. Its automatic budget defers the exact exhaustive functions in
+[the compute manifest](scripts/ci/manual_tests.json); ordinary local pytest
+remains unfiltered. Reproduce the hosted selection with:
+
+```bash
+python -m pytest scripts/tests/ -p scripts.ci.pytest_budget --ci-budget
+```
+
+Use the CI workflow's manual `full` input for the complete ordinary suite, and
+its `compatibility` input for Python 3.10/3.11/3.12. Historical checks still
+require their local prerequisites and the separate `--retained-evidence` option.
+Successful PR checks can be reused after merging only when the source trees
+match; newer source runs cancel obsolete runs.
+
 For C++ engine work:
 
 ```bash

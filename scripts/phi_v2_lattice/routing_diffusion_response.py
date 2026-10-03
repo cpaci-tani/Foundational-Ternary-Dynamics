@@ -55,7 +55,10 @@ def heat_error_bound(spacing, time, diffusion, pure_fourth_sum, laplacian_square
 
 def certificate():
     rows = []
-    with flint.ctx.workprec(192):
+    # ctx.workprec was added in python-flint 0.7; Python 3.10 uses 0.6.
+    saved_precision = flint.ctx.prec
+    flint.ctx.prec = 192
+    try:
         for m in SPACINGS:
             for wave in PROBES:
                 norm2 = sum(x * x for x in wave)
@@ -75,6 +78,8 @@ def certificate():
                              "heat_expectation_enclosure": str(continuum),
                              "absolute_error_enclosure": str(error), "complete_error_bound": str(bound),
                              "certified_below_bound": passed})
+    finally:
+        flint.ctx.prec = saved_precision
     return {"schema": "strict-routing-diffusion-continuum-1", "law_id": R.LAW_ID,
             "scope": "exact one-carrier path law and full-prepared-ensemble mean populations for L>3T; "
                      "weak C4 observable heat comparison under diffusive rescaling",

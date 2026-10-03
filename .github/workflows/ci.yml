@@ -1,5 +1,5 @@
 # FTD Continuous Integration Pipeline
-# Runs Python tests, linting, and static repository-integrity checks. Native
+# Runs relevant Python tests, linting, and static repository-integrity checks. Native
 # source changes have a separate focused Windows gate; full engine validation
 # remains local (ADR-0015). These checks do not certify physics claims.
 # Quarto manuscript is built locally (not in CI).
@@ -11,14 +11,56 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      full:
+        description: 'Run every ordinary Python regression, including exhaustive certificates'
+        type: boolean
+        default: false
+      compatibility:
+        description: 'Run the Python 3.10/3.11/3.12 compatibility matrix'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  changes:
     runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      python: ${{ steps.paths.outputs.python }}
+      lint: ${{ steps.paths.outputs.lint }}
+      integrity: ${{ steps.paths.outputs.integrity }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify check routing
+        run: python -m unittest discover -s scripts/ci -p 'test_*.py'
+      - name: Route changes and reuse successful identical PR checks
+        id: paths
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/ci/ci_changes.py --workflow ci.yml
+
+  test:
+    needs: changes
+    if: needs.changes.outputs.python == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ github.event_name == 'workflow_dispatch' && inputs.full && 90 || 20 }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        # One supported interpreter is the automatic gate. The compatibility
+        # matrix remains explicitly available, rather than tripling every edit.
+        python-version: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.compatibility && '["3.10", "3.11", "3.12"]' || '["3.12"]') }}
 
     steps:
       - uses: actions/checkout@v4
@@ -27,31 +69,49 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
           pip install -r requirements-dev.txt
 
       # 64 MiB build artifact, never committed; deterministic generator, and the
       # loader re-verifies the pinned SHA-256 (hydro/channels.py TABLE_HASH).
+      - name: Cache deterministic strict hydro collision table
+        id: hydro-table
+        uses: actions/cache@v4
+        with:
+          path: engine/build_strict_hydro_tables/*.u32
+          key: hydro-table-v1-${{ hashFiles('scripts/phi_v2_lattice/hydro/channels.py', 'scripts/phi_v2_lattice/hydro/experiments/generate_tables.py') }}
+
       - name: Generate strict hydro collision table
+        if: steps.hydro-table.outputs.cache-hit != 'true'
         working-directory: scripts
         run: python -m phi_v2_lattice.hydro.experiments.generate_tables
 
-      - name: Run tests with coverage
+      # The old coverage + three-interpreter jobs took 76--94 minutes each.
+      # Keep coverage overhead outside the automatic compute budget. Named
+      # exhaustive certificates remain available via the manual full input;
+      # ordinary validation, codec, and control cases stay in the cheap lane.
+      - name: Run Python regressions
+        env:
+          FTD_CI_FULL: ${{ github.event_name == 'workflow_dispatch' && inputs.full && '1' || '0' }}
         run: |
-          pytest scripts/tests/ --cov=scripts --cov-report=xml --cov-report=term-missing
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          file: ./coverage.xml
-          fail_ci_if_error: false
+          if [ "$FTD_CI_FULL" = "1" ]; then
+            python -m pytest scripts/tests/ --durations=20 -ra
+          else
+            python -m pytest scripts/tests/ -p scripts.ci.pytest_budget --ci-budget --durations=20 -ra
+          fi
 
   lint:
+    needs: changes
+    if: needs.changes.outputs.lint == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v4
@@ -72,7 +132,10 @@ jobs:
           ruff check scripts/verification/verify_index_links.py scripts/verification/check_manuscript_v2_propagation.py --output-format=github
 
   repository-integrity:
+    needs: changes
+    if: needs.changes.outputs.integrity == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v4

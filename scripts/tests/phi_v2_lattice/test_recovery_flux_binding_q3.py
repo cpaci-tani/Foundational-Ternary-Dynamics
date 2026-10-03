@@ -204,6 +204,20 @@ def test_campaign_retains_parent_failure_and_post_run_drift(tmp_path, monkeypatc
     sentinel = tmp_path/"test-only-pinned-input"
     sentinel.write_text("before", encoding="utf-8")
     monkeypatch.setattr(Q, "_accepted_upstream", lambda *args: [sentinel])
+    # Admission is already synthetic in this failure-injection control. Supply
+    # only its local-only document inputs; production admission remains strict.
+    checkout = tmp_path / "synthetic-checkout"
+    inputs = ("scripts/phi_v2_lattice/recovery_flux_binding_q3.py",
+              "scripts/tests/phi_v2_lattice/test_recovery_flux_binding_q3.py",
+              "scripts/phi_v2_lattice/recorded_matching.py", "scripts/phi_v2_lattice/flux_binding.py",
+              "engine/docs/DERIV_STRICT_FLUX_BINDING_Q3_V1.md",
+              "engine/docs/PROPOSAL_STRICT_BOUND_COMPOSITE_TRANSPORT_V1.md",
+              "engine/docs/AMENDMENT_STRICT_WAVE6_BALANCED_ORDER_V1.md")
+    for name in inputs:
+        fixture = checkout / name
+        fixture.parent.mkdir(parents=True, exist_ok=True)
+        fixture.write_text("synthetic test-only input " + name, encoding="utf-8")
+    monkeypatch.setattr(Q, "__file__", str(checkout / inputs[0]))
 
     def failed_graph():
         sentinel.write_text("after", encoding="utf-8")

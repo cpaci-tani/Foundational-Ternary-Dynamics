@@ -5,10 +5,12 @@ on:
     branches: [main, develop]
     paths:
       - '.github/workflows/engine-source-gate.yml'
+      - 'scripts/ci/**'
       - 'engine/CMakeLists.txt'
       - 'engine/cmake/**'
       - 'engine/include/**'
       - 'engine/src/**'
+      - 'engine/cuda/**'
       - 'engine/tests/*.cpp'
       - 'engine/tests/*.h'
       - 'engine/tests/**/*.cpp'
@@ -17,22 +19,47 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/engine-source-gate.yml'
+      - 'scripts/ci/**'
       - 'engine/CMakeLists.txt'
       - 'engine/cmake/**'
       - 'engine/include/**'
       - 'engine/src/**'
+      - 'engine/cuda/**'
       - 'engine/tests/*.cpp'
       - 'engine/tests/*.h'
       - 'engine/tests/**/*.cpp'
       - 'engine/tests/**/*.h'
+  workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
+
+concurrency:
+  group: engine-source-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      run: ${{ steps.paths.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Route changes and reuse successful identical PR checks
+        id: paths
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/ci/ci_changes.py --workflow engine-source-gate.yml --scope engine
+
   merge-gate:
+    needs: changes
+    if: needs.changes.outputs.run == 'true'
     runs-on: windows-latest
-    timeout-minutes: 60
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 

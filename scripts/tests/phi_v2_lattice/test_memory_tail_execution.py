@@ -389,7 +389,24 @@ def test_admission_rejects_missing_or_changed_readiness_inputs(tmp_path, monkeyp
         R.accepted_inputs(prepared, path, R._sha(path))
 
 
-def test_all_runtime_project_imports_are_directly_pinned():
+def test_all_runtime_project_imports_are_directly_pinned(tmp_path, monkeypatch):
+    # The source closure is tested with a synthetic specification, without
+    # requiring the ignored local scientific registration in a public checkout.
+    fixtures = {}
+    for index, name in enumerate(R.PINNED):
+        if not name.startswith("engine/docs/"):
+            continue
+        fixture = tmp_path / str(index)
+        fixture.write_text("synthetic test-only registration " + name, encoding="utf-8")
+        fixtures[name] = fixture
+    spec = fixtures[R.OWNED[-1]]
+    original_repo = R._repo
+    monkeypatch.setattr(R, "_repo", lambda name: fixtures[name] if name in fixtures else original_repo(name))
+    # This control registers the actual current source bytes. Frozen historical
+    # registrations remain mandatory in the production campaign, not here.
+    monkeypatch.setattr(R, "PINNED", {
+        name: R._sha(fixtures[name] if name in fixtures else original_repo(name)) for name in R.PINNED
+    })
     pins = R._source_pins()
     # Source/byte identity only; no scientific certificate is evaluated.
     required = {"scripts/phi_v2_lattice/__init__.py", "scripts/phi_v2_lattice/experiments/__init__.py",
@@ -398,6 +415,10 @@ def test_all_runtime_project_imports_are_directly_pinned():
                 "scripts/phi_v2_lattice/experiments/certify_full_memory.py",
                 "scripts/phi_v2_lattice/experiments/certify_memory_tail.py"}
     assert required <= pins.keys()
+    assert all(pins[name] == R._sha(original_repo(name)) for name in required)
+    spec.write_text("changed synthetic specification", encoding="utf-8")
+    with pytest.raises(ValueError, match="frozen specification differs"):
+        R._source_pins()
 
 
 def test_inventory_includes_nested_report_and_retains_hash_errors(tmp_path, monkeypatch):
