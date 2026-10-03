@@ -540,6 +540,12 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
                 if (value) value.textContent = telemetryText(reading.value);
                 if (unit) unit.textContent = reading.value !== null && reading.unit ? ` ${reading.unit}` : '';
                 output.setAttribute('data-reading-kind', reading.value === null ? 'missing' : typeof reading.value);
+                // Integer counters can be exact strings (including large ticks).
+                // Style them as numbers without parsing or changing their value.
+                output.setAttribute('data-reading-numeric', String(typeof reading.value === 'number' || typeof reading.value === 'string' && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(reading.value)));
+                // Give source identities and long model descriptions the full row;
+                // numeric readings keep their aligned value/unit column.
+                output.closest('.observer-telemetry-reading')?.setAttribute('data-reading-wide', String(typeof reading.value === 'string' && reading.value.length > 18));
             }
         }
     }
