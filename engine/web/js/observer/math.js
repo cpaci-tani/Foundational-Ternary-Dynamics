@@ -29,10 +29,8 @@ export function gamma(beta) {
 /** Coordinates in a frame moving at velocity v relative to the input frame. @param {FourVector} event @param {Vec3} v */
 export function boostEvent(event, v) {
     const [t, ...r] = event;
-    const b2 = dot(v, v);
-    if (b2 < 1e-30) return [...event];
     const g = gamma(v), vr = dot(v, r);
-    return [g * (t - vr), ...add(r, scale(v, (g - 1) * vr / b2 - g * t))];
+    return [g * (t - vr), ...add(r, scale(v, g * g / (g + 1) * vr - g * t))];
 }
 export const boostFourVector = boostEvent;
 /** @param {FourVector} event @param {Vec3} velocity */
@@ -73,14 +71,24 @@ export function constantProperAcceleration(properTime, acceleration) {
     const rapidity = acceleration * properTime;
     return { time: Math.sinh(rapidity) / acceleration, position: (Math.cosh(rapidity) - 1) / acceleration, velocity: Math.tanh(rapidity) };
 }
-/** Integrate constant coordinate force per rest mass, u=gamma*v. @param {Vec3} velocity @param {Vec3} properForce @param {number} dt @param {number} [maxBeta] */
-export function integrateFourVelocity(velocity, properForce, dt, maxBeta = MAX_BETA) {
+/** Shared kick-drift-kick, du/dt=f in the simulation coordinate frame.
+ * A cap projects the requested endpoint u onto the allowed ball; the drift is
+ * the midpoint of that same constrained u interval. Kicks take zero time.
+ * @param {Vec3} velocity @param {Vec3} coordinateForcePerMass @param {number} dt @param {number} [maxBeta]
+ */
+export function integrateFourVelocity(velocity, coordinateForcePerMass, dt, maxBeta = MAX_BETA) {
+    if (!Number.isFinite(dt) || dt < 0 || !Number.isFinite(maxBeta) || maxBeta < 0 || maxBeta >= 1) throw new RangeError('Invalid SR integration interval or application speed ceiling.');
+    if (coordinateForcePerMass.length !== 3 || coordinateForcePerMass.some(x => !Number.isFinite(x))) throw new RangeError('Coordinate force / rest mass must be a finite 3-vector.');
+    if (length(velocity) > maxBeta + 1e-12) throw new RangeError('Initial speed exceeds the application ceiling.');
     const u0 = scale(velocity, gamma(velocity));
-    let u1 = add(u0, scale(properForce, dt));
+    let u1 = add(u0, scale(coordinateForcePerMass, dt));
     const maxU = maxBeta / Math.sqrt(1 - maxBeta * maxBeta);
-    if (length(u1) > maxU) u1 = scale(normalize(u1), maxU);
+    const capApplied = length(u1) > maxU;
+    if (capApplied) u1 = scale(normalize(u1), maxU);
+    const midpoint = scale(add(u0, u1), .5), driftGamma = Math.sqrt(1 + dot(midpoint, midpoint));
+    const driftVelocity = scale(midpoint, 1 / driftGamma);
     const v1 = scale(u1, 1 / Math.sqrt(1 + dot(u1, u1)));
-    return { velocity: v1, displacement: scale(add(velocity, v1), dt / 2), properElapsed: dt * (1 / gamma(velocity) + 1 / gamma(v1)) / 2 };
+    return { velocity: v1, driftVelocity, displacement: scale(driftVelocity, dt), properElapsed: dt / driftGamma, capApplied };
 }
 /** Retarded center event for an inertial segment; stable positive quadratic root. @param {Vec3} observer @param {number} time @param {Vec3} position @param {Vec3} velocity @param {number} [originTime] */
 export function retardedTime(observer, time, position, velocity, originTime = 0) {

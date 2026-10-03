@@ -27,7 +27,7 @@ const float EPS=.00001;
 vec4 tex(sampler2D s,int i){ ivec2 size=textureSize(s,0); return texelFetch(s,ivec2(i%size.x,i/size.x),0); }
 vec4 record(int i,int field){return tex(uSegments,i*8+field);}
 float gm(vec3 v){return inversesqrt(max(1.-dot(v,v),.000001));}
-vec3 boostSpace(vec3 x,float t,vec3 v){float b=dot(v,v); return x+(b>1e-12?(gm(v)-1.)*dot(v,x)/b+gm(v)*t:0.)*v;}
+vec3 boostSpace(vec3 x,float t,vec3 v){float g=gm(v);return x+(g*g/(g+1.)*dot(v,x)+g*t)*v;}
 bool aabb(vec3 o,vec3 d,vec3 mn,vec3 mx,float limit){
     float lo=0.,hi=limit;
     for(int j=0;j<3;j++){
@@ -78,11 +78,11 @@ bool segmentHit(int index,vec3 rayOrigin,vec3 direction,float timeSlope,inout fl
     vec4 a=record(index,0),b=record(index,1),c=record(index,2),r0=record(index,3),r1=record(index,4),r2=record(index,5),extra=record(index,7);
     vec3 velocity=uSR?b.xyz:vec3(0),relative=rayOrigin-a.xyz;
     float b2=dot(velocity,velocity),g=uSR?b.w:1.;
-    vec3 origin=relative+(b2>1e-12?(g-1.)*dot(velocity,relative)/b2:0.)*velocity;
-    vec3 ray=direction+(b2>1e-12?(g-1.)*dot(velocity,direction)/b2-g*timeSlope:0.)*velocity;
+    vec3 origin=relative+(g*g/(g+1.)*dot(velocity,relative))*velocity;
+    vec3 ray=direction+(g*g/(g+1.)*dot(velocity,direction)-g*timeSlope)*velocity;
     mat3 invRotation=mat3(r0.xyz,r1.xyz,r2.xyz);
     vec3 o=(invRotation*origin)/c.xyz,d=(invRotation*ray)/c.xyz;
-    float minimum=uOptical?max(0.,-r0.w):0.,maximum=uOptical?min(best,-max(c.w,uHistoryStart-uTime)+.000001):best;
+    float minimum=uOptical?max(0.,-r0.w):0.,maximum=uOptical?min(best,-max(c.w,uHistoryStart)+.000001):best;
     if(minimum>=maximum)return false;
     float distance=maximum-minimum;vec3 n;
     if(!shapeHit(int(a.w),o+minimum*d,d,distance,n))return false;
@@ -90,13 +90,14 @@ bool segmentHit(int index,vec3 rayOrigin,vec3 direction,float timeSlope,inout fl
     float offset=distance*timeSlope;
     if(uOptical&&(offset<c.w||offset>=r0.w))return false;
     best=distance;normal=normalize(transpose(invRotation)*(n/c.xyz));local=o+distance*d;
-    // The center proper clock is anchored at originTime. Surface synchronization is Einstein synchronization in the rest frame.
-    proper=extra.x+(-extra.y)/g-g*dot(velocity,relative)+g*(timeSlope-dot(velocity,direction))*distance;
+    // Center clock at observation time, modulo one for the dial. Diagnostics
+    // export its small relative offset and reconstruct the Float64 base on CPU.
+    proper=extra.x-g*dot(velocity,relative)+g*(timeSlope-dot(velocity,direction))*distance;
     return true;
 }
 float hash(vec3 p){p=fract(p*.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}
 vec3 spectrum(float wavelength){return vec3(exp(-.5*pow((wavelength-610.)/35.,2.)),exp(-.5*pow((wavelength-545.)/30.,2.)),exp(-.5*pow((wavelength-455.)/25.,2.)));}
-vec3 shifted(vec3 color,float factor){if(!uDoppler)return color;return color.r*spectrum(610./factor)+color.g*spectrum(545./factor)+color.b*spectrum(455./factor);}
+vec3 shifted(vec3 color,float factor){float D=uOptical&&uDoppler?factor:1.;return color.r*spectrum(610./D)+color.g*spectrum(545./D)+color.b*spectrum(455./D);}
 float line(float coordinate,float width){return 1.-smoothstep(width,width*2.,abs(coordinate));}
 ${FRACTAL_GLSL}
 vec3 sky(vec3 d){
@@ -175,15 +176,18 @@ void main(){
     }
     float groundDistance=abs(direction.y)>.000001?-uCamera.y/direction.y:INF;
     bool groundBlocks=!uMirrorWorld&&direction.y<0.&&groundDistance>0.&&groundDistance<best;
-    if(uDebugMode>0){fragColor=picked<0||groundBlocks?vec4(0):vec4(float(picked+1)*(pickedMirror?-1.:1.),best,uTime+best*timeSlope,proper);return;}
+    if(uDebugMode==1){fragColor=picked<0||groundBlocks?vec4(0):vec4(float(picked+1)*(pickedMirror?-1.:1.),best,best*timeSlope,proper-record(picked,7).x);return;}
+    if(uDebugMode==2){vec3 v=picked>=0?record(picked,1).xyz:vec3(0);if(pickedMirror)v.y=-v.y;float D=uOptical?gm(uVelocity)*(1.+dot(uVelocity,normalize(direction)))/(gm(v)*(1.+dot(v,normalize(direction)))):1.;fragColor=vec4(D,0.,0.,1.);return;}
+    if(uDebugMode==4){fragColor=picked<0||groundBlocks?vec4(0):vec4(best*direction,1.);return;}
     vec3 skyDirection=normalize(direction);if(uMirrorWorld)skyDirection.y=abs(skyDirection.y);
     vec3 color=picked<0?cameraBillboards(sky(skyDirection)):vec3(0);
     if(groundBlocks){color=ground(uCamera+direction*groundDistance,groundDistance);picked=-1;best=groundDistance;}
-    if(picked<0&&uOptical){float environmentFactor=gm(uVelocity)*(1.+dot(uVelocity,normalize(direction)));color=shifted(color,environmentFactor)*(uBeaming?pow(environmentFactor,4.):1.);}
+    if(picked<0){float environmentFactor=uOptical?gm(uVelocity)*(1.+dot(uVelocity,normalize(direction))):1.;color=shifted(color,environmentFactor)*(uBeaming?pow(environmentFactor,4.):1.);}
     if(picked>=0){
         vec4 material=record(picked,6);vec3 velocity=record(picked,1).xyz;
         if(pickedMirror)velocity.y=-velocity.y;
         float factor=uOptical?gm(uVelocity)*(1.+dot(uVelocity,normalize(direction)))/(gm(velocity)*(1.+dot(velocity,normalize(direction)))):1.;
+        // Material weights are integrated line energies: D^4 is applied once.
         color=shifted(material.rgb,factor)*material.a*(uBeaming?pow(factor,4.):1.);
         if(record(picked,7).z==2.&&record(picked,7).w!=0.)color*=.8+.2*sin((uTime+best*timeSlope)*record(picked,7).w+float(picked)*.13);
         if(uShading){float face=.35+.65*abs(dot(normal,normalize(vec3(.4,.8,.6))));color*=face;}
@@ -192,6 +196,7 @@ void main(){
         if(picked==uSelected)color+=vec3(.07,.13,.13);
         if(int(record(picked,0).w)==16){float angle=proper*6.2831853;float face=step(.4,abs(local.z));vec2 dial=local.xy;float rim=line(length(dial)-.32,.012);vec2 hand=vec2(sin(angle),cos(angle));float projection=clamp(dot(dial,hand),0.,.27);float tick=line(length(dial-hand*projection),.012);color+=vec3(1)*face*(rim+tick);}
     }
+    if(uDebugMode==3){fragColor=vec4(color,1.);return;}
     // With the mirror active the plane becomes a passable reference grid, not an opaque occluder.
     if(uMirrorWorld&&groundDistance>0.&&groundDistance<best){vec3 grid=ground(uCamera+direction*groundDistance,groundDistance)-vec3(.014,.024,.037);color+=max(grid,vec3(0))*.65;}
     // Explicit presentation overlays: already projected into the same observer's image, never geometry occluders.

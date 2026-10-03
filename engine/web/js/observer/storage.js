@@ -2,6 +2,7 @@
 /** Local, opt-in world storage. Constructing this class never opens IndexedDB. */
 import { SHAPES, ENVIRONMENT_PRESETS } from './catalog.js';
 import { MAX_GRAVITY_STRENGTH } from './types.js';
+import { migrateObserverSnapshot, normalizeCoordinateForce } from './conventions.js';
 /** @typedef {import('./types.js').WorldSnapshot} WorldSnapshot */
 /** @typedef {import('./catalog.js').ObserverSettings} ObserverSettings */
 /** @typedef {{id:string,name:string,kind:string,updatedAt:number,bytes:number,text:string}} StorageRecord */
@@ -92,6 +93,7 @@ export function validateObserverDocument(document) {
         ids.add(entity.id);
         string(entity.name, 'entity name');
         if (!SHAPE_IDS.has(entity.shape)) fail('unknown object shape');
+        normalizeCoordinateForce(entity);
         vec(entity.position, 'entity position'); vec(entity.velocity, 'entity velocity');
         vec(entity.size, 'entity size', Number.MIN_VALUE, 1000000);
         vec(entity.rotation, 'entity rotation'); vec(entity.color, 'entity color', 0, 1);
@@ -156,13 +158,13 @@ export function validateObserverDocument(document) {
         for (const value of Object.values(cameraSettings.bindings)) string(value, 'keybinding', 40);
     }
     if (snapshot.scrubTime !== null && snapshot.scrubTime !== undefined) finite(snapshot.scrubTime, 'history cursor', snapshot.historyStart, snapshot.time);
-    return { snapshot, settings: document.settings };
+    return { snapshot: migrateObserverSnapshot(snapshot), settings: document.settings };
 }
 
 /** @param {PortableDocument} document */
 function encode(document) {
-    validateObserverDocument(document);
-    const text = JSON.stringify(document, (_key, value) => value === Infinity ? { [INFINITY_KEY]: 'Infinity' } : value);
+    const migrated = validateObserverDocument(document);
+    const text = JSON.stringify({ ...document, ...migrated }, (_key, value) => value === Infinity ? { [INFINITY_KEY]: 'Infinity' } : value);
     if (bytesOf(text) > MAX_DOCUMENT_BYTES) fail('document exceeds 32 MiB limit');
     return text;
 }

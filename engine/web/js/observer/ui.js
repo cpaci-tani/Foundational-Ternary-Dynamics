@@ -127,6 +127,9 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     identity.append(badges);
     const telemetry = node('div', 'observer-hud');
     telemetry.setAttribute('aria-label', 'Observer clocks and motion');
+    const historyReadout = node('span', 'observer-description'); historyReadout.dataset.observerHistoryCoverage = '';
+    const worldlineReadout = node('span', 'observer-description'); worldlineReadout.dataset.observerWorldline = '';
+    identity.append(worldlineReadout, historyReadout);
     /** @type {Record<string,HTMLElement>} */
     const hudFields = {};
     for (const [id, label] of [['coordinate', 'WORLD TIME'], ['proper', 'YOUR CLOCK'], ['beta', 'SPEED / c'], ['gamma', 'LORENTZ γ']]) {
@@ -232,8 +235,8 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
         draft.spectral = current.spectral;
         field(block, 'Emission spectrum', current.spectral, { observerEntityField: 'spectral', options: [{ id: 'white', label: 'Tinted three-line spectrum' }, { id: 'red-line', label: 'Red line · 610 nm' }, { id: 'green-line', label: 'Green line · 545 nm' }, { id: 'blue-line', label: 'Blue line · 455 nm' }] });
         if (snapshot?.profile === 'sr' && ['clock', 'beacon'].includes(current.shape)) {
-            draft.properAcceleration = clone(current.properAcceleration);
-            vector(block, 'Force per rest mass · point marker', current.properAcceleration, 'observerEntityField', 'properAcceleration');
+            draft.coordinateForcePerMass = clone(current.coordinateForcePerMass);
+            vector(block, 'Coordinate force / rest mass · point marker', current.coordinateForcePerMass, 'observerEntityField', 'coordinateForcePerMass');
         }
         if (snapshot?.profile === 'playground') {
             field(block, 'Body behavior', current.bodyType, { observerEntityField: 'bodyType', options: [{ id: 'dynamic', label: 'Dynamic body' }, { id: 'kinematic', label: 'Prescribed motion' }, { id: 'fixed', label: 'Fixed landmark' }] });
@@ -350,7 +353,7 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     function renderCamera() {
         const move = section(panelBody, 'Your viewpoint', 'Look up and hold forward to fly up; look down to dive. Free flight crosses the reference plane. Enable ground-plane movement below for level travel.');
         settingField(move, 'Scroll zoom speed · units per notch', 'scrollZoomSpeed', { min: 0.001, max: 1000000, step: 'any' });
-        for (const [key, label, min, max, step] of /** @type {Array<[string,string,number,number,number]>} */ ([['fov', 'Field of view · degrees', 30, 120, 1], ['speed', 'Travel speed · c', 0.001, 0.99, 0.001], ['acceleration', 'Acceleration · c per time unit', 0.01, 10, 0.01], ['sensitivity', 'Look sensitivity', 0.0001, 0.02, 0.0001], ['roll', 'Camera roll · radians', -Math.PI, Math.PI, 0.01], ['renderScale', 'Resolution scale', 0.25, 1.5, 0.05], ['gridSnap', 'Author grid snap · 0 disables', 0, 10, 0.1]])) settingField(move, label, key, { min, max, step });
+        for (const [key, label, min, max, step] of /** @type {Array<[string,string,number,number,number]>} */ ([['fov', 'Field of view · degrees', 30, 120, 1], ['speed', 'Travel speed · c', 0.001, 0.99, 0.001], ['acceleration', 'Coordinate force / rest mass limit · SR; acceleration · Playground', 0.01, 10, 0.01], ['sensitivity', 'Look sensitivity', 0.0001, 0.02, 0.0001], ['roll', 'Camera roll · radians', -Math.PI, Math.PI, 0.01], ['renderScale', 'Resolution scale', 0.25, 1.5, 0.05], ['gridSnap', 'Author grid snap · 0 disables', 0, 10, 0.1]])) settingField(move, label, key, { min, max, step });
         for (const [key, label] of [['invertY', 'Invert vertical look'], ['grounded', 'Lock movement to ground plane'], ['worldUp', 'Keep world up'], ['reticle', 'Center reticle'], ['pauseOnInspect', 'Pause when inspecting'], ['autoQuality', 'Adapt image resolution to frame time']]) settingField(move, label, key, { type: 'checkbox' });
         const locks = section(panelBody, 'Axis constraints');
         ['X', 'Y', 'Z'].forEach((axis, index) => settingField(locks, `Lock ${axis} movement`, `axisLocks.${index}`, { type: 'checkbox' }));
@@ -616,6 +619,8 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
         if (selectionChanged) { discardPreview(); selectedId = nextSelected; }
         const beta = Math.hypot(...(snapshot?.observer?.velocity || [0, 0, 0]));
         hudFields.coordinate.textContent = finiteText(snapshot?.time);
+        worldlineReadout.textContent = `Clock origin ${snapshot?.observer?.worldline ?? '—'} · ${snapshot?.observer?.worldlineReason ?? 'preparation'}${snapshot?.observer?.capApplied ? ' · 0.99c control cap applied' : ''}`;
+        historyReadout.textContent = `Retained light history ${finiteText(snapshot?.historyStart)} → ${finiteText(snapshot?.time)} · earlier emissions unavailable`;
         hudFields.proper.textContent = finiteText(snapshot?.observer?.properTime);
         hudFields.beta.textContent = finiteText(beta, 3);
         hudFields.gamma.textContent = beta < 1 ? finiteText(1 / Math.sqrt(1 - beta * beta), 3) : '—';

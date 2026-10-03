@@ -49,24 +49,24 @@ test('spectrum and point-force controls preview without writing, commit together
         const clock = workspace.snapshot.entities.find(entity => entity.alive && entity.shape === 'clock');
         const extended = workspace.snapshot.entities.find(entity => entity.alive && entity.shape === 'box');
         return { clock: { id: clock.id, revision: clock.revision, spectral: clock.spectral,
-            properAcceleration: clock.properAcceleration, position: clock.position }, extendedId: extended.id };
+            coordinateForcePerMass: clock.coordinateForcePerMass, position: clock.position }, extendedId: extended.id };
     });
     await page.getByRole('button', { name: 'Objects', exact: true }).click();
     await page.getByLabel('Selected object', { exact: true }).selectOption(target.clock.id);
     await page.getByLabel('Emission spectrum', { exact: true }).selectOption('red-line');
-    await page.locator('[data-observer-entity-field="properAcceleration.0"]').fill('0.2');
+    await page.locator('[data-observer-entity-field="coordinateForcePerMass.0"]').fill('0.2');
     const preview = await page.evaluate(id => {
         const workspace = window.__FTD_DEV__.registry.get('observerWorkspace');
         const entity = workspace.snapshot.entities.find(item => item.id === id);
-        return { revision: entity.revision, spectral: entity.spectral, force: entity.properAcceleration,
-            previewSpectral: workspace.preview.spectral, previewForce: workspace.preview.properAcceleration };
+        return { revision: entity.revision, spectral: entity.spectral, force: entity.coordinateForcePerMass,
+            previewSpectral: workspace.preview.spectral, previewForce: workspace.preview.coordinateForcePerMass };
     }, target.clock.id);
     expect(preview).toEqual({ revision: target.clock.revision, spectral: target.clock.spectral,
-        force: target.clock.properAcceleration, previewSpectral: 'red-line', previewForce: [0.2, 0, 0] });
+        force: target.clock.coordinateForcePerMass, previewSpectral: 'red-line', previewForce: [0.2, 0, 0] });
     await page.getByRole('button', { name: 'Apply changes', exact: true }).click();
     await page.waitForFunction(id => {
         const entity = window.__FTD_DEV__.registry.get('observerWorkspace').snapshot.entities.find(item => item.id === id);
-        return entity.spectral === 'red-line' && entity.properAcceleration[0] === 0.2;
+        return entity.spectral === 'red-line' && entity.coordinateForcePerMass[0] === 0.2;
     }, target.clock.id);
     const committed = await page.evaluate(id => {
         const workspace = window.__FTD_DEV__.registry.get('observerWorkspace');
@@ -84,5 +84,5 @@ test('spectrum and point-force controls preview without writing, commit together
     expect(Math.hypot(...velocity)).toBeLessThan(1);
     await page.getByRole('button', { name: 'Objects', exact: true }).click();
     await page.getByLabel('Selected object', { exact: true }).selectOption(target.extendedId);
-    await expect(page.locator('[data-observer-entity-field^="properAcceleration."]')).toHaveCount(0);
+    await expect(page.locator('[data-observer-entity-field^="coordinateForcePerMass."]')).toHaveCount(0);
 });

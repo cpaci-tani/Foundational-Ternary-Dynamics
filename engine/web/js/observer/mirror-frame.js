@@ -26,7 +26,7 @@ export function reflectQuaternion(rotation) {
 export function reflectAuthorPatch(patch, mirrored = true) {
     if (!mirrored) return patch;
     /** @type {Record<string, unknown>} */ const result = { ...patch };
-    for (const key of ['position', 'velocity', 'properAcceleration', 'impulse', 'force']) {
+    for (const key of ['position', 'velocity', 'coordinateForcePerMass', 'properAcceleration', 'impulse', 'force']) {
         if (Array.isArray(patch[key])) result[key] = reflectPolar(patch[key]);
     }
     for (const key of ['rotation', 'angularVelocity', 'torque']) {

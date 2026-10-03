@@ -296,6 +296,11 @@ python engine/web/serve.py 8080
 Open `http://localhost:8080`. Browser test dependencies and commands are in
 the [web test package](engine/web/tests/package.json).
 
+Mind's Eye is an adopted Minkowski reference workspace with a read-only lattice
+link. Its [SR API and numerical conventions](engine/web/docs/REF_MINDS_EYE_SR_CONVENTIONS.md)
+and [repair evidence](engine/web/docs/AUDIT_MINDS_EYE_SR_REPAIR.md) document force
+semantics, retained optical histories, display controls and actual GPU checks.
+
 ## License and citation
 
 The repository is distributed under [CC BY-NC-SA 4.0](LICENSE). Cite a
