@@ -99,7 +99,7 @@ function envelope(snapshot, view) {
         preparationVersion: `${snapshot.epoch}:${snapshot.preparationVersion ?? 0}:${view.version}`, tick: snapshot.tick,
         capabilities: actions.map(item => item.type), actions: clone(actions),
         facts: { running: snapshot.playing, profile: snapshot.profile, physicsEngine: snapshot.physicsEngine,
-            ...(snapshot.spacetime?{spacetime:clone(snapshot.spacetime),velocityConvention:'local static orthonormal frame',authorMassConvention:'generic entity mass is not the GR source mass; spacetime.massSolar fixes nominal GM',navigationConvention:'guided local du/dt control; freefall ignores navigation forces',referenceBoundary:'Schwarzschild exterior, prescribed floating static sphere; no native FTD recovery'}:{}),
+            ...(snapshot.spacetime?{spacetime:clone(snapshot.spacetime),velocityConvention:'local static orthonormal frame',authorMassConvention:'generic entity mass is not the GR source mass; spacetime.massSolar fixes nominal GM',navigationConvention:'guided local du/dt control; freefall ignores navigation forces',referenceBoundary:snapshot.spacetime.kind==='schwarzschild-black-hole'?'Schwarzschild black-hole exterior, non-emitting horizon and finite static sky shell; observer remains outside horizon; no native FTD recovery':'Schwarzschild exterior, prescribed floating static sphere; no native FTD recovery'}:{}),
             time: snapshot.time, epoch: snapshot.epoch, editVersion: snapshot.preparationVersion ?? 0,
             units: snapshot.units, experiment: snapshot.experiment, historyStart: snapshot.historyStart, scrubTime: snapshot.scrubTime,
             observer: clone(snapshot.observer), entities: snapshot.entities.map(compactEntity),

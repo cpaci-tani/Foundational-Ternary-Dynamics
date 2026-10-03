@@ -7,6 +7,8 @@ import { referenceLineWeights } from './spectrum.js';
 import { ObserverEnvironment, OBSERVER_ENVIRONMENTS, seededRandom } from './environments.js';
 import { observerVertexShader, observerFragmentShader } from './shaders.js';
 import { compactStarFragmentShader } from './compact-star-shaders.js';
+import { blackHoleFragmentShader } from './black-hole-shaders.js';
+import { traceBlackHole } from './black-hole.js';
 import { starMetric } from './compact-star.js';
 import { feedbackConfiguration } from './feedback.js';
 import { fractalStyle, boundedFractalDetail } from './fractal-presets.js';
@@ -87,6 +89,7 @@ export class ObserverRenderer {
         };
         this.material = new THREE.RawShaderMaterial({ uniforms: this.uniforms, vertexShader: observerVertexShader, fragmentShader: observerFragmentShader, glslVersion: THREE.GLSL3, depthTest: false, depthWrite: false });
         this.compactMaterial = new THREE.RawShaderMaterial({uniforms:this.uniforms,vertexShader:observerVertexShader,fragmentShader:compactStarFragmentShader,glslVersion:THREE.GLSL3,depthTest:false,depthWrite:false});
+        this.blackHoleMaterial = new THREE.RawShaderMaterial({uniforms:this.uniforms,vertexShader:observerVertexShader,fragmentShader:blackHoleFragmentShader,glslVersion:THREE.GLSL3,depthTest:false,depthWrite:false});
         this.geometry = new THREE.PlaneGeometry(2, 2);this.mesh=new THREE.Mesh(this.geometry,this.material);this.scene.add(this.mesh);
         this.pickTarget = new THREE.WebGLRenderTarget(1, 1, { type: THREE.FloatType, format: THREE.RGBAFormat, depthBuffer: false, stencilBuffer: false });
         // Exactly two targets. The first pass each frame has feedback disabled,
@@ -103,7 +106,7 @@ export class ObserverRenderer {
         /** @type {import('./optics.js').TraceAcceleration|null} */ this.traceAcceleration = null;
         /** @type {OpticalSnapshot|null} */ this.preparedSnapshot = null;
         this.preparedViewKey = '';
-        this.diagnostics = { fractalStyle: -1, fractalDetail: 0.65, tracedInstances: 0, staticInstances: 0, movingInstances: 0, uniqueTriangles: this.atlas.uniqueTriangles, meshBvhNodes: this.atlas.meshBvhNodes, requestedTriangleBudget: this.atlas.triangleBudget, internalResolution: [1, 1], requestedScale: 1, internalScale: 1, gpuTimeMs: 0, adaptiveQuality: true, adaptiveGpuBudgetMs: 11, feedbackQualityFactor: 1, layerCount: 0, environmentStatus: 'ready', environmentMessage: '', mirrorWorld: false, feedbackEnabled: false, feedbackLayers: 0, feedbackDepth: 0, feedbackPasses: 0, feedbackResolution: [0, 0], feedbackTargetCount: 2, gpu: this.gpuInfo() };
+        this.diagnostics = { blackHoleRay: /** @type {ReturnType<typeof traceBlackHole>|null} */(null), fractalStyle: -1, fractalDetail: 0.65, tracedInstances: 0, staticInstances: 0, movingInstances: 0, uniqueTriangles: this.atlas.uniqueTriangles, meshBvhNodes: this.atlas.meshBvhNodes, requestedTriangleBudget: this.atlas.triangleBudget, internalResolution: [1, 1], requestedScale: 1, internalScale: 1, gpuTimeMs: 0, adaptiveQuality: true, adaptiveGpuBudgetMs: 11, feedbackQualityFactor: 1, layerCount: 0, environmentStatus: 'ready', environmentMessage: '', mirrorWorld: false, feedbackEnabled: false, feedbackLayers: 0, feedbackDepth: 0, feedbackPasses: 0, feedbackResolution: [0, 0], feedbackTargetCount: 2, gpu: this.gpuInfo() };
         this.requestedScale = 1;
         // Software devices start at a declared half-resolution image; physical/history accuracy is unchanged.
         this.qualityFactor = /swiftshader|llvmpipe|software/i.test(String(this.diagnostics.gpu.renderer)) ? 0.5 : 1;
@@ -116,6 +119,7 @@ export class ObserverRenderer {
         /** @type {WebGLQuery[]} */ this.pendingQueries = [];
         this.scope.on(this.canvas, 'webglcontextlost', (/** @type {Event} */ event) => {
             event.preventDefault(); this.contextLost = true;
+            this.diagnostics.blackHoleRay=null;
             // Release Three's old-context target listeners while GL is lost (deletes
             // are harmless no-ops). Deleting their stale handles after restoration
             // instead raises INVALID_OPERATION in Chromium/ANGLE.
@@ -133,7 +137,7 @@ export class ObserverRenderer {
             for (const texture of this.textures()) texture.needsUpdate = true;
             this.uniforms.uHasFeedback.value = false; this.uniforms.uFeedback.value = this.emptyTexture;
             if (this.environment.texture) this.environment.texture.needsUpdate = true;
-            this.material.needsUpdate = true;this.compactMaterial.needsUpdate=true; this.contextLost = false;
+            this.material.needsUpdate = true;this.compactMaterial.needsUpdate=true;this.blackHoleMaterial.needsUpdate=true; this.contextLost = false;
         });
         this.resize(container.clientWidth || 960, container.clientHeight || 640);
     }
@@ -217,7 +221,8 @@ export class ObserverRenderer {
     }
     /** @param {OpticalSnapshot} snapshot @param {RendererSettings} settings */
     prepare(snapshot, settings) {
-        this.mesh.material=snapshot.spacetime?this.compactMaterial:this.material;
+        this.diagnostics.blackHoleRay=null;
+        this.mesh.material=snapshot.spacetime?.kind==='schwarzschild-black-hole'?this.blackHoleMaterial:snapshot.spacetime?this.compactMaterial:this.material;
         const requested = Math.max(0.25, Math.min(1.5, settings.renderScale ?? 1));
         const scale = settings.autoQuality === false ? requested : Math.max(0.25, requested * this.qualityFactor);
         if (scale !== this.renderScale) { this.renderScale = scale; this.resize(this.width, this.height); }
@@ -326,8 +331,26 @@ export class ObserverRenderer {
     }
     /** @param {OpticalSnapshot} snapshot @param {RendererSettings} settings @param {number} ndcX @param {number} ndcY */
     pick(snapshot, settings = {}, ndcX = 0, ndcY = 0) {
+        if(snapshot.spacetime?.kind==='schwarzschild-black-hole'){
+            this.diagnostics.blackHoleRay=this.inspectRay(snapshot,settings,ndcX,ndcY);return null;
+        }
         const prepared = this.preparedSnapshot === snapshot && this.preparedViewKey === JSON.stringify([settings.optical, settings.cameraOverride]) ? this.traceAcceleration : null;
         return traceObserverRay(snapshot, { ...settings, aspect: this.width / this.height }, ndcX, ndcY, prepared ? [] : [...this.environment.segments, ...this.benchmarkSegments], prepared);
+    }
+    /** Current Float64 reference ray; captures have no optical surface hit.
+     * @param {OpticalSnapshot} snapshot @param {RendererSettings} settings @param {number} [ndcX] @param {number} [ndcY] */
+    inspectRay(snapshot,settings={},ndcX=0,ndcY=0){
+        if(snapshot.spacetime?.kind!=='schwarzschild-black-hole')return null;
+        return traceBlackHole(snapshot,{...settings,aspect:this.width/this.height},ndcX,ndcY);
+    }
+    /** Actual compiled GPU ray diagnostic, separate from live Float64 telemetry.
+     * @param {OpticalSnapshot} snapshot @param {RendererSettings} settings @param {number} [ndcX] @param {number} [ndcY] */
+    inspectGpuRay(snapshot,settings={},ndcX=0,ndcY=0){
+        if(snapshot.spacetime?.kind!=='schwarzschild-black-hole')return null;
+        const path=this.readDiagnosticPixel(snapshot,settings,ndcX,ndcY,5),endpoint=this.readDiagnosticPixel(snapshot,settings,ndcX,ndcY,4,true);
+        const frequency=this.readDiagnosticPixel(snapshot,settings,ndcX,ndcY,2,true),direction=this.readDiagnosticPixel(snapshot,settings,ndcX,ndcY,6,true);
+        const observer={...snapshot.observer,...settings.cameraOverride};
+        return {source:'Compiled production GPU float readback',status:path[0]===1?'captured':path[0]===2?'escaped':'budget-exhausted',distance:path[1],delay:path[2],impactParameter:path[3],position:observer.position.map((v,i)=>v+endpoint[i]),direction:[...direction].slice(0,3),finalImpactParameter:direction[3],doppler:path[0]===2?frequency[0]:null,emissionLapse:path[0]===2?frequency[1]:null,receiverLapse:frequency[2],observationTime:snapshot.time};
     }
     /** Exact GPU first-hit output from the same material used to paint the scene. Float render targets are required.
      * @param {OpticalSnapshot} snapshot @param {RendererSettings} settings @param {number} ndcX @param {number} ndcY
@@ -608,7 +631,7 @@ export class ObserverRenderer {
     dispose() {
         if (this.disposed) return; this.disposed = true; this.scope.dispose(); this.environment.dispose();
         const gl = /** @type {WebGL2RenderingContext} */ (this.renderer.getContext()); for (const query of this.pendingQueries) gl.deleteQuery(query); this.pendingQueries = [];
-        this.material.dispose();this.compactMaterial.dispose(); this.geometry.dispose(); this.pickTarget.dispose(); for (const texture of this.textures()) texture.dispose();
+        this.material.dispose();this.compactMaterial.dispose();this.blackHoleMaterial.dispose();this.diagnostics.blackHoleRay=null; this.geometry.dispose(); this.pickTarget.dispose(); for (const texture of this.textures()) texture.dispose();
         for (const target of this.feedbackTargets) target.dispose();
         this.renderer.dispose(); this.canvas.remove(); this.overlayCanvas.remove(); this.benchmarkSegments = []; this.segments = [];
         this.historiesById.clear(); this.apparentSegmentsById.clear();

@@ -1,7 +1,7 @@
 /** Actual WebGL2 Schwarzschild null-geodesic integration. Paired Float64 oracle
  * lives in compact-star.js; GPU parity is measured by float-target readback.
  */
-export const COMPACT_STAR_GLSL = `
+export const SCHWARZSCHILD_GLSL = `
 uniform vec3 uStarCenter;
 uniform float uStarRs,uStarRadius,uStarEscape;
 float starA(vec3 p){float q=uStarRs/(4.*length(p-uStarCenter));return (1.-q)/(1.+q);}
@@ -16,6 +16,9 @@ void starStep(inout vec3 p,inout vec3 d,inout float delay,float h){
     p+=h*(k1p+2.*d2+2.*d3+d4)/6.;d=normalize(d+h*(k1d+2.*k2d+2.*k3d+k4d)/6.);
     delay+=h*(k1t+2.*k2t+2.*k3t+k4t)/6.;
 }
+`;
+export const COMPACT_STAR_GLSL = `
+${SCHWARZSCHILD_GLSL}
 float starDistance(vec3 p){return length(p-uStarCenter)-uStarRadius;}
 vec4 renderCompactStar(vec3 restDirection){
     float transformedTime=gm(uVelocity)*(-1.+dot(uVelocity,restDirection));
@@ -25,7 +28,18 @@ vec4 renderCompactStar(vec3 restDirection){
         float nearest=starDistance(p);
         if(nearest<=.00001){picked=0;break;}
         float rho=length(p-uStarCenter);if(rho>=uStarEscape){escaped=true;break;}
-        float h=min(min(.04*rho,.5),max(.000001,.8*nearest));starStep(p,d,delay,h);arc+=h;
+        float h=min(min(.04*rho,.5),max(.000001,.8*nearest));
+        vec3 oldP=p,oldD=d;float oldDelay=delay;starStep(p,d,delay,h);
+        if(length(p-uStarCenter)>=uStarEscape){
+            float lo=0.,hi=h;
+            for(int i=0;i<22;i++){
+                float mid=(lo+hi)*.5;vec3 candidateP=oldP,candidateD=oldD;float candidateT=oldDelay;
+                starStep(candidateP,candidateD,candidateT,mid);
+                if(length(candidateP-uStarCenter)>=uStarEscape)hi=mid;else lo=mid;
+            }
+            float used=(lo+hi)*.5;p=oldP;d=oldD;delay=oldDelay;starStep(p,d,delay,used);arc+=used;escaped=true;break;
+        }
+        arc+=h;
     }
     float Aemit=picked==0?starA(uStarCenter+vec3(uStarRadius,0,0)):starA(p);
     float D=Aemit/starA(vec3(0))*gm(uVelocity)*(1.+dot(uVelocity,initial));

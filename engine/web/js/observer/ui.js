@@ -6,6 +6,7 @@ import { MAX_GRAVITY_STRENGTH } from './types.js';
 import { createPhenomenaInstrument } from './phenomena-instrument.js';
 import { starMetric, LIGHT_SPEED } from './compact-star.js';
 import { observationTelemetry } from './telemetry.js';
+import { createObserverTooltips } from './tooltips.js';
 /** @typedef {import('./types.js').WorldSnapshot} WorldSnapshot */
 /** @typedef {import('./types.js').WorldCommand} WorldCommand */
 /** @typedef {import('./catalog.js').ObserverSettings & Record<string,any>} ObserverSettings */
@@ -167,12 +168,18 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     status.dataset.observerStatus = '';
     const panel = node('aside', 'observer-panel');
     panel.hidden = true; panel.dataset.observerPanel = '';
+    panel.id = 'observer-controls';
     panel.setAttribute('aria-label', 'Observer controls');
     const panelHead = node('div', 'observer-panel-head');
     const panelTitle = node('h2', '', 'Objects');
+    const telemetrySummary = node('p', 'observer-telemetry-summary');
+    telemetrySummary.dataset.observerTelemetrySummary = '';
+    telemetrySummary.hidden = true;
+    telemetrySummary.setAttribute('aria-live', 'off');
     const panelClose = button('×', 'close-panel', { title: 'Close controls' }); panelClose.setAttribute('aria-label', 'Close controls');
-    panelHead.append(panelTitle, panelClose);
+    panelHead.append(panelTitle, telemetrySummary, panelClose);
     const panelBody = node('div', 'observer-panel-body'); panel.append(panelHead, panelBody);
+    toolbar.querySelectorAll('[data-observer-panel-tab]').forEach(tab => tab.setAttribute('aria-controls', panel.id));
     element.append(head, telemetry, target, toolbar, transport, status, panel); host.append(element);
     const phenomena = createPhenomenaInstrument();
     element.append(phenomena.element);
@@ -196,6 +203,8 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     let disposed = false;
     let interfaceHidden = false;
     let telemetrySignature = '';
+    const tooltips = createObserverTooltips(host, () => ({ profile: snapshot?.profile || 'sr', curved: !!snapshot?.spacetime, blackHole: snapshot?.spacetime?.kind === 'schwarzschild-black-hole' }));
+    scope.defer(() => tooltips.dispose());
     const entity = () => viewState.authorEntity?.id === selectedId ? viewState.authorEntity : snapshot?.entities?.find(item => item.id === selectedId);
     /** @param {string} name @param {any} [payload] */
     const action = (name, payload) => {
@@ -218,7 +227,7 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     /** @param {HTMLElement} block @param {string} label @param {string} key @param {FieldOptions} [options] */
     function settingField(block, label, key, options = {}) { return field(block, label, getPath(settings, key), { observerSetting: key, ...options }); }
     function renderObjects() {
-        if(snapshot?.spacetime){section(panelBody,'Floating compact star','The emitting sphere stays fixed at the center of the Schwarzschild reference spacetime. Geometry and optical histories are locked for this experiment.');return;}
+        if(snapshot?.spacetime){const blackHole=snapshot.spacetime.kind==='schwarzschild-black-hole';section(panelBody,blackHole?'Black-hole exterior':'Floating compact star',blackHole?'The central event horizon is a boundary of the Schwarzschild exterior, with no emitting surface or material object. Captured sight rays remain dark; escaping rays reach the finite reference sky.':'The emitting sphere stays fixed at the center of the Schwarzschild reference spacetime. Geometry and optical histories are locked for this experiment.');return;}
         const create = section(panelBody, 'Place something here', 'Objects belong to this sandbox. Select a shape, then place it in front of you.');
         field(create, 'Geometry', 'box', { options: SHAPES, observerCreateShape: '' });
         row(create, button('＋ Place object', 'create-object', { primary: true }));
@@ -318,7 +327,7 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
         row(physics, button('Reset world', 'reset'));
     }
     function renderWorld() {
-        if(snapshot?.spacetime){section(panelBody,'Schwarzschild exterior','This experiment uses fixed stellar geometry and a static radiance boundary at isotropic radius 40. Enter another preparation for world authoring, environments or Minkowski history scrubbing.');row(panelBody,button('Reset star experiment','reset'));return;}
+        if(snapshot?.spacetime){const blackHole=snapshot.spacetime.kind==='schwarzschild-black-hole';section(panelBody,'Schwarzschild exterior',blackHole?'A nonrotating black-hole exterior with a prescribed static reference sky at isotropic radius 40. The observer stops at an exterior numerical guard before the horizon; this chart does not simulate horizon crossing or an interior. Enter another preparation for world authoring.':'This experiment uses fixed stellar geometry and a static radiance boundary at isotropic radius 40. Enter another preparation for world authoring, environments or Minkowski history scrubbing.');row(panelBody,button(blackHole?'Reset black-hole experiment':'Reset star experiment','reset'));return;}
         renderWorldPhysics();
         const environment = snapshot?.environment || { preset: 'void', seed: 1, radius: 40, density: 1, spacing: 4, orientation: 0, opacity: 1, color: [0.2, 0.7, 1], animationRate: 0, anchor: 'world' };
         const block = section(panelBody, 'Surround yourself', 'A geometric setting wraps the full view. These visual shells do not change the world’s physics.');
@@ -383,7 +392,7 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
             : 'Camera echoes are off.';
     }
     function renderLayers() {
-        if(snapshot?.spacetime){section(panelBody,'Curved received-light geometry','The marked surface and background grid are traced along null geodesics. Flat-space rulers, reflected geometry, wave overlays and simultaneity comparisons are unavailable in this experiment.');return;}
+        if(snapshot?.spacetime){section(panelBody,'Curved received-light geometry',snapshot.spacetime.kind==='schwarzschild-black-hole'?'Sight rays follow Schwarzschild null geodesics. Escaping rays sample the finite reference sky; captured rays make the black-hole shadow. Flat-space rulers, reflected geometry, wave overlays and simultaneity comparisons are unavailable.':'The marked surface and background grid are traced along null geodesics. Flat-space rulers, reflected geometry, wave overlays and simultaneity comparisons are unavailable in this experiment.');return;}
         const overlays = section(panelBody, 'Spatial readouts', 'Readouts hover near objects. Filter their visibility independently of the center reticle.');
         settingField(overlays, 'Visible overlays', 'overlayFilter', { options: [{ id: 'selected', label: 'Selected object' }, { id: 'all', label: 'All objects' }, { id: 'none', label: 'Hidden' }] });
         for (const [id, label] of Object.entries(FIELD_NAMES)) settingField(overlays, label, `overlayFields.${id}`, { type: 'checkbox' });
@@ -391,7 +400,7 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
         for (const { id, label } of LAYERS) settingField(layers, label, `layers.${id}`, { type: 'checkbox' });
     }
     function renderPhenomena() {
-        if(snapshot?.spacetime){const gr=section(panelBody,'Gravitational and local SR optics','The received frequency includes the emitting-surface lapse, observer lapse and local Doppler factor. Integrated line intensity scales with the fourth power of that combined factor.');for(const [key,label] of [['doppler','Received color shift'],['beaming','Received intensity']])settingField(gr,label,key,{type:'checkbox'});const output=node('p','observer-description');output.dataset.observerGrObservation='';gr.append(output);return;}
+        if(snapshot?.spacetime){const blackHole=snapshot.spacetime.kind==='schwarzschild-black-hole';const gr=section(panelBody,'Gravitational and local SR optics',blackHole?'The horizon emits no light in this reference preparation. Escaping sight rays receive the prescribed finite static sky, including gravitational and local SR frequency factors; captured directions remain dark. The photon sphere sets the unstable vacuum orbit used to understand the shadow.':'The received frequency includes the emitting-surface lapse, observer lapse and local Doppler factor. Integrated line intensity scales with the fourth power of that combined factor.');for(const [key,label] of [['doppler','Received color shift'],['beaming','Received intensity']])settingField(gr,label,key,{type:'checkbox'});const output=node('p','observer-description');output.dataset.observerGrObservation='';gr.append(output);return;}
         const frame = section(panelBody, 'Space, time and arriving light', 'These instruments use the adopted Minkowski reference model (c = 1). They illustrate the sandbox; they are not measurements of recovered lattice physics.');
         for (const id of ['lightCones', 'simultaneity', 'lightPaths', 'aberration', 'ghosts', 'pulses']) {
             const entry = LAYERS.find(layer => layer.id === id);
@@ -415,9 +424,10 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     }
     function renderExperiments() {
         if(snapshot?.spacetime){
-            const star=section(panelBody,'Compact star · observer motion','Free fall follows a timelike geodesic. Hold applies an ideal stopping impulse and supports you at rest. Navigation in guided mode controls local momentum; clocks accumulate along your actual path.');
+            const blackHole=snapshot.spacetime.kind==='schwarzschild-black-hole';
+            const star=section(panelBody,blackHole?'Black hole · exterior observer motion':'Compact star · observer motion','Free fall follows a timelike geodesic. Hold applies an ideal stopping impulse and supports you at rest. Navigation in guided mode controls local momentum; clocks accumulate along your actual path.');
             row(star,button('Release into free fall','compact-star-motion',{value:'freefall'}),button('Hold at rest','compact-star-motion',{value:'guided'}));
-            star.append(node('p','observer-description',`${snapshot.spacetime.massSolar} solar masses · ${snapshot.spacetime.radiusKm} km areal radius · ${snapshot.spacetime.lengthUnitMeters/1000} km per displayed coordinate unit. Floating sphere with prescribed surface emission and a finite optical boundary. Nonrotating exterior reference model.`));
+            star.append(node('p','observer-description',blackHole?`${snapshot.spacetime.massSolar} nominal solar-GM multiples · horizon areal radius ${finiteText(snapshot.spacetime.radiusKm,2)} km · ${finiteText(snapshot.spacetime.lengthUnitMeters/1000,2)} km per displayed coordinate unit. No accretion disk, rotating geometry or interior. Free fall stops before the horizon at the exterior numerical guard or local-speed limit.`:`${snapshot.spacetime.massSolar} solar masses · ${snapshot.spacetime.radiusKm} km areal radius · ${snapshot.spacetime.lengthUnitMeters/1000} km per displayed coordinate unit. Floating sphere with prescribed surface emission and a finite optical boundary. Nonrotating exterior reference model.`));
         }
         const block = section(panelBody, 'Small worlds, clear questions', 'Each preparation replaces the sandbox world with its declared SR, Schwarzschild GR or classical reference model.');
         for (const experiment of EXPERIMENTS) {
@@ -473,6 +483,7 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
         telemetrySignature = '';
         if (!activePanel) return;
         ({ objects: renderObjects, forcegun: renderForceGun, world: renderWorld, camera: renderCamera, layers: renderLayers, phenomena: renderPhenomena, telemetry: renderTelemetry, experiments: renderExperiments, storage: renderStorage, lattice: renderLattice, help: renderHelp })[activePanel]();
+        tooltips.refresh();
     }
     /** @param {number|string|null} value */
     function telemetryText(value) {
@@ -485,16 +496,22 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     function renderTelemetry() {
         if (!snapshot) return;
         const sections = observationTelemetry(snapshot, viewState);
+        const readingsCount = sections.reduce((total, group) => total + group.rows.length, 0);
+        telemetrySummary.textContent = `${snapshot.playing ? 'LIVE' : 'PAUSED'} · ${readingsCount} readings · ${sections.length} categories · ${snapshot.spacetime ? 'GR + LOCAL SR' : snapshot.profile === 'sr' ? 'SR' : 'CLASSICAL'}`;
+        telemetrySummary.dataset.playing = String(snapshot.playing);
         const signature = JSON.stringify(sections.map(group => [group.id, group.title, group.description, group.rows.map(reading => [reading.id, reading.label, reading.unit, reading.note])]));
         if (signature !== telemetrySignature) {
             const expanded = new Map(Array.from(panelBody.querySelectorAll('details')).map(detail => [detail.dataset.observerTelemetrySection, detail.open]));
             panelBody.replaceChildren();
-            panelBody.append(node('p', 'observer-description observer-telemetry-intro', 'Live readings from this observation. Expand a category for its units, frame and measurement notes.'));
+            panelBody.append(node('p', 'observer-description observer-telemetry-intro', 'Your frame, clocks and arriving light. Collapse categories to focus; units and measurement notes stay with each reading.'));
+            const groups = node('div', 'observer-telemetry-grid');
             for (const group of sections) {
                 const block = node('details', 'observer-telemetry-group');
                 block.dataset.observerTelemetrySection = group.id;
-                block.open = expanded.get(group.id) ?? ['time', 'motion', 'distance', 'gravity', 'optics'].includes(group.id);
-                block.append(node('summary', '', group.title));
+                block.open = expanded.get(group.id) ?? true;
+                const summary = node('summary');
+                summary.append(node('span', 'observer-telemetry-group-title', group.title), node('span', 'observer-telemetry-count', String(group.rows.length)));
+                block.append(summary);
                 if (group.description) block.append(node('p', 'observer-description', group.description));
                 const readings = node('dl', 'observer-telemetry-readings');
                 for (const reading of group.rows) {
@@ -505,26 +522,36 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
                     output.dataset.observerTelemetry = reading.id;
                     output.setAttribute('aria-label', reading.label);
                     output.setAttribute('aria-live', 'off');
+                    output.append(node('span', 'observer-telemetry-value'), node('span', 'observer-telemetry-unit'));
                     value.append(output); entry.append(value);
                     if (reading.note) entry.append(node('p', 'observer-telemetry-note', reading.note));
                     readings.append(entry);
                 }
-                block.append(readings); panelBody.append(block);
+                block.append(readings); groups.append(block);
             }
+            panelBody.append(groups);
             telemetrySignature = signature;
         }
         for (const group of sections) for (const reading of group.rows) {
             const output = panelBody.querySelector(`[data-observer-telemetry="${reading.id}"]`);
-            if (output) output.textContent = `${telemetryText(reading.value)}${reading.value !== null && reading.unit ? ` ${reading.unit}` : ''}`;
+            if (output) {
+                const value = output.querySelector('.observer-telemetry-value');
+                const unit = output.querySelector('.observer-telemetry-unit');
+                if (value) value.textContent = telemetryText(reading.value);
+                if (unit) unit.textContent = reading.value !== null && reading.unit ? ` ${reading.unit}` : '';
+                output.setAttribute('data-reading-kind', reading.value === null ? 'missing' : typeof reading.value);
+            }
         }
     }
     /** @param {boolean} hidden */
     function hideInterface(hidden) {
+        tooltips.hide();
         interfaceHidden = hidden;
         if (hidden) closePanel();
         visibility.title = hidden ? 'Show interface' : 'Hide interface';
         visibility.setAttribute('aria-label', visibility.title);
         visibility.setAttribute('aria-pressed', String(hidden));
+        tooltips.refresh();
         action('ui-visibility', hidden);
         visibility.focus({ preventScroll: true });
     }
@@ -535,8 +562,11 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
         if (interfaceHidden) hideInterface(false);
         discardPreview(); activePanel = /** @type {PanelName} */ (name); panel.hidden = false;
         panel.dataset.observerPanel = name;
+        panel.classList.toggle('observer-panel-telemetry', name === 'telemetry');
+        telemetrySummary.hidden = name !== 'telemetry';
         panelTitle.textContent = PANELS.find(([id]) => id === name)?.[1] || name;
         element.classList.add('observer-has-panel');
+        element.classList.toggle('observer-has-telemetry', name === 'telemetry');
         toolbar.querySelectorAll('[data-observer-panel-tab]').forEach(tab => { tab.setAttribute('aria-expanded', String(tab.getAttribute('data-observer-panel-tab') === name)); });
         renderPanel(); action('panel-open', name);
         if (name === 'storage') action('refresh-saves');
@@ -546,6 +576,8 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
         if (!activePanel) return;
         discardPreview(); const previous = activePanel; activePanel = null; panel.hidden = true;
         element.classList.remove('observer-has-panel');
+        element.classList.remove('observer-has-telemetry');
+        tooltips.refresh();
         toolbar.querySelectorAll('[data-observer-panel-tab]').forEach(tab => tab.setAttribute('aria-expanded', 'false'));
         action('panel-close');
         /** @type {HTMLElement|null} */ (toolbar.querySelector(`[data-observer-panel-tab="${previous}"]`))?.focus({ preventScroll: true });
@@ -709,8 +741,9 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
         historyReadout.textContent = `Retained light history ${finiteText(snapshot?.historyStart)} → ${finiteText(snapshot?.time)} · earlier emissions unavailable`;
         starReadout.hidden=!snapshot?.spacetime;
         telemetry.toggleAttribute('data-observer-gr',!!snapshot?.spacetime);
-        if(snapshot?.spacetime){const star=snapshot.spacetime,A=starMetric(star,[star.center[0]+star.radius,star.center[1],star.center[2]]).lapse,Aobs=starMetric(star,snapshot.observer.position).lapse;
-            starReadout.textContent=`Scaled compact star · ${star.observerMode==='freefall'?'FREE FALL':'GUIDED / SUPPORTED'} · surface redshift z=${(1/A-1).toFixed(3)} (to infinity) · your clock rate ${(Aobs*Math.sqrt(1-beta*beta)).toFixed(4)} · 1 time unit = ${(star.lengthUnitMeters/LIGHT_SPEED*1e6).toFixed(1)} µs`;
+        if(snapshot?.spacetime){const star=snapshot.spacetime,Aobs=starMetric(star,snapshot.observer.position).lapse;
+            if(star.kind==='schwarzschild-black-hole')starReadout.textContent=`Black-hole exterior · ${star.observerMode==='freefall'?'FREE FALL':'GUIDED / SUPPORTED'} · horizon areal radius ${(star.rs*star.lengthUnitMeters/1000).toFixed(2)} km · your clock rate ${(Aobs*Math.sqrt(1-beta*beta)).toFixed(4)} · exterior numerical guard before horizon`;
+            else {const A=starMetric(star,[star.center[0]+star.radius,star.center[1],star.center[2]]).lapse;starReadout.textContent=`Scaled compact star · ${star.observerMode==='freefall'?'FREE FALL':'GUIDED / SUPPORTED'} · surface redshift z=${(1/A-1).toFixed(3)} (to infinity) · your clock rate ${(Aobs*Math.sqrt(1-beta*beta)).toFixed(4)} · 1 time unit = ${(star.lengthUnitMeters/LIGHT_SPEED*1e6).toFixed(1)} µs`;}
         }
         hudFields.proper.textContent = finiteText(snapshot?.observer?.properTime);
         hudFields.beta.textContent = finiteText(beta, 3);
@@ -750,12 +783,12 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
         if (activePanel === 'phenomena' && previousProfile !== snapshot.profile) renderPanel();
         if(!snapshot.spacetime)phenomena.update(snapshot, { ...settings, cameraOverride: viewState.cameraOverride, selectedId }, viewState.hit ?? null);
         if (activePanel === 'telemetry' && !interfaceHidden) renderTelemetry();
-        panelBody.querySelectorAll('[data-observer-gr-observation]').forEach(output=>{const hit=viewState.hit;output.textContent=hit?`Center ray · received factor ${finiteText(hit.doppler,5)} · emission t=${finiteText(hit.emissionTime,5)} · surface clock τ=${finiteText(hit.properTime,5)}`:'Aim at the star to inspect arriving light.';});
+        panelBody.querySelectorAll('[data-observer-gr-observation]').forEach(output=>{const hit=viewState.hit;output.textContent=snapshot?.spacetime?.kind==='schwarzschild-black-hole'?'No emitting horizon. Use Telemetry to inspect captured or escaping sight-ray diagnostics.':hit?`Center ray · received factor ${finiteText(hit.doppler,5)} · emission t=${finiteText(hit.emissionTime,5)} · surface clock τ=${finiteText(hit.properTime,5)}`:'Aim at the star to inspect arriving light.';});
         if (activePanel === 'lattice') panelBody.querySelectorAll('[data-observer-lattice-field]').forEach(output => {
             const key = output.getAttribute('data-observer-lattice-field') || '';
             const info = viewState.lattice || {};
             output.textContent = String(key === 'status' ? (info.status ?? info.reason ?? (info.available ? 'Observation available' : 'Waiting for observation')) : (info[key] ?? '—'));
         });
     }
-    return { element, update, setStatus, openPanel, closePanel, dispose() { if (disposed) return; discardPreview(); disposed = true; scope.dispose(); element.remove(); } };
+    return { element, update, setStatus, openPanel, closePanel, tooltipInventory: () => tooltips.inventory(), dispose() { if (disposed) return; discardPreview(); disposed = true; scope.dispose(); element.remove(); } };
 }

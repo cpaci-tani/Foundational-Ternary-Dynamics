@@ -55,7 +55,7 @@ export function segmentBounds(segment, time, historyStart, index) {
 
 /** @param {OpticalSnapshot} snapshot @param {OpticalSettings} settings @param {number} ndcX @param {number} ndcY @param {OpticalSegment[]} extras @param {TraceAcceleration|null} prepared @returns {OpticalHit|null} */
 export function traceObserverRay(snapshot, settings = {}, ndcX = 0, ndcY = 0, extras = [], prepared = null) {
-    if(snapshot.spacetime)return traceCompactStar(snapshot,settings,ndcX,ndcY);
+    if(snapshot.spacetime)return snapshot.spacetime.kind==='schwarzschild-black-hole'?null:traceCompactStar(snapshot,settings,ndcX,ndcY);
     const ray = observerRay(snapshot, settings, ndcX, ndcY), segments = prepared?.segments || visibleSegments(snapshot, settings, extras);
     const optical = snapshot.profile === 'sr' && settings.optical !== false, sr = snapshot.profile === 'sr';
     // Simultaneous-frame intersections can lie at coordinate times later than the observation event.

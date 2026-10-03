@@ -46,6 +46,7 @@ export const ENVIRONMENT_PRESETS = Object.freeze([
 ]);
 
 export const EXPERIMENTS = Object.freeze([
+    named('black-hole', 'A Schwarzschild black hole', 'A 10-solar-mass nonrotating, uncharged black hole displayed at tabletop scale. A lensed sky and captured-light shadow; bounded exterior navigation.'),
     named('compact-star', 'A floating compact star', 'A 1.4-solar-mass, 12 km star displayed at tabletop scale. Schwarzschild light bending, gravitational redshift, local SR and free fall.'),
     named('baseline', 'A quiet frame', 'Start with a plane, a clock and simple landmarks.'),
     named('clocks', 'Separated clocks', 'Compare clocks at separated locations and their delayed appearance.'),
