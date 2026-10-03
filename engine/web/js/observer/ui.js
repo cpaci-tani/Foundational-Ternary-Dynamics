@@ -8,6 +8,7 @@ import { starMetric, LIGHT_SPEED } from './compact-star.js';
 import { observationTelemetry } from './telemetry.js';
 import { createObserverTooltips } from './tooltips.js';
 import { createTelemetryResize } from './telemetry-resize.js';
+import { createTelemetryLayout } from './telemetry-layout.js';
 /** @typedef {import('./types.js').WorldSnapshot} WorldSnapshot */
 /** @typedef {import('./types.js').WorldCommand} WorldCommand */
 /** @typedef {import('./catalog.js').ObserverSettings & Record<string,any>} ObserverSettings */
@@ -221,6 +222,8 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     scope.defer(() => tooltips.dispose());
     const telemetryResize = createTelemetryResize({ panel, handle: resizeHandle, root: element, description: resizeDescription });
     scope.defer(() => telemetryResize.dispose());
+    const telemetryLayout = createTelemetryLayout({ panel, body: panelBody });
+    scope.defer(() => telemetryLayout.dispose());
     const entity = () => viewState.authorEntity?.id === selectedId ? viewState.authorEntity : snapshot?.entities?.find(item => item.id === selectedId);
     /** @param {string} name @param {any} [payload] */
     const action = (name, payload) => {
@@ -515,7 +518,9 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
         const readingsCount = sections.reduce((total, group) => total + group.rows.length, 0);
         telemetrySummary.textContent = `${snapshot.playing ? 'LIVE' : 'PAUSED'} · ${readingsCount} readings · ${sections.length} categories · ${snapshot.spacetime ? 'GR + LOCAL SR' : snapshot.profile === 'sr' ? 'SR' : 'CLASSICAL'}`;
         telemetrySummary.dataset.playing = String(snapshot.playing);
-        const signature = JSON.stringify(sections.map(group => [group.id, group.title, group.description, group.rows.map(reading => [reading.id, reading.label, reading.unit, reading.note])]));
+        // Measurement notes and labels may change without replacing focused
+        // readings, their category state, or the retained scroll position.
+        const signature = JSON.stringify(sections.map(group => [group.id, group.rows.map(reading => reading.id)]));
         if (signature !== telemetrySignature) {
             const expanded = new Map(Array.from(panelBody.querySelectorAll('details')).map(detail => [detail.dataset.observerTelemetrySection, detail.open]));
             panelBody.replaceChildren();
@@ -528,10 +533,11 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
                 const summary = node('summary');
                 summary.append(node('span', 'observer-telemetry-group-title', group.title), node('span', 'observer-telemetry-count', String(group.rows.length)));
                 block.append(summary);
-                if (group.description) block.append(node('p', 'observer-description', group.description));
+                block.append(node('p', 'observer-description', group.description));
                 const readings = node('dl', 'observer-telemetry-readings');
                 for (const reading of group.rows) {
                     const entry = node('div', 'observer-telemetry-reading');
+                    entry.dataset.observerTelemetryReading = reading.id;
                     entry.append(node('dt', '', reading.label));
                     const value = node('dd');
                     const output = node('output');
@@ -540,7 +546,7 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
                     output.setAttribute('aria-live', 'off');
                     output.append(node('span', 'observer-telemetry-value'), node('span', 'observer-telemetry-unit'));
                     value.append(output); entry.append(value);
-                    if (reading.note) entry.append(node('p', 'observer-telemetry-note', reading.note));
+                    entry.append(node('p', 'observer-telemetry-note', reading.note));
                     readings.append(entry);
                 }
                 block.append(readings); groups.append(block);
@@ -548,22 +554,41 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
             panelBody.append(groups);
             telemetrySignature = signature;
         }
-        for (const group of sections) for (const reading of group.rows) {
-            const output = panelBody.querySelector(`[data-observer-telemetry="${reading.id}"]`);
-            if (output) {
-                const value = output.querySelector('.observer-telemetry-value');
-                const unit = output.querySelector('.observer-telemetry-unit');
-                if (value) value.textContent = telemetryText(reading.value);
-                if (unit) unit.textContent = reading.value !== null && reading.unit ? ` ${reading.unit}` : '';
-                output.setAttribute('data-reading-kind', reading.value === null ? 'missing' : typeof reading.value);
-                // Integer counters can be exact strings (including large ticks).
-                // Style them as numbers without parsing or changing their value.
-                output.setAttribute('data-reading-numeric', String(typeof reading.value === 'number' || typeof reading.value === 'string' && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(reading.value)));
-                // Give source identities and long model descriptions the full row;
-                // numeric readings keep their aligned value/unit column.
-                output.closest('.observer-telemetry-reading')?.setAttribute('data-reading-wide', String(typeof reading.value === 'string' && reading.value.length > 18));
+        for (const group of sections) {
+            const block = panelBody.querySelector(`[data-observer-telemetry-section="${group.id}"]`);
+            const title = block?.querySelector('.observer-telemetry-group-title');
+            const description = block?.querySelector('.observer-description');
+            if (title && title.textContent !== group.title) title.textContent = group.title;
+            if (description && description.textContent !== group.description) description.textContent = group.description;
+            for (const reading of group.rows) {
+                const output = panelBody.querySelector(`[data-observer-telemetry="${reading.id}"]`);
+                if (output) {
+                    const entry = output.closest('.observer-telemetry-reading');
+                    const label = entry?.querySelector('dt');
+                    const note = entry?.querySelector('.observer-telemetry-note');
+                    const value = output.querySelector('.observer-telemetry-value');
+                    const unit = output.querySelector('.observer-telemetry-unit');
+                    const valueText = telemetryText(reading.value);
+                    const unitText = reading.value !== null && reading.unit ? ` ${reading.unit}` : '';
+                    if (label && label.textContent !== reading.label) label.textContent = reading.label;
+                    if (note && note.textContent !== reading.note) note.textContent = reading.note;
+                    if (value && value.textContent !== valueText) value.textContent = valueText;
+                    if (unit && unit.textContent !== unitText) unit.textContent = unitText;
+                    output.setAttribute('aria-label', reading.label);
+                    output.setAttribute('data-reading-kind', reading.value === null ? 'missing' : typeof reading.value);
+                    // Integer counters can be exact strings (including large ticks).
+                    // Style them as numbers without parsing or changing their value.
+                    output.setAttribute('data-reading-numeric', String(typeof reading.value === 'number' || typeof reading.value === 'string' && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(reading.value)));
+                    // Row geometry belongs to the declared reading, independently
+                    // of changing text length, notation, or availability.
+                    entry?.setAttribute('data-reading-presentation', reading.presentation);
+                    output.setAttribute('data-reading-presentation', reading.presentation);
+                    entry?.setAttribute('data-reading-wide', String(reading.presentation !== 'number'));
+                    entry?.setAttribute('data-reading-has-unit', String(!!reading.unit));
+                }
             }
         }
+        telemetryLayout.refresh();
     }
     /** @param {boolean} hidden */
     function hideInterface(hidden) {
@@ -582,7 +607,7 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     function openPanel(name) {
         if (!PANELS.some(([id]) => id === name) || disposed) return;
         if (interfaceHidden) hideInterface(false);
-        telemetryResize.close();
+        telemetryResize.close(); telemetryLayout.close();
         discardPreview(); activePanel = /** @type {PanelName} */ (name); panel.hidden = false;
         panel.dataset.observerPanel = name;
         panel.classList.toggle('observer-panel-telemetry', name === 'telemetry');
@@ -599,7 +624,7 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     }
     function closePanel() {
         if (!activePanel) return;
-        telemetryResize.close(); resizeHandle.hidden = true;
+        telemetryResize.close(); telemetryLayout.close(); resizeHandle.hidden = true;
         discardPreview(); const previous = activePanel; activePanel = null; panel.hidden = true;
         element.classList.remove('observer-has-panel');
         element.classList.remove('observer-has-telemetry');
