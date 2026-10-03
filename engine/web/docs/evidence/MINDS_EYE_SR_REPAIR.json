@@ -1,0 +1,1306 @@
+{
+  "auditBaselineCommit": "4e3853a06a458e0d5eaac2fc3d7c4bdfffe4596f",
+  "branch": "codex/minds-eye-sr-repair",
+  "patchCommit": "The commit containing this evidence; inspect git log -1 -- engine/web/docs/evidence/MINDS_EYE_SR_REPAIR.json",
+  "environment": {
+    "os": "Windows 11",
+    "node": "24.11.0",
+    "typescript": "5.9.3",
+    "playwright": "1.59.1",
+    "threeVendoredRevision": "169",
+    "rapierCompatibility": "0.20.0"
+  },
+  "testCounts": {
+    "observerNode": {
+      "passed": 224,
+      "failed": 0,
+      "skipped": 0
+    },
+    "assistantNode": {
+      "passed": 230,
+      "failed": 0,
+      "skipped": 0
+    },
+    "suppliedOriginal": {
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0
+    },
+    "suppliedCurrentImportsOnly": {
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0
+    },
+    "observerBrowser": {
+      "passed": 61,
+      "failed": 0,
+      "skipped": 0
+    },
+    "hardwarePerformanceIsolated": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0
+    },
+    "assistantBrowserAdditional": {
+      "passed": 13,
+      "failed": 1,
+      "skipped": 0
+    },
+    "isolatedLocalModelComparisons": {
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0
+    },
+    "workerAcceleratedReplayFinal": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "gpuTests": {
+    "sr-accelerated-event.json": {
+      "cpu": {
+        "entityId": "object-5",
+        "id": "object-5",
+        "revision": 109,
+        "distance": 0.09565109138610937,
+        "emissionTime": 0.9043489086138895,
+        "properTime": 0.8760965386591321,
+        "position": [
+          0.194887997612662,
+          3,
+          0.00018224194722284148
+        ],
+        "sourcePosition": [
+          0.194887997612662,
+          3,
+          0.00018224194722284148
+        ],
+        "restPosition": [
+          -8.238854697366947e-05,
+          0,
+          0.00018224194722283755
+        ],
+        "normal": [
+          -0.411942734868335,
+          0,
+          0.9112097361141379
+        ],
+        "historical": true,
+        "segmentIndex": 108,
+        "mirrored": false,
+        "doppler": 0.9112097361141634
+      },
+      "gpu": {
+        "entityId": "object-5",
+        "id": "object-5",
+        "revision": 109,
+        "distance": 0.09565109014511108,
+        "emissionTime": 0.9043489098548878,
+        "properTime": 0.8760965765592603,
+        "position": [
+          0.194887997612662,
+          3,
+          0.00018224318822113172
+        ],
+        "sourcePosition": [
+          0.194887997612662,
+          3,
+          0.00018224318822113172
+        ],
+        "doppler": 0.911209762096405,
+        "emissionTimeOffset": -0.09565109014511108,
+        "properTimeOffset": -0.08712422847747803,
+        "positionOffset": [
+          0,
+          0,
+          -0.09565109014511108
+        ],
+        "clockBase": 0.9632208050367383,
+        "segmentIndex": 108,
+        "mirrored": false
+      },
+      "segment": {
+        "entityId": "object-5",
+        "revision": 109,
+        "start": 0.8999999999999992,
+        "end": 0.9083333333333325,
+        "originTime": 0.8999999999999992,
+        "position": [
+          0.19317156955071055,
+          3,
+          0
+        ],
+        "velocity": [
+          0.41194273486827804,
+          0,
+          0
+        ],
+        "size": [
+          0.0004,
+          0.0004,
+          0.0004
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "shape": "beacon",
+        "color": [
+          0.15,
+          0.7,
+          1
+        ],
+        "emission": 1,
+        "clockOffset": 0.8720998314253223,
+        "name": "Geometric object",
+        "mass": 1,
+        "spectral": "white",
+        "integratorVersion": "sr-coordinate-force-kdk-v2",
+        "capApplied": false
+      }
+    },
+    "sr-gpu-evidence.json": {
+      "hits": 698,
+      "misses": 18,
+      "boundaries": 4,
+      "boundaryCases": [
+        {
+          "shape": "plane",
+          "beta": 0.6,
+          "translation": 0,
+          "mirrored": false,
+          "x": 0,
+          "cpu": {
+            "entityId": "parity",
+            "id": "parity",
+            "revision": 7,
+            "distance": 8.000000000000155,
+            "emissionTime": 1.9999999999998455,
+            "properTime": -6.7381134651801515,
+            "position": [
+              -5.4975283254226355,
+              3.7035311350369415,
+              0.2309250088760395
+            ],
+            "sourcePosition": [
+              -5.4975283254226355,
+              3.7035311350369415,
+              0.2309250088760395
+            ],
+            "restPosition": [
+              -3.191891195797325e-14,
+              -4.336808689942018e-18,
+              -1.4988010832439613e-13
+            ],
+            "normal": [
+              0.09537450575679465,
+              0.9810316271289851,
+              0.1687621113410926
+            ],
+            "historical": true,
+            "segmentIndex": 0,
+            "mirrored": false,
+            "doppler": 0.7417941970317781
+          },
+          "gpu": {
+            "entityId": "parity",
+            "id": "parity",
+            "revision": 7,
+            "distance": 8.00001335144043,
+            "emissionTime": 1.9999866485595703,
+            "properTime": -6.7381272315979,
+            "position": [
+              -5.497537612915039,
+              3.703532338142395,
+              0.23091506958007812
+            ],
+            "sourcePosition": [
+              -5.497537612915039,
+              3.703532338142395,
+              0.23091506958007812
+            ],
+            "doppler": 0.7417941689491272,
+            "emissionTimeOffset": -8.00001335144043,
+            "properTimeOffset": -7.7381272315979,
+            "positionOffset": [
+              -5.497537612915039,
+              0.703532338142395,
+              -5.769084930419922
+            ],
+            "clockBase": 1,
+            "segmentIndex": 0,
+            "mirrored": false
+          }
+        },
+        {
+          "shape": "disk",
+          "beta": 0.6,
+          "translation": 0,
+          "mirrored": false,
+          "x": 0,
+          "cpu": {
+            "entityId": "parity",
+            "id": "parity",
+            "revision": 7,
+            "distance": 8.000000000000155,
+            "emissionTime": 1.9999999999998455,
+            "properTime": -6.7381134651801515,
+            "position": [
+              -5.4975283254226355,
+              3.7035311350369415,
+              0.2309250088760395
+            ],
+            "sourcePosition": [
+              -5.4975283254226355,
+              3.7035311350369415,
+              0.2309250088760395
+            ],
+            "restPosition": [
+              -3.191891195797325e-14,
+              -4.336808689942018e-18,
+              -1.4988010832439613e-13
+            ],
+            "normal": [
+              0.09537450575679465,
+              0.9810316271289851,
+              0.1687621113410926
+            ],
+            "historical": true,
+            "segmentIndex": 0,
+            "mirrored": false,
+            "doppler": 0.7417941970317781
+          },
+          "gpu": {
+            "entityId": "parity",
+            "id": "parity",
+            "revision": 7,
+            "distance": 8.00001335144043,
+            "emissionTime": 1.9999866485595703,
+            "properTime": -6.7381272315979,
+            "position": [
+              -5.497537612915039,
+              3.703532338142395,
+              0.23091506958007812
+            ],
+            "sourcePosition": [
+              -5.497537612915039,
+              3.703532338142395,
+              0.23091506958007812
+            ],
+            "doppler": 0.7417941689491272,
+            "emissionTimeOffset": -8.00001335144043,
+            "properTimeOffset": -7.7381272315979,
+            "positionOffset": [
+              -5.497537612915039,
+              0.703532338142395,
+              -5.769084930419922
+            ],
+            "clockBase": 1,
+            "segmentIndex": 0,
+            "mirrored": false
+          }
+        },
+        {
+          "shape": "plane",
+          "beta": 0.6,
+          "translation": 10000000,
+          "mirrored": false,
+          "x": 0,
+          "cpu": {
+            "entityId": "parity",
+            "id": "parity",
+            "revision": 7,
+            "distance": 8.000000026027605,
+            "emissionTime": 10000001.999999974,
+            "properTime": 9999993.26188651,
+            "position": [
+              9999994.502471657,
+              3.703531137325832,
+              0.23092499010675027
+            ],
+            "sourcePosition": [
+              9999994.502471657,
+              3.703531137325832,
+              0.23092499010675027
+            ],
+            "restPosition": [
+              -4.737339409643937e-09,
+              0,
+              -2.4989514901818666e-08
+            ],
+            "normal": [
+              0.09537450575679465,
+              0.9810316271289851,
+              0.1687621113410926
+            ],
+            "historical": true,
+            "segmentIndex": 0,
+            "mirrored": false,
+            "doppler": 0.7417941970317781
+          },
+          "gpu": {
+            "entityId": "parity",
+            "id": "parity",
+            "revision": 7,
+            "distance": 8.00001335144043,
+            "emissionTime": 10000001.999986649,
+            "properTime": 9999993.261872768,
+            "position": [
+              9999994.502462387,
+              3.703532338142395,
+              0.23091506958007812
+            ],
+            "sourcePosition": [
+              9999994.502462387,
+              3.703532338142395,
+              0.23091506958007812
+            ],
+            "doppler": 0.7417941689491272,
+            "emissionTimeOffset": -8.00001335144043,
+            "properTimeOffset": -7.7381272315979,
+            "positionOffset": [
+              -5.497537612915039,
+              0.703532338142395,
+              -5.769084930419922
+            ],
+            "clockBase": 10000001,
+            "segmentIndex": 0,
+            "mirrored": false
+          }
+        },
+        {
+          "shape": "disk",
+          "beta": 0.6,
+          "translation": 10000000,
+          "mirrored": false,
+          "x": 0,
+          "cpu": {
+            "entityId": "parity",
+            "id": "parity",
+            "revision": 7,
+            "distance": 8.000000026027605,
+            "emissionTime": 10000001.999999974,
+            "properTime": 9999993.26188651,
+            "position": [
+              9999994.502471657,
+              3.703531137325832,
+              0.23092499010675027
+            ],
+            "sourcePosition": [
+              9999994.502471657,
+              3.703531137325832,
+              0.23092499010675027
+            ],
+            "restPosition": [
+              -4.737339409643937e-09,
+              0,
+              -2.4989514901818666e-08
+            ],
+            "normal": [
+              0.09537450575679465,
+              0.9810316271289851,
+              0.1687621113410926
+            ],
+            "historical": true,
+            "segmentIndex": 0,
+            "mirrored": false,
+            "doppler": 0.7417941970317781
+          },
+          "gpu": {
+            "entityId": "parity",
+            "id": "parity",
+            "revision": 7,
+            "distance": 8.00001335144043,
+            "emissionTime": 10000001.999986649,
+            "properTime": 9999993.261872768,
+            "position": [
+              9999994.502462387,
+              3.703532338142395,
+              0.23091506958007812
+            ],
+            "sourcePosition": [
+              9999994.502462387,
+              3.703532338142395,
+              0.23091506958007812
+            ],
+            "doppler": 0.7417941689491272,
+            "emissionTimeOffset": -8.00001335144043,
+            "properTimeOffset": -7.7381272315979,
+            "positionOffset": [
+              -5.497537612915039,
+              0.703532338142395,
+              -5.769084930419922
+            ],
+            "clockBase": 10000001,
+            "segmentIndex": 0,
+            "mirrored": false
+          }
+        }
+      ],
+      "failures": [],
+      "maxima": {
+        "distance": 2.206649595137833e-05,
+        "emissionTime": 2.2066757082939148e-05,
+        "properTime": 1.8854203919005386e-05,
+        "doppler": 7.705536651803069e-07,
+        "position": 2.1463260054588318e-05,
+        "relativeDistance": 2.6001457956325554e-06,
+        "relativeDoppler": 7.705536651803069e-07
+      },
+      "gpu": {
+        "vendor": "Google Inc. (NVIDIA)",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "floatReadback": true
+      },
+      "precision": {
+        "bits": 23,
+        "rangeMin": 127,
+        "rangeMax": 127
+      },
+      "browser": "147.0.7727.15"
+    },
+    "sr-conditioning-evidence.json": {
+      "rows": [
+        {
+          "delta": -0.0001,
+          "cpu": {
+            "entityId": "sphere",
+            "id": "sphere",
+            "revision": 1,
+            "distance": 5.8903666722041015,
+            "emissionTime": -5.8903666722041015,
+            "properTime": -5.8903666722041015,
+            "position": [
+              0.9814017647396669,
+              3,
+              0.19196503891559846
+            ],
+            "sourcePosition": [
+              0.9814017647396669,
+              3,
+              0.19196503891559846
+            ],
+            "restPosition": [
+              0.9814017647396669,
+              0,
+              0.19196503891559846
+            ],
+            "normal": [
+              0.9814017647396671,
+              0,
+              0.19196503891559852
+            ],
+            "historical": false,
+            "segmentIndex": 0,
+            "mirrored": false,
+            "doppler": 1
+          },
+          "gpu": {
+            "entityId": "sphere",
+            "id": "sphere",
+            "revision": 1,
+            "distance": 5.890320301055908,
+            "emissionTime": -5.890320301055908,
+            "properTime": -5.890320301055908,
+            "position": [
+              0.9813939332962036,
+              3,
+              0.19201087951660156
+            ],
+            "sourcePosition": [
+              0.9813939332962036,
+              3,
+              0.19201087951660156
+            ],
+            "doppler": 1,
+            "emissionTimeOffset": -5.890320301055908,
+            "properTimeOffset": -5.890320301055908,
+            "positionOffset": [
+              0.9813939332962036,
+              0,
+              -5.807989120483398
+            ],
+            "clockBase": 0,
+            "segmentIndex": 0,
+            "mirrored": false
+          }
+        },
+        {
+          "delta": 0,
+          "cpu": {
+            "entityId": "sphere",
+            "id": "sphere",
+            "revision": 1,
+            "distance": 5.916079783099616,
+            "emissionTime": -5.916079783099616,
+            "properTime": -5.916079783099616,
+            "position": [
+              0.9860132971832694,
+              3,
+              0.16666666666666607
+            ],
+            "sourcePosition": [
+              0.9860132971832694,
+              3,
+              0.16666666666666607
+            ],
+            "restPosition": [
+              0.9860132971832694,
+              0,
+              0.16666666666666607
+            ],
+            "normal": [
+              0.9860132971832694,
+              0,
+              0.16666666666666607
+            ],
+            "historical": false,
+            "segmentIndex": 0,
+            "mirrored": false,
+            "doppler": 1
+          },
+          "gpu": null
+        },
+        {
+          "delta": 0.0001,
+          "cpu": null,
+          "gpu": null
+        }
+      ],
+      "distances": [
+        {
+          "expected": 0.009000000000000001,
+          "cpu": {
+            "entityId": "sphere",
+            "id": "sphere",
+            "revision": 1,
+            "distance": 0.008999999999999788,
+            "emissionTime": -0.008999999999999788,
+            "properTime": -0.008999999999999788,
+            "position": [
+              0,
+              3,
+              5.9910000000000005
+            ],
+            "sourcePosition": [
+              0,
+              3,
+              5.9910000000000005
+            ],
+            "restPosition": [
+              0,
+              0,
+              0.001
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "historical": false,
+            "segmentIndex": 0,
+            "mirrored": false,
+            "doppler": 1
+          },
+          "gpu": {
+            "entityId": "sphere",
+            "id": "sphere",
+            "revision": 1,
+            "distance": 0.009000007063150406,
+            "emissionTime": -0.009000007063150406,
+            "properTime": -0.009000007063150406,
+            "position": [
+              0,
+              3,
+              5.99099999293685
+            ],
+            "sourcePosition": [
+              0,
+              3,
+              5.99099999293685
+            ],
+            "doppler": 1,
+            "emissionTimeOffset": -0.009000007063150406,
+            "properTimeOffset": -0.009000007063150406,
+            "positionOffset": [
+              0,
+              0,
+              -0.009000007063150406
+            ],
+            "clockBase": 0,
+            "segmentIndex": 0,
+            "mirrored": false
+          }
+        },
+        {
+          "expected": 49,
+          "cpu": {
+            "entityId": "sphere",
+            "id": "sphere",
+            "revision": 1,
+            "distance": 49,
+            "emissionTime": -49,
+            "properTime": -49,
+            "position": [
+              0,
+              3,
+              -43
+            ],
+            "sourcePosition": [
+              0,
+              3,
+              -43
+            ],
+            "restPosition": [
+              0,
+              0,
+              1
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "historical": false,
+            "segmentIndex": 0,
+            "mirrored": false,
+            "doppler": 1
+          },
+          "gpu": {
+            "entityId": "sphere",
+            "id": "sphere",
+            "revision": 1,
+            "distance": 49,
+            "emissionTime": -49,
+            "properTime": -49,
+            "position": [
+              0,
+              3,
+              -43
+            ],
+            "sourcePosition": [
+              0,
+              3,
+              -43
+            ],
+            "doppler": 1,
+            "emissionTimeOffset": -49,
+            "properTimeOffset": -49,
+            "positionOffset": [
+              0,
+              0,
+              -49
+            ],
+            "clockBase": 0,
+            "segmentIndex": 0,
+            "mirrored": false
+          }
+        }
+      ]
+    },
+    "sr-spectral-evidence.json": {
+      "failures": [],
+      "samples": 192,
+      "maxRelativeError": 1.238968328709511e-06,
+      "paths": [
+        {
+          "pitch": 0.3,
+          "off": [
+            0.01710236631333828,
+            0.0245966799557209,
+            0.04374244064092636
+          ],
+          "on": [
+            0.01710236631333828,
+            0.0245966799557209,
+            0.04374244064092636
+          ]
+        },
+        {
+          "pitch": -0.6,
+          "off": [
+            0.1602652221918106,
+            0.33007287979125977,
+            0.4169839322566986
+          ],
+          "on": [
+            0.1602652221918106,
+            0.33007287979125977,
+            0.4169839322566986
+          ]
+        }
+      ],
+      "gpu": {
+        "vendor": "Google Inc. (NVIDIA)",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "floatReadback": true
+      }
+    },
+    "sr-worker-evidence.json": {
+      "ticks": 120,
+      "clock": 0.9624241677287918,
+      "markerClock": 0.9624241677287918,
+      "markerSegments": 121,
+      "staleRejected": true,
+      "resetWorldline": 3,
+      "loadedEpoch": 3
+    }
+  },
+  "performance": {
+    "before": {
+      "gpu": {
+        "vendor": "Google Inc. (NVIDIA)",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "floatReadback": true
+      },
+      "segments": 2892,
+      "resolution": [
+        320,
+        200
+      ],
+      "frames": 120,
+      "stepMeanMs": 0.014374999205271403,
+      "render": {
+        "mean": 6.123791668812434,
+        "p95": 8.520000040531158,
+        "max": 16.2600000500679
+      },
+      "frame": {
+        "mean": 16.417499999701977,
+        "p95": 18.00499999523163,
+        "max": 18.605000019073486
+      },
+      "motion": {
+        "observerX": 0.23606715441207207,
+        "observerClock": 0.962422614901113,
+        "markerX": 0.23420376443082205,
+        "markerClock": 0.9628625016052799
+      }
+    },
+    "after": {
+      "gpu": {
+        "vendor": "Google Inc. (NVIDIA)",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "floatReadback": true
+      },
+      "segments": 2904,
+      "resolution": [
+        320,
+        200
+      ],
+      "frames": 120,
+      "stepMeanMs": 0.015333333611488342,
+      "render": {
+        "mean": 6.219583331545194,
+        "p95": 8.790000021457672,
+        "max": 12.925000011920929
+      },
+      "frame": {
+        "mean": 16.44441666652759,
+        "p95": 18.080000042915344,
+        "max": 18.589999973773956
+      },
+      "motion": {
+        "observerX": 0.23606838904459002,
+        "observerClock": 0.9624241677287918,
+        "markerX": 0.23606838904459002,
+        "markerClock": 0.9624241677287918
+      }
+    },
+    "hardwareGates": [
+      {
+        "fractalStyle": -1,
+        "fractalDetail": 0.65,
+        "tracedInstances": 2064,
+        "staticInstances": 2000,
+        "movingInstances": 64,
+        "uniqueTriangles": 99998,
+        "meshBvhNodes": 75371,
+        "requestedTriangleBudget": 100000,
+        "internalResolution": [
+          1555,
+          874
+        ],
+        "requestedScale": 1,
+        "internalScale": 0.81,
+        "gpuTimeMs": 6.829408,
+        "adaptiveQuality": true,
+        "adaptiveGpuBudgetMs": 11,
+        "feedbackQualityFactor": 0.35,
+        "layerCount": 8,
+        "environmentStatus": "ready",
+        "environmentMessage": "",
+        "mirrorWorld": true,
+        "feedbackEnabled": true,
+        "feedbackLayers": 2,
+        "feedbackDepth": 3,
+        "feedbackPasses": 3,
+        "feedbackResolution": [
+          326,
+          183
+        ],
+        "feedbackTargetCount": 2,
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        },
+        "resolutionChanges": [
+          {
+            "frame": 1,
+            "image": [
+              1728,
+              972
+            ],
+            "echoes": [
+              362,
+              204
+            ]
+          },
+          {
+            "frame": 10,
+            "image": [
+              1555,
+              874
+            ],
+            "echoes": [
+              326,
+              183
+            ]
+          }
+        ],
+        "frames": 600,
+        "fps": 59.80306849544449,
+        "p95": 16.67000000000189,
+        "p99": 16.67000000000189,
+        "max": 49.9950000000008,
+        "labels": 32,
+        "waveWavelength": 4,
+        "waveAmplitude": 0.65,
+        "warmup": {
+          "stableFrames": 120,
+          "additionalWarmupMs": 3133.0199999809265,
+          "initialWarmupMs": 4000
+        },
+        "testOutputDirectory": "observer-performance-Obser-0aa00-60Hz-with-default-immersion-chromium"
+      },
+      {
+        "fractalStyle": 3,
+        "fractalDetail": 1,
+        "tracedInstances": 2064,
+        "staticInstances": 2000,
+        "movingInstances": 64,
+        "uniqueTriangles": 99998,
+        "meshBvhNodes": 75371,
+        "requestedTriangleBudget": 100000,
+        "internalResolution": [
+          1020,
+          573
+        ],
+        "requestedScale": 1,
+        "internalScale": 0.5314410000000002,
+        "gpuTimeMs": 8.378368,
+        "adaptiveQuality": true,
+        "adaptiveGpuBudgetMs": 11,
+        "feedbackQualityFactor": 0.35,
+        "layerCount": 8,
+        "environmentStatus": "ready",
+        "environmentMessage": "",
+        "mirrorWorld": true,
+        "feedbackEnabled": true,
+        "feedbackLayers": 3,
+        "feedbackDepth": 5,
+        "feedbackPasses": 5,
+        "feedbackResolution": [
+          165,
+          93
+        ],
+        "feedbackTargetCount": 2,
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        },
+        "resolutionChanges": [
+          {
+            "frame": 1,
+            "image": [
+              1133,
+              637
+            ],
+            "echoes": [
+              184,
+              103
+            ]
+          },
+          {
+            "frame": 10,
+            "image": [
+              1020,
+              573
+            ],
+            "echoes": [
+              165,
+              93
+            ]
+          }
+        ],
+        "frames": 600,
+        "fps": 59.90256847237967,
+        "p95": 16.67000000000189,
+        "p99": 16.67000000000189,
+        "max": 33.32999999999993,
+        "labels": 32,
+        "waveWavelength": 4,
+        "waveAmplitude": 0.65,
+        "warmup": {
+          "stableFrames": 120,
+          "additionalWarmupMs": 5544.134999990463,
+          "initialWarmupMs": 4000
+        },
+        "testOutputDirectory": "observer-performance-Obser-b8eaf--with-maximum-camera-echoes-chromium"
+      },
+      {
+        "fractalStyle": 3,
+        "fractalDetail": 0.65,
+        "tracedInstances": 2064,
+        "staticInstances": 2000,
+        "movingInstances": 64,
+        "uniqueTriangles": 99998,
+        "meshBvhNodes": 75371,
+        "requestedTriangleBudget": 100000,
+        "internalResolution": [
+          1399,
+          787
+        ],
+        "requestedScale": 1,
+        "internalScale": 0.7290000000000001,
+        "gpuTimeMs": 6.865344,
+        "adaptiveQuality": true,
+        "adaptiveGpuBudgetMs": 11,
+        "feedbackQualityFactor": 0.35,
+        "layerCount": 8,
+        "environmentStatus": "ready",
+        "environmentMessage": "",
+        "mirrorWorld": true,
+        "feedbackEnabled": true,
+        "feedbackLayers": 2,
+        "feedbackDepth": 3,
+        "feedbackPasses": 3,
+        "feedbackResolution": [
+          293,
+          165
+        ],
+        "feedbackTargetCount": 2,
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        },
+        "resolutionChanges": [
+          {
+            "frame": 1,
+            "image": [
+              1728,
+              972
+            ],
+            "echoes": [
+              362,
+              204
+            ]
+          },
+          {
+            "frame": 10,
+            "image": [
+              1555,
+              874
+            ],
+            "echoes": [
+              326,
+              183
+            ]
+          },
+          {
+            "frame": 334,
+            "image": [
+              1399,
+              787
+            ],
+            "echoes": [
+              293,
+              165
+            ]
+          }
+        ],
+        "frames": 600,
+        "fps": 59.50654200046117,
+        "p95": 16.67000000000189,
+        "p99": 16.67000000000189,
+        "max": 50,
+        "labels": 32,
+        "waveWavelength": 0.5,
+        "waveAmplitude": 2,
+        "warmup": {
+          "stableFrames": 120,
+          "additionalWarmupMs": 2823.8400000333786,
+          "initialWarmupMs": 4000
+        },
+        "testOutputDirectory": "observer-performance-Obser-d7070-e-and-spacetime-instruments-chromium"
+      },
+      {
+        "fractalStyle": 0,
+        "fractalDetail": 0.65,
+        "tracedInstances": 2064,
+        "staticInstances": 2000,
+        "movingInstances": 64,
+        "uniqueTriangles": 99998,
+        "meshBvhNodes": 75371,
+        "requestedTriangleBudget": 100000,
+        "internalResolution": [
+          1020,
+          573
+        ],
+        "requestedScale": 1,
+        "internalScale": 0.5314410000000002,
+        "gpuTimeMs": 7.729088,
+        "adaptiveQuality": true,
+        "adaptiveGpuBudgetMs": 11,
+        "feedbackQualityFactor": 0.35,
+        "layerCount": 8,
+        "environmentStatus": "ready",
+        "environmentMessage": "",
+        "mirrorWorld": true,
+        "feedbackEnabled": true,
+        "feedbackLayers": 3,
+        "feedbackDepth": 5,
+        "feedbackPasses": 5,
+        "feedbackResolution": [
+          165,
+          93
+        ],
+        "feedbackTargetCount": 2,
+        "gpu": {
+          "vendor": "Google Inc. (NVIDIA)",
+          "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "floatReadback": true
+        },
+        "resolutionChanges": [
+          {
+            "frame": 1,
+            "image": [
+              1133,
+              637
+            ],
+            "echoes": [
+              184,
+              103
+            ]
+          },
+          {
+            "frame": 10,
+            "image": [
+              1020,
+              573
+            ],
+            "echoes": [
+              165,
+              93
+            ]
+          }
+        ],
+        "frames": 600,
+        "fps": 59.80306849544451,
+        "p95": 16.67000000000189,
+        "p99": 16.67000000000189,
+        "max": 33.33499999999913,
+        "labels": 32,
+        "waveWavelength": 4,
+        "waveAmplitude": 0.65,
+        "warmup": {
+          "stableFrames": 120,
+          "additionalWarmupMs": 4784.560000002384,
+          "initialWarmupMs": 4000
+        },
+        "testOutputDirectory": "observer-performance-Obser-ee77f-ra-echoes-in-evolving-Julia-chromium"
+      }
+    ],
+    "initialConcurrentRun": {
+      "passed": 2,
+      "failed": 2,
+      "failures": {
+        "Julia": {
+          "fps": 59.2129,
+          "p99Ms": 33.33
+        },
+        "waveAndSpacetime": {
+          "fps": 59.01875,
+          "p99Ms": 33.33
+        }
+      },
+      "limitation": "Overlapped another GPU measurement. Later isolated run passed unchanged thresholds; do not infer the causal source of every stutter."
+    }
+  },
+  "convergence": {
+    "force": [
+      0.5,
+      0,
+      0
+    ],
+    "duration": 1,
+    "stepCounts": [
+      60,
+      120,
+      240,
+      480
+    ],
+    "positionAbsErrors": [
+      1.6462055783261764e-06,
+      4.115448003216837e-07,
+      1.0288578700112794e-07,
+      2.5721419966151515e-08
+    ],
+    "properClockAbsErrors": [
+      2.0704534431370547e-06,
+      5.176095848602458e-07,
+      1.2940215843304514e-07,
+      3.235052237204883e-08
+    ],
+    "minimumRequiredOrder": 1.8,
+    "measuredOrder": "approximately 2 for both quantities"
+  },
+  "seededFloat64": {
+    "seed": "0x5eed2026",
+    "cases": 2000,
+    "intervalRelative": 1.3386312606324774e-14,
+    "inverseRelative": 9.93379791255219e-15,
+    "nullAbs": 5.329070518200751e-15,
+    "retardedRelative": 1.4297939564876424e-15,
+    "clockDopplerScaled": 2.1568607829354167e-10,
+    "momentumCases": 2000,
+    "momentumMaxRelative": 2.6645352591003757e-15
+  },
+  "sourceSha256": {
+    "engine/web/js/observer/catalog.js": "da805b7e13576945e9947a8edb13ac05c95acb3d341014e7276ad1b2c19f415c",
+    "engine/web/js/observer/conventions.js": "51420e34c2d30e61f81d1d0df3e4a045d4928017d2d1f0bc9b591b142be4fe9a",
+    "engine/web/js/observer/diagnostics.js": "92fb0b459336df151e87572d0bdb7ef9b755f9eb43bd602d51a8a25a68724c93",
+    "engine/web/js/observer/environments.js": "dcfcded62b219338612b5f305e736946678e7eb45e7f8e66b5be05e46ee5e78f",
+    "engine/web/js/observer/feedback.js": "372c9c9c12b2a26af642d2898cf793644d44604ec1685b121172bcf1e5f68899",
+    "engine/web/js/observer/force-gun-effort.js": "caf38cee0100ece233376f1abdea318e49c232766169fdcc3927345438b8812b",
+    "engine/web/js/observer/force-gun-physics.js": "7797d00f1df6356329e71aeaed7a8953e58e417671b29a4806a0c93b498ab904",
+    "engine/web/js/observer/force-gun.js": "85b7a313fc745852390657e545e828d1fdbf72c1e66f68f567f80631b29b750c",
+    "engine/web/js/observer/fractal-presets.js": "33722090ceec020beaacae5d058534001a53e92d5fd87afed24f973e6697dd01",
+    "engine/web/js/observer/fractal-shaders.js": "3a2393828239ad030a929c6a936fc0b0f28f46d3b9a62b4fd9e4ca7f68d8c105",
+    "engine/web/js/observer/fractal-volumes.js": "1eec884750a8012f6fd0c2cd2b527bf6e4d73d749dbd760180fb6b44b7bad703",
+    "engine/web/js/observer/frame-geometry.js": "4b7986791591c3099de0b9a3c54c5ee3e2d8aa4e3913920d8ecdc8e87fb662fd",
+    "engine/web/js/observer/geometry.js": "be13e506799de88f8fbd6f54a524e08538cad43c522b35b0cc43080ef4922908",
+    "engine/web/js/observer/gizmo.js": "f650d4b9682ceebb2ebeb5554f7c873e23e8843f64d1b44a1ddeac340b172f24",
+    "engine/web/js/observer/input.js": "62334c294f8150bd040058f59cf712f9ecd18fe1a47acd889f2ad60551e5847a",
+    "engine/web/js/observer/lattice-adapter.js": "f2b9a77fa66aca307e4d9fdbc74990d233e15a0b1a34deb57869b7173550e918",
+    "engine/web/js/observer/math.js": "2bd616e56812e71ea6dc939ef7069cc8e89ba033f545bae70a6a28591b7e0624",
+    "engine/web/js/observer/mirror-frame.js": "a0c79f28ae7ebf41072601e0e48404999c41d09808386941068439ffd4ca09c9",
+    "engine/web/js/observer/optics.js": "505cb8c8a990742d5386cfd90aebc848fb4000f4c6442a38e8e3422cde2b488c",
+    "engine/web/js/observer/phenomena-data.js": "55582ef2b455492ea33ffa4aa9409262d5d46001f7d072c983a464557e34bea7",
+    "engine/web/js/observer/phenomena-instrument.js": "3c9e043028ee1b252adcb38f60b9eb5d0e35662c923a656d57627317eab24cfc",
+    "engine/web/js/observer/playground.js": "50a6b4d52fccd58e9e454683c8df8db87faa84f6f0490164971acd40c2ea7eb3",
+    "engine/web/js/observer/renderer.js": "bc220913bd341942372eb6af025e9fafef1a24c9da768adab88756993231c853",
+    "engine/web/js/observer/screen-clipping.js": "f3f73050c43a53093f6e56ac97f6f570ce1eff67160f9b901795ea89718e0a7d",
+    "engine/web/js/observer/session-worker.js": "7cf3ddaa8c680558e736cd8f84e9ee88f93faeeeca6f35e8459e0dcd57cb178d",
+    "engine/web/js/observer/session.js": "d8a1b16606891088a646b5b44cd7c5667b733d35719df6520d7e7f4e35dd21cc",
+    "engine/web/js/observer/shaders.js": "f95d18943c99be3fab5ca860d808ef6b440a5aee90d11e16e2b53d7d7b60b2ef",
+    "engine/web/js/observer/spatial-labels.js": "5763d4c61bdc22f1d26b6a83c4368623c43f79a0ec3bd4d05970d7dfdbb5f11f",
+    "engine/web/js/observer/spectrum.js": "3d1ec2a04bf57e2c7c9620d354f1031ddb00509cced3ec6ffbe1ec183961d5e7",
+    "engine/web/js/observer/storage.js": "6b04d83edaff91db71866622711f1d9e717f5814df1864574a2e156025e8de8a",
+    "engine/web/js/observer/types.js": "a6eb22be982c3e26584c80cecd0e3654c7f5f004810ac6b6e2e902fc6e9817e8",
+    "engine/web/js/observer/ui.js": "3053ae8449b8f18dfc79c4ee5b63b265105fa100170d165c02cfe67b3a59c66e",
+    "engine/web/js/observer/wave-phenomena.js": "5b6fa170163d319848609717b847647a626b272ff95fc9d5647e93c3367730bf",
+    "engine/web/js/observer/worker-client.js": "84f791ea3addc0b8043c31c852446b9a39fa222b2d60f44eb83f41128c5e4e39",
+    "engine/web/js/observer/workspace-host.js": "7abfcd158af30c0dacc1d894c0642d89d78b6d8c51dee3d4f9f1fd71de1fa7cd",
+    "engine/web/js/observer/workspace.js": "3151f42af21a4d24bf1a5ddb753ee50c00b66521bc7b63313c9fa1e8a7eabb1b"
+  },
+  "validationLimits": [
+    "Single Windows RTX 5090 / ANGLE D3D11 / Chromium backend",
+    "GPU first-hit checks use seeded synthetic scenes and actual accelerated session history, not arbitrary scene certification",
+    "Finite-step acceleration is point-marker and piecewise inertial",
+    "Three-line display response is approximate",
+    "0.99c application ceiling and at most 60-unit / 65536-segment retained history",
+    "Additional local-model scenario-design smoke initially failed draft measurement validation; isolated current retry and original-module comparison passed once each. Reliability remains unqualified.",
+    "Remote JEV approval service not exercised; browser smoke uses offline approval fixture",
+    "No C++/CUDA/WSL physics campaign, full-project build or universal GPU certification claimed"
+  ],
+  "diagnosticFixture": {
+    "sessionId": "fixture-session-identity",
+    "epoch": 1,
+    "observerWorldlineId": 2,
+    "tick": 0,
+    "integratorVersion": "sr-coordinate-force-kdk-v2",
+    "worldlineReason": "preparation",
+    "worldlineStart": 0,
+    "observationTime": 0,
+    "observerPosition": [
+      0,
+      3,
+      6
+    ],
+    "observerVelocity": [
+      0,
+      0,
+      0
+    ],
+    "observerProperTime": 0,
+    "historyStart": -60,
+    "availableInterval": [
+      -60,
+      0
+    ],
+    "historyStatus": "available",
+    "opticalMode": true,
+    "capApplied": false,
+    "hit": {
+      "sourceId": "object-5",
+      "sourceRevision": 1,
+      "segmentStart": -60,
+      "segmentEnd": null,
+      "integratorVersion": "sr-coordinate-force-kdk-v2",
+      "emissionTime": -7.5,
+      "emissionPosition": [
+        0,
+        3,
+        -1.5
+      ],
+      "apparentPosition": [
+        0,
+        3,
+        -1.5
+      ],
+      "sourceProperTime": -7.5,
+      "dopplerFactor": 1,
+      "distance": 7.5,
+      "mirrored": false
+    }
+  },
+  "additionalModelSmoke": {
+    "model": "SmolLM2-360M-Instruct-q4f16_1-MLC",
+    "generated": [
+      "{\"name\":\"lattice\",\"settings\":[{\"key\":\"packet.amplitude\",\"value\":0.5}],\"measurements\":[\n        \"manifested\",\"positive\",\"negative\",\"totalFlux\",\"physicalTime\",\"dt\"\n        ]}",
+      "{\"scenarioId\":\"flux-pulse\"}",
+      "{\"name\":\"Transverse Wave Packet Propagation\",\"settings\":[{\"key\":\"packet.amplitude\",\"value\":0.5}],\"measurements\":[\"totalFlux\",\"vacuumBaselineEnergy\",\"entropy\",\"dynamicEnergy\",\"vacuumBaselineEnergy\"]}"
+    ],
+    "status": "failed",
+    "summary": "Choose 1 to 12 unique measurements from the template allowlist.\nRecorded 0 / 4 confirmed ticks since the prepared baseline, with 0 measured intervals.",
+    "completedTicks": 0,
+    "baselineOriginalAssistantModules": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "note": "Initial automatic scenario-design draft failed measurement validation. Original assistant modules passed once; current modules passed once on retry. Model reliability remains outside this SR repair.",
+    "currentCodeIsolatedRetry": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "sourceHashEncoding": "SHA-256 of UTF-8 source bytes with CRLF normalized to LF"
+}

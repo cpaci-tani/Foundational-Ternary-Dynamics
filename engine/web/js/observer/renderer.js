@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { LifetimeScope } from '../ui/utils/lifetime-scope.js';
 import { SHAPE_NAMES, restMesh, subdivideRestMesh, buildBVH, rotationMatrix, rotate, dot } from './geometry.js';
 import { traceObserverRay, visibleSegments, segmentBounds, cameraBasis, projectPoint, createPointProjector, apparentCenter, gamma } from './optics.js';
+import { referenceLineWeights } from './spectrum.js';
 import { ObserverEnvironment, OBSERVER_ENVIRONMENTS, seededRandom } from './environments.js';
 import { observerVertexShader, observerFragmentShader } from './shaders.js';
 import { feedbackConfiguration } from './feedback.js';
@@ -68,6 +69,7 @@ export class ObserverRenderer {
         this.overlayCanvas.setAttribute('aria-hidden', 'true'); container.appendChild(this.overlayCanvas); this.overlayContext = this.overlayCanvas.getContext('2d');
         this.environment = new ObserverEnvironment(); this.atlas = geometryAtlas();
         this.capacity = 256;
+        /** Float64 bases remain outside GPU textures; readback carries only clock offsets. @type {number[]} */ this.clockOrigins = [];
         this.segmentTexture = dataTexture(this.capacity * 8); this.nodeTexture = dataTexture(this.capacity * 6); this.orderTexture = dataTexture(this.capacity); this.emptyTexture = dataTexture(1);
         this.scene = new THREE.Scene(); this.camera = new THREE.Camera();
         const v3 = () => new THREE.Vector3();
@@ -227,6 +229,7 @@ export class ObserverRenderer {
         this.ensureCapacity(this.segments.length);
         const observer = { ...snapshot.observer, ...settings.cameraOverride }, sr = snapshot.profile === 'sr', optical = sr && settings.optical !== false;
         const position = observer.position, segmentData = this.segmentTexture.image.data;
+        this.clockOrigins.length = this.segments.length;
         const bounds = this.segments.map((segment, index) => {
             this.historiesById.get(segment.entityId || segment.id || '')?.push(segment);
             const rotation = rotationMatrix(segment.rotation), velocity = segment.velocity || [0, 0, 0], originTime = segment.originTime || 0;
@@ -234,8 +237,10 @@ export class ObserverRenderer {
             const shape = segment.shape === 'pulse' ? 'light-pulse' : segment.shape;
             const shapeId = SHAPE_NAMES.indexOf(shape); if (shapeId < 0) throw new TypeError(`Unsupported geometry: ${segment.shape}`);
             // Declared three-line reference spectra, not a reconstruction of an arbitrary RGB material's spectrum.
-            const color = segment.spectral === 'red-line' ? [1, 0, 0] : segment.spectral === 'green-line' ? [0, 1, 0] : segment.spectral === 'blue-line' ? [0, 0, 1] : segment.color;
-            segmentData.set([...center, shapeId, ...velocity, sr ? gamma(velocity) : 1, ...segment.size, Math.max(-1e20, (segment.start ?? -Infinity) - snapshot.time), ...rotation.slice(0, 3), Math.min(1e20, (segment.end ?? Infinity) - snapshot.time), ...rotation.slice(3, 6), segment.revision, ...rotation.slice(6, 9), index, ...color, segment.emission ?? 1, segment.clockOffset || 0, originTime - snapshot.time, (segment.entityId || '').startsWith('environment:') ? 2 : segment.decorative ? 1 : 0, segment.animationRate || 0], index * 32);
+            const color = referenceLineWeights(segment.color, segment.spectral), g = sr ? gamma(velocity) : 1;
+            const clockBase = (segment.clockOffset ?? 0) + (snapshot.time - originTime) / g;
+            this.clockOrigins[index] = clockBase;
+            segmentData.set([...center, shapeId, ...velocity, g, ...segment.size, Math.max(-1e20, (segment.start ?? -Infinity) - snapshot.time), ...rotation.slice(0, 3), Math.min(1e20, (segment.end ?? Infinity) - snapshot.time), ...rotation.slice(3, 6), segment.revision, ...rotation.slice(6, 9), index, ...color, segment.emission ?? 1, clockBase - Math.floor(clockBase), 0, (segment.entityId || '').startsWith('environment:') ? 2 : segment.decorative ? 1 : 0, segment.animationRate || 0], index * 32);
             const box = segmentBounds(segment, snapshot.time, snapshot.historyStart, index);
             return { ...box, min: box.min.map((x, j) => x - position[j]), max: box.max.map((x, j) => x - position[j]) };
         });
@@ -249,7 +254,7 @@ export class ObserverRenderer {
         const u = this.uniforms, basis = cameraBasis(observer);
         u.uNodeCount.value = bvh.nodes.length; u.uSegmentCount.value = this.segments.length; u.uSR.value = sr; u.uOptical.value = optical;
         u.uCamera.value.fromArray(position); u.uVelocity.value.fromArray(observer.velocity); u.uForward.value.fromArray(basis.forward); u.uRight.value.fromArray(basis.right); u.uUp.value.fromArray(basis.up);
-        u.uTime.value = snapshot.time; u.uHistoryStart.value = snapshot.historyStart; u.uFov.value = settings.fov || 60; u.uDoppler.value = settings.doppler !== false; u.uBeaming.value = settings.beaming !== false; u.uShading.value = settings.artisticShading !== false;
+        u.uTime.value = snapshot.time; u.uHistoryStart.value = snapshot.historyStart - snapshot.time; u.uFov.value = settings.fov || 60; u.uDoppler.value = settings.doppler !== false; u.uBeaming.value = settings.beaming !== false; u.uShading.value = settings.artisticShading !== false;
         u.uMirrorWorld.value = settings.mirrorWorld === true; this.diagnostics.mirrorWorld = u.uMirrorWorld.value;
         u.uSelected.value = this.segments.findIndex(s => (s.entityId || s.id) === settings.selectedId);
         u.uLayers.value = LAYER_KEYS.reduce((bits, key, i) => bits | ((settings.layers?.[key] ?? key === 'grid') ? 1 << i : 0), 0);
@@ -321,14 +326,36 @@ export class ObserverRenderer {
      * @param {OpticalSnapshot} snapshot @param {RendererSettings} settings @param {number} ndcX @param {number} ndcY
      */
     readPixelHit(snapshot, settings = {}, ndcX = 0, ndcY = 0) {
+        const pixels = this.readDiagnosticPixel(snapshot, settings, ndcX, ndcY, 1);
+        const index = Math.round(Math.abs(pixels[0])) - 1, segment = this.segments[index];
+        if (!segment) return null;
+        const doppler = this.readDiagnosticPixel(snapshot, settings, ndcX, ndcY, 2, true)[0];
+        const eventOffset = this.readDiagnosticPixel(snapshot, settings, ndcX, ndcY, 4, true);
+        const observer = { ...snapshot.observer, ...settings.cameraOverride }, mirrored = pixels[0] < 0;
+        const position = observer.position.map((x, j) => x + eventOffset[j]);
+        return { entityId: segment.entityId || segment.id, id: segment.entityId || segment.id, revision: segment.revision, distance: pixels[1],
+            emissionTime: snapshot.time + pixels[2], properTime: this.clockOrigins[index] + pixels[3], position,
+            sourcePosition: position.map((x, j) => mirrored && j === 1 ? -x : x), doppler,
+            emissionTimeOffset: pixels[2], properTimeOffset: pixels[3], positionOffset:[...eventOffset].slice(0,3), clockBase: this.clockOrigins[index], segmentIndex: index, mirrored };
+    }
+    /** Actual compiled spectral stage, before tone mapping/vignette/overlay lines.
+     * @param {OpticalSnapshot} snapshot @param {RendererSettings} settings @param {number} ndcX @param {number} ndcY
+     */
+    readPixelLinearColor(snapshot, settings = {}, ndcX = 0, ndcY = 0) {
+        return [...this.readDiagnosticPixel(snapshot, settings, ndcX, ndcY, 3)].slice(0, 3);
+    }
+    /** Opt-in GPU instrumentation; it never advances a session.
+     * @param {OpticalSnapshot} snapshot @param {RendererSettings} settings @param {number} ndcX @param {number} ndcY @param {number} mode @param {boolean} prepared
+     */
+    readDiagnosticPixel(snapshot, settings, ndcX, ndcY, mode, prepared = false) {
         if (this.disposed || this.contextLost) throw new Error('GPU optical readback requires a live graphics context.');
         if (!this.diagnostics.gpu.floatReadback) throw new Error('EXT_color_buffer_float is required for GPU optical parity checks.');
-        this.prepare(snapshot, settings); this.uniforms.uDebugMode.value = 1; this.uniforms.uPickNdc.value.set(ndcX, ndcY);
+        if (!prepared) this.prepare(snapshot, settings);
+        this.uniforms.uDebugMode.value = mode; this.uniforms.uPickNdc.value.set(ndcX, ndcY);
         const pixels = new Float32Array(4);
         try { this.renderer.setRenderTarget(this.pickTarget); this.renderer.render(this.scene, this.camera); this.renderer.readRenderTargetPixels(this.pickTarget, 0, 0, 1, 1, pixels); }
         finally { this.renderer.setRenderTarget(null); this.uniforms.uDebugMode.value = 0; }
-        const index = Math.round(Math.abs(pixels[0])) - 1, segment = this.segments[index];
-        return segment ? { entityId: segment.entityId || segment.id, id: segment.entityId || segment.id, revision: segment.revision, distance: pixels[1], emissionTime: pixels[2], properTime: pixels[3], segmentIndex: index, mirrored: pixels[0] < 0 } : null;
+        return pixels;
     }
     /** @param {OpticalSnapshot} snapshot @param {RendererSettings} settings @param {number[]} point */
     projectPoint(snapshot, settings, point) { return projectPoint(snapshot, { ...settings, aspect: this.width / this.height }, point); }

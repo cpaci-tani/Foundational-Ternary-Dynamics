@@ -15,7 +15,7 @@ export function relevantActions(text,actions){
     const intent=text.toLowerCase();
     const families=[
         [/\b(pause|stop|freeze|halt)\b/,['pause']],[/\b(resume|start|play|continue)\b/,['resume']],[/tick|step|advance/,['step']],
-        [/heavy|heavier|mass|weight|color|colour|red|blue|green|rename|resize|position|velocity|restitution|friction|damping|rotate|size|dimensions|acceleration|move/,['update']],
+        [/heavy|heavier|mass|weight|color|colour|red|blue|green|rename|resize|position|velocity|restitution|friction|damping|rotate|size|dimensions|acceleration|force|move/,['update']],
         [/create|spawn|add (?:a|an|one)|new (?:sphere|cube|box|object)/,['create']],
         [/delete|remove.*(?:object|shape|cube|sphere)/,['delete']],[/restore|undelete/,['restore']],[/\b(select|deselect|selection)\b/,['select']],
         [/gravity|collision|(?:switch|change|set).{0,20}profile/,['world']],[/impulse|push|kick/,['impulse']],
@@ -42,7 +42,7 @@ export function relevantActions(text,actions){
         const hints=[[/mass|weight|heavy|heavier/,/twice|double|triple|half|halve|times/.test(intent)?'massFactor':'mass'],
             [/name|rename/,'name'],[/color|colour|red|blue|green|white|yellow|cyan|magenta/,'color'],
             [/position|move|translate|\bat\s*\[/,'position'],[/size|dimensions|resize|scale/,'size'],[/rotation|rotate|orientation/,'rotation'],
-            [/velocity/,'velocity'],[/angular/,'angularVelocity'],[/acceleration/,'properAcceleration'],
+            [/velocity/,'velocity'],[/angular/,'angularVelocity'],[/acceleration|coordinate.?force|force.?per|rest.?mass/,'coordinateForcePerMass'],
             [/restitution|bounc/,'restitution'],[/friction/,'friction'],[/damping/,'damping'],[/gravity/,'gravity'],
             [/collision/,'collisions'],[/overlay|label/,'overlay'],[/emission|glow|lumin/,'emission'],[/fixed|dynamic|kinematic/,'bodyType']];
         for(const [pattern,key]of hints)if(/** @type {RegExp} */(pattern).test(intent))fields.add(/** @type {string} */(key));

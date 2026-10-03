@@ -35,7 +35,7 @@ test('inertial retarded center solves null condition including approaching branc
         close(length(p),10-t);
     }
 });
-test('proper-force integration agrees with analytic constant proper acceleration',()=>{
+test('collinear coordinate force agrees with the analytic constant-force worldline',()=>{
     let v=[0,0,0],x=0,tau=0; const dt=1/120;
     for(let i=0;i<120;i++){const step=integrateFourVelocity(v,[.5,0,0],dt);v=step.velocity;x+=step.displacement[0];tau+=step.properElapsed;}
     const analytic=constantProperAcceleration(Math.asinh(.5)/.5,.5);

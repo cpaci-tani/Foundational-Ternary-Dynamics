@@ -119,10 +119,12 @@ export function constrainActions(text, observation, candidates) {
         const entity = selected?.current;
         const create = /\b(?:create|spawn|add (?:a|an|one)|new (?:object|shape|cube|box|sphere))\b/.test(source);
         const entityActions = create ? ['observer.create'] : ['observer.update'];
+        if (/\bproper\s*acceleration\b/.test(source)) throw new Error('Comoving proper acceleration requires a specified transported frame. The supported SR clock or beacon control is coordinate force / rest mass: du/dt in the simulation coordinate frame. Request that interpretation explicitly.');
         const camera = /\b(?:camera|field of view|fov)\b/.test(source);
         const personal = /\b(?:selected|this|that|it|current object)\b/.test(source);
         const targetTypes = new Set(['observer.update','observer.delete','observer.restore','observer.impulse']);
         const bodyRequest = actions.some(action => targetTypes.has(action.type)) || /\b(?:mass|heavy|heavier|weight|dimensions|resize|position|velocity|move|impulse|push|kick|delete|remove|restore|undelete|rotate|rotation|acceleration|restitution|friction|damping|colou?r|rename)\b/.test(source);
+        if (!camera && /\bacceleration\b/.test(source)) throw new Error('Specify coordinate force / rest mass [x, y, z] in the simulation coordinate frame; an acceleration request does not specify this force law.');
         const needsTarget = !create && !camera && personal && bodyRequest;
         if (needsTarget && (!selected?.id || !entity || entity.alive === false && !/\b(?:restore|undelete)\b/.test(source))) {
             throw new Error('Select a current object first, then repeat the request. A historical crosshair observation is not a current selected target.');
@@ -162,18 +164,19 @@ export function constrainActions(text, observation, candidates) {
 
         // Mass ratios must remain ratios of the current stable target, rather
         // than arbitrary nearby positive numbers chosen by the language model.
-        const massIntent = /\b(?:mass|weight|heavy|heavier)\b/.test(source);
+        const massSource = source.replace(/\bforce\s*(?:\/|per)\s*rest\s+mass\b/g, 'force');
+        const massIntent = /\b(?:mass|weight|heavy|heavier)\b/.test(massSource);
         if (massIntent) {
             const factors = [];
-            if (/\b(?:double|twice)\b/.test(source)) factors.push(2);
-            if (/\b(?:triple|thrice)\b/.test(source)) factors.push(3);
-            if (/\b(?:half|halve)\b/.test(source)) factors.push(0.5);
-            for (const match of source.matchAll(new RegExp(`(?<![\\w.,])(${numberSource})\\s*times\\b`, 'gi'))) factors.push(numeric(match[1]));
-            const factorTails = tails(source, /\bmass\s*factor\b/);
+            if (/\b(?:double|twice)\b/.test(massSource)) factors.push(2);
+            if (/\b(?:triple|thrice)\b/.test(massSource)) factors.push(3);
+            if (/\b(?:half|halve)\b/.test(massSource)) factors.push(0.5);
+            for (const match of massSource.matchAll(new RegExp(`(?<![\\w.,])(${numberSource})\\s*times\\b`, 'gi'))) factors.push(numeric(match[1]));
+            const factorTails = tails(massSource, /\bmass\s*factor\b/);
             factors.push(...factorTails.map(scalar));
             if (factors.length) {
                 const factor = /** @type {number} */(unique(factors, 'mass multiplier'));
-                if (tails(source,/\b(?:mass|weight)(?!\s*factor)\b/).some(tail => scalar(tail) !== null)) throw new Error('Specify either an absolute mass or a mass multiplier in this request, then observe before the next mass change.');
+                if (tails(massSource,/\b(?:mass|weight)(?!\s*factor)\b/).some(tail => scalar(tail) !== null)) throw new Error('Specify either an absolute mass or a mass multiplier in this request, then observe before the next mass change.');
                 if (create) throw new Error('A new object has no current mass to multiply. Specify its absolute mass in simulation units.');
                 if (!entity || !selected?.id) throw new Error('Select a current object before changing its mass by a multiplier.');
                 const absoluteSchema = observation.actions?.find(action => action.type === 'observer.update')?.args.properties.mass;
@@ -183,8 +186,8 @@ export function constrainActions(text, observation, candidates) {
                 bind(entityActions, 'massFactor', factor, 'mass multiplier');
                 for (const action of actions) if (entityActions.includes(action.type) && action.args.properties.mass && !action.args.required?.includes('mass')) delete action.args.properties.mass;
             } else {
-                const values = tails(source, /\b(?:mass|weight)\b/).map(scalar);
-                if (/\b(?:increase|decrease|reduce|add|subtract)\b[^.;]*\b(?:mass|weight)\b|\b(?:mass|weight)\b[^.;]*\bby\b/.test(source)) throw new Error('State the new absolute mass, or an explicit multiplier such as twice the current mass. An unspecified increase or decrease will not choose a value.');
+                const values = tails(massSource, /\b(?:mass|weight)\b/).map(scalar);
+                if (/\b(?:increase|decrease|reduce|add|subtract)\b[^.;]*\b(?:mass|weight)\b|\b(?:mass|weight)\b[^.;]*\bby\b/.test(massSource)) throw new Error('State the new absolute mass, or an explicit multiplier such as twice the current mass. An unspecified increase or decrease will not choose a value.');
                 bind(entityActions, 'mass', unique(values,'mass'), 'mass');
                 for (const action of actions) if (entityActions.includes(action.type) && action.args.properties.massFactor && !action.args.required?.includes('massFactor')) delete action.args.properties.massFactor;
             }
@@ -198,7 +201,7 @@ export function constrainActions(text, observation, candidates) {
             ['position',/\bposition\b/,camera ? ['observer.camera'] : entityActions,'position [x, y, z]'],
             ['velocity',/(?<!angular\s)\b(?:linear\s+)?velocity\b/,entityActions,'velocity [x, y, z]'],
             ['angularVelocity',/\bangular\s+velocity\b/,entityActions,'angular velocity [x, y, z]'],
-            ['properAcceleration',/\b(?:proper\s+)?acceleration\b/,camera ? [] : entityActions,'proper acceleration [x, y, z]'],
+            ['coordinateForcePerMass',/\bcoordinate\s+force(?:\s*(?:\/|per)\s*rest\s+mass)?\b|\bforce\s*(?:\/|per)\s*rest\s+mass\b/,camera ? [] : entityActions,'coordinate force / rest mass [x, y, z]'],
             ['rotation',/\b(?:rotation|orientation)\b/,entityActions,'rotation [x, y, z]'],
             ['impulse',/\bimpulse\b/,['observer.impulse'],'impulse [x, y, z]'],
             ['color',/\b(?:colou?r|rgb)\b/ ,entityActions,'RGB color [red, green, blue]'],
@@ -218,7 +221,7 @@ export function constrainActions(text, observation, candidates) {
             const value = /** @type {number[]} */(unique(found.map(vector),label));
             if (key === 'velocity' && sr && Math.hypot(...value) > 0.99) throw new Error('SR velocity must have magnitude at most 0.99 in the c = 1 reference world. Supply a slower vector; it will not be rescaled.');
             if (key === 'angularVelocity' && sr && value.some(component => component !== 0)) throw new Error('Continuous rigid rotation requires Playground. Switch profiles explicitly before setting nonzero angular velocity.');
-            if (key === 'properAcceleration' && sr && value.some(component => component !== 0) && !['clock','beacon'].includes(entity?.shape)) throw new Error('SR proper acceleration is supported only for clock or beacon markers. This selected extended object requires Playground.');
+            if (key === 'coordinateForcePerMass' && sr && value.some(component => component !== 0) && !['clock','beacon'].includes(entity?.shape)) throw new Error('SR coordinate force / rest mass is supported only for clock or beacon markers. This selected extended object requires Playground.');
             if (key === 'impulse' && value.every(component => component === 0)) throw new Error('An impulse must be nonzero. Specify its three components and direction.');
             bind(types,key,value,label);
         }

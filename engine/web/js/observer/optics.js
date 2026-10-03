@@ -1,14 +1,14 @@
 /** Float64 optical oracle for an adopted Minkowski reference model; c = 1. */
 import { dot, cross, normalize, rotationMatrix, inverseRotate, rotate, intersectShape, buildBVH, hitBounds } from './geometry.js';
 
-/** @typedef {{position:number[],velocity:number[],properTime?:number,yaw?:number,pitch?:number,roll?:number}} CameraState */
-/** @typedef {{entityId?:string,id?:string,revision:number,start?:number,end?:number|null,originTime?:number,position:number[],velocity:number[],size:number[],rotation:number[],shape:string,color:number[],spectral?:string,emission?:number,clockOffset?:number,alive?:boolean,name?:string,overlay?:unknown,decorative?:boolean,animationRate?:number}} OpticalSegment */
+/** @typedef {{position:number[],velocity:number[],properTime?:number,yaw?:number,pitch?:number,roll?:number,worldline?:number,worldlineReason?:string,worldlineStart?:number,capApplied?:boolean}} CameraState */
+/** @typedef {{entityId?:string,id?:string,revision:number,start?:number,end?:number|null,originTime?:number,position:number[],velocity:number[],size:number[],rotation:number[],shape:string,color:number[],spectral?:string,emission?:number,clockOffset?:number,alive?:boolean,name?:string,overlay?:unknown,decorative?:boolean,animationRate?:number,integratorVersion?:string,capApplied?:boolean}} OpticalSegment */
 /** @typedef {{time:number,profile:string,historyStart:number,observer:CameraState,entities:OpticalSegment[],segments:OpticalSegment[],environment?:object,environmentHistory?:{start:number,end:number|null,revision:number,environment:object}[],pulses?:{origin:number[],start:number,color:number[]}[],epoch?:number,revision?:number}} OpticalSnapshot */
 /** @typedef {{fov?:number,aspect?:number,optical?:boolean,cameraOverride?:Partial<CameraState>,selectedId?:string|null,[key:string]:unknown}} OpticalSettings */
 /** @typedef {{entityId:string,id:string,revision:number,distance:number,emissionTime:number,properTime:number,position:number[],sourcePosition:number[],restPosition:number[],normal:number[],historical:boolean,mirrored:boolean,segmentIndex:number,doppler:number}} OpticalHit */
 /** @typedef {{segments:OpticalSegment[],bvh:ReturnType<typeof buildBVH>,offset:number[]}} TraceAcceleration */
 /** @param {number[]} v */
-export function gamma(v) { const b2 = dot(v, v); if (b2 >= 1) throw new RangeError('SR velocities must be strictly below c.'); return 1 / Math.sqrt(1 - b2); }
+export function gamma(v) { const b2 = dot(v, v); if (!Number.isFinite(b2) || b2 >= 1) throw new RangeError('SR velocities must be finite and strictly below c.'); return 1 / Math.sqrt(1 - b2); }
 /** @param {CameraState} observer */
 export function cameraBasis(observer) {
     const yaw = observer.yaw || 0, pitch = observer.pitch || 0, roll = observer.roll || 0;
@@ -20,8 +20,8 @@ export function cameraBasis(observer) {
  * @param {number} time @param {number[]} space @param {number[]} velocity
  */
 export function boost(time, space, velocity) {
-    const g = gamma(velocity), b2 = dot(velocity, velocity), projection = dot(velocity, space);
-    const k = b2 > 1e-20 ? (g - 1) * projection / b2 + g * time : 0;
+    const g = gamma(velocity), projection = dot(velocity, space);
+    const k = g * g / (g + 1) * projection + g * time;
     return { time: g * (time + projection), space: space.map((x, j) => x + k * velocity[j]) };
 }
 /** @param {OpticalSnapshot} snapshot @param {OpticalSettings} settings @param {number} ndcX @param {number} ndcY */
@@ -125,15 +125,15 @@ export function createPointProjector(snapshot, settings) {
     const observer = { ...snapshot.observer, ...settings.cameraOverride };
     const [ox, oy, oz] = observer.position, [vx, vy, vz] = observer.velocity;
     const sr = snapshot.profile === 'sr', optical = sr && settings.optical !== false;
-    const speedSquared = vx * vx + vy * vy + vz * vz, g = sr ? gamma(observer.velocity) : 1;
-    const boostCoefficient = speedSquared > 1e-20 ? (g - 1) / speedSquared : 0;
+    const g = sr ? gamma(observer.velocity) : 1;
+    const boostCoefficient = g * g / (g + 1);
     const { forward, right, up } = cameraBasis(observer), tangent = Math.tan((settings.fov || 60) * Math.PI / 360);
     const scaleX = 1 / (2 * tangent * (settings.aspect || 1)), scaleY = 1 / (2 * tangent);
     /** @param {number[]} point */
     return point => {
         const dx = point[0] - ox, dy = point[1] - oy, dz = point[2] - oz;
         const distance = Math.hypot(dx, dy, dz), projection = vx * dx + vy * dy + vz * dz;
-        const coefficient = sr && speedSquared > 1e-20 ? boostCoefficient * projection - g * (optical ? -distance : projection) : 0;
+        const coefficient = sr ? boostCoefficient * projection - g * (optical ? -distance : projection) : 0;
         const sx = dx + coefficient * vx, sy = dy + coefficient * vy, sz = dz + coefficient * vz;
         const depth = sx * forward[0] + sy * forward[1] + sz * forward[2];
         // Homogeneous numerators remain finite exactly on the camera plane.
@@ -164,7 +164,8 @@ export function apparentCenter(snapshot, settings, s) {
         return { position: position.map((x, j) => x + s.velocity[j] * dt), emissionTime: snapshot.time + dt };
     }
     const r = position.map((x, j) => x - observer.position[j]), v = s.velocity, rv = dot(r, v), a = 1 - dot(v, v);
-    const delay = (-rv + Math.sqrt(rv * rv + a * dot(r, r))) / a, emissionTime = snapshot.time - delay;
+    const rr = dot(r, r), root = Math.sqrt(rv * rv + a * rr);
+    const delay = rv >= 0 ? rr / (root + rv || 1) : (root - rv) / a, emissionTime = snapshot.time - delay;
     if (emissionTime < Math.max(snapshot.historyStart, s.start ?? -Infinity) || emissionTime >= (s.end ?? Infinity)) return null;
     return { position: position.map((x, j) => x - v[j] * delay), emissionTime };
 }

@@ -112,7 +112,9 @@ test('SR restrictions explain unsupported requests without altering their number
     rejected(result('Set this object proper acceleration to [1,0,0]', ['observer.update'], { profile: 'sr' }), /clock or beacon/);
     rejected(result('Set this object velocity to [.8,.8,0]', ['observer.update'], { profile: 'sr' }), /magnitude at most 0.99/);
     exact(result('Set this object velocity to [.3,0,0]', ['observer.update'], { profile: 'sr' }), 'velocity', [.3,0,0]);
-    exact(result('Set this object proper acceleration to [1,0,0]', ['observer.update'], { profile: 'sr', shape: 'clock' }), 'properAcceleration', [1,0,0]);
+    rejected(result('Set this object proper acceleration to [1,0,0]', ['observer.update'], { profile: 'sr', shape: 'clock' }), /transported frame/);
+    exact(result('Set this object coordinate force / rest mass to [1,0,0]', ['observer.update'], { profile: 'sr', shape: 'clock' }), 'coordinateForcePerMass', [1,0,0]);
+    rejected(result('Set this object acceleration to [1,0,0]', ['observer.update'], { profile: 'sr', shape: 'clock' }), /coordinate force/);
     exact(result('Set this object rotation to [0,1,0]', ['observer.update'], { profile: 'sr' }), 'rotation', [0,1,0]);
 });
 

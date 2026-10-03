@@ -3,6 +3,7 @@ import { add, sub, scale, length, normalize, gamma, clamp, FIXED_DT, MAX_BETA, c
 import { ENTITY_LIMIT, HISTORY_WINDOW, SEGMENT_LIMIT, MAX_GRAVITY_STRENGTH } from './types.js';
 import { PlaygroundPhysics } from './playground.js';
 import { forceGunSettings } from './force-gun-physics.js';
+import { INTEGRATOR_VERSION, normalizeCoordinateForce, migrateObserverSnapshot } from './conventions.js';
 /** @typedef {import('./types.js').WorldEntity} WorldEntity */
 /** @typedef {import('./types.js').WorldSegment} WorldSegment */
 /** @typedef {import('./types.js').WorldSnapshot} WorldSnapshot */
@@ -38,7 +39,8 @@ function assertPortable(value, depth=0, seen=new Set()) {
 }
 /** @param {WorldEntity} entity @param {Record<string,unknown>} patch @param {'sr'|'playground'} profile */
 function applyEntityPatch(entity, patch, profile) {
-    for (const key of ['position','size','rotation','velocity','color','angularVelocity','properAcceleration']) {
+    patch = normalizeCoordinateForce(patch);
+    for (const key of ['position','size','rotation','velocity','color','angularVelocity','coordinateForcePerMass']) {
         if (!(key in patch)) continue;
         const value = vec(patch[key], key);
         if (key === 'size' && value.some(x => x <= 0 || x > 1e5)) throw new Error('Dimensions must be positive and no larger than 100000.');
@@ -63,8 +65,9 @@ function applyEntityPatch(entity, patch, profile) {
     if (profile === 'sr') {
         if (length(entity.velocity) > MAX_BETA + 1e-12) throw new Error('SR velocity must not exceed 0.99c.');
         if (length(entity.angularVelocity) > 0) throw new Error('Continuous rigid rotation is available only in Playground.');
-        if (length(entity.properAcceleration) > 0 && !['clock','beacon'].includes(entity.shape)) throw new Error('SR acceleration is restricted to point-clock or beacon markers.');
+        if (length(entity.coordinateForcePerMass) > 0 && !['clock','beacon'].includes(entity.shape)) throw new Error('SR coordinate force / rest mass is restricted to point-clock or beacon markers.');
     }
+    if (profile === 'playground' && 'coordinateForcePerMass' in patch && length(entity.coordinateForcePerMass) > 0) throw new Error('Coordinate force / rest mass is an SR point-marker control. Use Playground impulses or the force gun for classical bodies.');
 }
 /** Authoritative, finite reference world. It never imports or mutates the lattice owner. */
 export class ObserverSession {
@@ -83,7 +86,7 @@ export class ObserverSession {
     /** @param {{profile?:'sr'|'playground',preset?:string,playing?:boolean}} [options] */
     constructor(options = {}) {
         this.state = {
-            schemaVersion: 1, sessionId: globalThis.crypto?.randomUUID?.() ?? `observer-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+            schemaVersion: 1, integratorVersion: INTEGRATOR_VERSION, sessionId: globalThis.crypto?.randomUUID?.() ?? `observer-${Date.now()}-${Math.random().toString(36).slice(2)}`,
             epoch: 1, revision: 0, preparationVersion: 0, tick: 0, time: 0, profile: options.profile ?? 'sr', playing: options.playing ?? true,
             observer: { position: [0,1.6,8], velocity: [0,0,0], properTime: 0, yaw: 0, pitch: 0, roll: 0, worldline: 1 },
             entities: [], segments: [], historyStart: -HISTORY_WINDOW, historyWindow: HISTORY_WINDOW,
@@ -124,7 +127,7 @@ export class ObserverSession {
         if (this.state.entities.length >= ENTITY_LIMIT) throw new Error(`Entity limit ${ENTITY_LIMIT} reached; no authored entity was evicted.`);
         const id = `object-${this.nextId++}`;
         /** @type {WorldEntity} */
-        const entity = { id, name: 'Geometric object', shape: 'sphere', position: [0,1,-2], size: [1,1,1], rotation: [0,0,0], velocity: [0,0,0], color: [.15,.7,1], emission: 1, mass: 1, overlay: false, alive: true, revision: 1, clockOffset: 0, originTime: this.state.time, createdAt: prehistory ? -HISTORY_WINDOW : this.state.time, deletedAt: null, bodyType: 'dynamic', restitution: .5, friction: .5, damping: .05, gravity:true,collisions:true, angularVelocity: [0,0,0], properAcceleration: [0,0,0], spectral: 'white' };
+        const entity = { id, name: 'Geometric object', shape: 'sphere', position: [0,1,-2], size: [1,1,1], rotation: [0,0,0], velocity: [0,0,0], color: [.15,.7,1], emission: 1, mass: 1, overlay: false, alive: true, revision: 1, clockOffset: 0, originTime: this.state.time, createdAt: prehistory ? -HISTORY_WINDOW : this.state.time, deletedAt: null, bodyType: 'dynamic', restitution: .5, friction: .5, damping: .05, gravity:true,collisions:true, angularVelocity: [0,0,0], coordinateForcePerMass: [0,0,0], spectral: 'white' };
         applyEntityPatch(entity, /** @type {Record<string,unknown>} */ (properties), this.state.profile);
         entity.editRevision = 1;
         this.state.entities.push(entity);
@@ -134,7 +137,7 @@ export class ObserverSession {
     /** @param {WorldEntity} e @param {number} [start] @param {number} [originTime] */
     openSegment(e, start = this.state.time, originTime = this.state.time) {
         if (this.state.segments.length >= SEGMENT_LIMIT) throw new Error(`Optical history limit ${SEGMENT_LIMIT} reached. Pause or reduce recorded trajectories.`);
-        this.state.segments.push({ entityId:e.id, revision:e.revision, start, end:null, originTime, position:[...e.position], velocity:[...e.velocity], size:[...e.size], rotation:[...e.rotation], shape:e.shape, color:[...e.color], emission:e.emission, clockOffset:e.clockOffset, name:e.name, mass:e.mass, spectral:e.spectral });
+        this.state.segments.push({ entityId:e.id, revision:e.revision, start, end:null, originTime, position:[...e.position], velocity:[...e.velocity], size:[...e.size], rotation:[...e.rotation], shape:e.shape, color:[...e.color], emission:e.emission, clockOffset:e.clockOffset, name:e.name, mass:e.mass, spectral:e.spectral, integratorVersion:INTEGRATOR_VERSION, capApplied:e.capApplied === true });
     }
     /** @param {WorldEntity} e @param {number} [time] */
     closeSegment(e, time = this.state.time) {
@@ -152,9 +155,9 @@ export class ObserverSession {
         preset = aliases[preset] ?? preset;
         if (!['baseline','clocks','moving-shapes','clock-avenue','light-clock','twin-journey','collision','intervention','performance'].includes(preset)) throw new Error('Unknown prepared experiment.');
         this.state.experiment = preset;this.state.preparedEvents=true; this.state.entities = []; this.state.segments = []; this.state.pulses = []; this.state.joints = []; this.state.collisionOccurred = false;
-        this.state.time = 0; this.state.tick = 0; this.state.historyStart = -HISTORY_WINDOW; this.state.scrubTime = null; this.accumulator = 0;
+        this.state.integratorVersion=INTEGRATOR_VERSION; this.state.time = 0; this.state.tick = 0; this.state.historyStart = -HISTORY_WINDOW; this.state.scrubTime = null; this.accumulator = 0;
         this.state.environmentHistory=[{start:-HISTORY_WINDOW,end:null,revision:1,environment:clone(this.state.environment)}];
-        this.state.observer = { position:[0,1.6,8],velocity:[0,0,0],properTime:0,yaw:0,pitch:0,roll:0,worldline:this.state.observer.worldline+1 };
+        this.state.observer = { position:[0,1.6,8],velocity:[0,0,0],properTime:0,yaw:0,pitch:0,roll:0,worldline:this.state.observer.worldline+1,worldlineReason:'preparation',worldlineStart:0,capApplied:false };
         if (preset === 'baseline' || preset === 'intervention') {
             this.addEntity({name:'Luminous sphere',shape:'sphere',position:[0,1,-2],color:[.15,.8,1],overlay:true},true);
             this.addEntity({name:'Amber cube',shape:'box',position:[-3,.8,-4],size:[1.6,1.6,1.6],color:[1,.45,.12],rotation:[0,.4,0]},true);
@@ -245,7 +248,7 @@ export class ObserverSession {
                 const grab={token,id:entity.id,epoch:this.state.epoch,targetRevision:entity.revision,sequence:/** @type {number} */(sequence),mode:data.mode,localAnchor,...this.gunTarget(data)};
                 this.forceGunTelemetry=this.playground.forceGun(grab,FIXED_DT,false);
                 this.forceGunGrab=grab;
-                if(this.relocated){this.state.observer.properTime=0;this.state.observer.worldline++;this.relocated=false;}
+                if(this.relocated){this.state.observer.properTime=0;this.state.observer.worldline++;this.state.observer.worldlineReason='resume after camera relocation';this.state.observer.worldlineStart=this.state.time;this.relocated=false;}
                 this.state.playing=true;this.state.preparedEvents=false;this.state.revision++;
             }
             return {ok:true,snapshot:this.snapshot(),forceGun:this.getForceGunTelemetry()};
@@ -272,7 +275,7 @@ export class ObserverSession {
             const edits = ['create','update','delete','duplicate','restore','environment','impulse','joint'].includes(command.type);
             if (edits && this.state.scrubTime !== null) { this.branchAtScrub(); entity=this.state.entities.find(e=>e.id===id); }
             const changesParticipants=['create','delete','duplicate','restore','impulse','joint'].includes(command.type);
-            const physicalPatch=command.type==='update'&&Object.keys(record(command.patch??payload.patch??{})).some(key=>['position','size','rotation','velocity','mass','shape','properAcceleration','angularVelocity','bodyType'].includes(key));
+            const physicalPatch=command.type==='update'&&Object.keys(record(command.patch??payload.patch??{})).some(key=>['position','size','rotation','velocity','mass','shape','properAcceleration','coordinateForcePerMass','angularVelocity','bodyType'].includes(key));
             // Prepared trajectories certify the untouched preparation only. Authoring may not
             // schedule a later reversal/contact for a deleted, moved, or replaced participant.
             if(changesParticipants||physicalPatch)this.state.preparedEvents=false;
@@ -299,7 +302,7 @@ export class ObserverSession {
             } else if (command.type === 'pause') this.state.playing=false;
             else if (command.type === 'play') {
                 if (this.state.scrubTime !== null) throw new Error('Return to the present or edit to branch before playing.');
-                if (this.relocated) { this.state.observer.properTime=0; this.state.observer.worldline++; this.relocated=false; }
+                if(this.relocated){this.state.observer.properTime=0;this.state.observer.worldline++;this.state.observer.worldlineReason='resume after camera relocation';this.state.observer.worldlineStart=this.state.time;this.relocated=false;}
                 this.state.playing=true;
             } else if (command.type === 'dolly') {
                 // Wheel travel is a camera relocation, not a physical velocity or a
@@ -409,7 +412,7 @@ export class ObserverSession {
     /** Begin a new clock origin after privileged camera relocation. @param {number[]} position */
     relocateObserver(position) {
         const observer=this.state.observer;
-        observer.position=position; observer.properTime=0; observer.worldline++; observer.velocity=[0,0,0]; this.relocated=true;
+        observer.position=position; observer.properTime=0; observer.worldline++; observer.velocity=[0,0,0]; observer.worldlineReason='camera relocation'; observer.worldlineStart=this.state.time; observer.capApplied=false; this.relocated=true;
     }
     branchAtScrub() {
         const time=this.state.scrubTime;
@@ -421,7 +424,7 @@ export class ObserverSession {
         const environment=this.state.environmentHistory.at(-1);if(environment)this.state.environment=clone(environment.environment);
         this.state.pulses=this.state.pulses.filter(p=>p.start<=time); this.state.scrubTime=null; this.state.epoch++; this.accumulator=0;
         this.state.preparedEvents=false;this.state.collisionOccurred=false;
-        this.state.observer.properTime=0; this.state.observer.velocity=[0,0,0]; this.state.observer.worldline++;
+        this.state.observer.properTime=0; this.state.observer.velocity=[0,0,0]; this.state.observer.worldline++; this.state.observer.worldlineReason='scrub branch'; this.state.observer.worldlineStart=time; this.relocated=false;
     }
     /** @param {Record<string,unknown>} data */
     load(data) {
@@ -431,7 +434,7 @@ export class ObserverSession {
         if(data.schemaVersion!==1||!Array.isArray(data.entities)||!Array.isArray(data.segments)) throw new Error('Unsupported snapshot schema.');
         if(data.entities.length>ENTITY_LIMIT||data.segments.length>SEGMENT_LIMIT) throw new Error('Snapshot exceeds world limits.');
         if(data.profile!=='sr'&&data.profile!=='playground') throw new Error('Invalid snapshot physics profile.');
-        const candidate=/** @type {WorldSnapshot} */(clone(data));
+        const candidate=migrateObserverSnapshot(/** @type {WorldSnapshot} */(clone(data)));
         candidate.preparationVersion ??= 0;
         if (!Number.isSafeInteger(candidate.preparationVersion) || candidate.preparationVersion < 0) throw new Error('Invalid preparation version.');
         number(candidate.time,'snapshot time'); number(candidate.historyStart,'history start');
@@ -506,7 +509,7 @@ export class ObserverSession {
         if(input.pitch!==undefined) o.pitch=clamp(number(input.pitch,'pitch'),-Math.PI/2+.001,Math.PI/2-.001);
         if(input.roll!==undefined) o.roll=number(input.roll,'roll');
         if(!this.state.playing||this.state.scrubTime!==null) {
-            if(this.state.scrubTime===null&&length(input.move??[0,0,0])>0) { o.position=add(o.position,scale(this.movement(input),elapsedSeconds*(input.speed??.5)*6)); this.relocated=true; }
+            if(this.state.scrubTime===null&&length(input.move??[0,0,0])>0) {o.position=add(o.position,scale(this.movement(input),elapsedSeconds*(input.speed??.5)*6));this.relocated=true;}
             return;
         }
         this.accumulator+=elapsedSeconds*this.state.playbackSpeed;
@@ -531,8 +534,22 @@ export class ObserverSession {
     /** @param {number} dt @param {ObserverInput} input */
     step(dt,input) {
         const s=this.state,o=s.observer;
-        const accelerated=s.profile==='sr'?s.entities.filter(e=>e.alive&&length(e.properAcceleration)>0):[];
-        if(s.segments.length+accelerated.length>SEGMENT_LIMIT) throw new Error('Optical history budget exhausted; simulation paused before losing history.');
+        if (!Number.isFinite(dt) || dt < 0) throw new Error('A step interval must be finite and nonnegative.');
+        if (dt === 0) return;
+        if (s.profile === 'playground' && input.coordinateForcePerMass !== undefined) throw new Error('Coordinate force / rest mass is an SR reference control.');
+        const accelerated=s.profile==='sr'?s.entities.filter(e=>e.alive&&length(e.coordinateForcePerMass)>0):[];
+        const stop=s.time+dt;
+        const events=s.preparedEvents ? (s.experiment==='twin-journey'?[10,20]:s.experiment==='collision'&&!s.collisionOccurred?[4/.9]:[]) : [];
+        if(s.preparedEvents&&s.experiment==='light-clock') {
+            for(let cycle=Math.floor(s.time/2.5)+1;cycle*2.5<=stop;cycle++) {
+                if(events.length>=SEGMENT_LIMIT)throw new Error('Prepared event budget exhausted; simulation paused before losing history.');
+                events.push(cycle*2.5);
+            }
+        }
+        const boundaries=[...events.filter(t=>t>s.time&&t<stop),stop];
+        const transitionSegments=s.integratorVersion===INTEGRATOR_VERSION?0:s.entities.filter(e=>e.alive).length;
+        const eventSegments=2*events.filter(t=>t>s.time&&t<=stop).length;
+        if(s.profile==='sr'&&s.segments.length+accelerated.length*2*boundaries.length+transitionSegments+eventSegments>SEGMENT_LIMIT) throw new Error('Optical history budget exhausted; simulation paused before losing history.');
         const desired=scale(this.movement(input),clamp(input.speed??.5,0,MAX_BETA));
         if(s.profile==='playground') {
             if(!this.playground) throw new Error('Playground is still loading.');
@@ -550,19 +567,33 @@ export class ObserverSession {
             this.playground.step(dt,s.entities);
             for(const e of s.entities.filter(e=>e.alive)) {e.clockOffset+=dt;e.originTime=s.time+dt;}
         } else {
-            const targetU=scale(desired,gamma(desired)),currentU=scale(o.velocity,gamma(o.velocity));
-            const delta=sub(targetU,currentU),force=scale(normalize(delta),Math.min(length(delta)/dt,Math.max(0,input.acceleration??1)));
-            const next=integrateFourVelocity(o.velocity,force,dt);
-            o.position=add(o.position,next.displacement);o.velocity=next.velocity;o.properTime+=next.properElapsed;
-            for(const e of s.entities.filter(e=>e.alive)) {
-                e.position=add(e.position,scale(e.velocity,dt));e.clockOffset+=dt/gamma(e.velocity);e.originTime=s.time+dt;
+            if(s.integratorVersion!==INTEGRATOR_VERSION) {
+                for(const e of s.entities.filter(e=>e.alive)){this.closeSegment(e);this.openSegment(e);}
+                s.integratorVersion=INTEGRATOR_VERSION;
             }
-            s.time+=dt;
-            for(const e of accelerated) {
-                this.closeSegment(e);e.velocity=integrateFourVelocity(e.velocity,e.properAcceleration,dt).velocity;e.revision++;this.openSegment(e);
+            for(const end of boundaries) {
+                const start=s.time,h=end-start;
+                const targetU=scale(desired,gamma(desired)),currentU=scale(o.velocity,gamma(o.velocity));
+                const delta=sub(targetU,currentU),force=input.coordinateForcePerMass === undefined
+                    ? scale(normalize(delta),Math.min(length(delta)/h,Math.max(0,input.acceleration??1)))
+                    : vec(input.coordinateForcePerMass,'coordinate force / rest mass');
+                const next=integrateFourVelocity(o.velocity,force,h);
+                o.position=add(o.position,next.displacement);o.velocity=next.velocity;o.properTime+=next.properElapsed;o.capApplied=next.capApplied;
+                for(const e of s.entities.filter(e=>e.alive)) {
+                    const evolution=integrateFourVelocity(e.velocity,e.coordinateForcePerMass,h);
+                    const acceleratedMarker=length(e.coordinateForcePerMass)>0;
+                    e.capApplied=evolution.capApplied;
+                    if(acceleratedMarker) {
+                        this.closeSegment(e,start);e.velocity=evolution.driftVelocity;this.openSegment(e,start,start);
+                    }
+                    e.position=add(e.position,evolution.displacement);e.clockOffset+=evolution.properElapsed;e.originTime=end;
+                    if(acceleratedMarker) {
+                        this.closeSegment(e,end);e.velocity=evolution.velocity;e.revision++;this.openSegment(e,end,end);
+                    }
+                }
+                s.time=end;this.demoEvents(start,end);
             }
-            this.demoEvents(s.time-dt,s.time);
-            s.time-=dt;
+            s.tick++;return;
         }
         s.time+=dt;s.tick++;
     }
@@ -607,19 +638,20 @@ export class ObserverSession {
     /** A profile change preserves the authored scene but declares a fresh preparation. */
     prepareProfile() {
         const s=this.state;
-        s.time=0;s.tick=0;s.scrubTime=null;s.segments=[];s.pulses=[];s.preparedEvents=false;s.collisionOccurred=false;
+        s.integratorVersion=INTEGRATOR_VERSION;s.time=0;s.tick=0;s.scrubTime=null;s.segments=[];s.pulses=[];s.preparedEvents=false;s.collisionOccurred=false;
         s.historyStart=-s.historyWindow;s.entities=s.entities.filter(e=>e.alive);this.accumulator=0;this.backlogPaused=false;
-        s.observer.properTime=0;s.observer.worldline++;
+        s.observer.properTime=0;s.observer.worldline++;s.observer.worldlineReason='profile preparation';s.observer.worldlineStart=0;s.observer.capApplied=false;
         const changes=[];
         if(s.profile==='sr') {
             for(const e of s.entities) {
                 if(length(e.velocity)>MAX_BETA){e.velocity=[0,0,0];changes.push(`${e.name}: speed above 0.99c reset to rest`);}
                 if(length(e.angularVelocity)>0){e.angularVelocity=[0,0,0];changes.push(`${e.name}: continuous rotation cleared`);}
-                if(length(e.properAcceleration)>0&&!['clock','beacon'].includes(e.shape)){e.properAcceleration=[0,0,0];changes.push(`${e.name}: extended-body acceleration cleared`);}
+                if(length(e.coordinateForcePerMass)>0&&!['clock','beacon'].includes(e.shape)){e.coordinateForcePerMass=[0,0,0];changes.push(`${e.name}: extended-body acceleration cleared`);}
             }
             s.joints=[];
         }
-        for(const e of s.entities){e.clockOffset=0;e.originTime=0;e.createdAt=-s.historyWindow;e.deletedAt=null;e.revision++;this.openSegment(e,-s.historyWindow,0);}
+        if(s.profile==='playground') for(const e of s.entities)e.coordinateForcePerMass=[0,0,0];
+        for(const e of s.entities){e.clockOffset=0;e.originTime=0;e.createdAt=-s.historyWindow;e.deletedAt=null;e.capApplied=false;e.revision++;this.openSegment(e,-s.historyWindow,0);}
         s.environmentHistory=[{start:-s.historyWindow,end:null,revision:1,environment:clone(s.environment)}];
         s.warnings=['Profile changed at the current poses. Clocks and optical history restart with declared inertial prehistory; prescribed demonstration events are disabled.',...changes];
     }

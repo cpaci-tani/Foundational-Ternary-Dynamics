@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Observer SR verification</title>
+<script type="importmap">{"imports":{"three":"/js/vendor/three/build/three.module.js","three/addons/":"/js/vendor/three/examples/jsm/"}}</script>
+</head><body><div id="stage" style="width:320px;height:200px;position:relative"></div>
+<script type="module">
+import {ObserverSession} from '/js/observer/session.js';
+import {ObserverRenderer} from '/js/observer/renderer.js';
+import * as optics from '/js/observer/optics.js';
+window.sr = {session:new ObserverSession({playing:false}), renderer:new ObserverRenderer({container:document.getElementById('stage')}), optics};
+await window.sr.session.initialize();
+window.sr.renderer.resize(320,200);
+</script></body></html>

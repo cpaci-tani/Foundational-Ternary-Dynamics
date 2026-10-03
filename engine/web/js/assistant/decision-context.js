@@ -6,7 +6,7 @@ export const DECISION_REQUEST_MAX_BYTES=60*1024;
 const encoder=new TextEncoder();
 const SECRET_KEYS=new Set(['apikey','typesafeapikey','browsertoken','clienttoken','password','secret','accesstoken','refreshtoken','credentials']);
 const SCENARIO_KEYS=['id','scenarioId','label','name','title','category','backend','sizes','description','intent','qualification','epistemicStatus','admissionStatus','evidenceLevel'];
-const ENTITY_KEYS=['id','alive','editRevision','name','shape','position','size','rotation','velocity','color','emission','mass','bodyType','restitution','friction','damping','gravity','collisions','overlay','angularVelocity','properAcceleration'];
+const ENTITY_KEYS=['id','alive','editRevision','name','shape','position','size','rotation','velocity','color','emission','mass','bodyType','restitution','friction','damping','gravity','collisions','overlay','angularVelocity','coordinateForcePerMass'];
 const ENTITY_TARGET_ACTIONS=new Set(['observer.select','observer.update','observer.delete','observer.restore','observer.impulse','observer.overlay','observer.camera']);
 
 /** Clone bounded JSON data, never object internals or credential-bearing fields.

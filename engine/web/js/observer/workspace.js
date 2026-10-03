@@ -12,12 +12,22 @@ import { boundedFractalDetail } from './fractal-presets.js';
 import { ObserverStorage } from './storage.js';
 import { reflectAuthorPatch, reflectPolar } from './mirror-frame.js';
 import { ObserverForceGun, ObserverTetherOverlay } from './force-gun.js';
+import { observationDiagnostics } from './diagnostics.js';
 
 /** @typedef {import('./types.js').WorldSnapshot} WorldSnapshot */
 /** @typedef {import('./types.js').WorldCommand} WorldCommand */
 
 /** One isolated presentation/session, driven exclusively by the app frame loop. */
 export class ObserverWorkspace {
+    /** Read-only dev-registry export for the current observation; no worker or lattice mutation.
+     * @param {number} [ndcX] @param {number} [ndcY]
+     */
+    exportObservationDiagnostics(ndcX = 0, ndcY = 0) {
+        if (!this.snapshot) return null;
+        const settings = { ...this.renderSettings, aspect: this.renderer.width / this.renderer.height };
+        const hit = this.renderer.pick(this.snapshot, settings, ndcX, ndcY);
+        return observationDiagnostics(this.snapshot, settings, hit, this.renderer.segments, ndcX, ndcY);
+    }
     /** @param {{onExit:()=>void,readLattice:()=>any}} deps */
     constructor(deps) {
         this.deps = deps;

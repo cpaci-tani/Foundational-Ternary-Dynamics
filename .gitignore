@@ -301,3 +301,7 @@ docs/theory/**/AUDIT_*.md
 
 # dissemination/ is local-only: untracked 2026-09-24. Files stay on disk; earlier revisions remain in Git history.
 /dissemination/
+
+# Public Mind's Eye repair conventions and reproducible implementation evidence.
+!engine/web/docs/REF_MINDS_EYE_SR_CONVENTIONS.md
+!engine/web/docs/AUDIT_MINDS_EYE_SR_REPAIR.md

@@ -29,7 +29,7 @@ const entityFields = {
     rotation: vector(-Math.PI * 100, Math.PI * 100), velocity: vector(), color: vector(0, 1),
     emission: numeric(0, 1e5), mass: numeric(1e-6, 1e5), bodyType: choice(['fixed', 'dynamic', 'kinematic']),
     restitution: numeric(0, 1), friction: numeric(0, 1e5), damping: numeric(0, 1e5),
-    gravity: boolean, collisions: boolean, overlay: boolean, angularVelocity: vector(), properAcceleration: vector(),
+    gravity: boolean, collisions: boolean, overlay: boolean, angularVelocity: vector(), coordinateForcePerMass: vector(), properAcceleration: { ...vector(), description: 'Deprecated alias: du/dt in the simulation coordinate frame, NOT comoving proper acceleration.' },
 };
 const fieldNames = ['name', 'position', 'velocity', 'properTime', 'distance', 'emissionTime', 'dimensions', 'axes', 'bounds', 'trajectory', 'frameVelocity'];
 /** @param {string} type @param {string} description @param {any} args */
@@ -45,7 +45,7 @@ export const OBSERVER_ACTION_DESCRIPTORS = freeze([
     descriptor('step', 'Advance 1–120 fixed 1/120 second ticks while paused; remain paused.', object({ count: integer(1, 120) })),
     descriptor('create', 'Create one bounded geometric object; do not fabricate a lattice identity.', object(entityFields)),
     descriptor('select', 'Select an existing stable object id, or clear the selection with null.', object({ id: { anyOf: [text, { type: 'null' }] } }, ['id'])),
-    descriptor('update', 'Edit the current selected/captured object, or explicit id. massFactor scales its current mass; cannot combine mass and massFactor. Spatial values use the selected mirrored author frame.', object({ id: text, ...entityFields, massFactor: numeric(0.001, 1000) })),
+    descriptor('update', 'Edit the current selected/captured object, or explicit id. massFactor scales its current mass; cannot combine mass and massFactor. Spatial values use the selected mirrored author frame. coordinateForcePerMass means du/dt in the simulation coordinate frame after mirror translation; it is not comoving proper acceleration.', object({ id: text, ...entityFields, massFactor: numeric(0.001, 1000) })),
     descriptor('delete', 'Delete a current live object; retained arriving-light history remains visible.', object({ id: text })),
     descriptor('restore', 'Restore an existing deleted object identity.', object({ id: text })),
     descriptor('impulse', 'Apply a finite nonzero central impulse to a dynamic Playground object; uses the selected mirrored author frame.', object({ id: text, impulse: vector() }, ['impulse'])),
@@ -53,7 +53,7 @@ export const OBSERVER_ACTION_DESCRIPTORS = freeze([
     descriptor('forceGun', 'Configure the user-operated Playground force gun or release it. This does not autonomously grab or inject forces.', object({ enabled: boolean, sensitivity: choice(['delicate', 'normal', 'strong']), multiplier: numeric(0.1, 10), release: boolean })),
     descriptor('environment', 'Edit the declared decorative environment using the catalog.', object({ preset: choice(ENVIRONMENT_PRESETS.map(item => item.id)), radius: numeric(0.001, 1e6), density: numeric(0, 1e6), spacing: numeric(0.001, 1e6), opacity: numeric(0, 1), seed: integer(0, 1e6), orientation: numeric(-1e6, 1e6), animationRate: numeric(-1e6, 1e6), color: vector(0, 1), anchor: choice(['world', 'camera']) })),
     descriptor('overlay', 'Change exactly one layer, field, filter, or current entity label. Layer/field/entity require enabled. Entity mode requires id or a captured selection.', object({ layer: choice(LAYERS.map(item => item.id)), field: choice(fieldNames), filter: choice(['selected', 'all', 'none']), id: text, enabled: boolean })),
-    descriptor('camera', 'Choose mode pose (position/yaw/pitch, relocation resets observer clock), view (presentation/navigation settings; roll is visible when worldUp is false), or lookAt (existing target id). Modes cannot mix fields.', object({ mode: choice(['pose', 'view', 'lookAt']), id: text, position: vector(), yaw: numeric(-Math.PI * 100, Math.PI * 100), pitch: numeric(-Math.PI / 2 + 0.01, Math.PI / 2 - 0.01), roll: numeric(-Math.PI * 100, Math.PI * 100), fov: numeric(20, 120), speed: numeric(0.001, 0.99), acceleration: numeric(0.001, 100), grounded: boolean, worldUp: boolean, optical: boolean, doppler: boolean, beaming: boolean, artisticShading: boolean, renderScale: numeric(0.25, 1.5), autoQuality: boolean }, ['mode'])),
+    descriptor('camera', 'Choose mode pose (position/yaw/pitch, relocation resets observer clock; SR acceleration setting limits du/dt), view (presentation/navigation settings; roll is visible when worldUp is false), or lookAt (existing target id). Modes cannot mix fields.', object({ mode: choice(['pose', 'view', 'lookAt']), id: text, position: vector(), yaw: numeric(-Math.PI * 100, Math.PI * 100), pitch: numeric(-Math.PI / 2 + 0.01, Math.PI / 2 - 0.01), roll: numeric(-Math.PI * 100, Math.PI * 100), fov: numeric(20, 120), speed: numeric(0.001, 0.99), acceleration: numeric(0.001, 100), grounded: boolean, worldUp: boolean, optical: boolean, doppler: boolean, beaming: boolean, artisticShading: boolean, renderScale: numeric(0.25, 1.5), autoQuality: boolean }, ['mode'])),
     descriptor('preset', 'Load one declared experiment; replaces the preparation and restarts its history.', object({ preset: choice(EXPERIMENTS.map(item => item.id)) }, ['preset'])),
     descriptor('undo', 'Undo the last authoring transaction and pause in a fresh epoch.', object()),
 ]);
@@ -121,7 +121,7 @@ function assertSR(snapshot, patch, original = {}) {
     if (snapshot.profile !== 'sr') return;
     if (patch.velocity && Math.hypot(...patch.velocity) > 0.99) throw new Error('SR velocity must not exceed 0.99c.');
     if (patch.angularVelocity?.some((/** @type {number} */ value) => value !== 0)) throw new Error('Continuous rigid rotation requires Playground.');
-    if (patch.properAcceleration?.some((/** @type {number} */ value) => value !== 0) && !['clock', 'beacon'].includes(patch.shape ?? original.shape ?? 'sphere')) throw new Error('SR acceleration is restricted to clock or beacon markers.');
+    if ((patch.coordinateForcePerMass ?? patch.properAcceleration)?.some((/** @type {number} */ value) => value !== 0) && !['clock', 'beacon'].includes(patch.shape ?? original.shape ?? 'sphere')) throw new Error('SR coordinate force / rest mass is restricted to clock or beacon markers.');
 }
 
 /** @param {{getWorkspace:()=>any,isActive:()=>boolean}} deps */
