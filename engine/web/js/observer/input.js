@@ -112,6 +112,9 @@ export class ObserverInput {
             event.stopImmediatePropagation();
             return;
         }
+        // Live telemetry leaves scene playback enabled, but focused controls
+        // still own their keys, including keys without a navigation binding.
+        if (event.target instanceof Element && event.target.closest('button,select,a,input,textarea,summary')) return;
         const settings = this.getSettings();
         const bindings = settings.bindings;
         const action = Object.keys(bindings).find(key => bindings[/** @type {keyof Bindings} */ (key)] === event.code);
@@ -121,7 +124,6 @@ export class ObserverInput {
             return;
         }
         if (this.panelOpen && !['inspect', 'world'].includes(action)) return;
-        if (event.target instanceof Element && event.target.closest('button,select,a,input,textarea,summary')) return;
         event.preventDefault();
         event.stopImmediatePropagation();
         if (['inspect', 'world', 'reticle', 'overlay'].includes(action)) {

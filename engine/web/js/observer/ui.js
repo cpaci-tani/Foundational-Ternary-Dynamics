@@ -7,6 +7,7 @@ import { createPhenomenaInstrument } from './phenomena-instrument.js';
 import { starMetric, LIGHT_SPEED } from './compact-star.js';
 import { observationTelemetry } from './telemetry.js';
 import { createObserverTooltips } from './tooltips.js';
+import { createTelemetryResize } from './telemetry-resize.js';
 /** @typedef {import('./types.js').WorldSnapshot} WorldSnapshot */
 /** @typedef {import('./types.js').WorldCommand} WorldCommand */
 /** @typedef {import('./catalog.js').ObserverSettings & Record<string,any>} ObserverSettings */
@@ -178,7 +179,20 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     telemetrySummary.setAttribute('aria-live', 'off');
     const panelClose = button('×', 'close-panel', { title: 'Close controls' }); panelClose.setAttribute('aria-label', 'Close controls');
     panelHead.append(panelTitle, telemetrySummary, panelClose);
-    const panelBody = node('div', 'observer-panel-body'); panel.append(panelHead, panelBody);
+    const panelBody = node('div', 'observer-panel-body');
+    const resizeHandle = button('↘', 'telemetry-resize', { title: 'Resize telemetry panel' });
+    resizeHandle.classList.add('observer-telemetry-resize');
+    resizeHandle.dataset.observerTelemetryResize = '';
+    resizeHandle.setAttribute('aria-label', 'Resize telemetry panel');
+    resizeHandle.setAttribute('aria-controls', panel.id);
+    const resizeDescription = node('span');
+    resizeDescription.id = 'observer-telemetry-resize-description';
+    resizeDescription.hidden = true;
+    resizeHandle.setAttribute('aria-describedby', resizeDescription.id);
+    resizeHandle.hidden = true;
+    // Keep the resize control early in keyboard order despite its corner position.
+    panelHead.append(resizeHandle);
+    panel.append(panelHead, panelBody, resizeDescription);
     toolbar.querySelectorAll('[data-observer-panel-tab]').forEach(tab => tab.setAttribute('aria-controls', panel.id));
     element.append(head, telemetry, target, toolbar, transport, status, panel); host.append(element);
     const phenomena = createPhenomenaInstrument();
@@ -205,6 +219,8 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     let telemetrySignature = '';
     const tooltips = createObserverTooltips(host, () => ({ profile: snapshot?.profile || 'sr', curved: !!snapshot?.spacetime, blackHole: snapshot?.spacetime?.kind === 'schwarzschild-black-hole' }));
     scope.defer(() => tooltips.dispose());
+    const telemetryResize = createTelemetryResize({ panel, handle: resizeHandle, root: element, description: resizeDescription });
+    scope.defer(() => telemetryResize.dispose());
     const entity = () => viewState.authorEntity?.id === selectedId ? viewState.authorEntity : snapshot?.entities?.find(item => item.id === selectedId);
     /** @param {string} name @param {any} [payload] */
     const action = (name, payload) => {
@@ -566,20 +582,24 @@ export function createObserverUI({ host, onCommand, onSetting, onAction }) {
     function openPanel(name) {
         if (!PANELS.some(([id]) => id === name) || disposed) return;
         if (interfaceHidden) hideInterface(false);
+        telemetryResize.close();
         discardPreview(); activePanel = /** @type {PanelName} */ (name); panel.hidden = false;
         panel.dataset.observerPanel = name;
         panel.classList.toggle('observer-panel-telemetry', name === 'telemetry');
         telemetrySummary.hidden = name !== 'telemetry';
+        resizeHandle.hidden = name !== 'telemetry';
         panelTitle.textContent = PANELS.find(([id]) => id === name)?.[1] || name;
         element.classList.add('observer-has-panel');
         element.classList.toggle('observer-has-telemetry', name === 'telemetry');
         toolbar.querySelectorAll('[data-observer-panel-tab]').forEach(tab => { tab.setAttribute('aria-expanded', String(tab.getAttribute('data-observer-panel-tab') === name)); });
         renderPanel(); action('panel-open', name);
+        if (name === 'telemetry') telemetryResize.open();
         if (name === 'storage') action('refresh-saves');
         panelClose.focus({ preventScroll: true });
     }
     function closePanel() {
         if (!activePanel) return;
+        telemetryResize.close(); resizeHandle.hidden = true;
         discardPreview(); const previous = activePanel; activePanel = null; panel.hidden = true;
         element.classList.remove('observer-has-panel');
         element.classList.remove('observer-has-telemetry');
