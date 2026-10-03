@@ -10,13 +10,21 @@ import { dot, length, sub, MAX_BETA } from './math.js';
  * https://physics.nist.gov/cuu/Constants/Table/allascii.txt
  */
 const MASS_CONVERSION_G = 6.67430e-11;
-/** @typedef {{id:string,label:string,value:number|string|null,unit:string,note:string}} TelemetryRow */
+/** Presentation is fixed by row identity, including when its measurement is unavailable.
+ * Counters retain exact decimal strings without converting them to floating-point numbers.
+ * @typedef {'number'|'text'|'counter'} TelemetryPresentation
+ */
+/** @typedef {{id:string,label:string,value:number|string|null,unit:string,note:string,presentation:TelemetryPresentation}} TelemetryRow */
 /** @typedef {{id:string,title:string,description:string,rows:TelemetryRow[]}} TelemetrySection */
 /** @typedef {{hit?:import('./optics.js').OpticalHit|null,cameraOverride?:Partial<import('./optics.js').CameraState>,selectedId?:string|null,settings?:{optical?:boolean,doppler?:boolean,beaming?:boolean,fov?:number},rendering?:Record<string,any>,lattice?:Record<string,any>}} TelemetryView */
 /** @param {unknown} value @returns {number|null} */
 const finite = value => typeof value === 'number' && Number.isFinite(value) ? value : null;
+/** @param {string} id @param {string} label @param {unknown} value @param {string} [unit] @param {string} [note] @param {TelemetryPresentation} [presentation] @returns {TelemetryRow} */
+const row = (id, label, value, unit = '', note = '', presentation = 'number') => ({ id, label, value: typeof value === 'string' ? value : finite(value), unit, note, presentation });
 /** @param {string} id @param {string} label @param {unknown} value @param {string} [unit] @param {string} [note] @returns {TelemetryRow} */
-const row = (id, label, value, unit = '', note = '') => ({ id, label, value: typeof value === 'string' ? value : finite(value), unit, note });
+const textRow = (id, label, value, unit = '', note = '') => row(id, label, value, unit, note, 'text');
+/** @param {string} id @param {string} label @param {unknown} value @param {string} [unit] @param {string} [note] @returns {TelemetryRow} */
+const counterRow = (id, label, value, unit = '', note = '') => row(id, label, value, unit, note, 'counter');
 /** @param {string} id @param {string} title @param {string} description @param {TelemetryRow[]} rows @returns {TelemetrySection} */
 const section = (id, title, description, rows) => ({ id, title, description, rows });
 
@@ -74,18 +82,18 @@ export function observationTelemetry(snapshot, view = {}) {
     const timeUnit = sr ? 'coordinate time units' : 'simulation time units';
     const sections = [
         section('model', 'Reference and session', blackHole ? 'Schwarzschild vacuum black-hole exterior with local SR. The horizon emits no light; a finite static sky shell supplies the background. The observer remains outside the horizon.' : star ? 'Adopted Schwarzschild vacuum exterior with local SR. Fixed emitting surface; no stellar interior or native FTD identification.' : sr ? 'Adopted Minkowski special relativity, c=1. SI length and time scales are unspecified.' : 'Classical Playground. Its simulation units and body mechanics do not define SR clocks or GR geometry.', [
-            row('reference', 'Reference model', star ? 'Schwarzschild exterior + local SR' : sr ? 'Minkowski SR' : 'Classical Playground'),
-            row('engine', 'Physics engine', snapshot.physicsEngine), row('integrator', 'Integrator', snapshot.integratorVersion ?? 'Unspecified'),
-            row('session', 'Session', snapshot.sessionId), row('epoch', 'Epoch', snapshot.epoch), row('tick', 'Tick', snapshot.tick),
-            row('playing', 'Transport', snapshot.playing ? 'Playing' : 'Paused'), row('playback', 'Playback rate', snapshot.playbackSpeed, '×', 'Presentation rate per wall-clock second; no change to physical clock conventions.'),
-            row('camera-preview', 'Camera comparison', preview ? 'Preview' : 'Session observer'),
-            row('units', 'Source units', snapshot.units), row('body-count', 'Live bodies', snapshot.entities.filter(entity => entity.alive).length),
+            textRow('reference', 'Reference model', star ? 'Schwarzschild exterior + local SR' : sr ? 'Minkowski SR' : 'Classical Playground'),
+            textRow('engine', 'Physics engine', snapshot.physicsEngine), textRow('integrator', 'Integrator', snapshot.integratorVersion ?? 'Unspecified'),
+            textRow('session', 'Session', snapshot.sessionId), row('epoch', 'Epoch', snapshot.epoch), counterRow('tick', 'Tick', snapshot.tick),
+            textRow('playing', 'Transport', snapshot.playing ? 'Playing' : 'Paused'), row('playback', 'Playback rate', snapshot.playbackSpeed, '×', 'Presentation rate per wall-clock second; no change to physical clock conventions.'),
+            textRow('camera-preview', 'Camera comparison', preview ? 'Preview' : 'Session observer'),
+            textRow('units', 'Source units', snapshot.units), row('body-count', 'Live bodies', snapshot.entities.filter(entity => entity.alive).length),
             row('warning-count', 'Session warnings', snapshot.warnings.length),
         ]),
         section('time', 'Time and retained history', 'Worldline clock differences use its recorded coordinate origin. Relocation starts a new clock; scrubbing and camera previews do not define a paired clock comparison.', [
             row('coordinate-time', 'Coordinate time t', snapshot.time, timeUnit),
             row('proper-time', sr ? snapshot.scrubTime !== null ? 'Retained observer proper time τ' : 'Observer proper time τ' : 'Observer elapsed clock', snapshot.observer.properTime, sr ? 'proper time units' : timeUnit, snapshot.scrubTime !== null ? 'Source-history scrubbing rewinds coordinate time and source entities; it does not rewind the retained observer worldline clock.' : preview ? 'Accumulated session observer clock; a camera comparison does not integrate a new clock.' : 'Accumulated on the recorded observer worldline.'),
-            row('worldline', 'Observer worldline', snapshot.observer.worldline), row('worldline-reason', 'Worldline origin', snapshot.observer.worldlineReason ?? 'Unspecified'),
+            row('worldline', 'Observer worldline', snapshot.observer.worldline), textRow('worldline-reason', 'Worldline origin', snapshot.observer.worldlineReason ?? 'Unspecified'),
             row('worldline-start', 'Coordinate clock origin', start, timeUnit), row('coordinate-elapsed', 'Coordinate elapsed on worldline', elapsed, timeUnit),
             row('clock-slip', 'Coordinate elapsed − observer clock', slip, timeUnit, clockPair ? 'Compared from the same worldline origin.' : 'Unavailable without a matching clock origin or during scrub/preview.'),
             row('clock-rate', sr ? 'Instantaneous dτ/dt' : 'Classical clock rate', rate, '', (snapshot.scrubTime !== null ? 'Uses the current observer velocity; source-history scrubbing does not rewind observer motion. ' : '') + (star ? 'A/γ; Schwarzschild coordinate time normalized to infinity.' : sr ? '1/γ in the Minkowski coordinate frame.' : 'Classical elapsed clock follows simulation time.')),
@@ -109,9 +117,9 @@ export function observationTelemetry(snapshot, view = {}) {
             row('energy-rest', 'Local total energy / mc²', lorentz), row('kinetic-rest', 'Local kinetic energy / mc²', lorentz === null ? null : lorentz - 1),
             row('momentum-rest', 'Local momentum magnitude / mc', lorentz === null ? null : lorentz * speed),
             row('killing-energy', 'Energy at infinity / mc²', star && lorentz !== null ? lapse * lorentz : null, '', 'Aγ is conserved for freefall in this static metric. Guided controls can change it.'),
-            row('motion-mode', 'Motion mode', star?.observerMode ?? (sr ? 'Minkowski controls' : 'Classical controls')),
+            textRow('motion-mode', 'Motion mode', star?.observerMode ?? (sr ? 'Minkowski controls' : 'Classical controls')),
             row('speed-cap', 'Session SR speed limit', sr ? MAX_BETA : null, 'c', 'Implementation boundary for this reference experiment.'),
-            row('cap-applied', 'Speed cap applied', observer.capApplied === true ? 'Yes' : 'No'),
+            textRow('cap-applied', 'Speed cap applied', observer.capApplied === true ? 'Yes' : 'No'),
         ]),
         section('distance', 'Position and distance', star ? 'Isotropic coordinates, areal radius and proper radial distance are distinct. Proper distance is on a constant Schwarzschild-time slice.' : 'Positions and center distances belong to the displayed coordinate frame. No SI length scale is assigned.', [
             ...observer.position.map((v, i) => row(`position-${i}`, `Position ${['X', 'Y', 'Z'][i]}`, v, coordinateUnit)),
@@ -192,9 +200,9 @@ export function observationTelemetry(snapshot, view = {}) {
     const sourceA = hit && star ? hit.entityId === star.sourceId ? surfaceA : starMetric(star, hit.sourcePosition).lapse : skyReceived ? finite(ray.emissionLapse) : null;
     const pathDistance = hit?.distance ?? (skyReceived ? finite(ray.distance) : null);
     sections.push(section('optics', 'Received light', blackHole ? 'Current Float64 sky-shell ray. The prescribed static background exists at all reference times without a retained source-entity clock. Captured and unresolved rays have no received emission. Color and intensity switches affect presentation.' : optical ? 'Current sight-ray witness only. Frequency shift combines emission and reception conditions; source and observer clocks can have different origins. Color and intensity switches affect presentation.' : 'A simultaneous geometry view does not supply received-light measurements. Enable the SR optical view to inspect light travel and frequency shift.', [
-        row('optical-mode', 'Observation mode', optical ? star ? 'Curved null ray + local SR' : 'Retarded Minkowski null ray' : 'Simultaneous geometry'),
-        row('optical-status', 'Current sight ray', blackHole ? ray?.status ?? 'No current ray measurement' : hit ? 'Source hit' : 'No current source hit'),
-        row('source', 'Received source identity', hit?.entityId ?? null), row('source-revision', 'Received source revision', hit?.revision ?? null),
+        textRow('optical-mode', 'Observation mode', optical ? star ? 'Curved null ray + local SR' : 'Retarded Minkowski null ray' : 'Simultaneous geometry'),
+        textRow('optical-status', 'Current sight ray', blackHole ? ray?.status ?? 'No current ray measurement' : hit ? 'Source hit' : 'No current source hit'),
+        textRow('source', 'Received source identity', hit?.entityId ?? null), row('source-revision', 'Received source revision', hit?.revision ?? null),
         row('frequency-ratio', 'Frequency ratio D = f_received/f_emitted', D), row('redshift', 'Received redshift z = 1/D − 1', D === null ? null : 1 / D - 1),
         row('wavelength-ratio', 'Wavelength ratio λ_received/λ_emitted', D === null ? null : 1 / D),
         row('bolometric-factor', 'Reference bolometric intensity ratio D⁴', D === null ? null : D ** 4, '', 'Reference ray-intensity factor; not a total luminosity or flux at the observer.'),
@@ -207,36 +215,36 @@ export function observationTelemetry(snapshot, view = {}) {
         row('source-lapse', 'Static emission lapse', sourceA), row('receiver-lapse', 'Static reception lapse', metric?.lapse ?? null),
         row('gr-frequency-ratio', 'Static gravitational frequency ratio', sourceA !== null && metric ? sourceA / metric.lapse : null),
         row('local-doppler-ratio', 'Local receiver SR Doppler ratio', D !== null && sourceA !== null && metric ? D * metric.lapse / sourceA : null, '', 'Factor after removing the static emission/reception lapse ratio.'),
-        row('color-display', 'Doppler color presentation', view.settings?.doppler === false ? 'Off' : 'On'),
-        row('intensity-display', 'D⁴ intensity presentation', view.settings?.beaming === true ? 'On' : 'Off'),
+        textRow('color-display', 'Doppler color presentation', view.settings?.doppler === false ? 'Off' : 'On'),
+        textRow('intensity-display', 'D⁴ intensity presentation', view.settings?.beaming === true ? 'On' : 'Off'),
     ]));
     if (blackHole) {
         const horizonSection = sections.find(group => group.id === 'horizon');
         horizonSection?.rows.push(
-            row('ray-measurement-source', 'Current ray measurement source', ray?.source ?? null, '', 'Live readings use the Float64 optical witness; production GPU accuracy is tested separately through floating-point framebuffer readback.'),
+            textRow('ray-measurement-source', 'Current ray measurement source', ray?.source ?? null, '', 'Live readings use the Float64 optical witness; production GPU accuracy is tested separately through floating-point framebuffer readback.'),
             row('ray-impact-parameter', 'Sight-ray null impact parameter', ray && unitLength !== null ? finite(ray.impactParameter) === null ? null : ray.impactParameter * unitLength : null, 'm'),
             row('observer-exterior-guard', 'Observer numerical boundary ρ', star?.observerBoundary ?? null, 'isotropic units', 'Exterior integration stops here or at the speed limit. This is a numerical guard, not a solid horizon, impact or physical stopping event.'),
         );
     }
     const rendering = view.rendering;
     sections.push(section('rendering', 'Rendering and observation budget', 'Renderer diagnostics describe the current presentation. Hardware identity or frame timing alone does not certify optical accuracy.', [
-        row('resolution', 'Internal image resolution', Array.isArray(rendering?.internalResolution) ? rendering.internalResolution.join(' × ') : null, 'px'),
+        textRow('resolution', 'Internal image resolution', Array.isArray(rendering?.internalResolution) ? rendering.internalResolution.join(' × ') : null, 'px'),
         row('render-scale', 'Internal render scale', rendering?.internalScale), row('requested-scale', 'Requested render scale', rendering?.requestedScale),
-        row('adaptive-quality', 'Adaptive quality', rendering ? rendering.adaptiveQuality === false ? 'Off' : 'On' : null),
+        textRow('adaptive-quality', 'Adaptive quality', rendering ? rendering.adaptiveQuality === false ? 'Off' : 'On' : null),
         row('render-time', 'Last measured GPU render duration', rendering && rendering.gpuTimeMs > 0 ? rendering.gpuTimeMs : null, 'ms', 'GPU timer-query measurement; unavailable until a completed query result is published. This is not the owning-frame interval or a physics step duration.'),
         row('gpu-budget', 'Adaptive timing budget', rendering?.adaptiveGpuBudgetMs, 'ms'),
         row('traced-instances', 'Traced instances', rendering?.tracedInstances), row('moving-instances', 'Moving instances', rendering?.movingInstances),
-        row('gpu-vendor', 'GPU vendor', rendering?.gpu?.vendor), row('gpu-renderer', 'GPU renderer', rendering?.gpu?.renderer),
-        row('float-readback', 'Float readback capability', rendering?.gpu ? rendering.gpu.floatReadback ? 'Available' : 'Unavailable' : null),
-        row('environment-status', 'Environment status', rendering?.environmentStatus),
+        textRow('gpu-vendor', 'GPU vendor', rendering?.gpu?.vendor), textRow('gpu-renderer', 'GPU renderer', rendering?.gpu?.renderer),
+        textRow('float-readback', 'Float readback capability', rendering?.gpu ? rendering.gpu.floatReadback ? 'Available' : 'Unavailable' : null),
+        textRow('environment-status', 'Environment status', rendering?.environmentStatus),
     ]));
     if (view.lattice) {
         const lattice = view.lattice, current = lattice.available === true && lattice.stale !== true;
         sections.push(section('lattice', 'Read-only lattice link', 'Completed lattice publications have their own owner and tick. No lattice-to-SR matter, mass, clock or GR metric identification is made.', [
-            row('lattice-status', 'Publication status', lattice.status), row('lattice-backend', 'Backend', lattice.backend),
-            row('lattice-tick', 'Lattice sample tick', current ? lattice.sampleTick : null), row('lattice-source', 'Lattice source identity', current ? lattice.sourceId : null),
+            textRow('lattice-status', 'Publication status', lattice.status), textRow('lattice-backend', 'Backend', lattice.backend),
+            counterRow('lattice-tick', 'Lattice sample tick', current ? lattice.sampleTick : null), textRow('lattice-source', 'Lattice source identity', current ? lattice.sourceId : null),
             row('lattice-size', 'Lattice size', current ? lattice.latticeSize : null), row('lattice-manifested', 'Manifested count', current ? lattice.manifested : null),
-            row('lattice-law', 'Selected law', current ? lattice.lawId : null),
+            textRow('lattice-law', 'Selected law', current ? lattice.lawId : null),
         ]));
     }
     return sections;

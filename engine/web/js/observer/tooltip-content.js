@@ -75,7 +75,7 @@ const settings = {
 };
 /** @type {Record<string,string>} */
 const actions = {
-    'telemetry-resize':'Drag this corner to resize the telemetry dropdown. The category grid reflows while values and units retain their size. Arrow keys resize by 20 CSS pixels; hold Shift for 80 pixels. Press Home or double-click to restore the default size. Your chosen size is kept while this workspace remains open and is constrained to leave the scene controls accessible.',
+    'telemetry-resize':'Drag this corner to resize the telemetry dropdown. The grid and text adapt to the available space; live readings keep their slots as values change. Arrow keys resize by 20 CSS pixels; hold Shift for 80 pixels. Press Home or double-click to restore the default size. Your chosen size is kept while this workspace remains open and is constrained to leave the scene controls accessible.',
     assistant:'Open or close the JEV console for this workspace. Opening it releases captured input without starting another simulation owner.',
     exit:'Return to the retained Lattice Sim workspace. Your observer session is retained until explicitly replaced.',
     'toggle-ui':'Hide or restore the interface while the scene keeps evolving. Hiding dismisses control drawers and the console; the small UI button remains.',
