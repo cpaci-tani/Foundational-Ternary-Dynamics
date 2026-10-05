@@ -106,9 +106,9 @@ $$16\,G^{*2} \;=\; 512 \cdot L(\mathrm{Sym}^2 E,\,1) \;=\; 2^9 \cdot L(\mathrm{S
 
 ### 2.3 Why This Is Non-Elementary
 
-The identity $16 G^{*2} = 2^9 L(\mathrm{Sym}^2 E, 1)$ is not a rewriting of the BSD period relation (1.2). It invokes a **different** L-function — the symmetric square of $h^1(E)$, whose Euler factors are $1 - (a_p^2 - p)p^{-s} + p^{1-2s} p^{-s} + p^{2-4s}$ rather than the degree-2 Euler factors of $L(E,s)$.
+The identity $16 G^{*2} = 2^9 L(\mathrm{Sym}^2 E, 1)$ is not a rewriting of the BSD period relation (1.2). It invokes a **different** L-function — the symmetric square of $h^1(E)$, whose Euler factor at a good prime is $\bigl[(1-\alpha_p^2p^{-s})(1-p\cdot p^{-s})(1-\beta_p^2p^{-s})\bigr]^{-1}$ with $\alpha_p+\beta_p=a_p$ and $\alpha_p\beta_p=p$, that is, the inverse of $1-(a_p^2-p)p^{-s}+p(a_p^2-p)p^{-2s}-p^{3}p^{-3s}$ (corrected 2026-10-05; the expression printed here before was not the Sym² factor), rather than the degree-2 Euler factors of $L(E,s)$.
 
-Damerell's theorem evaluates this Sym² L-function at $s = 1$ (a non-critical point for $L(E,s)$ but critical for $L(\mathrm{Sym}^2 E,s)$) to give a rational multiple of $\varpi^2/\pi$. This is a genuine Sym² period computation, not downstream of $L(E,1) = \varpi/4$.
+Damerell's theorem evaluates this Sym² L-function at $s = 1$ (the central critical point of $L(E,s)$, but a non-central critical point of $L(\mathrm{Sym}^2 E,s)$, whose centre is $s = 3/2$ in the arithmetic normalization; corrected 2026-10-05) to give a rational multiple of $\varpi^2/\pi$. This is a genuine Sym² period computation, not downstream of $L(E,1) = \varpi/4$.
 
 The integer $2^9 = 512$ is the Damerell rational $1/(8\pi) \cdot \pi$ times $|\mathrm{Aut}(E)|^2 = 16$ times a factor of $2^5$ absorbed into the Damerell normalization conventions. See §6 for the integer decomposition.
 
@@ -119,6 +119,20 @@ At 100-digit precision, PARI/GP returns
 $$\bigl|\,512 \cdot L(\mathrm{Sym}^2 E,1) - 16 G^{*2}\,\bigr| < 10^{-90}$$
 
 Code in §7.
+
+### 2.5 Normalization and an explicit proof route (added 2026-10-05)
+
+**Normalization.** The identity uses the arithmetic normalization of $L(\mathrm{Sym}^2 E,s)$: conductor $64$, functional equation $s \leftrightarrow 3-s$, critical points $s=1$ and $s=2$, centre $s=3/2$, and trivial Euler factor at $p=2$. In the analytic normalization ($s \leftrightarrow 1-s$) the value at "$s=1$" is the arithmetic value at $s=2$, namely $\Gamma(1/4)^4/256=(\pi^2/4)\,L(\mathrm{Sym}^2E,1)$, and the identity $16G^{*2}=512\,L(\mathrm{Sym}^2E,1)$ fails there.
+
+**Explicit proof route.** Because $E$ has CM by $\mathbb{Z}[i]$,
+
+$$L(\mathrm{Sym}^2 E,s)=L(g,s)\,L(\chi_{-4},s-1),\qquad g=\eta(4\tau)^6\in S_3(\Gamma_0(16),\chi_{-4}).$$
+
+One checks this prime by prime. For $p\equiv 1 \pmod 4$, $b_g(p)=\alpha_p^2+\beta_p^2=a_p^2-2p$. For $p\equiv 3\pmod 4$, both sides have Euler factor $\bigl[(1-p^{1-s})(1+p^{1-s})^2\bigr]^{-1}$. At $p=2$ every factor is $1$. (That $g$ is the CM form of $\psi^2$, where $\psi$ is the Hecke character of $E$, follows from Hecke's theorem and the Sturm bound $6$ of the space.) The transformation $\eta(-1/\tau)=\sqrt{\tau/i}\,\eta(\tau)$ gives $g(-1/(16\tau))=64\,i\,\tau^3g(\tau)$, so $\Lambda(s)=(2/\pi)^s\Gamma(s)L(g,s)$ satisfies $\Lambda(s)=\Lambda(3-s)$ and $L(g,1)=(2/\pi)\,L(g,2)$. Rogers, Wan and Zucker prove $L(g,2)=\Gamma(1/4)^4/(64\pi)$ (*Ramanujan J.* 2015, arXiv:1303.2259, Theorem 5). With $L(\chi_{-4},0)=1/2$:
+
+$$L(\mathrm{Sym}^2E,1)=\frac{2}{\pi}\cdot\frac{\Gamma(1/4)^4}{64\pi}\cdot\frac12=\frac{\Gamma(1/4)^4}{64\pi^2}=\frac{G^{*2}}{32}.$$
+
+**In-repo reproduction.** `scripts/proofs/proof_sym2_lvalue_verification.py` checks each step numerically: the coefficients for all $n\le 2000$, the root number, the values at 50 digits, and an optional PARI/GP `lfunsympow` cross-check. This closes the deferred item F1 in [`SPEC_OPEN_MATH_FRONTIERS.md`](../../01_reference/SPEC_OPEN_MATH_FRONTIERS.md).
 
 ---
 

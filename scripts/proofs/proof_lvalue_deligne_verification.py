@@ -20,7 +20,8 @@ CHECKS (all force-computed this run, mpmath; none recalled):
   (3) Confirm the master-quadratic coefficient identities with the reproduced L(E,1):
         16 G*^3 = 2^13 * L(E,1)^3 / pi^(3/2)            (k=13, NOT 2^10)
         16 G*^2 = 512  * L(Sym^2 E, 1),  L(Sym^2 E,1) = varpi^2/(8 pi)   (Damerell-Shimura)
-      and cross-check L(Sym^2 E,1) independently by its Euler product magnitude.
+      Here the Sym^2 value is substituted; scripts/proofs/proof_sym2_lvalue_verification.py
+      reproduces it from its own Dirichlet series (arithmetic normalization).
 
 This is a verification (reproducing a known identity), NOT a look-elsewhere search.
 Run: python scripts/proofs/proof_lvalue_deligne_verification.py
@@ -177,11 +178,10 @@ def main():
     print(f"     512*L   = {mp.nstr(rhs2, 16)}   diff {mp.nstr(abs(lhs2-rhs2),4)}  -> {'PASS' if abs(lhs2-rhs2) < mp.mpf('1e-25') else 'FAIL'}")
 
     # Honest scope note on Sym^2 (NOT reproduced here — still a cited import)
-    print(f"\n(3c) SCOPE: L(Sym^2 E,1) = varpi^2/(8 pi) is the cited Damerell-Shimura closed form")
-    print(f"     (not reproduced from its own Dirichlet series in this script — the Sym^2 of a")
-    print(f"     CM form factors through Hecke L-functions of Q(i); reproducing it cleanly is")
-    print(f"     deferred). So the 16 G*^2 identity (3b) is verified GIVEN that import, while the")
-    print(f"     16 G*^3 identity (3a) is now FULLY import-reproduced via the L(E,1) series in (2).")
+    print(f"\n(3c) SCOPE: this script substitutes L(Sym^2 E,1) = varpi^2/(8 pi) in (3b).")
+    print(f"     scripts/proofs/proof_sym2_lvalue_verification.py reproduces that value from its own")
+    print(f"     Dirichlet series (CM factorization through eta(4 tau)^6 and chi_-4, arithmetic")
+    print(f"     normalization), so both coefficient identities are import-reproduced in-repo.")
 
     ok = (not bad) and rel < mp.mpf("1e-6") and abs(lhs3 - rhs3) < mp.mpf("1e-25") and abs(lhs2 - rhs2) < mp.mpf("1e-25")
     print("\n" + "=" * 74)
@@ -189,8 +189,8 @@ def main():
     print("  - L(E,1) = varpi/4 REPRODUCED from point-counting + the analytic rank-0 series")
     print("    (not substituted) -> the 16 G*^3 = 2^13 L(E,1)^3/pi^(3/2) identity is now")
     print("    [DERIVED-given-import, L(E,1)-import REPRODUCED], k=13 confirmed (NOT 2^10).")
-    print("  - 16 G*^2 = 512 L(Sym^2 E,1) verified GIVEN the cited Sym^2 = varpi^2/(8pi)")
-    print("    (Damerell-Shimura); reproducing the Sym^2 value itself remains deferred.")
+    print("  - 16 G*^2 = 512 L(Sym^2 E,1) verified here GIVEN Sym^2 = varpi^2/(8pi); that value is")
+    print("    reproduced in proof_sym2_lvalue_verification.py (F1 closed 2026-10-05).")
     print("=" * 74)
     return 0 if ok else 1
 
