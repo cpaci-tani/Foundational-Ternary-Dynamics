@@ -22,3 +22,11 @@ Lock a test: derive from Phi (no alpha input) a coarse-grained two-mode damped s
 - FTD-1026 "amplification 44.3 = x+/x-": x+/x- = 45.3167; 44.3 = x+/x- - 1.
 - 8G*^2(1 +- sqrt(1 - 1/G*)) gives 127.009 / 13.051; radicand must be 1 - 1/(4G*). Sites: SPEC_QUADRATIC_PHYSICS_BRIDGE.md:425-426, FOUND_THE_COMPLETE_ALGEBRA_OF_i.md:541, DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md:84,91, scripts/proofs/proof_alpha_from_lattice.py:39-40.
 - DERIV_ALPHA_FROM_PHASE_STRUCTURE.md:89 says x- < G*; x- - G* = +0.0653.
+
+## Addendum 2026-10-06: gravity status check (same session)
+- g_00: FTD-native via the clock law, conditional on the flagged clock hypothesis (FTD-0131). [DERIVED, conditional]
+- g_rr: weak field from the adopted Einstein-Hilbert action (Sep 24 reconstruction: U = V, PPN gamma = 1); exact Schwarzschild under vacuum Einstein closure. EH itself rests on the adopted hypersurface-deformation algebra (Hojman-Kuchar-Teitelboim). [DERIVED, conditional on adopted EH]
+- Engine: latency_field solves grad^2 phi = 4 pi G (rho - mean rho) by SOR each tick and sets latency = sqrt(-phi). The field variable is L^2, which is harmonic outside sources (1/R), so the engine is consistent with the reciprocal exterior profile; the retracted FTD-0361 route used L. Gravity in the engine is an elliptic constraint with no tensor sector, so c_T is undefined and an Einstein-aether fit cannot run. [checked in code]
+- P2's global clock fixes a foliation, so the full hypersurface algebra can only be emergent; the generic outcome of a preferred-time substrate is Einstein-aether/khronometric, with GR at vanishing aether couplings. [SELECTION PRINCIPLE]
+- Spin-2: FTD-0209 [THEOREM] none in the free theory with canonical toggles; FTD-0193 [CLOSED NEGATIVE] none measured. Only door left: a composite helicity-2 pole in the interacting J_i J_j channel (Weinberg-Witten blocks it under exact Lorentz covariance; the lattice-scale Lorentz breaking is the loophole). [OPEN]
+- Test for that door: thermalized Langevin run, helicity-2 projection of the J_i J_j correlator, look for a pole at omega = c k distinct from the two-particle threshold edge. A free theory gives only the edge.
