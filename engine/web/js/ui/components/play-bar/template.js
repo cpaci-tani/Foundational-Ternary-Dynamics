@@ -73,6 +73,11 @@ export function getPlayBarTemplate() {
                 <button type="button" role="option" data-framed-view="lattice">Full lattice</button>
                 <button type="button" role="option" data-framed-view="lattice-out">Zoomed out lattice</button>
                 <button type="button" role="option" data-framed-view="quasi">Zoomed out quasi-domain</button>
+                <div class="play-bar-zoom-note" role="presentation">Beyond the lattice: reference lengths, nothing simulated</div>
+                <button type="button" role="option" data-framed-view="lhc" data-travel>LHC resolution</button>
+                <button type="button" role="option" data-framed-view="electroweak" data-travel>W, Z, Higgs, top</button>
+                <button type="button" role="option" data-framed-view="nuclear" data-travel>Nuclear scale</button>
+                <button type="button" role="option" data-framed-view="electron" data-travel>Electron</button>
             </div>
         </div>
     `;

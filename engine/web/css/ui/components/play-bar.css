@@ -462,3 +462,15 @@
         bottom: calc(100% + var(--sp-sm));
     }
 }
+
+/* Divider line in the zoom menu between views of the lattice and the
+   reference lengths beyond it. */
+.play-bar-zoom-note {
+    margin: 6px 0 2px;
+    padding: 6px 10px 2px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: var(--fs-xs);
+    line-height: 1.25;
+    color: var(--text-muted, #9aa6b2);
+    white-space: normal;
+}

@@ -1,6 +1,7 @@
 import { LINK_DISPLACEMENT, siteIndex } from './link-geometry.js';
 import { DEFAULT_FLUX_THRESHOLD } from './viewport/flux-threshold.js';
 import { fluxCellIndex, mooreCellIndices, nearestVisiblePoint } from './viewport/flux-point-grid.js';
+import { OUTERMOST_LANDMARK_M, framedLandmarkVoxels, metresToVoxels } from './ui/components/live-rulers/scale-landmarks.js';
 import { mountLiveRulers } from './ui/components/live-rulers/mount.js';
 import { activationEnergyEv, clockEnvironmentStep, energyAreaPath, energyStringPath, globalClockPhase, LIVE_MEASURE_DEFAULTS, manifestedSiteName, pointAttributeSize, pointSpritePixels, relativeClockEnvironment, spectrumColor, voxelClockPhase } from './ui/components/live-rulers/measure.js';
 /**
@@ -107,6 +108,14 @@ import { ViewportFieldRenderer } from './viewport/field-renderer.js?v=8';
 // were centralized into viewport/constants.js (D-6). They were unused in
 // this orchestrator (every buffer allocation lives in the Phase-3
 // sub-renderers), so they are not re-imported here.
+
+// A framed view reached by travelling takes this long per power of ten of
+// camera distance (clamped), so the empty range passes at a steady pace.
+const CAMERA_FLIGHT_MS_PER_DECADE = 380;
+// Wheel zoom beyond the quasi-domain: gain per decade past the point where
+// the shell has shrunk away, and its ceiling (about four notches a decade).
+const FAR_ZOOM_GAIN_PER_DECADE = 6;
+const FAR_ZOOM_GAIN_MAX = 9.4;
 
 export class Viewport {
     constructor(container) {
@@ -475,8 +484,12 @@ export class Viewport {
     /**
      * Place the camera on a three-quarter view of a canned subject.
      * Distances are chosen so the subject fills a set share of the view.
+     * Beyond the quasi-domain the subjects are external reference lengths
+     * (scale-landmarks.js): nothing is simulated out there.
+     * With `animate` the camera travels there at a steady rate per power of
+     * ten instead of jumping; any user input takes over.
      */
-    setFramedView(id) {
+    setFramedView(id, { animate = false } = {}) {
         const frames = {
             moore: { voxels: 3, fill: 0.5, focus: 'voxel' },
             neighborhood: { voxels: 9, fill: 0.62, focus: 'voxel' },
@@ -485,7 +498,8 @@ export class Viewport {
             'lattice-out': { voxels: null, fill: 0.2, focus: 'lattice', span: 'diagonal' },
             quasi: { voxels: null, fill: 0.74, focus: 'lattice', span: 'shell' },
         };
-        const frame = frames[id];
+        const landmarkVoxels = framedLandmarkVoxels(id);
+        const frame = frames[id] || (landmarkVoxels ? { voxels: landmarkVoxels, fill: 1, focus: 'lattice' } : null);
         if (!frame) return false;
         const unit = this._worldPerLatticeUnit();
         const n = Math.max(1, this.latticeSize || 32);
@@ -503,11 +517,99 @@ export class Viewport {
         this.controls.maxDistance = Math.max(this.controls.maxDistance || 0, distance * 4, 1e8);
         this.controls.minDistance = Math.min(this.controls.minDistance || 0.01, 0.01);
         this.camera.up.set(0, 1, 0);
+        this._cancelCameraFlight();
+        const from = this.camera.position.distanceTo(this.controls.target);
         this.controls.target.copy(target);
+        if (animate && from > 0 && typeof requestAnimationFrame === 'function') {
+            this._flyCamera(target, view, from, distance);
+            return true;
+        }
         this.camera.position.copy(target).addScaledVector(view, distance);
         this.controls.update();
         this._updateLiveRulers();
         return true;
+    }
+
+    /**
+     * Travel from one orbit distance to another along a fixed view direction,
+     * at an even rate per power of ten, so twenty decades of empty space pass
+     * as steadily as two. Wheel, drag or another framed view cancels it.
+     */
+    _flyCamera(target, view, from, to) {
+        const decades = Math.abs(Math.log10(to / from));
+        const duration = Math.min(9000, Math.max(450, decades * CAMERA_FLIGHT_MS_PER_DECADE));
+        const started = performance.now();
+        const flight = { cancelled: false, frame: 0 };
+        this._cameraFlight = flight;
+        const cancel = () => this._cancelCameraFlight();
+        this.controls.addEventListener('start', cancel);
+        this.renderer?.domElement?.addEventListener('wheel', cancel, { passive: true });
+        flight.release = () => {
+            this.controls.removeEventListener('start', cancel);
+            this.renderer?.domElement?.removeEventListener('wheel', cancel);
+        };
+        const step = (now) => {
+            if (flight.cancelled) return;
+            const t = Math.min(1, (now - started) / duration);
+            // Ease in and out in log-distance, so the start and the stop are soft.
+            const eased = t * t * (3 - 2 * t);
+            const distance = from * Math.pow(to / from, eased);
+            this.camera.position.copy(target).addScaledVector(view, distance);
+            this.controls.update();
+            if (t < 1) {
+                flight.frame = requestAnimationFrame(step);
+            } else {
+                this._cancelCameraFlight();
+                this._updateLiveRulers();
+            }
+        };
+        flight.frame = requestAnimationFrame(step);
+    }
+
+    _cancelCameraFlight() {
+        const flight = this._cameraFlight;
+        if (!flight) return;
+        this._cameraFlight = null;
+        flight.cancelled = true;
+        if (flight.frame && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(flight.frame);
+        flight.release?.();
+    }
+
+    /**
+     * How far the orbit may dolly out. In the lattice view that is far enough
+     * for the outermost reference length (the electron) to sit well inside
+     * the view; every other mode keeps the earlier limit.
+     */
+    _zoomOutLimit() {
+        if (this._engineMode && this._engineMode !== 'lattice') return 1e8;
+        // Called every frame: recomputed only when the view size or the
+        // lattice's drawn scale changes.
+        const unit = (this.scene.scale.x || 1) * (this._fluxRenderer?._fluxVolume?.scale.x || 1);
+        const size = this._viewSize;
+        const cache = this._zoomLimit || (this._zoomLimit = { unit: NaN, size: null, value: 1e8 });
+        if (cache.unit !== unit || cache.size !== size) {
+            cache.unit = unit;
+            cache.size = size;
+            cache.value = Math.max(1e8, this._distanceForWorldSize(metresToVoxels(OUTERMOST_LANDMARK_M) * unit, 0.2));
+        }
+        return cache.value;
+    }
+
+    /** Screen position of the lattice centre and the pixels one voxel covers there. */
+    _latticeCentreOnScreen(viewWidth, viewHeight) {
+        if (this._engineMode && this._engineMode !== 'lattice') return null;
+        const world = this._latticeCenterWorld();
+        const eye = (this._centreEye || (this._centreEye = new THREE.Vector3()))
+            .copy(world).applyMatrix4(this.camera.matrixWorldInverse);
+        const depth = -eye.z;
+        if (!(depth > 0)) return null;
+        world.project(this.camera);
+        const worldPerPixel = (2 * Math.tan((this.camera.fov * Math.PI) / 360) * depth) / Math.max(1, viewHeight);
+        return {
+            x: (world.x * 0.5 + 0.5) * viewWidth,
+            y: (-world.y * 0.5 + 0.5) * viewHeight,
+            pixelsPerVoxel: this._worldPerLatticeUnit() / worldPerPixel,
+        };
     }
 
     _worldPerLatticeUnit() {
@@ -547,7 +649,7 @@ export class Viewport {
 
     _distanceForWorldSize(worldSize, fill) {
         const fov = (this.camera.fov || 50) * Math.PI / 180;
-        const view = this.container?.getBoundingClientRect?.() || { width: 1000, height: 600 };
+        const view = this._viewSize || this.container?.getBoundingClientRect?.() || { width: 1000, height: 600 };
         const aspect = Math.max(0.2, view.width / Math.max(1, view.height));
         const vertical = 2 * Math.tan(fov / 2);
         const limit = Math.min(vertical, vertical * aspect);
@@ -1308,7 +1410,7 @@ export class Viewport {
         if (this._liveMeasure?.smoothOrbit === false) {
             controls.panSpeed = base.pan * fine;
             controls.rotateSpeed = base.rotate * fine;
-            controls.zoomSpeed = base.zoom * fine;
+            controls.zoomSpeed = base.zoom * Math.max(1, this._farZoomGain(distance)) * fine;
             return;
         }
         const ref = Math.max(this.getReferenceDistance(), 1);
@@ -1317,7 +1419,10 @@ export class Viewport {
         const zoomGain = Math.min(1.15, Math.max(0.4, 1 / Math.sqrt(Math.max(ratio, 0.35))));
         controls.panSpeed = base.pan * gain * fine;
         controls.rotateSpeed = base.rotate * gain * fine;
-        controls.zoomSpeed = base.zoom * zoomGain * fine;
+        // Past the quasi-domain there are twenty powers of ten with nothing
+        // simulated in them. The wheel speeds up as the shell shrinks away,
+        // and slows again on the way back in.
+        controls.zoomSpeed = base.zoom * Math.max(zoomGain, this._farZoomGain(distance)) * fine;
         const far = 1 + Math.log2(Math.max(ratio, 1));
         controls.dampingFactor = base.damp / Math.min(far, 4);
         const previous = this._lastOrbitDist;
@@ -1330,14 +1435,29 @@ export class Viewport {
         this._lastOrbitDist = distance;
     }
 
+    /** Wheel-zoom gain for the empty range beyond the quasi-domain (lattice view only). */
+    _farZoomGain(distance) {
+        if (this._engineMode && this._engineMode !== 'lattice') return 0;
+        const shell = this._shellDiameterUnits() * (this.scene.scale.x || 1);
+        // The gain starts where the quasi-domain view sits (the shell about
+        // fills the view) and reaches its ceiling a decade and a half out.
+        const decades = Math.log10(distance / Math.max(shell * 1.5, 1));
+        return decades > 0 ? Math.min(FAR_ZOOM_GAIN_MAX, decades * FAR_ZOOM_GAIN_PER_DECADE) : 0;
+    }
+
     render() {
         if (this.presentationSuspended) return;
         // Dynamically adjust camera.far to prevent culling at extreme zoom out
         const dist = this.camera.position.distanceTo(this.controls.target);
+        this.controls.maxDistance = this._zoomOutLimit();
         this._tuneOrbitSensitivity(dist);
         const desiredFar = Math.max(this._baseFar || 2000, dist * 5);
-        if (this._actualFar !== desiredFar) {
+        // Far out, the near plane follows the camera so the depth range the
+        // GPU works with stays representable in single precision.
+        const desiredNear = dist > 1e6 ? dist * 1e-6 : 0.001;
+        if (this._actualFar !== desiredFar || this.camera.near !== desiredNear) {
             this._actualFar = desiredFar;
+            this.camera.near = desiredNear;
             this.camera.updateProjectionMatrix();
         }
 
@@ -1430,6 +1550,7 @@ export class Viewport {
             pointSprite: this._pointSprite(rect.width, rect.height, refresh),
             voxelClocks: this._voxelClocks(rect.width, rect.height, refresh),
             mooreNeighborhood: this._mooreNeighborhood(rect.width, rect.height, refresh),
+            latticeCentre: this._latticeCentreOnScreen(rect.width, rect.height),
             fluxVisible: this.showFlux !== false,
             measures: this._liveMeasure,
         });
