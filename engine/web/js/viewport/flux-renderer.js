@@ -40,6 +40,7 @@ import { fluxToColorInto, fluxToColor } from '../fields.js';
 import { FLUX_VOL_VERT, PARTICLE_FRAG, PARTICLE_SHADER_UNIFORMS } from './shaders.js';
 import { clampFluxThreshold, DEFAULT_FLUX_THRESHOLD } from './flux-threshold.js';
 import { computeFluxActivation, createFluxActivationStepper } from './flux-activation.js';
+import { FluxVolumeWorkerClient } from './flux-volume-worker-client.js';
 
 // (MAX_FIELD_GRID was declared here but never referenced — flux volume
 // buffers size from lattice³, not the field-grid cap. Removed under D-6;
@@ -74,6 +75,48 @@ const FLUX_FLOW_LINE_MAX_VERTS = 16000;
 // that complete support synchronously creates a ~30 ms main-thread stall.
 const FLUX_ASYNC_SOURCE_COUNT = 200000;
 const FLUX_ASYNC_FRAME_BUDGET_MS = 4.0;
+// Release rate of the peak-hold normaliser, per committed frame.
+const FLUX_PEAK_HOLD_DECAY = 0.985;
+
+// Deterministic per-site jitter (Organic mode) around the physical source
+// coordinate, clamped to the lattice. `sourcePosition` keeps the exact value.
+function writeFluxPosition(
+    posArr, sourcePosArr, c3, N,
+    sourceX, sourceY, sourceZ,
+    physicalX, physicalY, physicalZ, jamp,
+) {
+    let h = (sourceX * 92837111)
+        ^ (sourceY * 689287499)
+        ^ (sourceZ * 283923481);
+    h = (h ^ (h >>> 15)) >>> 0;
+    posArr[c3] = Math.max(0.5, Math.min(
+        N - 0.5,
+        physicalX + ((h & 1023) / 1024 - 0.5) * jamp,
+    ));
+    posArr[c3 + 1] = Math.max(0.5, Math.min(
+        N - 0.5,
+        physicalY + (((h >>> 10) & 1023) / 1024 - 0.5) * jamp,
+    ));
+    posArr[c3 + 2] = Math.max(0.5, Math.min(
+        N - 0.5,
+        physicalZ + (((h >>> 20) & 1023) / 1024 - 0.5) * jamp,
+    ));
+    sourcePosArr[c3] = physicalX;
+    sourcePosArr[c3 + 1] = physicalY;
+    sourcePosArr[c3 + 2] = physicalZ;
+}
+
+// A queued frame outlives the producer's particle buffers.
+function snapshotParticleSites(particleData) {
+    const positions = particleData?.positions;
+    if (!positions) return null;
+    return {
+        positions: positions.slice(),
+        colors: particleData.colors ? particleData.colors.slice() : null,
+        locked: particleData.locked ? particleData.locked.slice() : null,
+        count: particleData.count,
+    };
+}
 
 export class ViewportFluxRenderer {
     constructor({
@@ -131,13 +174,27 @@ export class ViewportFluxRenderer {
         this._fluxAsyncRaf = 0;
         this._fluxPositionSignature = '';
         this._fluxVisibleCount = 0;
+
+        // Off-thread path for large lattices (see _queueWorkerFluxUpdate).
+        // The worker is created on the first frame that needs it.
+        this._fluxWorkerEnabled = true;
+        this._fluxWorkerSharedEnabled = true;  // shared memory rather than transfers, where available
+        this._fluxWorkerSharedFailed = false;
+        this._fluxWorkerClient = null;
+        this._fluxWorkerInFlight = null;       // buffers of the request the worker is computing
+        this._fluxWorkerSpare = null;          // output arrays last shown, reused by the next job
+        this._fluxWorkerDensityPool = [];      // owned density copies
+        this._fluxWorkerOwnedDensity = null;   // the copy currently published as the snapshot
+        this._fluxWorkerStateMask = null;
+        this._fluxInsideMask = null;
+        this._fluxInsideMaskKey = '';
     }
 
     // Peak-hold-with-decay update, instance-local (see the constructor
     // comment). Not shared with overlay-frames.js's updateDecayingMax helper —
     // this is a different module (the Three.js renderer, not the JS field
     // sampler).
-    _updatePeakHoldDecay(fieldName, instantMax, decay = 0.985) {
+    _updatePeakHoldDecay(fieldName, instantMax, decay = FLUX_PEAK_HOLD_DECAY) {
         const prev = this[fieldName] || 0;
         const next = Math.max(instantMax, prev * decay);
         this[fieldName] = next;
@@ -159,6 +216,7 @@ export class ViewportFluxRenderer {
         this._cancelFluxAsyncUpdate();
         this._latticeSize = size;
         this._halfN = halfN;
+        this._releaseFluxWorkerBuffers();
         this.resetFluxNormalization();
         // Rebuild flux volume for new size (mirrors viewport.js setLatticeSize behaviour).
         if (this._fluxVolume) {
@@ -294,9 +352,16 @@ export class ViewportFluxRenderer {
         this._fluxStateMask = new Uint8Array(count);
         this._fluxSiteKind = new Int8Array(count);
         this._fluxActivation = new Float64Array(count);
+    }
+
+    // Scratch and snapshot grids for the two main-thread paths (synchronous,
+    // and the cooperative fallback). The worker owns its own scratch, so a
+    // large lattice that never falls back never allocates these.
+    _ensureFluxFallbackScratch(count) {
+        if (this._fluxActivationScratchA?.length === count) return;
         this._fluxActivationScratchA = new Float64Array(count);
         this._fluxActivationScratchB = new Float64Array(count);
-        this._fluxDensitySnapshot = new Float64Array(count);
+        this._fluxFallbackDensitySnapshot = new Float64Array(count);
         this._fluxPendingDensitySnapshot = new Float64Array(count);
     }
 
@@ -314,6 +379,7 @@ export class ViewportFluxRenderer {
             Math.max(0, Math.trunc(Number(particleData?.count) || 0)),
             positions ? Math.floor(positions.length / 3) : 0,
         );
+        let mapped = 0;
         for (let i = 0; i < particleCount; i++) {
             const px = Math.floor(Number(positions[i * 3]));
             const py = Math.floor(Number(positions[i * 3 + 1]));
@@ -337,7 +403,9 @@ export class ViewportFluxRenderer {
             let kind = green > 0.7 ? 1 : red > 0.8 ? -1 : 1;
             if (locked?.[i]) kind = kind < 0 ? -2 : 2;
             kinds[index] = kind;
+            mapped++;
         }
+        return mapped;
     }
 
     _cancelFluxAsyncUpdate() {
@@ -345,8 +413,20 @@ export class ViewportFluxRenderer {
             cancelAnimationFrame(this._fluxAsyncRaf);
         }
         this._fluxAsyncRaf = 0;
+        // A worker request in flight cannot be recalled. Clearing the job
+        // makes its result stale; _onFluxWorkerResult then recycles it.
+        if (this._fluxPendingFrame?.worker) {
+            this._recycleFluxWorkerDensity(this._fluxPendingFrame.densitySource);
+        }
         this._fluxAsyncJob = null;
         this._fluxPendingFrame = null;
+    }
+
+    _fluxPointCeiling(frame) {
+        const renderSpacing = frame.compact ? frame.compactSpacing : 1;
+        const footprintStride = Math.min(renderSpacing, FLUX_POINT_FOOTPRINT_MAX_STRIDE);
+        return FLUX_LATTICE_MIN_POINT_SIZE
+            + Math.max(0.1, this._fluxPointScale || 1.0) * 9.0 * footprintStride;
     }
 
     _sourceCoordinate(frame, axisIndex) {
@@ -382,9 +462,7 @@ export class ViewportFluxRenderer {
         const sourcePlane = sourceN * sourceN;
         const renderSpacing = frame.compact ? frame.compactSpacing : 1;
         const jamp = this._fluxOrganic ? renderSpacing : 0;
-        const footprintStride = Math.min(renderSpacing, FLUX_POINT_FOOTPRINT_MAX_STRIDE);
-        const pointCeiling = FLUX_LATTICE_MIN_POINT_SIZE
-            + Math.max(0.1, this._fluxPointScale || 1.0) * 9.0 * footprintStride;
+        const pointCeiling = this._fluxPointCeiling(frame);
         let sourceIndex = startIndex;
 
         while (sourceIndex < frame.sourceCount) {
@@ -400,25 +478,11 @@ export class ViewportFluxRenderer {
                 const c3 = sourceIndex * 3;
 
                 if (frame.writePositions) {
-                    let h = (sourceX * 92837111)
-                        ^ (sourceY * 689287499)
-                        ^ (sourceZ * 283923481);
-                    h = (h ^ (h >>> 15)) >>> 0;
-                    posArr[c3] = Math.max(0.5, Math.min(
-                        frame.N - 0.5,
-                        physicalX + ((h & 1023) / 1024 - 0.5) * jamp,
-                    ));
-                    posArr[c3 + 1] = Math.max(0.5, Math.min(
-                        frame.N - 0.5,
-                        physicalY + (((h >>> 10) & 1023) / 1024 - 0.5) * jamp,
-                    ));
-                    posArr[c3 + 2] = Math.max(0.5, Math.min(
-                        frame.N - 0.5,
-                        physicalZ + (((h >>> 20) & 1023) / 1024 - 0.5) * jamp,
-                    ));
-                    sourcePosArr[c3] = physicalX;
-                    sourcePosArr[c3 + 1] = physicalY;
-                    sourcePosArr[c3 + 2] = physicalZ;
+                    writeFluxPosition(
+                        posArr, sourcePosArr, c3, frame.N,
+                        sourceX, sourceY, sourceZ,
+                        physicalX, physicalY, physicalZ, jamp,
+                    );
                 }
 
                 const magnitude = Number(density[sourceIndex]);
@@ -470,6 +534,7 @@ export class ViewportFluxRenderer {
     _queueLargeFluxUpdate(frame, particleData) {
         // One reusable pending snapshot is distinct from the active job's
         // snapshot. Bridge buffers may be reused before this job starts.
+        this._ensureFluxFallbackScratch(frame.density.length);
         this._fluxPendingDensitySnapshot.set(frame.density);
         const positions = particleData?.positions?.slice();
         this._fluxPendingFrame = { ...frame,
@@ -483,6 +548,7 @@ export class ViewportFluxRenderer {
         const pending = this._fluxPendingFrame;
         if (!pending) return;
         this._fluxPendingFrame = null;
+        this._fluxDensitySnapshot = this._fluxFallbackDensitySnapshot;
         this._fluxDensitySnapshot.set(pending.densitySource);
         this._mapManifestedState(
             pending.particleData,
@@ -521,14 +587,15 @@ export class ViewportFluxRenderer {
         if (suspended && this._fluxAsyncRaf) {
             cancelAnimationFrame(this._fluxAsyncRaf);
             this._fluxAsyncRaf = 0;
-        } else if (!suspended && this._fluxAsyncJob) this._scheduleFluxAsyncSlice();
+        } else if (!suspended && this._fluxAsyncJob && !this._fluxAsyncJob.worker) this._scheduleFluxAsyncSlice();
     }
 
     _runFluxAsyncSlice() {
         this._fluxAsyncRaf = 0;
         if (this._presentationSuspended) return;
         const frame = this._fluxAsyncJob;
-        if (!frame || !this._fluxVolume) return;
+        // A worker request has no phases to step; it completes by message.
+        if (!frame || frame.worker || !this._fluxVolume) return;
         const deadline = performance.now() + FLUX_ASYNC_FRAME_BUDGET_MS;
 
         while (performance.now() < deadline && this._fluxAsyncJob === frame) {
@@ -574,6 +641,390 @@ export class ViewportFluxRenderer {
             }
         }
         this._scheduleFluxAsyncSlice();
+    }
+
+    // ── Off-thread path (source grids above FLUX_ASYNC_SOURCE_COUNT) ────
+    // flux-volume-worker.js computes activation, normalisation, colour, size
+    // and visibility. The main thread copies the input, then swaps the
+    // finished arrays into the geometry. `_fluxAsyncJob` and
+    // `_fluxPendingFrame` keep their meaning: one request in flight, and the
+    // single latest frame waiting behind it. The cooperative slices above
+    // remain the fallback when no worker is available.
+
+    /** Force the cooperative main-thread path (tests, before/after measurement). */
+    setFluxVolumeWorkerEnabled(on) {
+        this._fluxWorkerEnabled = !!on;
+    }
+
+    _ensureFluxWorker() {
+        if (!this._fluxWorkerEnabled || globalThis.__ftdFluxVolumeWorker === false) return null;
+        if (!this._fluxWorkerClient) {
+            this._fluxWorkerClient = new FluxVolumeWorkerClient({
+                onResult: (result) => this._onFluxWorkerResult(result),
+                onFailure: (message) => this._onFluxWorkerFailure(message),
+            });
+        }
+        return this._fluxWorkerClient.available ? this._fluxWorkerClient : null;
+    }
+
+    /**
+     * Shared memory is the normal mode: every buffer the worker reads or
+     * writes is a SharedArrayBuffer view allocated once here, and a frame
+     * moves no memory between threads. Transferring instead (about 29 MB per
+     * frame at L=97) made the collector run on the main thread for every
+     * few frames. Transfer mode remains for pages that are not cross-origin
+     * isolated and as the first fallback when the worker cannot take shared
+     * memory.
+     */
+    setFluxVolumeSharedMemory(on) {
+        this._fluxWorkerSharedEnabled = !!on;
+    }
+
+    _fluxWorkerUsesSharedMemory() {
+        return this._fluxWorkerSharedEnabled !== false
+            && !this._fluxWorkerSharedFailed
+            && typeof SharedArrayBuffer === 'function'
+            && globalThis.__ftdFluxVolumeShared !== false;
+    }
+
+    _allocFluxWorkerArray(Type, length, shared) {
+        return shared
+            ? new Type(new SharedArrayBuffer(length * Type.BYTES_PER_ELEMENT))
+            : new Type(length);
+    }
+
+    /** An array fits a mode when it is shared in shared mode and transferable otherwise. */
+    _fluxWorkerArrayFits(array, length, shared) {
+        if (!array || array.length !== length) return false;
+        // Tag check, not instanceof: the buffer may come from another realm.
+        const isShared = Object.prototype.toString.call(array.buffer) === '[object SharedArrayBuffer]';
+        return isShared === shared;
+    }
+
+    _takeFluxWorkerDensity(source) {
+        const shared = this._fluxWorkerUsesSharedMemory();
+        const pool = this._fluxWorkerDensityPool;
+        while (pool.length) {
+            const candidate = pool.pop();
+            if (candidate.constructor === source.constructor
+                && this._fluxWorkerArrayFits(candidate, source.length, shared)) {
+                candidate.set(source);
+                return candidate;
+            }
+        }
+        const copy = this._allocFluxWorkerArray(source.constructor, source.length, shared);
+        copy.set(source);
+        return copy;
+    }
+
+    _recycleFluxWorkerDensity(array) {
+        // A transferred (detached) array has length 0 and is dropped here.
+        if (array?.length > 0 && this._fluxWorkerDensityPool?.length < 3) {
+            this._fluxWorkerDensityPool.push(array);
+        }
+    }
+
+    _releaseFluxWorkerBuffers() {
+        this._fluxWorkerSpare = null;
+        this._fluxWorkerInFlight = null;
+        this._fluxWorkerStateMask = null;
+        this._fluxInsideMask = null;
+        this._fluxInsideMaskKey = '';
+        if (this._fluxWorkerDensityPool) this._fluxWorkerDensityPool.length = 0;
+    }
+
+    /** Drawable-site mask for a shaped boundary, built once per shape and grid layout. */
+    _fluxBoundaryMask(frame) {
+        // Shared with the worker when shared memory is in use; cloned otherwise.
+        const shared = this._fluxWorkerUsesSharedMemory();
+        const key = [
+            this._boundaryShape,
+            frame.N,
+            frame.sourceN,
+            frame.compact ? 1 : 0,
+            frame.compactSpacing,
+            frame.compactOrigin,
+            shared ? 1 : 0,
+        ].join(':');
+        if (this._fluxInsideMaskKey === key && this._fluxInsideMask?.length === frame.sourceCount) {
+            return this._fluxInsideMask;
+        }
+        const sourceN = frame.sourceN;
+        const mask = this._allocFluxWorkerArray(Uint8Array, frame.sourceCount, shared);
+        let sourceIndex = 0;
+        for (let sourceZ = 0; sourceZ < sourceN; sourceZ++) {
+            for (let sourceY = 0; sourceY < sourceN; sourceY++) {
+                for (let sourceX = 0; sourceX < sourceN; sourceX++) {
+                    mask[sourceIndex++] = this._sourceInsideBoundary(frame, sourceX, sourceY, sourceZ) ? 1 : 0;
+                }
+            }
+        }
+        this._fluxInsideMask = mask;
+        this._fluxInsideMaskKey = key;
+        return mask;
+    }
+
+    /** Positions depend only on the grid layout and Organic mode: one pass per layout. */
+    _writeFluxPositions(frame) {
+        const geometry = this._fluxVolume.geometry;
+        const posAttr = geometry.getAttribute('position');
+        const sourcePosAttr = geometry.getAttribute('sourcePosition');
+        const sourceN = frame.sourceN;
+        const jamp = this._fluxOrganic ? (frame.compact ? frame.compactSpacing : 1) : 0;
+        let c3 = 0;
+        for (let sourceZ = 0; sourceZ < sourceN; sourceZ++) {
+            const physicalZ = this._sourceCoordinate(frame, sourceZ);
+            for (let sourceY = 0; sourceY < sourceN; sourceY++) {
+                const physicalY = this._sourceCoordinate(frame, sourceY);
+                for (let sourceX = 0; sourceX < sourceN; sourceX++, c3 += 3) {
+                    writeFluxPosition(
+                        posAttr.array, sourcePosAttr.array, c3, frame.N,
+                        sourceX, sourceY, sourceZ,
+                        this._sourceCoordinate(frame, sourceX), physicalY, physicalZ, jamp,
+                    );
+                }
+            }
+        }
+        posAttr.needsUpdate = true;
+        sourcePosAttr.needsUpdate = true;
+        this._fluxPositionSignature = frame.positionSignature;
+    }
+
+    /** @returns {boolean} false when no worker is available; the caller falls back. */
+    _queueWorkerFluxUpdate(frame, particleData) {
+        // Only typed arrays can be copied into a transferable buffer.
+        if (!ArrayBuffer.isView(frame.density)) return false;
+        const client = this._ensureFluxWorker();
+        if (!client) return false;
+        // A cooperative job must not race the worker for the same arrays.
+        if ((this._fluxAsyncJob && !this._fluxAsyncJob.worker)
+            || (this._fluxPendingFrame && !this._fluxPendingFrame.worker)) {
+            this._cancelFluxAsyncUpdate();
+        }
+        if (frame.writePositions) this._writeFluxPositions(frame);
+
+        // Latest wins: a frame still waiting is overwritten in place. The
+        // bridge may reuse its buffer before the worker is free, so the
+        // density is always copied here.
+        const waiting = this._fluxPendingFrame;
+        let densitySource;
+        if (waiting && waiting.densitySource.length === frame.density.length
+            && waiting.densitySource.constructor === frame.density.constructor) {
+            densitySource = waiting.densitySource;
+            densitySource.set(frame.density);
+        } else {
+            if (waiting) this._recycleFluxWorkerDensity(waiting.densitySource);
+            densitySource = this._takeFluxWorkerDensity(frame.density);
+        }
+        const idle = !client.busy;
+        this._fluxPendingFrame = {
+            ...frame,
+            worker: true,
+            writePositions: false,
+            density: null,
+            densitySource,
+            // Kept only so a worker failure can redraw from the producer.
+            producerDensity: frame.density,
+            // An idle worker maps the sites at once, straight from the producer.
+            particleData: idle ? particleData : snapshotParticleSites(particleData),
+        };
+        if (idle) this._dispatchWorkerFluxUpdate();
+        return true;
+    }
+
+    _dispatchWorkerFluxUpdate() {
+        const pending = this._fluxPendingFrame;
+        const client = this._fluxWorkerClient;
+        if (!pending?.worker || !client?.available || client.busy || !this._fluxVolume) return;
+        this._fluxPendingFrame = null;
+
+        const sourceCount = pending.sourceCount;
+        const manifested = this._mapManifestedState(
+            pending.particleData,
+            pending.sourceN,
+            pending.compactSpacing,
+            pending.compactOrigin,
+            pending.compact,
+        );
+        const shared = this._fluxWorkerUsesSharedMemory();
+        // A density copy made in the other mode (the mode changed between
+        // queue and dispatch) is copied once more into the right kind.
+        let density = pending.densitySource;
+        if (!this._fluxWorkerArrayFits(density, density.length, shared)) {
+            density = this._takeFluxWorkerDensity(density);
+            pending.densitySource = density;
+        }
+        let stateMask = null;
+        if (manifested > 0) {
+            stateMask = this._fluxWorkerArrayFits(this._fluxWorkerStateMask, sourceCount, shared)
+                ? this._fluxWorkerStateMask
+                : this._allocFluxWorkerArray(Uint8Array, sourceCount, shared);
+            // Shared: the same mask is refilled for every job. Transferred:
+            // it leaves with the job and comes back with the result.
+            this._fluxWorkerStateMask = shared ? stateMask : null;
+            stateMask.set(this._fluxStateMask);
+        }
+        const spare = this._fluxWorkerSpare;
+        this._fluxWorkerSpare = null;
+        let outputs = spare
+            && this._fluxWorkerArrayFits(spare.activation, sourceCount, shared)
+            && this._fluxWorkerArrayFits(spare.colors, sourceCount * 3, shared)
+            && this._fluxWorkerArrayFits(spare.sizes, sourceCount, shared)
+            && this._fluxWorkerArrayFits(spare.visibilities, sourceCount, shared) ? spare : null;
+        if (shared && !outputs) {
+            // Happens twice per grid size: the two sets then alternate
+            // between the screen and the worker.
+            outputs = {
+                activation: this._allocFluxWorkerArray(Float64Array, sourceCount, true),
+                colors: this._allocFluxWorkerArray(Float32Array, sourceCount * 3, true),
+                sizes: this._allocFluxWorkerArray(Float32Array, sourceCount, true),
+                visibilities: this._allocFluxWorkerArray(Float32Array, sourceCount, true),
+            };
+        }
+        const job = {
+            shared,
+            sourceN: pending.sourceN,
+            density,
+            stateMask,
+            // Never transferred: the cached mask stays here (shared, or cloned).
+            insideMask: pending.needsClip ? this._fluxBoundaryMask(pending) : null,
+            thresholdFraction: pending.thresholdFraction,
+            peakHold: this._fluxMaxDecay || 0,
+            peakHoldDecay: FLUX_PEAK_HOLD_DECAY,
+            pointFloor: FLUX_LATTICE_MIN_POINT_SIZE,
+            pointCeiling: this._fluxPointCeiling(pending),
+            colorFloor: FLUX_LATTICE_INSPECTION_COLOR_FLOOR,
+            activation: outputs ? outputs.activation : null,
+            colors: outputs ? outputs.colors : null,
+            sizes: outputs ? outputs.sizes : null,
+            visibilities: outputs ? outputs.visibilities : null,
+        };
+        const transfer = [];
+        if (!shared) {
+            transfer.push(density.buffer);
+            if (stateMask) transfer.push(stateMask.buffer);
+            if (outputs) {
+                transfer.push(
+                    outputs.activation.buffer,
+                    outputs.colors.buffer,
+                    outputs.sizes.buffer,
+                    outputs.visibilities.buffer,
+                );
+            }
+        }
+        const id = client.submit(job, transfer);
+        if (!id) {
+            this._onFluxWorkerFailure('request could not be posted', pending);
+            return;
+        }
+        // What this side still holds of the request. In shared mode that is
+        // everything; after a transfer it is nothing until the result returns.
+        this._fluxWorkerInFlight = shared ? { id, shared, outputs, density } : { id, shared };
+        this._fluxAsyncJob = { ...pending, id, densitySource: null, particleData: null };
+    }
+
+    _onFluxWorkerResult(result) {
+        const flight = this._fluxWorkerInFlight;
+        this._fluxWorkerInFlight = null;
+        // Shared: the worker wrote into arrays this side kept. Transferred:
+        // they come back in the message.
+        const held = flight?.id === result.id && flight.shared ? flight : null;
+        const outputs = held ? held.outputs : result;
+        const snapshot = held ? held.density : result.density;
+        if (!held && result.stateMask) this._fluxWorkerStateMask = result.stateMask;
+        if (!outputs?.colors || !outputs.sizes || !outputs.visibilities || !outputs.activation) {
+            // Nothing usable came back (buffers were released meanwhile).
+            if (this._fluxAsyncJob?.worker) this._fluxAsyncJob = null;
+            this._dispatchWorkerFluxUpdate();
+            return;
+        }
+        const job = this._fluxAsyncJob;
+        const geometry = this._fluxVolume?.geometry;
+        const colorAttr = geometry?.getAttribute('particleColor');
+        const sizeAttr = geometry?.getAttribute('size');
+        const visibilityAttr = geometry?.getAttribute('particleVisibility');
+        const current = !!job?.worker && job.id === result.id && !!colorAttr
+            && colorAttr.array.length === outputs.colors.length
+            && sizeAttr.array.length === outputs.sizes.length
+            && visibilityAttr.array.length === outputs.visibilities.length;
+        if (current) {
+            // Swap, do not copy: the arrays that were on screen become the
+            // next job's output buffers. three.js re-uploads an attribute
+            // whose array was replaced by one of equal byte length.
+            this._fluxWorkerSpare = {
+                activation: this._fluxActivation,
+                colors: colorAttr.array,
+                sizes: sizeAttr.array,
+                visibilities: visibilityAttr.array,
+            };
+            colorAttr.array = outputs.colors;
+            sizeAttr.array = outputs.sizes;
+            visibilityAttr.array = outputs.visibilities;
+            this._fluxActivation = outputs.activation;
+            if (this._fluxDensitySnapshot === this._fluxWorkerOwnedDensity) {
+                this._recycleFluxWorkerDensity(this._fluxWorkerOwnedDensity);
+            }
+            this._fluxDensitySnapshot = snapshot;
+            this._fluxWorkerOwnedDensity = snapshot;
+            this._fluxMaxDecay = result.maxActivation;
+            this._fluxWorkerComputeMs = result.computeMs;
+            this._fluxAsyncJob = null;
+            this._commitFluxAttributes({ ...job, writePositions: false, visibleCount: result.visibleCount });
+        } else {
+            // Cancelled, hidden, or superseded by a rebuild: commit nothing,
+            // keep the buffers for the next job.
+            this._fluxWorkerSpare = {
+                activation: outputs.activation,
+                colors: outputs.colors,
+                sizes: outputs.sizes,
+                visibilities: outputs.visibilities,
+            };
+            this._recycleFluxWorkerDensity(snapshot);
+        }
+        this._dispatchWorkerFluxUpdate();
+    }
+
+    /**
+     * The worker failed. A worker that failed while using shared memory is
+     * replaced once by one that receives transferred buffers; shared memory
+     * is the first thing to be refused where the worker is not cross-origin
+     * isolated. After that, every later frame uses the cooperative path.
+     * Either way the newest frame still known here is redrawn.
+     */
+    _onFluxWorkerFailure(message, unsent = null) {
+        const flight = this._fluxWorkerInFlight;
+        const retryWithTransfer = this._fluxWorkerUsesSharedMemory();
+        console.warn(
+            retryWithTransfer
+                ? '[flux-volume] worker failed with shared memory; retrying with transferred buffers:'
+                : '[flux-volume] worker unavailable; using the main-thread path:',
+            message,
+        );
+        const lost = this._fluxAsyncJob?.worker ? this._fluxAsyncJob : null;
+        const waiting = this._fluxPendingFrame?.worker ? this._fluxPendingFrame : null;
+        if (lost) this._fluxAsyncJob = null;
+        if (waiting) this._fluxPendingFrame = null;
+        this._releaseFluxWorkerBuffers();
+        if (retryWithTransfer) {
+            this._fluxWorkerSharedFailed = true;
+            this._fluxWorkerClient?.dispose();
+            this._fluxWorkerClient = null;
+        }
+        const replay = waiting || unsent || lost;
+        if (!replay || !this._fluxVolume) return;
+        // A shared in-flight copy is still readable here; a transferred one is not.
+        const kept = replay === lost && flight?.shared ? flight.density : replay.densitySource;
+        const density = kept?.length === replay.sourceCount ? kept : replay.producerDensity;
+        if (density?.length !== replay.sourceCount) return;
+        const frame = {
+            ...replay,
+            worker: false,
+            density,
+            writePositions: this._fluxPositionSignature !== replay.positionSignature,
+        };
+        if (!retryWithTransfer || !this._queueWorkerFluxUpdate(frame, replay.particleData)) {
+            this._queueLargeFluxUpdate(frame, replay.particleData);
+        }
     }
 
     /**
@@ -674,10 +1125,15 @@ export class ViewportFluxRenderer {
         };
 
         if (sourceCount > FLUX_ASYNC_SOURCE_COUNT && !compact?.scalarCounts) {
-            this._queueLargeFluxUpdate(frame, particleData);
+            // Off-thread when a worker is available; cooperative main-thread
+            // slices otherwise.
+            if (!this._queueWorkerFluxUpdate(frame, particleData)) {
+                this._queueLargeFluxUpdate(frame, particleData);
+            }
             return;
         }
         this._cancelFluxAsyncUpdate();
+        this._ensureFluxFallbackScratch(sourceCount);
         this._mapManifestedState(
             particleData,
             sourceN,
@@ -899,6 +1355,9 @@ export class ViewportFluxRenderer {
     dispose() {
         if (this._fluxDrawOrderDetach) { this._fluxDrawOrderDetach(); this._fluxDrawOrderDetach = null; }
         this._cancelFluxAsyncUpdate();
+        this._fluxWorkerClient?.dispose();
+        this._fluxWorkerClient = null;
+        this._releaseFluxWorkerBuffers();
         if (this._fluxVolume) {
             this._scene.remove(this._fluxVolume);
             if (this._fluxVolume.geometry) this._fluxVolume.geometry.dispose();
