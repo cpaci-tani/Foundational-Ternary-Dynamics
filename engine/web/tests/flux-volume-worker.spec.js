@@ -20,17 +20,20 @@ async function installImportMap(page) {
     `);
 }
 
-test('worker and cooperative paths produce identical flux-volume buffers', async ({ page }) => {
+// Shared memory is the normal mode; transferred buffers serve pages that are
+// not cross-origin isolated. Both must match the cooperative path.
+for (const shared of [true, false]) test(`worker (${shared ? 'shared memory' : 'transferred buffers'}) and cooperative paths produce identical flux-volume buffers`, async ({ page }) => {
     const pageErrors = [];
     page.on('pageerror', (error) => pageErrors.push(String(error)));
     await installImportMap(page);
 
-    const result = await page.evaluate(async () => {
+    const result = await page.evaluate(async (shared) => {
         const THREE = await import('three');
         const { ViewportFluxRenderer } = await import('/js/viewport/flux-renderer.js?flux-volume-worker-test=1');
         const N = 59; // 205,379 sources: above the off-thread threshold.
         const inSphere = (x, y, z) => x * x + y * y + z * z <= 1;
         const make = (useWorker) => {
+            // (shared is read from the enclosing evaluate argument)
             const renderer = new ViewportFluxRenderer({
                 scene: new THREE.Scene(),
                 latticeSize: N,
@@ -42,6 +45,7 @@ test('worker and cooperative paths produce identical flux-volume buffers', async
                 writeStreamlinesIntoMesh: () => {},
             });
             renderer.setFluxVolumeWorkerEnabled(useWorker);
+            renderer.setFluxVolumeSharedMemory(shared);
             renderer.setFluxOrganic(true);
             renderer.setFluxThreshold(0.05);
             return renderer;
@@ -138,14 +142,20 @@ test('worker and cooperative paths produce identical flux-volume buffers', async
             workerComputeMs: viaWorker._fluxWorkerComputeMs,
             cooperativeHasNoWorker: cooperative._fluxWorkerClient === null,
             cornerHidden: viaWorker._fluxVolume.geometry.getAttribute('particleVisibility').array[0] === 0,
+            sharedArrays: Object.prototype.toString.call(
+                viaWorker._fluxVolume.geometry.getAttribute('particleColor').array.buffer,
+            ) === '[object SharedArrayBuffer]',
+            isolated: self.crossOriginIsolated === true,
         };
         viaWorker.dispose();
         cooperative.dispose();
         return summary;
-    });
+    }, shared);
 
     expect(pageErrors).toEqual([]);
     expect(result.workerAvailable, 'the module worker loaded and answered').toBe(true);
+    expect(result.isolated, 'the test page is cross-origin isolated, so shared memory is really exercised').toBe(true);
+    expect(result.sharedArrays, 'the arrays on screen are of the requested kind').toBe(shared);
     expect(result.workerComputeMs).toBeGreaterThan(0);
     expect(result.cooperativeHasNoWorker).toBe(true);
     expect(result.jittered, 'Organic positions were written on the worker path').toBe(true);

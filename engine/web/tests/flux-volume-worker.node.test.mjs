@@ -35,6 +35,8 @@ function makeFakeWorker() {
             const copy = structuredClone(message, { transfer });
             fake.posted.push({
                 id: copy.id,
+                shared: !!copy.shared,
+                transfers: transfer.length,
                 recycled: !!copy.colors,
                 stateMask: !!copy.stateMask,
                 insideMask: !!copy.insideMask,
@@ -95,7 +97,9 @@ const R = load(
 );
 
 const inSphere = (x, y, z) => x * x + y * y + z * z <= 1;
-function makeRenderer(N, { shape = 'cube', threshold = 0 } = {}) {
+const isSharedArray = (array) => Object.prototype.toString.call(array.buffer) === '[object SharedArrayBuffer]';
+
+function makeRenderer(N, { shape = 'cube', threshold = 0, shared = true } = {}) {
     const renderer = new R.ViewportFluxRenderer({
         scene: new THREE.Scene(),
         latticeSize: N,
@@ -107,6 +111,7 @@ function makeRenderer(N, { shape = 'cube', threshold = 0 } = {}) {
         writeStreamlinesIntoMesh: () => {},
     });
     renderer.setFluxThreshold(threshold);
+    renderer.setFluxVolumeSharedMemory(shared);
     return renderer;
 }
 
@@ -254,11 +259,15 @@ test('kernel equals the synchronous renderer path bit for bit', () => {
     );
 });
 
-test('worker path commits the kernel result: snapshot, latest-wins, recycling, cancel', () => {
+// Both buffer modes must commit the same frames: shared memory (the normal
+// mode) and transferred buffers (pages that are not cross-origin isolated).
+for (const shared of [true, false]) test(`worker path, ${shared ? 'shared memory' : 'transferred buffers'}: snapshot, latest-wins, recycling, cancel`, () => {
     const N = 59; // 205,379 sources: above the off-thread threshold.
     assert.ok(N ** 3 > R.FLUX_ASYNC_SOURCE_COUNT);
-    const renderer = makeRenderer(N, { threshold: 0.02 });
+    const renderer = makeRenderer(N, { threshold: 0.02, shared });
     const meta = frameMeta(renderer, N, N);
+    const colourBuffers = new Set();
+    const noteColours = () => colourBuffers.add(renderer._fluxVolume.geometry.getAttribute('particleColor').array.buffer);
     fake.posted.length = 0;
 
     // The input is copied when queued; later producer writes cannot leak in.
@@ -275,6 +284,10 @@ test('worker path commits the kernel result: snapshot, latest-wins, recycling, c
     assert.equal(renderer._fluxPendingFrame, null);
     assertCommitted(renderer, expected, 'first frame');
     assertSameBits(renderer._fluxDensitySnapshot, firstCopy, 'published density snapshot');
+    noteColours();
+    assert.equal(isSharedArray(renderer._fluxVolume.geometry.getAttribute('particleColor').array), shared);
+    assert.equal(isSharedArray(renderer._fluxActivation), shared);
+    assert.equal(isSharedArray(renderer._fluxDensitySnapshot), shared);
     const source = renderer._fluxVolume.geometry.getAttribute('sourcePosition').array;
     assert.deepEqual(Array.from(source.slice(0, 6)), [0.5, 0.5, 0.5, 1.5, 0.5, 0.5], 'positions written once');
 
@@ -290,12 +303,23 @@ test('worker path commits the kernel result: snapshot, latest-wins, recycling, c
     expected = reference(renderer, second, meta, expected.maxActivation);
     assert.ok(fake.run());
     assertCommitted(renderer, expected, 'second frame');
+    noteColours();
     assert.equal(renderer._fluxAsyncJob?.worker, true, 'waiting frame dispatched on commit');
     expected = reference(renderer, fourth, meta, expected.maxActivation);
     assert.ok(fake.run());
     assertCommitted(renderer, expected, 'fourth frame');
+    noteColours();
     assert.equal(fake.posted.length, 3, 'first, second and fourth only');
-    assert.deepEqual(fake.posted.map((job) => job.recycled), [false, true, true], 'output arrays ping-pong');
+    assert.deepEqual(fake.posted.map((job) => job.shared), [shared, shared, shared]);
+    if (shared) {
+        // Nothing crosses by transfer, and the main thread supplies every buffer.
+        assert.deepEqual(fake.posted.map((job) => job.transfers), [0, 0, 0]);
+        assert.deepEqual(fake.posted.map((job) => job.recycled), [true, true, true]);
+        assert.equal(colourBuffers.size, 2, 'two output sets alternate between screen and worker');
+    } else {
+        assert.deepEqual(fake.posted.map((job) => job.transfers), [1, 5, 5], 'density, then density + four outputs');
+        assert.deepEqual(fake.posted.map((job) => job.recycled), [false, true, true], 'output arrays ping-pong');
+    }
     assert.deepEqual(fake.posted.map((job) => job.stateMask || job.insideMask), [false, false, false]);
 
     // Hiding the volume while a request is in flight commits nothing.
@@ -317,14 +341,16 @@ test('worker path commits the kernel result: snapshot, latest-wins, recycling, c
     expected = reference(renderer, fifth, meta, expected.maxActivation);
     assert.ok(fake.run());
     assertCommitted(renderer, expected, 'fifth frame');
+    noteColours();
+    if (shared) assert.equal(colourBuffers.size, 2, 'no further output set after a stale result');
 
     renderer.dispose();
     assert.equal(renderer._fluxWorkerClient, null);
 });
 
-test('worker path carries the boundary mask and manifested sites', () => {
+for (const shared of [true, false]) test(`worker path, ${shared ? 'shared memory' : 'transferred buffers'}: boundary mask and manifested sites`, () => {
     const N = 59;
-    const renderer = makeRenderer(N, { shape: 'sphere', threshold: 0.05 });
+    const renderer = makeRenderer(N, { shape: 'sphere', threshold: 0.05, shared });
     const meta = frameMeta(renderer, N, N);
     const particles = {
         positions: new Float32Array([29.5, 29.5, 29.5, 20.2, 31.9, 27.1]),
@@ -348,33 +374,64 @@ test('worker path carries the boundary mask and manifested sites', () => {
     assert.equal(renderer._fluxSiteKind[at(29, 29, 29)], -2, 'locked red site keeps its kind');
     assert.equal(renderer._fluxSiteKind[at(20, 31, 27)], 1, 'green site keeps its kind');
     assertCornerClipped(expected, 0.05);
+
+    // A second frame reuses the masks; in shared mode nothing is transferred.
+    const next = field(N, 22, 0.6);
+    hotCorner(next, N, 2);
+    renderer.updateFluxVolume(next, N, particles);
+    const second = reference(renderer, next, meta, expected.maxActivation, renderer._fluxStateMask.slice());
+    assert.ok(fake.run());
+    assertCommitted(renderer, second, 'second sphere frame');
+    assert.deepEqual(fake.posted.map((job) => job.transfers), shared ? [0, 0] : [2, 6]);
     renderer.dispose();
 });
 
-test('worker failure falls back to the cooperative path and redraws the lost frame', () => {
+test('worker failure degrades in two steps: transferred buffers, then the cooperative path', () => {
     const N = 59;
     const renderer = makeRenderer(N, { threshold: 0.02 });
     const meta = frameMeta(renderer, N, N);
     const density = field(N, 31);
     warnings.length = 0;
     fake.posted.length = 0;
+
+    // Step 1: the shared-memory worker fails. A new worker takes the same
+    // frame by transfer; the frame is not lost.
     fake.failNext = true;
     renderer.updateFluxVolume(density, N);
+    assert.equal(fake.posted[0].shared, true);
+    const firstClient = renderer._fluxWorkerClient;
     assert.ok(fake.run());
     assert.equal(warnings.length, 1, 'one warning');
+    assert.match(warnings[0], /retrying with transferred buffers/);
+    assert.notEqual(renderer._fluxWorkerClient, firstClient, 'the failed worker was replaced');
+    assert.equal(firstClient.available, false);
+    assert.equal(renderer._fluxAsyncJob?.worker, true, 'the frame is back in flight');
+    assert.deepEqual([fake.posted.length, fake.posted[1].shared, fake.posted[1].transfers], [2, false, 1]);
+    let expected = reference(renderer, density, meta, 0);
+    assert.ok(fake.run());
+    assertCommitted(renderer, expected, 'frame replayed by transfer');
+    assert.equal(isSharedArray(renderer._fluxActivation), false);
+
+    // Step 2: the transfer worker fails too. The cooperative path replays the frame.
+    const next = field(N, 32, 0.5);
+    fake.failNext = true;
+    renderer.updateFluxVolume(next, N);
+    assert.ok(fake.run());
+    assert.equal(warnings.length, 2);
+    assert.match(warnings[1], /using the main-thread path/);
     assert.equal(renderer._fluxWorkerClient.available, false);
     assert.ok(renderer._fluxAsyncJob && !renderer._fluxAsyncJob.worker, 'cooperative job replays the frame');
-
-    let expected = reference(renderer, density, meta, 0);
+    expected = reference(renderer, next, meta, expected.maxActivation);
     for (let guard = 0; guard < 10000 && renderer._fluxAsyncJob; guard++) rafQueue.shift()?.();
     assert.equal(renderer._fluxAsyncJob, null);
-    assertCommitted(renderer, expected, 'replayed frame');
+    assertCommitted(renderer, expected, 'frame replayed on the main thread');
 
-    // Later frames never touch the worker again.
-    const next = field(N, 32, 0.5);
-    renderer.updateFluxVolume(next, N);
-    assert.equal(fake.posted.length, 1);
-    expected = reference(renderer, next, meta, expected.maxActivation);
+    // Later frames never touch a worker again.
+    const posted = fake.posted.length;
+    const later = field(N, 33, 0.8);
+    renderer.updateFluxVolume(later, N);
+    assert.equal(fake.posted.length, posted);
+    expected = reference(renderer, later, meta, expected.maxActivation);
     for (let guard = 0; guard < 10000 && renderer._fluxAsyncJob; guard++) rafQueue.shift()?.();
     assertCommitted(renderer, expected, 'fallback frame');
     renderer.dispose();

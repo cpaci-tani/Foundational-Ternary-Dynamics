@@ -6,14 +6,19 @@
  * @consumers ./flux-volume-worker-client.js
  *
  * Protocol (one request in flight at a time):
- *   in   { type:'frame', id, sourceN, density, stateMask|null, insideMask|null,
- *          thresholdFraction, peakHold, peakHoldDecay, pointFloor, pointCeiling,
- *          colorFloor, activation|null, colors|null, sizes|null, visibilities|null }
+ *   in   { type:'frame', id, shared, sourceN, density, stateMask|null,
+ *          insideMask|null, thresholdFraction, peakHold, peakHoldDecay,
+ *          pointFloor, pointCeiling, colorFloor,
+ *          activation|null, colors|null, sizes|null, visibilities|null }
  *   out  { type:'frame', id, instantMaxActivation, maxActivation, visibleCount,
- *          manifestedCount, computeMs, density, stateMask|null,
- *          activation, colors, sizes, visibilities }
+ *          manifestedCount, computeMs }                      when shared
+ *   out  the same plus { density, stateMask|null, activation, colors, sizes,
+ *          visibilities }, all transferred back              otherwise
  *   out  { type:'error', id, message }
- * Recycled output arrays of the wrong length are replaced, never resized.
+ * shared: every array is a SharedArrayBuffer view the main thread keeps; the
+ * worker writes in place and no memory moves. Otherwise the arrays arrive by
+ * transfer and return by transfer; recycled output arrays of the wrong length
+ * are replaced, never resized.
  */
 
 import { computeFluxVolumeFrame } from './flux-volume-kernel.js';
@@ -49,6 +54,12 @@ self.onmessage = ({ data }) => {
             { ...data, stateMask },
             { scratchA, scratchB, activation, colors, sizes, visibilities },
         );
+        if (data.shared) {
+            // Every array is shared memory the main thread still holds; the
+            // results are already where it will read them.
+            self.postMessage({ type: 'frame', id: data.id, ...result, computeMs: performance.now() - started });
+            return;
+        }
         // Every array goes back: outputs to be shown, inputs to be reused.
         const transfer = [
             data.density.buffer,
@@ -73,4 +84,10 @@ self.onmessage = ({ data }) => {
     } catch (error) {
         self.postMessage({ type: 'error', id: data.id, message: String(error?.message || error) });
     }
+};
+
+// A request carrying shared memory cannot be delivered to a worker that is
+// not cross-origin isolated. Say so, or the main thread would wait forever.
+self.onmessageerror = () => {
+    self.postMessage({ type: 'error', id: 0, message: 'request could not be decoded' });
 };
