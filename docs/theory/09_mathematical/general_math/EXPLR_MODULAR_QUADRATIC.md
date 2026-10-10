@@ -4,6 +4,8 @@
 
 **Status:** [THEOREM] (definitive answers) + [SELECTION] (structural interpretations)
 
+> **Erratum (2026-10-05).** Part II originally used the periods and Tamagawa number of a different model: real period 3.7081, c_2 = 4, hence L(E,1) = 0.92704 and the identity G* = 4*sqrt(2/pi)*L(E,1). For E: y^2 = x^3 - x (LMFDB 32.a3, Cremona 32a2) the correct data are: least real period varpi = 2.6221 for the Neron differential dx/(2y), two real components (BSD real volume 2*varpi), c_2 = 2 (Kodaira type III), |E(Q)_tors| = 4, so L(E,1) = varpi/4 = 0.655514 and G* = 8*L(E,1)/sqrt(pi). The old value 0.92704 = varpi/(2*sqrt(2)) is L(1) of the conductor-64 curve y^2 = x^3 + x. The same correction was made in the G* identities paper (entry G3 of `docs/papers/src/GSTAR_IDENTITIES_CORRECTIONS.md`); it agrees with `DERIV_LFUNCTION_GSTAR_CONNECTION.md` and `scripts/proofs/proof_lvalue_deligne_verification.py`. The script named in the appendix is not in the repository; use that proof script instead. The affected lines below are corrected in place, and the original text is in git history.
+
 ---
 
 ## Executive Summary
@@ -16,9 +18,9 @@ We investigate whether the FTD master quadratic x^2 - 16G*^2 x + 16G*^3 = 0 is a
 |----------|--------|--------|
 | Is the quadratic a modular equation? | **NO** | [THEOREM] |
 | Do precision coefficients relate to Hecke eigenvalues? | **Indirectly** (CM structure) | [SELECTION] |
-| Does L(E,1) appear in the quadratic? | **YES**: G* = 4*sqrt(2/pi)*L(E,1) | [THEOREM] |
+| Does L(E,1) appear in the quadratic? | **YES**: G* = 8*L(E,1)/sqrt(pi) | [THEOREM] |
 
-**Key discovery:** The FTD master coefficient G* is exactly `4*sqrt(2/pi)` times the central L-value of the CM curve E: y^2 = x^3 - x. This is a precise, verifiable mathematical identity connecting FTD to the Birch and Swinnerton-Dyer conjecture.
+**Key discovery:** The FTD master coefficient G* is exactly `8/sqrt(pi)` times the central L-value of the CM curve E: y^2 = x^3 - x. This is a precise, verifiable mathematical identity connecting FTD to the Birch and Swinnerton-Dyer conjecture.
 
 ---
 
@@ -80,41 +82,41 @@ The framework integers {3, 4, 7, 13} split under the CM structure as:
 
 For E: y^2 = x^3 - x with CM by Z[i]:
 
-- **Lattice parameter:** omega = Gamma(1/4)^2 / (4*sqrt(pi)) = 1.8541
-- **Real period:** Omega_1 = 2*omega = 3.7081
-- **Imaginary period:** |Omega_2| = 2*omega (since tau = i, the lattice is square)
+- **Lemniscate constant:** varpi = Gamma(1/4)^2 / (2*sqrt(2*pi)) = 2.6221, the least real period for the Neron differential dx/(2y)
+- **Period lattice:** varpi*Z[i] (period basis (varpi, i*varpi)); E(R) has two components, so the BSD real volume is Omega_BSD = 2*varpi = 5.2441
+- **Imaginary period:** i*varpi (since tau = i, the lattice is square)
 - **Period ratio:** tau = Omega_2/Omega_1 = i (the unique self-dual point)
 
 ### 2.2 The L-function Value
 
 By the BSD formula:
 
-L(E, 1) = Omega_1 * |Sha| * prod(c_p) / |E(Q)_tors|^2
+L(E, 1) = Omega_BSD * |Sha| * prod(c_p) / |E(Q)_tors|^2
 
 For E: y^2 = x^3 - x:
 - |Sha| = 1 (proven trivial)
-- c_2 = 4 (Tamagawa number at p = 2)
+- c_2 = 2 (Tamagawa number at p = 2, Kodaira type III)
 - c_p = 1 for all odd primes
 - |E(Q)_tors| = 4
 
-Therefore: **L(E, 1) = Omega_1 * 4 / 16 = Omega_1 / 4 = omega / 2 = 0.92704**
+Therefore: **L(E, 1) = 2*varpi * 2 / 16 = varpi / 4 = 0.655514**
 
 ### 2.3 The G*-L(E,1) Identity [THEOREM]
 
-**Identity:** G* = 4 * sqrt(2/pi) * L(E, 1)
+**Identity:** G* = 8 * L(E, 1) / sqrt(pi)
 
 **Proof:**
 
 G* = Gamma(1/4) / Gamma(3/4) = 2.9587...
     [equivalently Gamma(1/4)^2/(sqrt(2)*Gamma(1/2)^2) = sqrt(2)*Gamma(1/4)^2/(2*pi)]
 
-L(E,1) = Omega_1/4 = omega/2 = Gamma(1/4)^2 / (8*sqrt(pi))
+L(E,1) = varpi/4 = Gamma(1/4)^2 / (8*sqrt(2*pi))
 
 Therefore:
-4*sqrt(2/pi)*L(E,1) = 4*sqrt(2/pi) * Gamma(1/4)^2 / (8*sqrt(pi))
-                     = sqrt(2/pi) * Gamma(1/4)^2 / (2*sqrt(pi))
-                     = Gamma(1/4)^2 / (sqrt(2) * Gamma(1/2)^2)
-                     = G*
+8*L(E,1)/sqrt(pi) = 8 * Gamma(1/4)^2 / (8*sqrt(2*pi)*sqrt(pi))
+                  = Gamma(1/4)^2 / (sqrt(2) * pi)
+                  = Gamma(1/4)^2 / (sqrt(2) * Gamma(1/2)^2)
+                  = G*
 
 **Numerical verification:** Both sides equal 2.958675119188639 to 15 decimal places.
 
@@ -253,7 +255,7 @@ The precision formula organizes these integers through ratios that respect the C
 
 1. **The master quadratic is NOT a modular equation** [THEOREM]. It is not a classical modular equation Phi_n(X,Y), not a Hilbert class polynomial H_D(x), and not a modular unit equation. Its roots (137 and 3) are not j-invariants of CM curves. However, its coefficients are built from evaluations of modular forms (theta_3 at the self-dual nome).
 
-2. **G* = 4*sqrt(2/pi) * L(E, 1)** [THEOREM]. The FTD master coefficient is a simple algebraic multiple of the central L-value of the CM curve E: y^2 = x^3 - x. This is a precise identity, not an approximation. It connects the fine structure constant (via the master quadratic) to the BSD L-function.
+2. **G* = 8 * L(E, 1)/sqrt(pi)** [THEOREM]. The FTD master coefficient is a simple algebraic multiple of the central L-value of the CM curve E: y^2 = x^3 - x. This is a precise identity, not an approximation. It connects the fine structure constant (via the master quadratic) to the BSD L-function.
 
 3. **The precision formula coefficients relate to Hecke eigenvalues indirectly** [SELECTION]. The denominators {47, 11} are supersingular primes for E (a_p = 0), while 13 is ordinary (a_13 = 6). The connection runs through the CM arithmetic of Z[i] rather than through individual Hecke eigenvalues.
 

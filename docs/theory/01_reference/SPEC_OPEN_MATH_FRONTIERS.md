@@ -11,13 +11,15 @@ Each frontier is graded:
 
 ---
 
-## F1 — In-repo L-value verification — **(a), PARTLY CLOSED**
+## F1 — In-repo L-value verification — **(a), CLOSED (2026-10-05)**
 
 **Question.** Are the Deligne special values behind the master-quadratic coefficients reproducible in-repo, or only asserted as cited imports?
 
 **Status.** `scripts/proofs/proof_lvalue_deligne_verification.py` now **reproduces `L(E,1)=ϖ/4`** for E:y²=x³−x from first principles (point-counting the Hecke eigenvalues `a_p` — CM fingerprint `a_p=0` for `p≡3 mod 4` confirmed over 280 primes — and summing the rank-0 analytic series), matching ϖ/4 to rel. diff 5×10⁻⁴¹. ⇒ `16G*³ = 2¹³·L(E,1)³/π^(3/2)` is now **`[DERIVED-given-import, L(E,1)-import REPRODUCED]`** (k=13 re-confirmed).
 
-**Remaining.** `L(Sym²E,1)=ϖ²/(8π)` is still a **cited Damerell–Shimura import**, so `16G*² = 512·L(Sym²E,1)` is verified *given* that value. Reproducing the Sym² value requires its own Dirichlet series (the Sym² of a CM form factors through Hecke L-functions of ℚ(i)) — bounded **(a)/(b)** work (clean with PARI/GP `lfunsympow`, or ~a day of mpmath). Deferred.
+**Closed (2026-10-05).** `scripts/proofs/proof_sym2_lvalue_verification.py` reproduces `L(Sym²E,1)=ϖ²/(8π)=G*²/32` from its own Dirichlet series instead of substituting the closed form. It checks that `eta(4 tau)^6` has `b(p)=a_p(E)^2-2p` for p = 1 mod 4 and `b(p)=0` for p = 3 mod 4 at every prime below 2000; that the Sym² Euler-product coefficients equal those of `L(eta(4 tau)^6, s) L(chi_-4, s-1)` for all n up to 2000; that the root number of `eta(4 tau)^6` is +1; and that `L(eta(4 tau)^6, 1) L(chi_-4, 0)` equals `G*²/32` at 50 digits. An optional PARI/GP `lfunsympow` cross-check agrees. ⇒ `16G*² = 512·L(Sym²E,1)` is now **`[DERIVED-given-import, Sym²-import REPRODUCED]`**, matching the L(E,1) line above. The exact value also has a complete proof route: the factorization above, the functional equation of `eta(4 tau)^6`, `L(chi_-4, 0)=1/2`, and `L(eta(4 tau)^6, 2)=Γ(1/4)⁴/(64π)` (Rogers, Wan and Zucker, *Ramanujan J.* 2015, arXiv:1303.2259, Theorem 5).
+
+**Normalization (required for the identity).** The identity holds in the arithmetic normalization of `L(Sym²E,s)`: conductor 64, functional equation s <-> 3-s, trivial Euler factor at 2. There s = 1 is a critical point but not the central one (the centre is s = 3/2). In the analytic normalization, s = 1 is the arithmetic s = 2, where the value is `Γ(1/4)⁴/256 = (π²/4)·L(Sym²E,1)`, so the identity fails there.
 
 ## F2 — Maximality / canonicality of ℚ(G\*) — **(c), deep external boundary**
 
@@ -59,7 +61,7 @@ Each frontier is graded:
 
 | Frontier | Grade | Status |
 |---|---|---|
-| F1 L-value verification | (a) | **L(E,1) reproduced**; Sym² value still cited (deferred) |
+| F1 L-value verification | (a) | **CLOSED (2026-10-05)**: L(E,1) and L(Sym²E,1) both reproduced in-repo; arithmetic normalization stated |
 | F2 ℚ(G\*) maximality | (c) | "maximal" struck; restricted conjecture statable; general case external |
 | F3 coeff-16 / D=3 forcing | (c) | arithmetic THEOREM / forcing SELECTION; the MC-T4.3 wall |
 | F4 G\* transcendence | (c) | permanent Chudnovsky import; clause must ride along |

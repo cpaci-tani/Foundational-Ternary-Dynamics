@@ -65,8 +65,9 @@ $$\frac{8}{\sqrt{\pi}} \times L(E,1) = 4.51352 \times 0.65551 = 2.95868 = G^* \q
 > So the **product identity** $16G^{*3}=2^{13}L(E,1)^3/\pi^{3/2}$ is now
 > **[DERIVED-given-import, with the $L(E,1)$ import REPRODUCED]** (and $k=13$, not $2^{10}$, is
 > re-confirmed). The **Sym² identity** $16G^{*2}=512\,L(\mathrm{Sym}^2 E,1)$ is verified *given*
-> the cited Damerell–Shimura value $L(\mathrm{Sym}^2 E,1)=\varpi^2/(8\pi)$; reproducing that
-> value from its own Dirichlet series is deferred.
+> the cited Damerell–Shimura value $L(\mathrm{Sym}^2 E,1)=\varpi^2/(8\pi)$. That value is now
+> reproduced from its own Dirichlet series (arithmetic normalization) by
+> `scripts/proofs/proof_sym2_lvalue_verification.py`, which closes F1 (2026-10-05).
 
 ### 1.3 The Coefficient 16 from BSD [THEOREM]
 
