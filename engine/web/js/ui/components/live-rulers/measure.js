@@ -16,6 +16,8 @@ export const LIVE_MEASURE_DEFAULTS = Object.freeze({
     mooreBars: true,
     mooreWaves: true,
     mooreJoules: true,
+    mooreEnergy: true,
+    mooreHz: 20,
     smoothOrbit: true,
     rulerScale: 1,
     clockSize: 16,
@@ -48,10 +50,58 @@ export function manifestedSiteName(kind) {
     return '';
 }
 
-/** Per-voxel clock in turns, from the published tick and the voxel's own address. No extra field. */
-export function voxelClockPhase(tick, x, y, z) {
-    const turns = (Number(tick) || 0) / 12 + x * 0.173 + y * 0.317 + z * 0.519;
+/** Same base-ten turn as the global ordinal clock hand. */
+export const CLOCK_TICKS_PER_TURN = 10;
+
+/** Fractional turn of the global ordinal clock. Tick 0 is phase 0. */
+export function globalClockPhase(tick) {
+    const turns = (Number(tick) || 0) / CLOCK_TICKS_PER_TURN;
     return turns - Math.floor(turns);
+}
+
+/**
+ * Where this voxel sits in the neighborhood environment, from -1 to 1.
+ * The neighborhood mean is 0, so a uniform environment stays on the global clock.
+ */
+export function relativeClockEnvironment(value, mean, span) {
+    if (!(span > 0)) return 0;
+    const t = (Number(value) - mean) / span;
+    if (!Number.isFinite(t)) return 0;
+    return Math.max(-1, Math.min(1, t));
+}
+
+/**
+ * Fractional turn of one voxel clock. Offset 0 matches the global clock,
+ * including at the start of a scenario. The offset is the accumulated
+ * effect of that voxel's environment relative to its neighborhood.
+ */
+export function voxelClockPhase(tick, offset = 0) {
+    const extra = Number(offset);
+    const turns = (Number(tick) || 0) / CLOCK_TICKS_PER_TURN + (Number.isFinite(extra) ? extra : 0);
+    return turns - Math.floor(turns);
+}
+
+/** Turn advance caused by a relative environment over a span of ticks. Zero at the start. */
+export function clockEnvironmentStep(deltaTicks, relativeEnvironment) {
+    const steps = Number(deltaTicks);
+    if (!(steps > 0)) return 0;
+    const relative = Number(relativeEnvironment);
+    const shift = Number.isFinite(relative) ? Math.max(-1, Math.min(1, relative)) : 0;
+    return (steps / CLOCK_TICKS_PER_TURN) * 0.25 * shift;
+}
+
+/** Local phase beside the global ordinal readout, plus the signed turn difference. */
+export function formatClockVersus(phase, tick) {
+    const local = Number(phase);
+    const wrapped = Number.isFinite(local) ? local - Math.floor(local) : 0;
+    const global = globalClockPhase(tick);
+    let delta = wrapped - global;
+    if (delta > 0.5) delta -= 1;
+    if (delta < -0.5) delta += 1;
+    if (Math.abs(delta) < 5e-4) delta = 0;
+    const sign = delta < 0 ? '' : '+';
+    const ordinal = Math.max(0, Math.trunc(Number(tick) || 0));
+    return `${wrapped.toFixed(3)} vs tick ${ordinal} (${sign}${delta.toFixed(3)})`;
 }
 
 /** gl_PointSize for a flux dot: size * sqrt(60 / depth), clamped like the shader. */
@@ -84,6 +134,16 @@ export function energyStringPath(samples, min, max) {
         path += `${i ? 'L' : 'M'}${x.toFixed(2)} ${y.toFixed(2)}`;
     }
     return path;
+}
+
+/** Filled area under a summed energy line. The top is the neighborhood max, the bottom its min. */
+export function energyAreaPath(samples, min, max) {
+    const line = energyStringPath(samples, min, max);
+    if (!line) return '';
+    const count = samples.length;
+    const endX = count === 1 ? 50 : 100;
+    const startX = count === 1 ? 50 : 0;
+    return `${line}L${endX.toFixed(2)} 16L${startX.toFixed(2)} 16Z`;
 }
 
 /** Spectrum color from the smallest point (blue) to the largest (red). `t` is 0..1. */

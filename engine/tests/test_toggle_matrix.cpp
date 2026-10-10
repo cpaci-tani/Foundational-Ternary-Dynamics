@@ -301,6 +301,10 @@ std::map<std::string_view, std::string> expected_scenario_profiles() {
     add({"s0-cell-membrane-pumped"}, "wave_propagation,de_broglie_clock,flux_pump");
     add({"s0-cell-membrane-pumped-resonant"}, "wave_propagation,de_broglie_clock,flux_pump");
     add({"s0-cell-membrane-transfer"}, "wave_propagation,de_broglie_clock,flux_cell_port");
+    // Loop-content pair: the repair runs the Gauss projection alone; the
+    // ring pair runs the bare wave map like the rest of the ring family.
+    add({"s0-cell-loop-repair"}, "gauss_projection");
+    add({"s0-cell-loop-pair"}, "wave_propagation");
 
     return expected;
 }
@@ -310,8 +314,8 @@ int audit_native_scenario_profiles() {
     const auto& ids = ftd::scale0_scenario_ids();
     std::set<std::string_view> unique(ids.begin(), ids.end());
     const auto expected = expected_scenario_profiles();
-    if (ids.size() != 143 || unique.size() != ids.size()) {
-        std::printf("  FAIL  native scenario registry: count=%zu unique=%zu (expected 143)\n",
+    if (ids.size() != 145 || unique.size() != ids.size()) {
+        std::printf("  FAIL  native scenario registry: count=%zu unique=%zu (expected 145)\n",
                     ids.size(), unique.size());
         ++failures;
     }

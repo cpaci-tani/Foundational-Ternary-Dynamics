@@ -26,6 +26,7 @@ function fixture(workerEligible = false) {
         captureOverlayPreferences:()=>({}), syncScale0ToggleUiFromEngine:()=>true,
         syncRecordControls:()=>{}, // UI dependency; this fixture tests owner installation.
         readAuthoritativeTick:()=>0, DEFAULT_TOGGLES:[],
+        SCALE0_SCENARIO_VISUAL_PROFILES:{}, // read for holdSeededState; the fixture scenario declares none.
         ...Object.fromEntries(['setPhysicsToggleCardPending','setSelectedScenarioId','beginScale0AuthoritativeLoad','completeScale0AuthoritativeLoad','failScale0AuthoritativeLoad','applyToggleDefaults','applyAuxiliaryDefaults','applyGravityAbsorbingToggles','markScenarioOverrideRows','syncComboSliders','restoreOverlayPreferences','applyScenarioVisualProfile','applyScale0OverlayApplicability','applyScenarioCameraFocus','recomputeAnyFieldActive','reportScenarioSetupFailure'].map(k=>[k,()=>{}])),
     };
     const api=vm.runInNewContext(helper+loader+'\n({loadScale0Scenario,syncScale0InspectorOwner})',g);

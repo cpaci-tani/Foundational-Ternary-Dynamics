@@ -1,0 +1,44 @@
+{
+  "format": "SeedRecipeV2",
+  "version": 2,
+  "schemaIdentity": "native-seed-2",
+  "title": "Loop repair — what Gauss projection removes and what it cannot touch",
+  "description": "A box-filling longitudinal mode superposed on the flux-cell ring, run with Gauss projection as the only active term, so each tick is one projection pass. The longitudinal mode is removed within about five ticks; the ring and every loop sum of the field are left unchanged. All initial data is [IMPOSED]. View the mid-plane flux slice with the curlJ channel (static) against the divergence channel (fades).",
+  "domain": { "kind": "native", "size": 33 },
+  "recipe": {
+    "version": 2,
+    "scenarioId": "s0-cell-torus",
+    "size": 33,
+    "blank": true,
+    "randomSeed": 0,
+    "components": [
+      {
+        "id": "gradient-wave",
+        "kind": "native",
+        "enabled": true,
+        "scenarioId": "s0-field-sound-lattice-wave",
+        "overrides": {
+          "packet.seedSpeed": 0,
+          "geometry.sigmaFraction": 1,
+          "geometry.cutoffSigmas": 0.75,
+          "packet.amplitude": 0.15,
+          "packet.modeNumber": 8,
+          "packet.phase": 0
+        }
+      },
+      {
+        "id": "ring",
+        "kind": "native",
+        "enabled": true,
+        "scenarioId": "s0-cell-torus",
+        "overrides": {}
+      }
+    ],
+    "overrides": {
+      "protocol.wave_propagation": 0,
+      "protocol.gauss_projection": 1,
+      "protocol.boundary": 0
+    }
+  },
+  "provenance": { "parentPreset": "s0-cell-torus", "custom": true }
+}

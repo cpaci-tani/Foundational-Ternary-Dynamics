@@ -219,17 +219,82 @@
     font-size: var(--fs-xs);
 }
 
-.play-bar-zoom-select {
-    height: calc(32px * var(--ui-scale, 1));
-    max-width: 168px;
+.play-bar-speed-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.play-bar-steps {
+    gap: 4px;
+}
+
+.play-bar-step-count {
+    min-width: calc(36px * var(--ui-scale, 1));
+    height: calc(36px * var(--ui-scale, 1));
     padding: 0 8px;
-    border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: color-mix(in oklch, var(--bg-input) 74%, transparent);
+    color: var(--text-secondary);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    font-size: var(--fs-xs);
+    cursor: pointer;
+}
+
+.play-bar-step-count:hover {
+    color: var(--accent-text);
+    border-color: var(--accent);
+}
+
+.play-bar-zoom {
+    position: relative;
+}
+
+.play-bar-zoom-btn svg {
+    display: block;
+}
+
+.play-bar-zoom-menu {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 10px);
+    min-width: 196px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--bg-elevated);
+    border: var(--glass-border, 1px solid rgba(255, 255, 255, 0.14));
     border-radius: var(--radius-md, 8px);
-    background: color-mix(in oklch, var(--bg-card) 80%, transparent);
+    box-shadow: var(--glass-shadow), var(--shadow-lg);
+    z-index: var(--z-local-overlay);
+}
+
+.play-bar-zoom-menu[hidden] {
+    display: none;
+}
+
+.play-bar-zoom-menu button {
+    text-align: left;
+    padding: 7px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
     color: var(--text-secondary);
     font: inherit;
     font-size: var(--fs-xs);
     cursor: pointer;
+}
+
+.play-bar-zoom-menu button:hover,
+.play-bar-zoom-menu button.is-active {
+    background: color-mix(in oklch, var(--accent) 16%, transparent);
+    color: var(--accent-text);
 }
 
 /* Active-state styling for the gear while its popover is open. */

@@ -872,9 +872,14 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // window.__ftdPrimeTickOnLoad (boolean) is a live override for tests / the
     // overlay-audit harness, letting them force true tick-0 (false) or primed
     // (true) regardless of the persisted user toggle. Falls back to the toggle.
+    // A visual profile may declare holdSeededState where the first tick is the
+    // event the scenario exists to show (one Gauss projection pass removes
+    // most of a gradient field), so priming would spend it before the first
+    // paint. The explicit test override above still wins in either direction.
+    const holdsSeededState = SCALE0_SCENARIO_VISUAL_PROFILES[scenario.id]?.holdSeededState === true;
     const primeOnLoad = (typeof window !== 'undefined' && typeof window.__ftdPrimeTickOnLoad === 'boolean')
         ? window.__ftdPrimeTickOnLoad
-        : state.primeTickOnLoad;
+        : state.primeTickOnLoad && !holdsSeededState;
     if (primeOnLoad && !params.seedRecipe) {
         try {
             if (activeBridge?.isNativeGPU

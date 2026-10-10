@@ -12,7 +12,7 @@ const read = page => page.evaluate(async () => {
 });
 async function start(page) {
     await gotoAndReady(page, {path: '/?engine=wasm', timeout: 90000});
-    await expect(page.locator('#seed-scenario option')).toHaveCount(772, {timeout: 30000});
+    await expect(page.locator('#seed-scenario option')).toHaveCount(774, {timeout: 30000});
     await page.selectOption('#scenario-select', 'record-relation');
     await expect.poll(async () => (await read(page)).ready, {timeout: 40000}).toBe(true);
     await page.evaluate(() => {const c = window.__ftdCtx; c.pauseSimulation(); c.appShell.panelDock.setCollapsed(false); c.appShell.panelDock.activate('seeding');});
@@ -342,7 +342,7 @@ test('every registered form and category base exposes complete numeric editors w
             await expect(panel).toHaveAttribute('data-seed-base', 'false', {timeout: 60000});
         }
     }
-    expect(scenarios).toHaveLength(772);
+    expect(scenarios).toHaveLength(774);
     expect(categories.size).toBe(22);
     expect(await digest(page)).toBe(before);
 });

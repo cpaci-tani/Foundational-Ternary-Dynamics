@@ -70,6 +70,7 @@ import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-pane
 import { initKnotsPanel } from './scales/scale0/ui/overlays/knots-panel.js';
 import { initTransactionPanel } from './scales/scale0/ui/overlays/transaction-panel.js';
 import { initScaleContextPanel } from './scales/scale0/ui/overlays/scale-context-panel.js?v=3';
+import { initMoorePanel } from './scales/scale0/ui/overlays/moore-panel.js';
 // Wire / boot helpers extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
 import { showToast, loadProgress as _loadProgress } from './app-wire/status.js';
@@ -678,6 +679,7 @@ async function init() {
     initKnotsPanel();
     initTransactionPanel();
     initScaleContextPanel();
+    initMoorePanel();
     appRegistry.register('panel:fluxSlice', window.__ftdFluxSlicePanel);
     appRegistry.register('panel:waveLab', window.__ftdWaveLabPanel);
     appRegistry.register('panel:p1Observables', window.__ftdP1Panel);

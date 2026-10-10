@@ -166,6 +166,8 @@ inline constexpr ScenarioMeta SCENARIO_META[] = {
     {"s0-cell-membrane-pumped", "Empty Membrane — Flux-Pump Charge Cycle", "1. Validated Native Dynamics", "", "flux,cell,storage,wave,membrane,pump", "[EMERGENT] charge/hold under an [IMPOSED] time-gated source; pump ledger exact by construction", "admitted-behavioral", 0, 0},
     {"s0-cell-membrane-transfer", "Two Tangent Membranes — Port Transfer Ledger", "1. Validated Native Dynamics", "", "flux,cell,storage,wave,membrane,port,transfer", "[EMERGENT] transfer through an imposed aperture between imposed clocked walls; receiver ledger measured", "admitted-behavioral", 0, 0},
     {"s0-cell-membrane-pumped-resonant", "Empty Membrane — Resonant Flux-Pump Charge", "1. Validated Native Dynamics", "", "flux,cell,storage,wave,membrane,pump,resonance", "[EMERGENT] resonant charging under an [IMPOSED] periodic source; period is a measured engine number", "admitted-behavioral", 0, 0},
+    {"s0-cell-loop-repair", "Gradient Blob Beside Ring — Projection-Only Repair", "1. Validated Native Dynamics", "", "flux,cell,control", "[EMERGENT] under the isolated Gauss projection from [IMPOSED] gradient-blob and ring initial data", "admitted-behavioral", 0, 0},
+    {"s0-cell-loop-pair", "Coherent Ring Beside Scrambled Control — Free-Wave Circulation", "1. Validated Native Dynamics", "", "flux,cell,wave,control", "[EMERGENT] under the isolated periodic wave map from [IMPOSED] coherent and sign-alternated ring data; control", "admitted-behavioral", 0, 0},
 };
 
 inline constexpr std::size_t scenario_meta_count() {

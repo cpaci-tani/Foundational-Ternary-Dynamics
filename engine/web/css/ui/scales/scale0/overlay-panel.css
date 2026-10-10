@@ -1090,11 +1090,45 @@
 
 /* ── Whole-panel collapse ─────────────────────────────── */
 #viewport-overlay.s0-overlay-panel.is-collapsed {
-    width: 224px;
     height: auto;
 }
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas:
+        "mark title summary collapse"
+        "mark subtitle subtitle collapse";
+    align-items: center;
+    column-gap: 8px;
+    row-gap: 2px;
     border-bottom: 0;
+}
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-identity,
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-title-group,
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-header-tools {
+    display: contents;
+}
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-mark {
+    grid-area: mark;
+    align-self: start;
+}
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-title {
+    grid-area: title;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-subtitle {
+    grid-area: subtitle;
+    white-space: normal;
+}
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-summary {
+    grid-area: summary;
+    align-self: start;
+}
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-collapse {
+    grid-area: collapse;
+    align-self: start;
 }
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-command,
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-active,

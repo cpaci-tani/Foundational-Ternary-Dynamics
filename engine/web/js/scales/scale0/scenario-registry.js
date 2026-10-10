@@ -1038,6 +1038,28 @@ export const SCALE0_SCENARIO_CATALOG = [
      * number, not a derived constant.
      */
     makeScenario('1. Validated Native Dynamics', 's0-cell-membrane-pumped-resonant', 'Empty Membrane — Resonant Flux-Pump Charge', ['flux', 'cell', 'storage', 'wave', 'membrane', 'pump', 'resonance'], '[EMERGENT] resonant charging under an [IMPOSED] periodic source; period is a measured engine number'),
+    /*
+     * Scenario: s0-cell-loop-repair (Projection-Only Repair)
+     * Physical purpose: shows what the Gauss projection removes and what it
+     * leaves - a source-free pure-gradient blob beside a flux-cell ring, with
+     * the projection as the only active term.
+     * Expected behavior: the blob is removed; the ring and the centred curl of
+     * the whole field are unchanged.
+     * Discrepancy: the Hodge split of a real-valued field, not a vortex or a
+     * conserved loop charge.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-loop-repair', 'Gradient Blob Beside Ring — Projection-Only Repair', ['flux', 'cell', 'control'], '[EMERGENT] under the isolated Gauss projection from [IMPOSED] gradient-blob and ring initial data'),
+    /*
+     * Scenario: s0-cell-loop-pair (Coherent Ring Beside Its Control)
+     * Physical purpose: a coherent ring and its sign-alternated control in one
+     * box on the periodic free wave map; equal pointwise |J|, only one carries
+     * circulation.
+     * Expected behavior: the coherent circulation reverses within three ticks;
+     * the control reads zero until the coherent ring's waves reach it.
+     * Discrepancy: the comparison ends when the wave fronts meet; no persistent
+     * current or winding number is implied.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-loop-pair', 'Coherent Ring Beside Scrambled Control — Free-Wave Circulation', ['flux', 'cell', 'wave', 'control'], '[EMERGENT] under the isolated periodic wave map from [IMPOSED] coherent and sign-alternated ring data; control'),
 ].sort(compareScale0ScenarioCategories);
 
 // Public/user-facing list: evidence-gated. The full catalog remains available

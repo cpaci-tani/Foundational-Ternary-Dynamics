@@ -12,7 +12,13 @@ function load(path, symbol, globals = {}) {
     return vm.runInNewContext(source + '\n' + symbol, globals);
 }
 const Core = load('viewport/scene-core.js', 'ViewportSceneCore', { THREE: { Color: class {} } });
-const Viewport = load('viewport.js', 'Viewport');
+// The viewport listens on document and window for the fine-orbit keys;
+// teardown must release exactly those.
+const released = [];
+const Viewport = load('viewport.js', 'Viewport', {
+    document: { addEventListener() {}, removeEventListener: (type) => released.push(`document:${type}`) },
+    window: { addEventListener() {}, removeEventListener: (type) => released.push(`window:${type}`) },
+});
 function resource() { return { calls: 0, dispose() { this.calls++; } }; }
 function group(children) { return { traverse(fn) { fn(this); for (const child of children) fn(child); } }; }
 
@@ -56,7 +62,9 @@ test('viewport teardown releases controls, renderer, canvas and every owned dele
     const renderer = { ...resource(), domElement: { remove() { detached++; } } };
     Object.assign(viewport, { controls, renderer, scene: { remove() {} },
         _resizeObserver: { disconnect() { disconnected++; } } });
+    released.length = 0;
     viewport.dispose(); viewport.dispose();
     for (const r of [...delegates, controls, renderer]) assert.equal(r.calls, 1);
     assert.equal(detached, 1); assert.equal(disconnected, 1);
+    assert.deepEqual(released, ['document:keydown', 'document:keyup', 'window:blur'], 'key listeners released once');
 });

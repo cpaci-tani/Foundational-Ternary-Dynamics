@@ -16,7 +16,6 @@ test.describe('Scale 0 playback controls audit gate', () => {
             const { sliderValueToSpeed, speedToSliderValue } = await import(
                 '/js/ui/components/play-bar/speed-scale.js'
             );
-            document.querySelector('.play-bar-settings')?.click();
             const samples = [];
             for (const chip of document.querySelectorAll('[data-speed-preset]')) {
                 const expected = Number.parseFloat(chip.dataset.speedPreset);
@@ -49,7 +48,7 @@ test.describe('Scale 0 playback controls audit gate', () => {
         const consoleErrors = attachConsoleWatcher(page);
         const report = await page.evaluate(async () => {
             const probe = await import('/tests/scale0-ui-audit-probe.js');
-            document.getElementById('play-bar-settings-popover')?.setAttribute('hidden', '');
+            document.getElementById('play-bar-zoom-menu')?.setAttribute('hidden', '');
             await new Promise((resolve) => setTimeout(resolve, 3000));
             probe.startScale0UiAuditProbe({
                 label: 'gate2-hidden-playback-settings',
@@ -173,7 +172,6 @@ test.describe('Scale 0 playback controls audit gate', () => {
             const count = () => { stepClicks += 1; };
             step.addEventListener('click', count, { capture: true });
             try {
-                document.querySelector('.play-bar-settings')?.click();
                 document.querySelector('[data-step-by="100"]')?.click();
                 document.getElementById('btn-reset')?.click();
                 await new Promise((resolve) => setTimeout(resolve, 100));
@@ -191,7 +189,7 @@ test.describe('Scale 0 playback controls audit gate', () => {
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 
-    test('ten remount and settings cycles retain one playback owner and stable resources', async ({ page }) => {
+    test('ten remount and zoom-menu cycles retain one playback owner and stable resources', async ({ page }) => {
         const consoleErrors = attachConsoleWatcher(page);
         const result = await page.evaluate(async () => {
             const scale0 = await import('/js/scales/scale0/controller.js?v=44');
@@ -204,9 +202,10 @@ test.describe('Scale 0 playback controls audit gate', () => {
 
             for (let i = 0; i < 10; i += 1) {
                 scale0.mountScale0PlaybackUI();
-                const settings = document.querySelector('.play-bar-settings');
-                settings.click();
-                settings.click();
+                // The play bar's one popover is the zoom-level menu.
+                const zoom = document.getElementById('play-bar-zoom-btn');
+                zoom.click();
+                zoom.click();
             }
 
             let speedInputEvents = 0;
@@ -225,13 +224,13 @@ test.describe('Scale 0 playback controls audit gate', () => {
                     subscribers: rafCoordinator.size(),
                 },
                 speedInputEvents,
-                settingsExpanded: document.querySelector('.play-bar-settings')?.getAttribute('aria-expanded'),
+                menuExpanded: document.getElementById('play-bar-zoom-btn')?.getAttribute('aria-expanded'),
             };
         });
 
         expect(result.after).toEqual(result.before);
         expect(result.speedInputEvents).toBe(1);
-        expect(result.settingsExpanded).toBe('false');
+        expect(result.menuExpanded).toBe('false');
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 

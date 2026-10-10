@@ -234,6 +234,23 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         fluxVolume: true,
         fieldOverlays: ['toggle-state-field', 'toggle-flux-lines', 'toggle-poynting'],
     },
+    's0-cell-loop-repair': {
+        // Radial gradient blob beside an azimuthal ring: J curves show both,
+        // B=curl(J) shows the part projection keeps, and the divergence
+        // channel shows the part it removes. The first projection pass takes
+        // the blob's peak to about a ninth, so this profile is shown at its
+        // seeded state rather than after the prime tick.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-flux-lines', 'toggle-b-field', 'toggle-div-field'],
+        holdSeededState: true,
+    },
+    's0-cell-loop-pair': {
+        // Two azimuthal rings with W=0 at tick 0: J curves close on the
+        // coherent ring and break on the control; B=curl(J) carries the
+        // sign of the circulation as it reverses.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-flux-lines', 'toggle-b-field'],
+    },
 };
 
 export function setDisplayText(id, text) {

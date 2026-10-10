@@ -27,6 +27,9 @@ export const DASHBOARD_SHORTCUTS = Object.freeze([
         { keys: ['7'], label: 'Toggle gravity force' }, { keys: ['8'], label: 'Toggle strong force' },
         { keys: ['9'], label: 'Toggle weak force' },
     ]) },
+    { group: 'Camera', rows: Object.freeze([
+        { keys: ['Alt'], label: 'Fine pan, orbit, and zoom while held' },
+    ]) },
     { group: 'Help', rows: Object.freeze([
         { keys: ['?'], label: 'Show this keyboard shortcuts list' },
         { keys: ['Esc'], label: 'Close this overlay (or the settings popover)' },

@@ -73,6 +73,11 @@ constexpr double PIN_GATED_CORRECTED_RATIO = 1.0;        // after subtracting th
 constexpr double PIN_GATED_CORRECTED_TOL = 0.2;
 constexpr double PIN_PUMPED_W_IN = 0.049280;             // engine-booked pump work
 constexpr double PIN_PUMPED_RETENTION = 0.8349;          // inner ball after 300 held ticks
+// Loop-content pair pins (L=33, CPU, 2026-10-09).
+constexpr double PIN_LOOP_RING_FLUX2 = 11.1018;          // sum |J|^2 of one R=4 ring
+constexpr double PIN_LOOP_BLOB_FLUX2 = 14.4643;          // sum |J|^2 of the gradient blob
+constexpr double PIN_LOOP_GAMMA0 = 7.3150;               // coherent ring circulation at tick 0
+constexpr double PIN_LOOP_GAMMA4 = -3.0889;              // and at tick 4, after the reversal
 
 double mid() { return (L - 1) * 0.5; }
 
@@ -85,6 +90,46 @@ std::unique_ptr<ftd::RenderBridge> make_at(int lattice, const char* id) {
 }
 
 std::unique_ptr<ftd::RenderBridge> make(const char* id) { return make_at(L, id); }
+
+// The same constructor with explicit seed overrides; used to seed one
+// ingredient of a two-ingredient scenario alone.
+std::unique_ptr<ftd::RenderBridge> make_seeded(const char* id, ftd::seed::Overrides overrides) {
+    auto rb = std::make_unique<ftd::RenderBridge>(L);
+    rb->force_cpu();
+    ftd::seed::Context context(std::string(id), std::move(overrides));
+    const bool ok = ftd::dispatch_scenario_seed(*rb, context);
+    ftd::test::check((std::string(id) + " seeded with overrides").c_str(), ok);
+    return rb;
+}
+
+// Whole-box sums of |J|^2, |curl J|^2 and (div J)^2 with the periodic centred
+// stencil, the one the engine's own curl and divergence diagnostics use.
+struct LoopNorms { double flux2 = 0.0, curl2 = 0.0, div2 = 0.0; };
+
+LoopNorms loop_norms(const ftd::RenderBridge& rb) {
+    const int N = rb.lattice().size();
+    const auto J = [&](int x, int y, int z) -> const ftd::Vec3& {
+        const auto w = [N](int i) { return (i % N + N) % N; };
+        return rb.voxels()[static_cast<std::size_t>(
+            rb.lattice().index(w(x), w(y), w(z)))].flux;
+    };
+    LoopNorms n;
+    for (int z = 0; z < N; ++z)
+    for (int y = 0; y < N; ++y)
+    for (int x = 0; x < N; ++x) {
+        const ftd::Vec3& xp = J(x + 1, y, z); const ftd::Vec3& xm = J(x - 1, y, z);
+        const ftd::Vec3& yp = J(x, y + 1, z); const ftd::Vec3& ym = J(x, y - 1, z);
+        const ftd::Vec3& zp = J(x, y, z + 1); const ftd::Vec3& zm = J(x, y, z - 1);
+        const double cx = 0.5 * ((yp.z - ym.z) - (zp.y - zm.y));
+        const double cy = 0.5 * ((zp.x - zm.x) - (xp.z - xm.z));
+        const double cz = 0.5 * ((xp.y - xm.y) - (yp.x - ym.x));
+        const double dv = 0.5 * ((xp.x - xm.x) + (yp.y - ym.y) + (zp.z - zm.z));
+        n.flux2 += J(x, y, z).mag2();
+        n.curl2 += cx * cx + cy * cy + cz * cz;
+        n.div2 += dv * dv;
+    }
+    return n;
+}
 
 ftd::FluxCellRegion whole_box() {
     return ftd::FluxCellRegion{mid(), mid(), mid(), 2.0 * L};
@@ -1031,6 +1076,145 @@ int main() {
         const MembraneTrace tr = run_membrane_hold(*rb, inner, HOLD_TICKS, "resonant_scenario");
         ftd::test::check("resonant cell holds its energy after disconnection",
                          tr.drift_max < HAMILTONIAN_DRIFT_GATE);
+    }
+
+    // ── Loop-content pair (2026-10-09) ──────────────────────────────
+    // Geometry of record at L=33: ring centres at x = 8 and 24, R = 4,
+    // sigma = 1.25, cutoff 3 sigma, so the two supports are disjoint.
+    const double loop_R = (L - 1) / 8.0;
+    const double loop_sigma = (L - 1) / 25.6;
+    const double loop_xa = 0.25 * (L - 1), loop_xb = 0.75 * (L - 1);
+    // flux_cell_ring_circulation samples the nearest site at each point of
+    // a circle. The automatic count at R = 4 is 51; an odd count does not
+    // respect the quarter-turn symmetry that makes the control's sum cancel,
+    // so the count is fixed at a multiple of four.
+    constexpr int LOOP_SAMPLES = 64;
+
+    ftd::test::section("s0-cell-loop-repair: projection removes the gradient blob and keeps the loop content");
+    {
+        auto rb = make("s0-cell-loop-repair");
+        auto ring_only = make_seeded("s0-cell-loop-repair", {{"packet.amplitude", 0.0}});
+        auto blob_only = make_seeded("s0-cell-loop-repair", {{"ring.amplitude", 0.0}});
+        ftd::test::check("loop-repair runs the Gauss projection and nothing else",
+                         rb->toggles.gauss_projection && !rb->toggles.wave_propagation
+                         && !rb->toggles.genesis && !rb->toggles.damping);
+        ftd::test::check("loop-repair uses the periodic box",
+                         rb->toggles.flux_boundary == ftd::FluxBoundaryMode::Periodic);
+
+        const LoopNorms n0 = loop_norms(*rb), r0 = loop_norms(*ring_only), b0 = loop_norms(*blob_only);
+        const double gamma0 = ftd::flux_cell_ring_circulation(*rb, loop_xa, mid(), mid(), loop_R, LOOP_SAMPLES);
+        ftd::test::metric("loop_repair.flux2", n0.flux2, 0);
+        ftd::test::metric("loop_repair.curl2", n0.curl2, 0);
+        ftd::test::metric("loop_repair.div2", n0.div2, 0);
+        ftd::test::metric("loop_repair.ring_flux2", r0.flux2, 0);
+        ftd::test::metric("loop_repair.blob_flux2", b0.flux2, 0);
+        ftd::test::metric("loop_repair.blob_curl2_over_flux2", b0.curl2 / b0.flux2, 0);
+        ftd::test::metric("loop_repair.gamma", gamma0, 0);
+        ftd::test::check("the gradient blob carries no loop content",
+                         b0.curl2 < 1e-24 * b0.flux2);
+        ftd::test::check("the blob is the larger part of the seeded field",
+                         b0.flux2 > r0.flux2);
+        ftd::test::check_close("ring and blob supports are disjoint, so their |J|^2 add",
+                               n0.flux2, r0.flux2 + b0.flux2, 1e-12 * n0.flux2);
+        ftd::test::check_close("pinned: ring sum |J|^2", r0.flux2,
+                               PIN_LOOP_RING_FLUX2, PIN_REL * PIN_LOOP_RING_FLUX2);
+        ftd::test::check_close("pinned: gradient blob sum |J|^2", b0.flux2,
+                               PIN_LOOP_BLOB_FLUX2, PIN_REL * PIN_LOOP_BLOB_FLUX2);
+
+        LoopNorms n5, b5;
+        for (int t = 1; t <= 50; ++t) {
+            rb->tick(); ring_only->tick(); blob_only->tick();
+            if (t == 5) { n5 = loop_norms(*rb); b5 = loop_norms(*blob_only); }
+        }
+        const LoopNorms n1 = loop_norms(*rb), r1 = loop_norms(*ring_only), b1 = loop_norms(*blob_only);
+        const double gamma1 = ftd::flux_cell_ring_circulation(*rb, loop_xa, mid(), mid(), loop_R, LOOP_SAMPLES);
+        ftd::test::metric("loop_repair.blob_flux2_ratio", b5.flux2 / b0.flux2, 5);
+        ftd::test::metric("loop_repair.div2_ratio", n5.div2 / n0.div2, 5);
+        ftd::test::metric("loop_repair.blob_flux2_ratio", b1.flux2 / b0.flux2, 50);
+        ftd::test::metric("loop_repair.div2_ratio", n1.div2 / n0.div2, 50);
+        ftd::test::metric("loop_repair.curl2_rel_change", (n1.curl2 - n0.curl2) / n0.curl2, 50);
+        ftd::test::metric("loop_repair.flux2_over_ring", n1.flux2 / r1.flux2, 50);
+        ftd::test::metric("loop_repair.ring_flux2_ratio", r1.flux2 / r0.flux2, 50);
+        ftd::test::metric("loop_repair.gamma", gamma1, 50);
+        const auto& repaired = rb->voxels();
+        ftd::test::check("no site manifests under projection alone",
+                         std::none_of(repaired.begin(), repaired.end(),
+                                      [](const ftd::Voxel& v) { return v.state != 0; }));
+        ftd::test::check_close("the curl of the whole field is unchanged by 50 projection ticks",
+                               n1.curl2, n0.curl2, 1e-12 * n0.curl2);
+        ftd::test::check("five projection ticks remove most of the blob",
+                         b5.flux2 < 1e-2 * b0.flux2);
+        ftd::test::check("fifty projection ticks remove the blob",
+                         b1.flux2 < 1e-6 * b0.flux2);
+        ftd::test::check("the divergence of the whole field is repaired",
+                         n1.div2 < 1e-6 * n0.div2);
+        ftd::test::check_close("what remains is the ring",
+                               n1.flux2, r1.flux2, 1e-6 * r1.flux2);
+        ftd::test::check_close("projection leaves the ring's own |J|^2 within 0.1%",
+                               r1.flux2, r0.flux2, 1e-3 * r0.flux2);
+        // The circle estimator is not an exact lattice loop sum, so removing
+        // the ring's own small divergence moves it by a fraction of a percent.
+        // The exact statement is the unchanged curl above.
+        ftd::test::check_close("ring circulation is unchanged to within 1% by the repair",
+                               gamma1, gamma0, 1e-2 * std::fabs(gamma0));
+    }
+
+    ftd::test::section("s0-cell-loop-pair: coherent circulation reverses beside a zero-circulation control");
+    {
+        auto rb = make("s0-cell-loop-pair");
+        ftd::test::check("loop-pair runs the bare wave map",
+                         rb->toggles.wave_propagation && !rb->toggles.gauss_projection
+                         && !rb->toggles.genesis && !rb->toggles.damping);
+        ftd::test::check("loop-pair uses the periodic box",
+                         rb->toggles.flux_boundary == ftd::FluxBoundaryMode::Periodic);
+        const ftd::FluxCellRegion region_a{loop_xa, mid(), mid(), loop_R + 3.0 * loop_sigma};
+        const ftd::FluxCellRegion region_b{loop_xb, mid(), mid(), loop_R + 3.0 * loop_sigma};
+        const double uj_a = ftd::compute_flux_cell_ledger(*rb, region_a).U_J;
+        const double uj_b = ftd::compute_flux_cell_ledger(*rb, region_b).U_J;
+        const double H0 = ftd::compute_flux_cell_ledger(*rb, whole_box()).H_wave;
+        ftd::test::metric("loop_pair.U_J_coherent", uj_a, 0);
+        ftd::test::metric("loop_pair.U_J_control", uj_b, 0);
+        ftd::test::check_close("the two rings store identical U_J", uj_a, uj_b, 1e-12 * uj_a);
+
+        const auto gamma_coherent = [&] {
+            return ftd::flux_cell_ring_circulation(*rb, loop_xa, mid(), mid(), loop_R, LOOP_SAMPLES); };
+        const auto gamma_control = [&] {
+            return ftd::flux_cell_ring_circulation(*rb, loop_xb, mid(), mid(), loop_R, LOOP_SAMPLES); };
+        double coherent[9], control[9];
+        double drift_max = 0.0;
+        for (int t = 0; t <= 8; ++t) {
+            if (t > 0) rb->tick();
+            coherent[t] = gamma_coherent();
+            control[t] = gamma_control();
+            ftd::test::metric("loop_pair.gamma_coherent", coherent[t], t);
+            ftd::test::metric("loop_pair.gamma_control", control[t], t);
+            const double H = ftd::compute_flux_cell_ledger(*rb, whole_box()).H_wave;
+            drift_max = std::max(drift_max, std::fabs(H - H0) / H0);
+        }
+        ftd::test::metric("loop_pair.H_drift_max", drift_max, 8);
+        ftd::test::check("the coherent ring carries circulation", coherent[0] > 1.0);
+        ftd::test::check_close("pinned: coherent circulation at tick 0", coherent[0],
+                               PIN_LOOP_GAMMA0, PIN_REL * PIN_LOOP_GAMMA0);
+        ftd::test::check_close("pinned: coherent circulation at tick 4", coherent[4],
+                               PIN_LOOP_GAMMA4, PIN_REL * std::fabs(PIN_LOOP_GAMMA4));
+        ftd::test::check("the control ring's circulation vanishes",
+                         std::fabs(control[0]) < 1e-9 * coherent[0]);
+        ftd::test::check("coherent circulation is still positive at tick 2", coherent[2] > 0.0);
+        ftd::test::check("coherent circulation has reversed by tick 3", coherent[3] < 0.0);
+        ftd::test::check("the reversal is not marginal", coherent[5] < -0.1 * coherent[0]);
+        double control_early = 0.0, control_all = 0.0;
+        for (int t = 0; t <= 8; ++t) {
+            if (t <= 4) control_early = std::max(control_early, std::fabs(control[t]));
+            control_all = std::max(control_all, std::fabs(control[t]));
+        }
+        ftd::test::metric("loop_pair.control_max_through_4", control_early, 4);
+        ftd::test::metric("loop_pair.control_max_through_8", control_all, 8);
+        ftd::test::check("the control is circulation-free through tick 4, across the reversal",
+                         control_early < 1e-3 * coherent[0]);
+        ftd::test::check("the control stays below 1% of the coherent start through tick 8",
+                         control_all < 1e-2 * coherent[0]);
+        ftd::test::check("the wave map conserves the Hamiltonian while circulation reverses",
+                         drift_max < HAMILTONIAN_DRIFT_GATE);
     }
 
     return ftd::test::finalize();

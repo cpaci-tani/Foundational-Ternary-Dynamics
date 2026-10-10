@@ -222,6 +222,9 @@ const std::vector<std::string_view>& scale0_scenario_ids() {
         "s0-cell-membrane-pumped",
         "s0-cell-membrane-transfer",
         "s0-cell-membrane-pumped-resonant",
+        // Loop-content pair (src/scenarios/cell.cpp, 2026-10-09)
+        "s0-cell-loop-repair",
+        "s0-cell-loop-pair",
     };
     return ids;
 }

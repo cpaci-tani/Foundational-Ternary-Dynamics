@@ -1151,6 +1151,7 @@ export class ViewportFluxRenderer {
             this._fluxActivationScratchB,
             this._fluxActivation,
         );
+        this._fluxDensitySnapshot = density;
         let instantMaxActivation = computedInstantMax;
         if (needsClip && computedInstantMax > 0) {
             // Normalise only against drawable cells. Energy outside a shaped
