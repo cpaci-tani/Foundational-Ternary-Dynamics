@@ -1,9 +1,10 @@
 import {
-    anchorRuler, formatLength, lengthGauge, LIVE_MEASURE_DEFAULTS, rulerInsets, viewportScale, visibleLatticeSpan,
+    anchorRuler, formatLength, lengthGauge, LIVE_MEASURE_DEFAULTS, OUTER_WORLD_PX, rulerInsets, viewportScale, visibleLatticeSpan,
 } from './measure.js';
 import { createLatticeRuler } from './lattice-ruler.js';
 import { createVoxelClocks } from './voxel-clocks.js';
 import { createMooreNeighborhood } from './neighborhood.js';
+import { createLandmarkRings } from './landmark-rings.js';
 import { createViewportRuler } from './viewport-ruler.js';
 
 const OBSTACLE_IDS = ['panel-area', 'viewport-overlay'];
@@ -16,7 +17,8 @@ export function mountLiveRulers(container) {
     const lattice = createLatticeRuler();
     const clocks = createVoxelClocks();
     const neighborhood = createMooreNeighborhood();
-    root.append(view.el, lattice.el, clocks.el, neighborhood.el);
+    const landmarks = createLandmarkRings();
+    root.append(view.el, lattice.el, clocks.el, neighborhood.el, landmarks.el);
     container.appendChild(root);
 
     // A setting reaches the DOM only when its value changes. The last value
@@ -135,6 +137,19 @@ export function mountLiveRulers(container) {
                 close && perSite ? pack.sites : [],
                 close && measures.mooreEnergy !== false ? pack.energy : null,
             );
+            // Beyond the quasi-domain the lattice is a dot and nothing is
+            // simulated; the reference rings take over from the bracket.
+            const centre = reading.latticeCentre;
+            const beyond = gauge.subject === 'lattice' && !!centre && measures.scaleLandmarks !== false
+                && (reading.shellDiameter || domain) * centre.pixelsPerVoxel <= OUTER_WORLD_PX;
+            landmarks.render(beyond ? {
+                x: centre.x,
+                y: centre.y,
+                pixelsPerVoxel: centre.pixelsPerVoxel,
+                viewWidth: viewRect.width,
+                viewHeight: viewRect.height,
+                latticeVoxels: domain,
+            } : null);
         },
         dispose() {
             observer?.disconnect();

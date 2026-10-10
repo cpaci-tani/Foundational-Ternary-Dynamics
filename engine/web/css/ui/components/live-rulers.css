@@ -326,3 +326,113 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
     white-space: nowrap;
 }
+
+/* Reference rings for the zoom-out beyond the lattice (landmark-rings.js).
+   External reference lengths: drawn dashed, in a neutral tone, so they do not
+   read as simulated structure. */
+.scale-landmarks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    contain: layout style;
+}
+
+.scale-landmarks[hidden],
+.scale-landmarks [hidden] {
+    display: none;
+}
+
+.scale-landmarks-rings {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.scale-landmark-ring {
+    fill: none;
+    stroke: rgba(215, 221, 230, 0.55);
+    stroke-width: 1.25;
+    stroke-dasharray: 6 5;
+    vector-effect: non-scaling-stroke;
+}
+
+.scale-landmark-ring--experiment {
+    stroke: rgba(240, 199, 199, 0.75);
+}
+
+.scale-landmark-ring--reference {
+    stroke: rgba(180, 205, 240, 0.6);
+    stroke-dasharray: 2 6;
+}
+
+.scale-landmark-label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 16px;
+    line-height: 1.2;
+    color: #e8eef5;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    white-space: nowrap;
+    will-change: transform;
+}
+
+.scale-landmark-label--experiment {
+    color: #f0c7c7;
+}
+
+.scale-landmarks-centre {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+}
+
+.scale-landmarks-dot {
+    position: absolute;
+    left: -3px;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f0c7c7;
+    box-shadow: 0 0 0 2px rgba(15, 23, 41, 0.9);
+}
+
+/* Left of the dot: ring labels always sit to the right of the centre. */
+.scale-landmarks-centre-label {
+    position: absolute;
+    left: -10px;
+    top: 0;
+    transform: translate(-100%, -50%);
+    font-size: 16px;
+    line-height: 1.2;
+    color: #f0c7c7;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    white-space: nowrap;
+}
+
+.scale-landmarks-caption {
+    position: absolute;
+    left: 50%;
+    top: 132px;
+    transform: translateX(-50%);
+    max-width: min(46ch, 60%);
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.35;
+    color: rgba(215, 221, 230, 0.86);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.scale-landmarks-caption p {
+    margin: 0;
+}
+
+.scale-landmarks-next {
+    margin-top: 4px;
+    color: #e8eef5;
+}

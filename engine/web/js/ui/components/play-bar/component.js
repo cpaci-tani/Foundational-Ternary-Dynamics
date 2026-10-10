@@ -76,7 +76,10 @@ export class PlayBarComponent extends BaseLifecycleController {
             for (const item of this.zoomMenu.querySelectorAll('[data-framed-view]')) {
                 this.bindEvent(item, 'click', (e) => {
                     e.stopPropagation();
-                    appRegistry.get('viewport')?.setFramedView?.(item.dataset.framedView);
+                    // Stops beyond the lattice are travelled to, so the empty range is seen.
+                    appRegistry.get('viewport')?.setFramedView?.(
+                        item.dataset.framedView, { animate: item.hasAttribute('data-travel') },
+                    );
                     this._setZoomMenu(false);
                 });
             }

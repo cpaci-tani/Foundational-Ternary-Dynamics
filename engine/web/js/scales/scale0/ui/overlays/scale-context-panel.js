@@ -16,6 +16,7 @@ import {
     FTD_ELECTRON_PRIMARY_PLANCK_TIME_S, FTD_PLANCK_LENGTH_RELATIVE_ERROR,
     FTD_TICK_S, HBAR_C_MEV_M, M_PLANCK_GEV, K_B, K_GENESIS, M_E_PHYS, C_WAVE,
 } from '../../../../constants.js';
+import { SCALE_LANDMARKS } from '../../../../ui/components/live-rulers/scale-landmarks.js';
 
 const PANEL_ID = 'scale-context-panel';
 export const SCALE0_LATTICE_SIZE_ACK_EVENT = 'ftd:scale0-lattice-size-ack';
@@ -213,10 +214,17 @@ function paintPhysicalRuler(panel, L) {
     const points = [
         { x: logPosition(latticeM), className: 'live', label: `current lattice L=${L}` },
         { x: logPosition(LHC_LEN_M), className: 'lhc', label: 'LHC resolution' },
-        { x: logPosition(1e-15), className: 'reference', label: 'nuclear scale' },
+        // The same external reference lengths the zoom-out view draws as
+        // rings. Measured values, not FTD results; nothing between the
+        // lattice and these is simulated.
+        ...SCALE_LANDMARKS.filter((landmark) => landmark.id !== 'lhc').map((landmark) => ({
+            x: logPosition(landmark.metres),
+            className: 'reference',
+            label: `${landmark.label}: ${sci(landmark.metres)} m (${landmark.basis})`,
+        })),
         { x: logPosition(1e-10), className: 'reference', label: 'atomic scale' },
     ];
-    const aria = `Log length context from one Planck length to atomic scale. The current L=${L} lattice spans ${sci(latticeM)} metres. LHC resolution is ${sci(LHC_LEN_M)} metres.`;
+    const aria = `Log length context from one Planck length to atomic scale. The current L=${L} lattice spans ${sci(latticeM)} metres. LHC resolution is ${sci(LHC_LEN_M)} metres. Reference marks for the elementary particles run from the top quark near 1e-18 metres to the electron near 4e-13 metres; nothing between the lattice and those lengths is simulated.`;
     svg.setAttribute('aria-label', aria);
     svg.replaceChildren();
     const namespace = 'http://www.w3.org/2000/svg';
