@@ -7,8 +7,6 @@
  * @related ./flux-volume-worker.js (protocol)
  */
 
-const FLUX_VOLUME_WORKER_URL = new URL('./flux-volume-worker.js', import.meta.url);
-
 export class FluxVolumeWorkerClient {
     /**
      * @param {object} options
@@ -26,7 +24,13 @@ export class FluxVolumeWorkerClient {
         try {
             if (workerFactory) this._worker = workerFactory();
             else if (typeof Worker !== 'undefined') {
-                this._worker = new Worker(FLUX_VOLUME_WORKER_URL, { type: 'module', name: 'FTDFluxVolume' });
+                // The URL is built inside the Worker call on purpose: the
+                // production build (Vite) bundles a worker and its imports
+                // only when it sees exactly this form.
+                this._worker = new Worker(
+                    new URL('./flux-volume-worker.js', import.meta.url),
+                    { type: 'module', name: 'FTDFluxVolume' },
+                );
             }
         } catch (error) {
             this._worker = null;
