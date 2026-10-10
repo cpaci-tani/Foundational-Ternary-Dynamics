@@ -19,6 +19,8 @@ import {
     anchorRuler,
     lengthGauge,
     rulerInsets,
+    RULER_END_LABEL_PX,
+    RULER_MIN_WIDTH_PX,
     latticeScale,
     niceStep,
     viewportScale,
@@ -85,6 +87,45 @@ test('the viewport ruler stops at the inner edges of the side panels', () => {
     ]);
     assert.equal(bottom.left, 8);
     assert.equal(bottom.right, 8);
+});
+
+test('the viewport ruler takes the widest open stretch of its own row', () => {
+    const view = { left: 0, right: 2000, top: 71, bottom: 745, width: 2000, height: 674 };
+    const rect = (left, right, top, bottom) => ({ left, right, top, bottom, width: right - left, height: bottom - top });
+    // A collapsed dock leaves only its icon rail and grip: the ruler starts beside them.
+    const rail = rulerInsets(view, [rect(12, 56, 83, 705), rect(50, 62, 83, 705), rect(1745, 1988, 79, 121)]);
+    assert.equal(rail.left, 70);
+    assert.equal(rail.right, 263);
+    assert.equal(rail.width, 2000 - 70 - 263);
+    assert.equal(rail.hidden, false);
+    // The play bar docked in the top row is an obstacle like any other.
+    const playBar = rulerInsets(view, [rect(13, 585, 85, 131), rect(1640, 1988, 79, 705)]);
+    assert.equal(playBar.left, 593);
+    assert.equal(playBar.right, 368);
+    // Something in the middle of the row splits it; the wider side wins.
+    const middle = rulerInsets(view, [rect(600, 800, 80, 120)]);
+    assert.equal(middle.left, 808);
+    assert.equal(middle.right, 8);
+    // What starts below the row is not in the way, however tall it is.
+    const below = rulerInsets(view, [rect(0, 400, 71 + 70, 745)]);
+    assert.equal(below.left, 8);
+    // Too little room: the ruler is hidden rather than squeezed.
+    const cramped = rulerInsets(view, [rect(0, 900, 80, 700), rect(1100, 2000, 80, 700)]);
+    assert.equal(cramped.width, 184);
+    assert.equal(cramped.hidden, true);
+    assert.equal(rulerInsets(view, [rect(0, 800, 80, 700), rect(1100, 2000, 80, 700)]).hidden, false);
+    assert.ok(RULER_MIN_WIDTH_PX > RULER_END_LABEL_PX, 'a ruler that is shown always has room for its end label');
+});
+
+test('ticks are as many as the width can label, and none sits under the end label', () => {
+    assert.deepEqual(viewportScale(100).ticks, [0, 20, 40, 60, 80, 100], 'default is unchanged');
+    // A narrow ruler asks for fewer divisions.
+    assert.deepEqual(viewportScale(100, 3).ticks, [0, 50, 100]);
+    // 96.4 is too close to 100 for both labels; with clearance it is dropped.
+    assert.deepEqual(viewportScale(104, 8).ticks, [0, 20, 40, 60, 80, 100, 104]);
+    assert.deepEqual(viewportScale(104, 8, 0.12).ticks, [0, 20, 40, 60, 80, 104]);
+    const scale = viewportScale(180.9, 8, RULER_END_LABEL_PX / 1667);
+    assert.deepEqual(scale.ticks, [0, 50, 100, 150, 180.9]);
 });
 
 test('the bracket moves from the nearest voxel to the lattice to the quasi-domain', () => {

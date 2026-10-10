@@ -1089,46 +1089,54 @@
 }
 
 /* ── Whole-panel collapse ─────────────────────────────── */
+/* Collapsed, the panel is a one-line pill: mark, name, active count. It is as
+   wide as that text, so the view ruler gets the rest of the row. The collapse
+   button is stretched over the whole pill, which makes the pill itself the
+   control for mouse and keyboard alike. */
 #viewport-overlay.s0-overlay-panel.is-collapsed {
+    width: auto;
     height: auto;
+    border-radius: var(--overlay-pill-radius, 999px);
 }
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-header {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto auto;
-    grid-template-areas:
-        "mark title summary collapse"
-        "mark subtitle subtitle collapse";
-    align-items: center;
-    column-gap: 8px;
-    row-gap: 2px;
+    position: relative;
+    gap: 8px;
+    min-height: var(--overlay-pill-height, 40px);
+    padding: 0 8px;
     border-bottom: 0;
 }
-#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-identity,
-#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-title-group,
-#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-header-tools {
-    display: contents;
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-identity {
+    gap: 8px;
 }
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-mark {
-    grid-area: mark;
-    align-self: start;
+    width: 24px;
+    height: 24px;
 }
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-title {
-    grid-area: title;
-    overflow: hidden;
+    letter-spacing: 0.06em;
     white-space: nowrap;
-    text-overflow: ellipsis;
-}
-#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-subtitle {
-    grid-area: subtitle;
-    white-space: normal;
 }
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-summary {
-    grid-area: summary;
-    align-self: start;
+    min-width: 0;
+    padding: 3px 8px;
+}
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-subtitle,
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-summary-unit {
+    display: none;
 }
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-collapse {
-    grid-area: collapse;
-    align-self: start;
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    padding: 0;
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    cursor: pointer;
+}
+#viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-collapse:hover {
+    background: var(--state-hover-bg);
 }
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-command,
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-active,
@@ -1137,7 +1145,7 @@
     display: none;
 }
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-collapse-icon {
-    transform: translateY(-2px) rotate(45deg);
+    display: none;
 }
 
 @media (max-width: 1100px) and (min-width: 768px) {

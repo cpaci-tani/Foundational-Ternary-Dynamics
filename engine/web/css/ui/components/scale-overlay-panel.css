@@ -168,8 +168,54 @@
     display: none !important;
 }
 
+/* Collapsed, every scale's panel is the same one-line pill as Scale 0's: as
+   wide as its title, so the view ruler gets the rest of the row. Each scale
+   sets its open width on an id selector, hence the !important here. The
+   collapse button is stretched over the pill, which makes the whole pill the
+   control. */
+.scale-overlay-panel.is-collapsed {
+    width: auto !important;
+    max-width: calc(100vw - 24px) !important;
+    border-radius: var(--overlay-pill-radius, 999px);
+}
+
+.scale-overlay-panel.is-collapsed .scale-overlay-header {
+    position: relative;
+    min-height: var(--overlay-pill-height, 40px);
+    padding: 0 14px;
+    border-bottom: 0;
+}
+
+.scale-overlay-panel.is-collapsed .scale-overlay-title {
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.scale-overlay-panel.is-collapsed .scale-overlay-count-unit {
+    display: none;
+}
+
+.scale-overlay-panel.is-collapsed .scale-overlay-collapse-slot {
+    position: static;
+}
+
+.scale-overlay-panel.is-collapsed .viewport-overlay-collapse {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    padding: 0;
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+}
+
 .scale-overlay-panel.is-collapsed .viewport-overlay-collapse-icon {
-    transform: rotate(180deg);
+    display: none;
+}
+
+.scale-overlay-panel.is-collapsed .viewport-overlay-collapse:hover {
+    background: var(--state-hover-bg);
 }
 
 @media (max-width: 767px) {

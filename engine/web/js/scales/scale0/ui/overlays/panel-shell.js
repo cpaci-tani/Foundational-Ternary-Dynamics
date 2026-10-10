@@ -166,8 +166,10 @@ export function refreshOverlayPanelShell() {
     const activeCount = rebuildActiveStrip(document.getElementById('s0-overlay-active'));
     const summary = document.getElementById('s0-overlay-summary');
     if (summary) {
-        const next = `${activeCount} active`;
-        if (summary.textContent !== next) summary.textContent = next;
+        // The number is its own node: the collapsed pill shows it without "active".
+        const count = summary.querySelector('.s0-overlay-summary-count');
+        const next = String(activeCount);
+        if (count && count.textContent !== next) count.textContent = next;
         summary.classList.toggle('is-empty', activeCount === 0);
     }
     refreshColumnCounts(body);

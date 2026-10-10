@@ -1,5 +1,6 @@
 import {
-    anchorRuler, formatLength, lengthGauge, LIVE_MEASURE_DEFAULTS, OUTER_WORLD_PX, rulerInsets, viewportScale, visibleLatticeSpan,
+    anchorRuler, formatLength, lengthGauge, LIVE_MEASURE_DEFAULTS, OUTER_WORLD_PX, RULER_END_LABEL_PX, RULER_TICK_SPACING_PX,
+    rulerInsets, viewportScale, visibleLatticeSpan,
 } from './measure.js';
 import { createLatticeRuler } from './lattice-ruler.js';
 import { createVoxelClocks } from './voxel-clocks.js';
@@ -7,8 +8,22 @@ import { createMooreNeighborhood } from './neighborhood.js';
 import { createLandmarkRings } from './landmark-rings.js';
 import { createViewportRuler } from './viewport-ruler.js';
 
-const OBSTACLE_IDS = ['panel-area', 'viewport-overlay'];
+// Everything that can sit in the view ruler's row. The shell pieces live
+// outside the view container; whatever floats inside it is found by walking
+// the container's own children, so a panel added later is avoided without
+// being listed here. `data-view-obstacle` opts in anything else.
+const SHELL_OBSTACLES = '#tab-bar, #panel-rail-resizer, #panel-area, #panel-side-resizer, #play-bar, '
+    + '.conservation-micropanel, [data-view-obstacle]';
+const NOT_OBSTACLES = '.live-rulers, #viewport-frame-chrome, canvas';
 const LAYOUT_MAX_AGE_MS = 250;
+
+/** A rectangle only counts while the element is actually on screen. */
+function visibleRect(el) {
+    if (!el || el.hidden || el.getClientRects().length === 0) return null;
+    const style = getComputedStyle(el);
+    if (style.visibility === 'hidden' || Number(style.opacity) < 0.05) return null;
+    return el.getBoundingClientRect();
+}
 
 export function mountLiveRulers(container) {
     const root = document.createElement('div');
@@ -51,15 +66,17 @@ export function mountLiveRulers(container) {
         if (layout && now - layoutAt < LAYOUT_MAX_AGE_MS) return layout;
         const viewRect = container.getBoundingClientRect();
         const obstacles = [];
-        for (const id of OBSTACLE_IDS) {
-            const el = document.getElementById(id);
-            if (!el) continue;
+        const consider = (el) => {
             if (observer && !watched.has(el)) {
                 watched.add(el);
                 observer.observe(el);
             }
-            if (el.hidden || el.getClientRects().length === 0) continue;
-            obstacles.push(el.getBoundingClientRect());
+            const rect = visibleRect(el);
+            if (rect) obstacles.push(rect);
+        };
+        for (const el of document.querySelectorAll(SHELL_OBSTACLES)) consider(el);
+        for (const el of container.children) {
+            if (el !== root && !el.matches(NOT_OBSTACLES)) consider(el);
         }
         layout = { viewRect, obstacles };
         layoutAt = now;
@@ -79,22 +96,26 @@ export function mountLiveRulers(container) {
             if (latticeValue && once('value-font', valueSize)) latticeValue.style.fontSize = valueSize;
             const lineWidth = `${measures.lineThickness ?? 1.5}px`;
             if (latticeWave && once('wave-stroke', lineWidth)) latticeWave.style.strokeWidth = lineWidth;
-            const viewHidden = measures.viewRuler === false;
-            if (once('view-hidden', viewHidden)) view.el.hidden = viewHidden;
             const gauge = lengthGauge(reading.engineMode);
             const metres = gauge.metresPerUnit;
             const format = (units, step) => formatLength(units, step, metres);
             const domain = gauge.domainUnits || Math.max(1, reading.latticeSize || 1);
             const span = visibleLatticeSpan(reading);
             const { viewRect, obstacles } = readLayout();
+            // The ruler takes the widest open stretch of its row and is hidden
+            // when that stretch is too narrow to carry it.
             const insets = rulerInsets(viewRect, obstacles);
+            const viewHidden = measures.viewRuler === false || insets.hidden;
+            if (once('view-hidden', viewHidden)) view.el.hidden = viewHidden;
             const insetLeft = `${insets.left}px`;
             if (once('inset-left', insetLeft)) view.el.style.left = insetLeft;
             const insetRight = `${insets.right}px`;
             if (once('inset-right', insetRight)) view.el.style.right = insetRight;
             const openPx = Math.max(1, viewRect.width - insets.left - insets.right);
             const openSpan = span.latticeWidth * (openPx / Math.max(1, viewRect.width));
-            view.render(viewportScale(openSpan), format, metres);
+            // As many ticks as the width can label, and none under the end label.
+            const divisions = Math.max(2, Math.min(8, Math.floor(openPx / RULER_TICK_SPACING_PX)));
+            view.render(viewportScale(openSpan, divisions, RULER_END_LABEL_PX / openPx), format, metres);
             const anchor = anchorRuler({
                 domainUnits: domain,
                 pixelsPerUnit: span.pixelsPerVoxel,

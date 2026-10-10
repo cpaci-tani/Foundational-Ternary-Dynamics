@@ -291,11 +291,18 @@ export function formatLength(units, step = 1, metresPerUnit = VOXEL_LENGTH_M) {
     return `${mant.toFixed(places)}×10${superscript(exp)} m`;
 }
 
-export function viewportScale(span) {
-    const step = niceStep(span, 8);
+/**
+ * Ticks for the view ruler. `divisions` is how many steps fit without their
+ * labels touching. `endClearance` is the share of the span the right-aligned
+ * end label needs; an interior tick that close to the end is left out so the
+ * two labels never print over each other.
+ */
+export function viewportScale(span, divisions = 8, endClearance = 0) {
+    const step = niceStep(span, divisions);
     const ticks = [0];
     if (step > 0 && step < span) {
-        for (let v = step; v < span - step * 0.05; v += step) {
+        const limit = span - Math.max(step * 0.05, span * Math.max(0, endClearance));
+        for (let v = step; v < limit; v += step) {
             ticks.push(v);
             if (ticks.length > 16) break;
         }
@@ -304,35 +311,45 @@ export function viewportScale(span) {
     return { span, step, ticks };
 }
 
+/** Height below the view's top edge that the view ruler occupies, in pixels. */
+export const RULER_BAND_PX = 70;
+/** Below this width the view ruler is hidden rather than squeezed. */
+export const RULER_MIN_WIDTH_PX = 240;
+/** Pixels one tick label needs, and the end label with its neighbour's half. */
+export const RULER_TICK_SPACING_PX = 170;
+export const RULER_END_LABEL_PX = 190;
+
 /**
- * Pixel insets that keep the viewport ruler in the open gap between side panels.
- * A full-width or short bottom sheet is not a side panel.
+ * Where the view ruler fits: the widest open stretch of its own row, with
+ * `gap` pixels of air on both sides. An obstacle is anything whose rectangle
+ * reaches into the ruler's row (a rail, a side panel, a floating panel open or
+ * collapsed, a bar docked on top). A full-width element is a backdrop, not an
+ * obstacle. `hidden` says the stretch is too narrow to carry a ruler.
  */
-export function rulerInsets(view, obstacles, gap = 8) {
+export function rulerInsets(view, obstacles, gap = 8, { band = RULER_BAND_PX, minWidth = RULER_MIN_WIDTH_PX } = {}) {
     const width = Math.max(1, view?.width || 0);
-    const height = Math.max(1, view?.height || 0);
-    let left = gap;
-    let right = gap;
+    const lo = view.left + gap;
+    const hi = view.right - gap;
+    const blocked = [];
     for (const rect of obstacles || []) {
         if (!rect || rect.width < 8 || rect.height < 8) continue;
         if (rect.width > width * 0.85) continue;
-        const overlap = Math.min(rect.bottom, view.bottom) - Math.max(rect.top, view.top);
-        const hitsRuler = rect.top < view.top + 64 && rect.bottom > view.top;
-        if (overlap < height * 0.35 && !hitsRuler) continue;
-        const center = (rect.left + rect.right) / 2;
-        if (center < view.left + width * 0.45 && rect.right > view.left && rect.right < view.right - 48) {
-            left = Math.max(left, rect.right - view.left + gap);
-        }
-        if (center > view.left + width * 0.55 && rect.left < view.right && rect.left > view.left + 48) {
-            right = Math.max(right, view.right - rect.left + gap);
-        }
+        if (!(rect.top < view.top + band && rect.bottom > view.top)) continue;
+        const from = Math.max(lo, rect.left - gap);
+        const to = Math.min(hi, rect.right + gap);
+        if (to > from) blocked.push([from, to]);
     }
-    if (left + right > width - 48) {
-        const scale = (width - 48) / (left + right);
-        left *= scale;
-        right *= scale;
+    blocked.sort((a, b) => a[0] - b[0]);
+    let start = lo;
+    let end = lo;
+    let cursor = lo;
+    for (const [from, to] of blocked) {
+        if (from - cursor > end - start) { start = cursor; end = from; }
+        cursor = Math.max(cursor, to);
     }
-    return { left, right };
+    if (hi - cursor > end - start) { start = cursor; end = hi; }
+    const open = Math.max(0, end - start);
+    return { left: start - view.left, right: view.right - end, width: open, hidden: open < minWidth };
 }
 
 const LATTICE_MULTIPLIERS = [1, 2, 5];

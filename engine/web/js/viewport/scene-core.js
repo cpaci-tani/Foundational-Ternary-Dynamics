@@ -36,6 +36,10 @@ const CLOCK_COLOR_FREE = new THREE.Color(0x38bdf8);
 const CLOCK_COLOR_LOADED = new THREE.Color(0xfbbf24);
 const CLOCK_COLOR_LIMIT = new THREE.Color(0xfb7185);
 const DEFAULT_FRONT_DISTANCE = 2.2;
+// The view ruler occupies the top RULER_BAND_PX (70) pixels of the view
+// (live-rulers/measure.js); the clock above the lattice is framed to sit
+// below that row with a little air.
+const VIEW_RULER_RESERVE_PX = 78;
 
 const clamp01 = value => Math.max(0, Math.min(1, Number(value) || 0));
 const clockNow = () => globalThis.performance?.now?.() ?? Date.now();
@@ -332,6 +336,7 @@ export class ViewportSceneCore {
         group.name = 'scale0-global-ordinal-clock';
         tagClockHover(group, 'clock');
         group.position.set(N * 0.82, N + Math.max(3.2, N * 0.16), N * 0.82);
+        group.userData.radius = radius;
         group.userData.clockModel = 'global-ordinal-plus-selected-causal-budget';
         group.userData.phaseOrder = GLOBAL_CLOCK_PHASES.map(phase => phase.name);
         group.userData.c4Reference = {
@@ -750,6 +755,46 @@ export class ViewportSceneCore {
         }
         this._controls.target.set(c, c, c);
         this._camera.position.set(pos[0], pos[1], pos[2]);
+        this._controls.update();
+        this.clearViewRulerRow();
+        return true;
+    }
+
+    /**
+     * How much farther back, along the current view direction, the camera has
+     * to be for the top of the clock face to sit below the view ruler's row.
+     * Zero when the clock is hidden or already clear. Moving the camera along
+     * its own view axis leaves a point's height in camera space unchanged and
+     * only adds depth, so the answer is exact in one step.
+     */
+    clockClearance(viewHeight = this._container?.clientHeight || 0) {
+        const clock = this.globalClock;
+        if (!clock || !this._showGlobalClock || !(viewHeight > 0)) return 0;
+        const reserve = (VIEW_RULER_RESERVE_PX * 2) / viewHeight;
+        if (reserve >= 0.9) return 0;
+        const camera = this._camera;
+        camera.updateMatrixWorld();
+        clock.updateWorldMatrix(true, false);
+        // Scratch vectors are made on first use, not at module load.
+        const scratch = this._clockScratch
+            || (this._clockScratch = { eye: new THREE.Vector3(), scale: new THREE.Vector3(), axis: new THREE.Vector3() });
+        const eye = scratch.eye.setFromMatrixPosition(clock.matrixWorld).applyMatrix4(camera.matrixWorldInverse);
+        const radius = (clock.userData.radius || 0) * clock.getWorldScale(scratch.scale).y;
+        const top = eye.y + radius * 1.2;
+        const depth = -eye.z;
+        if (!(top > 0) || !(depth > 0)) return 0;
+        const needed = top / (Math.tan((camera.fov * Math.PI) / 360) * (1 - reserve));
+        return Math.max(0, needed - depth);
+    }
+
+    /** Dolly the camera back just far enough for the clock to clear the view ruler. */
+    clearViewRulerRow() {
+        const extra = this.clockClearance();
+        if (!(extra > 0)) return false;
+        const camera = this._camera;
+        const axis = this._clockScratch.axis.copy(camera.position).sub(this._controls.target);
+        if (axis.lengthSq() === 0) return false;
+        camera.position.addScaledVector(axis.normalize(), extra);
         this._controls.update();
         return true;
     }
