@@ -84,7 +84,7 @@ import { TopologySheetRenderer } from './viewport/topology-sheet-renderer.js?v=3
 // decomposition. Viewport composes a ViewportFluxRenderer and forwards
 // every flux-volume/streamline method through a thin wrapper. See
 // viewport/REFACTOR_MAP.md.
-import { ViewportFluxRenderer } from './viewport/flux-renderer.js?v=5';
+import { ViewportFluxRenderer } from './viewport/flux-renderer.js?v=6';
 import { NativeTransportRenderer } from './viewport/native-transport-renderer.js';
 // Particle Points mesh + trails + velocity-vectors + per-particle force arrows
 // extracted as Phase 3d. Viewport composes a ViewportParticleRenderer and
