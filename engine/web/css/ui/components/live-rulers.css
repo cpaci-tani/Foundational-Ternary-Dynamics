@@ -368,6 +368,15 @@
     stroke-dasharray: 2 6;
 }
 
+/* Rings are concentric on the lattice, so some ring always passes behind a
+   label; a dark backing keeps the text whole. */
+.scale-landmark-label,
+.scale-landmarks-centre-label {
+    padding: 0 4px;
+    border-radius: 4px;
+    background: rgba(4, 8, 20, 0.78);
+}
+
 .scale-landmark-label {
     position: absolute;
     left: 0;

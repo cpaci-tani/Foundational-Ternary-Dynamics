@@ -117,7 +117,7 @@ export function getScale1OverlayTemplate() {
   return createScaleOverlayPanel({
     id: 'pe-viewport-overlay',
     scaleClass: 'scale1-only',
-    title: 'Particle overlays <span class="pe-overlay-summary" id="pe-overlay-summary">0 active</span>',
+    title: 'Particle overlays <span class="pe-overlay-summary" id="pe-overlay-summary"><span class="scale-overlay-count">0</span><span class="scale-overlay-count-unit"> active</span></span>',
     footnote: 'Effective presentation in sim units — no QFT or substrate-recovery claim',
     bodyHtml,
   });

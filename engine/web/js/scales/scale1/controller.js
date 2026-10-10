@@ -67,7 +67,10 @@ function updatePEOverlaySummary() {
     const summary = document.getElementById('pe-overlay-summary');
     if (!summary) return;
     const active = Object.values(scale1State.overlays).filter(Boolean).length;
-    summary.textContent = `${active} active`;
+    // The number is its own node: the collapsed pill shows it without "active".
+    const count = summary.querySelector('.scale-overlay-count');
+    if (count) count.textContent = String(active);
+    else summary.textContent = `${active} active`;
 }
 
 function setOverlay(key, on) {

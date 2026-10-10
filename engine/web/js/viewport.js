@@ -509,11 +509,14 @@ export class Viewport {
             const shell = this._shellDiameterUnits();
             subject = (shell > 0 ? shell : n * 8) * unit;
         }
-        const distance = this._distanceForWorldSize(subject, frame.fill);
+        let distance = this._distanceForWorldSize(subject, frame.fill);
         const target = frame.focus === 'voxel'
             ? this._attachedVoxelWorld()
             : this._latticeCenterWorld();
         const view = new THREE.Vector3(1, 0.62, 1.05).normalize();
+        // The whole-lattice view keeps the clock above the lattice clear of
+        // the view ruler's row.
+        if (id === 'lattice') distance += this._clockClearanceAt(target, view, distance);
         this.controls.maxDistance = Math.max(this.controls.maxDistance || 0, distance * 4, 1e8);
         this.controls.minDistance = Math.min(this.controls.minDistance || 0.01, 0.01);
         this.camera.up.set(0, 1, 0);
@@ -528,6 +531,24 @@ export class Viewport {
         this.controls.update();
         this._updateLiveRulers();
         return true;
+    }
+
+    /**
+     * Extra orbit distance the clock face needs to clear the view ruler when
+     * the camera looks at `target` from `distance` along `view`. The camera is
+     * placed there only for the measurement and put back.
+     */
+    _clockClearanceAt(target, view, distance) {
+        const core = this._sceneCore;
+        if (!core?.clockClearance) return 0;
+        const position = this.camera.position.clone();
+        const orientation = this.camera.quaternion.clone();
+        this.camera.position.copy(target).addScaledVector(view, distance);
+        this.camera.lookAt(target);
+        const extra = core.clockClearance(this._viewSize?.height || undefined);
+        this.camera.position.copy(position);
+        this.camera.quaternion.copy(orientation);
+        return extra;
     }
 
     /**

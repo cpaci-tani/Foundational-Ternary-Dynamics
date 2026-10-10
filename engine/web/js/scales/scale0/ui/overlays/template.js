@@ -36,7 +36,8 @@ export function getScale0OverlayTemplate() {
         </span>
       </div>
       <div class="s0-overlay-header-tools">
-        <span class="s0-overlay-summary" id="s0-overlay-summary" aria-live="polite">0 active</span>
+        <span class="s0-overlay-summary" id="s0-overlay-summary" aria-live="polite"><span
+            class="s0-overlay-summary-count">0</span><span class="s0-overlay-summary-unit"> active</span></span>
         <button class="s0-overlay-collapse u-no-baseline" type="button"
             aria-label="Collapse visualization overlay"
             aria-expanded="true"

@@ -224,8 +224,13 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
         }
         expect(result.cameraPosition[0]).toBeCloseTo(cameraCenter, 12);
         expect(result.cameraPosition[1]).toBeCloseTo(cameraCenter, 12);
+        // The face-on default is 2.2 lattice widths away, or farther when the
+        // clock above the lattice would otherwise sit in the view ruler's row
+        // (view-ruler-fit.spec.js checks the clearance itself).
         expect(result.cameraPosition[2])
-            .toBeCloseTo(cameraCenter + result.latticeSize * 2.2, 12);
+            .toBeGreaterThanOrEqual(cameraCenter + result.latticeSize * 2.2 - 1e-9);
+        expect(result.cameraPosition[2])
+            .toBeLessThan(cameraCenter + result.latticeSize * 4);
         expect(Math.abs(result.clockNdc[0])).toBeLessThan(1);
         expect(Math.abs(result.clockNdc[1])).toBeLessThan(1);
         expect(result.clockNdc[2]).toBeGreaterThan(-1);
