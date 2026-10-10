@@ -9,7 +9,12 @@ import {
     pointSizeColor,
     activationEnergyEv,
     energyStringPath,
+    energyAreaPath,
+    clockEnvironmentStep,
     voxelClockPhase,
+    globalClockPhase,
+    relativeClockEnvironment,
+    formatClockVersus,
     manifestedSiteName,
     anchorRuler,
     lengthGauge,
@@ -124,11 +129,20 @@ test('a voxel ruler matches the flux point sprite and colors by point scale', ()
     assert.equal(manifestedSiteName(1), 'positive');
     assert.equal(manifestedSiteName(-1), 'negative');
     assert.equal(manifestedSiteName(2), 'locked positive');
-    assert.ok(voxelClockPhase(0, 0, 0, 0) !== voxelClockPhase(0, 1, 0, 0));
-    assert.ok(voxelClockPhase(3, 1, 2, 3) >= 0 && voxelClockPhase(3, 1, 2, 3) < 1);
-    assert.notEqual(voxelClockPhase(0, 1, 2, 3), voxelClockPhase(1, 1, 2, 3));
+    assert.equal(clockEnvironmentStep(0, 1), 0);
+    assert.equal(clockEnvironmentStep(4, 0), 0);
+    assert.ok(clockEnvironmentStep(4, 1) > 0);
+    assert.ok(clockEnvironmentStep(4, -1) < 0);
+    assert.equal(voxelClockPhase(0, 0), 0);
+    assert.equal(voxelClockPhase(10, 0), globalClockPhase(10));
+    assert.notEqual(voxelClockPhase(10, 0.2), voxelClockPhase(10, 0));
+    assert.ok(voxelClockPhase(3, 0.2) >= 0 && voxelClockPhase(3, 0.2) < 1);
+    assert.equal(relativeClockEnvironment(5, 5, 4), 0);
+    assert.equal(relativeClockEnvironment(9, 5, 4), 1);
+    assert.equal(formatClockVersus(0, 0), '0.000 vs tick 0 (+0.000)');
     const path = energyStringPath([1, 3], 1, 3);
     assert.match(path, /^M0\.00 14\.00L100\.00 2\.00$/);
+    assert.equal(energyAreaPath([1, 3], 1, 3), 'M0.00 14.00L100.00 2.00L100.00 16L0.00 16Z');
     assert.equal(pointSizeColor(0.1), 'hsl(240.0 78% 58%)');
     assert.equal(pointSizeColor(3), 'hsl(0.0 78% 58%)');
 });

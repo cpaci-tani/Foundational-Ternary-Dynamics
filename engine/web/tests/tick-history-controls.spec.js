@@ -84,6 +84,7 @@ test('temporal side panels expose consistent history controls', async ({ page })
             knots: 'knots-panel',
             'p1-observables': 'p1-observables-panel',
             inspector: 'inspector-panel',
+            moore: 'moore-panel',
         };
         const sections = {
             'wave-lab': '#wave-lab-panel',
@@ -93,6 +94,7 @@ test('temporal side panels expose consistent history controls', async ({ page })
             knots: '#knots-panel',
             'p1-observables': '#p1-observables-panel',
             inspector: '.panel-resource-shell',
+            moore: '.moore-panel',
         };
         return Object.fromEntries(Object.entries(expected).map(([panelId, controlId]) => {
             const panel = document.querySelector(`#panel-${panelId}`);

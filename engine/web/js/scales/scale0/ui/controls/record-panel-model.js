@@ -12,6 +12,7 @@ export const RECORD_PANEL_CONTRACTS = Object.freeze({
     dispersion: 'No dispersion relation is established by these preparations. The analytical thermal gate remains separate evidence.',
     knots: 'No knot identity or trajectory is exported; stored manifestation does not establish a persistent particle identity.',
     gravity: 'No gravitational field, potential or force identification is defined for these records.',
+    moore: 'No voxel energy, flux magnitude or per-voxel clock phase is defined for these records. Token counts are not effective field amplitudes.',
 });
 export const RECORD_PHASES = ['Admission', 'Collision / relations', 'Streaming', 'Manifestation'];
 const sum = values => values.reduce((total, value) => total + BigInt(value), 0n).toString();

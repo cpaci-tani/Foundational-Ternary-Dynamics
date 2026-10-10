@@ -13,12 +13,25 @@ export function createViewportRuler() {
     el.append(label, track, ticks);
 
     let signature = '';
+    let lastSpan = NaN;
+    let lastStep = NaN;
+    let lastUnit = NaN;
+    let lastTickCount = -1;
 
     return {
         el,
-        render(scale, formatLength) {
-            const next = `${scale.step}|${scale.ticks.join(',')}|${scale.span}`;
+        /** `unit` is the metres per voxel behind `formatLength`; the label depends on it. */
+        render(scale, formatLength, unit = 0) {
+            // The ticks follow from span and step, so an unchanged scale needs
+            // no string work at all.
+            if (scale.span === lastSpan && scale.step === lastStep && unit === lastUnit
+                && scale.ticks.length === lastTickCount) return;
+            lastSpan = scale.span;
+            lastStep = scale.step;
+            lastUnit = unit;
+            lastTickCount = scale.ticks.length;
             label.textContent = `view · ${formatLength(scale.span, scale.step)}`;
+            const next = `${scale.step}|${scale.ticks.join(',')}|${scale.span}`;
             if (next === signature) return;
             signature = next;
             ticks.replaceChildren();

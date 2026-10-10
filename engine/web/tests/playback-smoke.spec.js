@@ -128,7 +128,7 @@ test.describe('Playback timeline smoke', () => {
         await expect.poll(() => activeScale0Tick(page), { timeout: 5_000 }).toBeGreaterThan(before);
         const afterMainStep = await activeScale0Tick(page);
 
-        await page.locator('.play-bar-settings').click();
+        // The advance-by buttons sit directly on the play bar.
         await page.locator('[data-step-by="10"]').click();
         await expect.poll(() => activeScale0Tick(page), { timeout: 5_000 }).toBeGreaterThanOrEqual(afterMainStep + 10);
     });

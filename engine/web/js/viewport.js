@@ -1,6 +1,8 @@
+import { LINK_DISPLACEMENT, siteIndex } from './link-geometry.js';
 import { DEFAULT_FLUX_THRESHOLD } from './viewport/flux-threshold.js';
+import { fluxCellIndex, mooreCellIndices, nearestVisiblePoint } from './viewport/flux-point-grid.js';
 import { mountLiveRulers } from './ui/components/live-rulers/mount.js';
-import { activationEnergyEv, LIVE_MEASURE_DEFAULTS, manifestedSiteName, pointAttributeSize, pointSpritePixels, spectrumColor, voxelClockPhase } from './ui/components/live-rulers/measure.js';
+import { activationEnergyEv, clockEnvironmentStep, energyAreaPath, energyStringPath, globalClockPhase, LIVE_MEASURE_DEFAULTS, manifestedSiteName, pointAttributeSize, pointSpritePixels, relativeClockEnvironment, spectrumColor, voxelClockPhase } from './ui/components/live-rulers/measure.js';
 /**
  * @file viewport.js
  * @brief Three.js 3D Viewport — renders particles and fields from the simulation bridge.
@@ -146,6 +148,12 @@ export class Viewport {
         this.controls.zoomSpeed = 1.2;
         this.controls.panSpeed = 1;
         this._orbitBase = { rotate: 0.6, zoom: 1.2, pan: 1, damp: 0.12 };
+        this._orbitFine = false;
+        this._onOrbitFineKey = (event) => this._setOrbitFine(event);
+        this._onOrbitFineBlur = () => this._setOrbitFine(null);
+        document.addEventListener('keydown', this._onOrbitFineKey, true);
+        document.addEventListener('keyup', this._onOrbitFineKey, true);
+        window.addEventListener('blur', this._onOrbitFineBlur);
         this._liveMeasure = { ...LIVE_MEASURE_DEFAULTS };
         this.controls.minDistance = 0.01;
         this.controls.maxDistance = 100000000;
@@ -717,7 +725,24 @@ export class Viewport {
     setLiveMeasure(patch) {
         if (!patch || !this._liveMeasure) return;
         Object.assign(this._liveMeasure, patch);
+        if (Object.prototype.hasOwnProperty.call(patch, 'mooreHz')) this._telemetryAt = 0;
         this._updateLiveRulers();
+    }
+
+    /** Shared refresh rate for every Moore telemetry, including the side panel. */
+    mooreTelemetryHz() {
+        const hz = Number(this._liveMeasure?.mooreHz);
+        if (!(hz > 0)) return 20;
+        return Math.min(60, Math.max(1, hz));
+    }
+
+    _telemetryRefresh(now = performance.now()) {
+        const gap = 1000 / this.mooreTelemetryHz();
+        if (this._telemetryAt == null || now - this._telemetryAt >= gap) {
+            this._telemetryAt = now;
+            return true;
+        }
+        return false;
     }
 
     toggleFluxVolume(on) {
@@ -825,8 +850,18 @@ export class Viewport {
     toggleFluxStreamlines(on) { this._fluxRenderer.toggleFluxStreamlines(on); }
 
     // -- Native transport (lattice links; spec 2026-09-15) --
-    toggleNativeTransport(on) { this._nativeTransportRenderer?.setVisible(on); }
-    updateNativeTransport(frame) { return this._nativeTransportRenderer?.update(frame) ?? null; }
+    toggleNativeTransport(on) {
+        if (!on) this._linkEnergySample = null;
+        this._nativeTransportRenderer?.setVisible(on);
+    }
+    updateNativeTransport(frame) {
+        const sample = frame?.sample;
+        const count = sample?.L > 0 ? sample.L ** 3 : 0;
+        this._linkEnergySample = sample?.status === 'ok' && sample.links?.length === 9 * count
+            ? sample
+            : null;
+        return this._nativeTransportRenderer?.update(frame) ?? null;
+    }
 
     // -- EM Force Volume (Cyan arrows) --
     _buildForceVolume() { this._fieldRenderer._buildForceVolume(); }
@@ -1245,23 +1280,44 @@ export class Viewport {
         this._fluxRenderer?.setPresentationSuspended(suspended);
     }
 
+    /** Alt scales pan, orbit, and zoom down so a close view can be nudged. */
+    _setOrbitFine(event) {
+        if (event && event.key !== 'Alt') return;
+        const editing = event?.target instanceof Element
+            && event.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])');
+        if (event?.type === 'keydown' && editing) return;
+        if (event?.type === 'keydown') event.preventDefault();
+        const next = event?.type === 'keydown';
+        if (this._orbitFine === next) return;
+        this._orbitFine = next;
+        const distance = this.camera?.position.distanceTo(this.controls?.target);
+        if (distance > 0) this._tuneOrbitSensitivity(distance);
+    }
+
     /**
      * Pan and orbit deltas are sized for the current camera distance. Far from
      * the subject a small drag flings the target, and that leftover motion is
      * still applied after dollying back in. Scale the speeds with distance and
-     * shrink any queued delta as the camera closes.
+     * shrink any queued delta as the camera closes. Alt applies another 0.2 scale.
      */
     _tuneOrbitSensitivity(distance) {
         const controls = this.controls;
         const base = this._orbitBase;
-        if (!controls || !base || !(distance > 0) || this._liveMeasure?.smoothOrbit === false) return;
+        if (!controls || !base || !(distance > 0)) return;
+        const fine = this._orbitFine ? 0.2 : 1;
+        if (this._liveMeasure?.smoothOrbit === false) {
+            controls.panSpeed = base.pan * fine;
+            controls.rotateSpeed = base.rotate * fine;
+            controls.zoomSpeed = base.zoom * fine;
+            return;
+        }
         const ref = Math.max(this.getReferenceDistance(), 1);
         const ratio = distance / ref;
         const gain = Math.min(1, Math.max(0.12, 1 / Math.sqrt(Math.max(ratio, 1))));
         const zoomGain = Math.min(1.15, Math.max(0.4, 1 / Math.sqrt(Math.max(ratio, 0.35))));
-        controls.panSpeed = base.pan * gain;
-        controls.rotateSpeed = base.rotate * gain;
-        controls.zoomSpeed = base.zoom * zoomGain;
+        controls.panSpeed = base.pan * gain * fine;
+        controls.rotateSpeed = base.rotate * gain * fine;
+        controls.zoomSpeed = base.zoom * zoomGain * fine;
         const far = 1 + Math.log2(Math.max(ratio, 1));
         controls.dampingFactor = base.damp / Math.min(far, 4);
         const previous = this._lastOrbitDist;
@@ -1306,12 +1362,59 @@ export class Viewport {
         }
         // SceneCore decides composer-vs-renderer based on _usePostProcessing.
         this._sceneCore?.render(this.scene, this.camera);
-        this._updateLiveRulers();
+        this._updateLiveRulers(false);
     }
 
-    _updateLiveRulers() {
+    /**
+     * Has anything the rulers are drawn from changed since the last update?
+     * Camera pose and projection, orbit target, scene and flux-cloud
+     * placement, view size, lattice, mode, attached voxel, drawn point count.
+     */
+    _liveRulerViewChanged(rect) {
+        const flux = this._fluxRenderer?._fluxVolume;
+        const last = this._rulerView || (this._rulerView = { values: new Float64Array(34), mode: null });
+        const next = this._rulerViewNext || (this._rulerViewNext = new Float64Array(34));
+        next.set(this.camera.matrixWorld.elements, 0);
+        next[16] = this.camera.projectionMatrix.elements[0];
+        next[17] = this.camera.projectionMatrix.elements[5];
+        next[18] = this.controls.target.x;
+        next[19] = this.controls.target.y;
+        next[20] = this.controls.target.z;
+        next[21] = this.scene.scale.x;
+        next[22] = this.scene.position.x;
+        next[23] = this.scene.position.y;
+        next[24] = this.scene.position.z;
+        next[25] = flux ? flux.scale.x : 0;
+        next[26] = flux ? flux.position.x : 0;
+        next[27] = flux?.geometry?.drawRange?.count ?? -1;
+        next[28] = rect.width;
+        next[29] = rect.height;
+        next[30] = this.latticeSize || this._latticeSize || 0;
+        next[31] = this.showFlux === false ? 0 : 1;
+        next[32] = this._attachedPoint ?? -1;
+        next[33] = this._shellDiameterUnits();
+        let changed = last.mode !== this._engineMode;
+        for (let i = 0; i < next.length && !changed; i++) changed = next[i] !== last.values[i];
+        if (changed) {
+            last.values.set(next);
+            last.mode = this._engineMode;
+        }
+        return changed;
+    }
+
+    /**
+     * Redraw the rulers and Moore readouts. The per-frame call passes
+     * `force = false` and returns early unless the telemetry is due or the
+     * view moved; every other caller (a setting, a toggle, a framed view)
+     * forces the update.
+     */
+    _updateLiveRulers(force = true) {
         if (!this._liveRulers) return;
-        const rect = this.container.getBoundingClientRect();
+        const refresh = this._telemetryRefresh();
+        // Size is kept current by _onResize; no layout read per frame.
+        const rect = this._viewSize || this.container.getBoundingClientRect();
+        const moved = this._liveRulerViewChanged(rect);
+        if (!force && !refresh && !moved) return;
         const distance = this.camera.position.distanceTo(this.controls.target);
         this._liveRulers.update({
             fovDeg: this.camera.fov,
@@ -1324,16 +1427,45 @@ export class Viewport {
             projectUnits: (units) => this._projectUnits(units, rect.width, rect.height),
             projectDiameter: (units) => this._projectDiameter(units, rect.width, rect.height),
             shellDiameter: this._shellDiameterUnits(),
-            pointSprite: this._pointSprite(rect.width, rect.height),
-            voxelClocks: this._voxelClocks(rect.width, rect.height),
-            mooreNeighborhood: this._mooreNeighborhood(rect.width, rect.height),
+            pointSprite: this._pointSprite(rect.width, rect.height, refresh),
+            voxelClocks: this._voxelClocks(rect.width, rect.height, refresh),
+            mooreNeighborhood: this._mooreNeighborhood(rect.width, rect.height, refresh),
             fluxVisible: this.showFlux !== false,
             measures: this._liveMeasure,
         });
     }
 
+    /** Screen point of a lattice coordinate. Matrices are already current. */
+    _projectLattice(x, y, z, viewWidth, viewHeight) {
+        const flux = this._fluxRenderer?._fluxVolume;
+        if (!flux || !Number.isFinite(x)) return null;
+        const world = this._pointWorld || (this._pointWorld = new THREE.Vector3());
+        world.set(x, y, z).applyMatrix4(flux.matrixWorld);
+        const ndc = this._pointNdc || (this._pointNdc = new THREE.Vector3());
+        ndc.copy(world).project(this.camera);
+        if (ndc.z < -1 || ndc.z > 1) return null;
+        return {
+            x: (ndc.x * 0.5 + 0.5) * viewWidth,
+            y: (-ndc.y * 0.5 + 0.5) * viewHeight,
+        };
+    }
+
     /** Screen width of the flux point the view is attached to, updated from its live size. */
-    _pointSprite(viewWidth, viewHeight) {
+    _pointSprite(viewWidth, viewHeight, refresh = true) {
+        if (!refresh && this._spriteFrame) {
+            const frame = this._spriteFrame;
+            const flux = this._fluxRenderer?._fluxVolume;
+            if (flux && frame.lx != null && frame.screen) {
+                flux.updateMatrixWorld();
+                this.camera.updateMatrixWorld();
+                const placed = this._projectLattice(frame.lx, frame.ly, frame.lz, viewWidth, viewHeight);
+                if (placed) {
+                    frame.screen.left = placed.x;
+                    frame.screen.top = placed.y - frame.px / 2 - 20;
+                }
+            }
+            return frame;
+        }
         const scale = this._fluxRenderer?._fluxPointScale ?? 1;
         const ceiling = pointAttributeSize(scale);
         const flux = this._fluxRenderer?._fluxVolume;
@@ -1349,46 +1481,169 @@ export class Viewport {
             height: px,
             placed: true,
         } : null;
-        return {
+        const position = flux?.geometry?.getAttribute('position');
+        const focus = this._attachedPoint;
+        const frame = {
             px,
             fill: spectrumColor(t),
             screen,
             name: hit?.name || '',
             wave: hit ? hit.wave : { value: 0, min: 0, max: 0, samples: [] },
+            index: focus,
+            lx: position && focus != null ? position.getX(focus) : null,
+            ly: position && focus != null ? position.getY(focus) : null,
+            lz: position && focus != null ? position.getZ(focus) : null,
+        };
+        this._spriteFrame = frame;
+        return frame;
+    }
+
+    /**
+     * One flux point per cell, in the point cloud's x-fastest order (not the
+     * link sample's siteIndex). `source` holds exact cell centres. -1 if that
+     * cell is absent, -2 if this buffer is not that grid.
+     */
+    _fluxCellIndex(source, count, visibility, x, y, z) {
+        return fluxCellIndex(
+            source, count, this.latticeSize || this._latticeSize || 0, visibility?.array ?? null, x, y, z,
+        );
+    }
+
+    /** The 27 (or 26) cells around a lattice centre. Null when the buffer is not a dense grid. */
+    _neighborhoodIndices(source, count, visibility, ax, ay, az, includeSelf) {
+        return mooreCellIndices(
+            source, count, this.latticeSize || this._latticeSize || 0, visibility?.array ?? null,
+            ax, ay, az, includeSelf,
+        );
+    }
+
+    /** SVG path for a trace, rebuilt only when a sample is pushed. */
+    _sealWave(trace, ev) {
+        if (trace.pathGeneration !== trace.generation) {
+            trace.path = energyStringPath(trace.samples, trace.min, trace.max);
+            trace.area = energyAreaPath(trace.samples, trace.min, trace.max);
+            trace.pathGeneration = trace.generation;
+        }
+        return {
+            value: ev,
+            min: trace.min,
+            max: trace.max,
+            samples: trace.samples,
+            path: trace.path,
+            area: trace.area,
         };
     }
 
+    /**
+     * Global tick plus a phase function. The neighborhood mean environment
+     * keeps the global rate; voxels above or below it run relatively faster or slower.
+     */
+    _clockReading(items) {
+        const tick = this._sceneCore?._globalTick || 0;
+        let mean = 0;
+        let lo = Infinity;
+        let hi = -Infinity;
+        for (let i = 0; i < items.length; i++) {
+            const value = items[i].joules;
+            mean += value;
+            if (value < lo) lo = value;
+            if (value > hi) hi = value;
+        }
+        mean = items.length ? mean / items.length : 0;
+        const span = Number.isFinite(lo) ? hi - lo : 0;
+        const viewport = this;
+        return {
+            tick,
+            globalPhase: globalClockPhase(tick),
+            phase(index, value) {
+                const offset = viewport._clockOffset(
+                    index, tick, relativeClockEnvironment(value, mean, span),
+                );
+                return voxelClockPhase(tick, offset);
+            },
+        };
+    }
+
+    /** Accumulated turn offset. A new scenario, or the first sample, starts at zero. */
+    _clockOffset(index, tick, relative) {
+        if (!this._clockOffsets) this._clockOffsets = new Map();
+        const ordinal = Math.max(0, Math.trunc(Number(tick) || 0));
+        if (this._clockOffsetTick == null || ordinal < this._clockOffsetTick) {
+            this._clockOffsets.clear();
+            this._clockOffsetTick = ordinal;
+        }
+        let entry = this._clockOffsets.get(index);
+        if (!entry || ordinal < entry.tick) entry = { offset: 0, tick: ordinal };
+        const running = Boolean(this._sceneCore?._globalClockRunning);
+        if (running && ordinal > entry.tick) {
+            entry.offset += clockEnvironmentStep(ordinal - entry.tick, relative);
+        }
+        entry.tick = ordinal;
+        this._clockOffsets.set(index, entry);
+        this._clockOffsetTick = ordinal;
+        return entry.offset;
+    }
+
     /** Clock faces for voxels near the one under the view. Farther faces fade out. */
-    _voxelClocks(viewWidth, viewHeight) {
+    _voxelClocks(viewWidth, viewHeight, refresh = true) {
         const distance = this.camera.position.distanceTo(this.controls.target);
-        if (distance > Math.max(this.getReferenceDistance(), 1) * 0.35) return [];
+        if (distance > Math.max(this.getReferenceDistance(), 1) * 0.35) {
+            this._clockFrame = null;
+            return [];
+        }
         const flux = this._fluxRenderer?._fluxVolume;
         const geometry = flux?.geometry;
         const position = geometry?.getAttribute('position');
         if (!position) return [];
         const count = geometry.drawRange ? geometry.drawRange.count : position.count;
-        if (count <= 0) return [];
+        if (count <= 0) {
+            this._clockFrame = null;
+            return [];
+        }
         flux.updateMatrixWorld();
         this.camera.updateMatrixWorld();
+        if (!refresh && this._clockFrame) {
+            for (const clock of this._clockFrame) {
+                const placed = this._projectLattice(clock.lx, clock.ly, clock.lz, viewWidth, viewHeight);
+                if (!placed) continue;
+                clock.x = placed.x;
+                clock.y = placed.y;
+            }
+            return this._clockFrame;
+        }
         const inverse = this._fluxInv || (this._fluxInv = new THREE.Matrix4());
         inverse.copy(flux.matrixWorld).invert();
         const local = this._pointLocal || (this._pointLocal = new THREE.Vector3());
         local.copy(this.controls.target).applyMatrix4(inverse);
         const arr = position.array;
+        // Cells are matched on their exact centres. `position` is where the
+        // dot is drawn, which Organic mode moves by up to half a cell.
+        const source = geometry.getAttribute('sourcePosition')?.array || arr;
         const visibility = geometry.getAttribute('particleVisibility');
-        const radius = Math.max(0.5, this._liveMeasure?.clockRadius ?? 2.5);
-        const radius2 = radius * radius;
-        const found = [];
-        for (let i = 0; i < count; i++) {
-            if (visibility && visibility.getX(i) < 0.5) continue;
-            const d = this._pointDistance2(arr, i, local);
-            if (d > radius2) continue;
-            found.push({ index: i, d });
+        const shown = visibility?.array;
+        const focus = this._attachedPoint;
+        const origin = focus != null && focus >= 0 && focus < count
+            ? [source[focus * 3], source[focus * 3 + 1], source[focus * 3 + 2]]
+            : [local.x, local.y, local.z];
+        let found = this._neighborhoodIndices(source, count, visibility, origin[0], origin[1], origin[2], true);
+        if (!found) {
+            // Not a dense lattice grid (a compact native sample): scan it.
+            found = [];
+            for (let i = 0; i < count; i++) {
+                if (shown && shown[i] < 0.5) continue;
+                const i3 = i * 3;
+                const dx = source[i3] - origin[0];
+                const dy = source[i3 + 1] - origin[1];
+                const dz = source[i3 + 2] - origin[2];
+                const span = Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz));
+                if (span > 1.25) continue;
+                found.push({ index: i, d: dx * dx + dy * dy + dz * dz });
+            }
         }
         found.sort((a, b) => a.d - b.d);
-        const tick = this._fluxRenderer?._fluxClockTick || 0;
-        const clocks = [];
-        for (let n = 0; n < found.length && clocks.length < 24; n++) {
+        const pending = [];
+        const reach = Math.sqrt(3);
+        for (let n = 0; n < found.length && pending.length < 27; n++) {
             const index = found[n].index;
             const i3 = index * 3;
             const world = this._pointWorld || (this._pointWorld = new THREE.Vector3());
@@ -1396,46 +1651,93 @@ export class Viewport {
             const ndc = this._pointNdc || (this._pointNdc = new THREE.Vector3());
             ndc.copy(world).project(this.camera);
             if (ndc.z < -1 || ndc.z > 1) continue;
-            const fade = 1 - Math.sqrt(found[n].d) / radius;
-            clocks.push({
+            const fade = 1 - Math.sqrt(found[n].d) / reach;
+            pending.push({
+                index,
                 x: (ndc.x * 0.5 + 0.5) * viewWidth,
                 y: (-ndc.y * 0.5 + 0.5) * viewHeight,
-                opacity: Math.max(0, Math.min(1, fade)),
-                phase: voxelClockPhase(tick, arr[i3], arr[i3 + 1], arr[i3 + 2]),
+                opacity: Math.max(0.45, Math.min(1, fade)),
+                joules: this._mooreScalars(index).joules,
+                lx: arr[i3],
+                ly: arr[i3 + 1],
+                lz: arr[i3 + 2],
             });
         }
+        const reading = this._clockReading(pending);
+        this._clockReadingCache = reading;
+        const clocks = [];
+        for (let n = 0; n < pending.length; n++) {
+            const item = pending[n];
+            clocks.push({
+                index: item.index,
+                x: item.x,
+                y: item.y,
+                opacity: item.opacity,
+                phase: reading.phase(item.index, item.joules),
+                lx: item.lx,
+                ly: item.ly,
+                lz: item.lz,
+            });
+        }
+        this._clockFrame = clocks;
         return clocks;
     }
 
     /** The 26 lattice sites around the attached voxel. Only the close Moore view, not a zoom-out. */
-    _mooreNeighborhood(viewWidth, viewHeight) {
+    _mooreNeighborhood(viewWidth, viewHeight, refresh = true) {
         const measures = this._liveMeasure || {};
-        if (measures.mooreBars === false && measures.mooreWaves === false && measures.mooreJoules === false) return [];
+        const perSite = measures.mooreBars !== false || measures.mooreWaves !== false || measures.mooreJoules !== false;
+        const wantEnergy = measures.mooreEnergy !== false;
+        if (!perSite && !wantEnergy) return this._mooreHidden();
         const distance = this.camera.position.distanceTo(this.controls.target);
-        if (distance > Math.max(this.getReferenceDistance(), 1) * 0.2) return [];
+        if (distance > Math.max(this.getReferenceDistance(), 1) * 0.2) return this._mooreHidden();
         const flux = this._fluxRenderer?._fluxVolume;
         const geometry = flux?.geometry;
         const position = geometry?.getAttribute('position');
         const sizes = geometry?.getAttribute('size');
-        if (!position || !sizes) return [];
+        if (!position || !sizes) return this._mooreHidden();
         const count = geometry.drawRange ? geometry.drawRange.count : position.count;
         const focus = this._attachedPoint;
-        if (count <= 0 || focus == null || focus >= count) return [];
+        if (count <= 0 || focus == null || focus >= count) return this._mooreHidden();
+        if (!refresh && this._mooreFrame && this._mooreFrame.focusIndex === focus) {
+            return this._placeMooreFrame(this._mooreFrame, viewWidth, viewHeight);
+        }
         const arr = position.array;
+        // Drawn position of the focus (for on-screen placement) and its exact
+        // cell centre (for identity: neighbours, links, published coordinates).
         const ax = arr[focus * 3];
         const ay = arr[focus * 3 + 1];
         const az = arr[focus * 3 + 2];
+        const source = geometry.getAttribute('sourcePosition')?.array || arr;
+        const sx = source[focus * 3];
+        const sy = source[focus * 3 + 1];
+        const sz = source[focus * 3 + 2];
         const visibility = geometry.getAttribute('particleVisibility');
+        const shown = visibility?.array;
         const ceiling = pointAttributeSize(this._fluxRenderer?._fluxPointScale ?? 1);
         const sites = [];
+        const records = [];
+        const focusScalars = this._mooreScalars(focus);
+        let sum = focusScalars.joules;
         flux.updateMatrixWorld();
         this.camera.updateMatrixWorld();
-        for (let i = 0; i < count && sites.length < 26; i++) {
-            if (i === focus) continue;
-            if (visibility && visibility.getX(i) < 0.5) continue;
+        let neighbors = 0;
+        let indexed = this._neighborhoodIndices(source, count, visibility, sx, sy, sz, false);
+        if (!indexed) {
+            // Not a dense lattice grid (a compact native sample): scan it.
+            indexed = [];
+            for (let i = 0; i < count && indexed.length < 26; i++) {
+                if (i === focus) continue;
+                if (shown && shown[i] < 0.5) continue;
+                const i3 = i * 3;
+                const span = Math.max(Math.abs(source[i3] - sx), Math.abs(source[i3 + 1] - sy), Math.abs(source[i3 + 2] - sz));
+                if (span < 0.25 || span > 1.25) continue;
+                indexed.push({ index: i });
+            }
+        }
+        for (let n = 0; n < indexed.length && neighbors < 26; n++) {
+            const i = indexed[n].index;
             const i3 = i * 3;
-            const span = Math.max(Math.abs(arr[i3] - ax), Math.abs(arr[i3 + 1] - ay), Math.abs(arr[i3 + 2] - az));
-            if (span < 0.25 || span > 1.25) continue;
             const world = this._pointWorld || (this._pointWorld = new THREE.Vector3());
             world.set(arr[i3], arr[i3 + 1], arr[i3 + 2]).applyMatrix4(flux.matrixWorld);
             const view = this._pointView || (this._pointView = new THREE.Vector3());
@@ -1446,9 +1748,23 @@ export class Viewport {
             const size = sizes.getX(i);
             const depth = Math.max(-view.z, 0.1);
             const px = pointSpritePixels(size, depth);
-            const activation = this._fluxRenderer?._fluxActivation?.[i];
-            const wave = this._neighborEnergy(i, activationEnergyEv(activation));
+            const scalars = this._mooreScalars(i);
+            const wave = this._neighborEnergy(i, scalars.joules);
+            const reading = this._clockReadingCache;
+            sum += wave.value;
+            neighbors += 1;
+            records.push({
+                x: source[i3], y: source[i3 + 1], z: source[i3 + 2],
+                name: manifestedSiteName(this._fluxRenderer?._fluxSiteKind?.[i] || 0),
+                joules: wave.value,
+                activation: scalars.activation,
+                flux: scalars.flux,
+                size: px,
+                phase: reading ? reading.phase(i, scalars.joules) : 0,
+                tick: reading ? reading.tick : 0,
+            });
             const t = (size - 1) / Math.max(ceiling - 1, 1e-6);
+            if (!perSite) continue;
             sites.push({
                 x: (ndc.x * 0.5 + 0.5) * viewWidth,
                 y: (-ndc.y * 0.5 + 0.5) * viewHeight - px / 2 - 8,
@@ -1459,9 +1775,213 @@ export class Viewport {
                 wave: measures.mooreWaves === false ? null : wave,
                 showJoule: measures.mooreJoules !== false,
                 joule: wave.value,
+                lx: arr[i3],
+                ly: arr[i3 + 1],
+                lz: arr[i3 + 2],
+                name: manifestedSiteName(this._fluxRenderer?._fluxSiteKind?.[i] || 0),
             });
         }
-        return sites;
+        const energy = wantEnergy ? this._mooreEnergyRuler(focus, ax, ay, az, sum, flux, viewWidth, viewHeight, sites) : null;
+        const publishedSum = energy ? energy.value : sum;
+        const neighborhoodLinks = this._mooreLinks(sx, sy, sz);
+        const focusReading = this._clockReadingCache;
+        const focusPhase = focusReading ? focusReading.phase(focus, focusScalars.joules) : 0;
+        const focusTick = focusReading ? focusReading.tick : 0;
+        let signature = `${focus}|${neighbors}|${publishedSum}|${focusScalars.flux}|${focusScalars.activation}|${focusPhase.toFixed(4)}|${focusTick}|${neighborhoodLinks ? neighborhoodLinks.signature : 'off'}`;
+        for (let i = 0; i < records.length; i++) {
+            signature += `|${records[i].joules}|${records[i].flux}|${records[i].activation}|${records[i].phase.toFixed(4)}`;
+        }
+        if (signature !== this._moorePublishSig) {
+            this._moorePublishSig = signature;
+            this._publishMoore({
+                focus: {
+                    x: sx, y: sy, z: sz,
+                    name: manifestedSiteName(this._fluxRenderer?._fluxSiteKind?.[focus] || 0),
+                    joules: focusScalars.joules,
+                    activation: focusScalars.activation,
+                    flux: focusScalars.flux,
+                    phase: focusPhase,
+                    tick: focusTick,
+                },
+                count: neighbors,
+                sum: publishedSum,
+                min: energy?.min ?? sum,
+                max: energy?.max ?? sum,
+                sites: records,
+                links: neighborhoodLinks,
+            });
+        }
+        const frame = { sites, energy, focusIndex: focus, ax, ay, az };
+        this._mooreFrame = frame;
+        return frame;
+    }
+
+    /** Move the last telemetry sample with the camera. Values stay on the shared rate. */
+    _placeMooreFrame(frame, viewWidth, viewHeight) {
+        const flux = this._fluxRenderer?._fluxVolume;
+        if (!flux) return frame;
+        flux.updateMatrixWorld();
+        this.camera.updateMatrixWorld();
+        for (const site of frame.sites) {
+            const placed = this._projectLattice(site.lx, site.ly, site.lz, viewWidth, viewHeight);
+            if (!placed) continue;
+            site.x = placed.x;
+            site.y = placed.y - site.px / 2 - 8;
+        }
+        if (frame.energy) {
+            const placed = this._mooreEnergyRuler(
+                frame.focusIndex, frame.ax, frame.ay, frame.az,
+                frame.energy.value, flux, viewWidth, viewHeight, frame.sites, true,
+            );
+            frame.energy.x = placed.x;
+            frame.energy.y = placed.y;
+            frame.energy.width = placed.width;
+        }
+        return frame;
+    }
+
+    _mooreHidden() {
+        this._moorePublishSig = '';
+        this._mooreFrame = null;
+        if (this._mooreSnapshot !== null) this._publishMoore(null);
+        return { sites: [], energy: null };
+    }
+
+    /**
+     * Links already held by the native-transport overlay, limited to segments
+     * whose both ends sit in this Moore neighborhood. Null when that overlay
+     * has no sample. This does not request a new lattice read.
+     */
+    _mooreLinks(ax, ay, az) {
+        const sample = this._linkEnergySample;
+        if (!sample) return null;
+        const axis = sample.L | 0;
+        const values = sample.links;
+        const fx = Math.round(ax - 0.5);
+        const fy = Math.round(ay - 0.5);
+        const fz = Math.round(az - 0.5);
+        const links = [];
+        let max = 0;
+        let signature = '0';
+        for (let oz = -1; oz <= 1; oz++) {
+            for (let oy = -1; oy <= 1; oy++) {
+                for (let ox = -1; ox <= 1; ox++) {
+                    const x = fx + ox;
+                    const y = fy + oy;
+                    const z = fz + oz;
+                    if (x < 0 || y < 0 || z < 0 || x >= axis || y >= axis || z >= axis) continue;
+                    const base = siteIndex(axis, x, y, z) * 9;
+                    for (let k = 0; k < LINK_DISPLACEMENT.length; k++) {
+                        const step = LINK_DISPLACEMENT[k];
+                        const nx = ox + step[0];
+                        const ny = oy + step[1];
+                        const nz = oz + step[2];
+                        if (Math.abs(nx) > 1 || Math.abs(ny) > 1 || Math.abs(nz) > 1) continue;
+                        const value = Number(values[base + k]);
+                        if (!value) continue;
+                        max = Math.max(max, Math.abs(value));
+                        links.push({
+                            ox, oy, oz,
+                            dx: step[0], dy: step[1], dz: step[2],
+                            value,
+                        });
+                        signature += `|${ox}${oy}${oz}${k}:${value}`;
+                    }
+                }
+            }
+        }
+        return { links, max, signature };
+    }
+
+    /** Energy, activation amplitude, and flux magnitude already stored for this site. */
+    _mooreScalars(index) {
+        const activation = Number(this._fluxRenderer?._fluxActivation?.[index]);
+        const flux = Number(this._fluxRenderer?._fluxDensitySnapshot?.[index]);
+        return {
+            joules: activationEnergyEv(activation),
+            activation: Number.isFinite(activation) ? activation : 0,
+            flux: Number.isFinite(flux) ? flux : 0,
+        };
+    }
+
+    /** Panel charts run after this frame paints, so the labels are not left behind the view. */
+    _publishMoore(detail) {
+        this._mooreSnapshot = detail;
+        this._mooreDeferredDetail = detail;
+        if (this._mooreDeferTimer) return;
+        this._mooreDeferTimer = setTimeout(() => {
+            this._mooreDeferTimer = 0;
+            const next = this._mooreDeferredDetail;
+            this._mooreDeferredDetail = undefined;
+            window.dispatchEvent(new CustomEvent('ftd:moore-neighborhood', { detail: next }));
+        }, 0);
+    }
+
+    /** Screen ruler across the 3-voxel Moore block, with the summed energy. */
+    _mooreEnergyRuler(focus, ax, ay, az, sum, flux, viewWidth, viewHeight, sites, hold = false) {
+        const trace = hold && this._mooreEnergyTrace
+            ? this._mooreEnergyTrace
+            : this._trackMooreEnergy(focus, sum);
+        const wave = this._sealWave(trace, trace.last);
+        const unit = this._worldPerLatticeUnit();
+        const scratch = this._mooreRuler || (this._mooreRuler = {
+            center: new THREE.Vector3(),
+            right: new THREE.Vector3(),
+            up: new THREE.Vector3(),
+            point: new THREE.Vector3(),
+            view: new THREE.Vector3(),
+        });
+        const center = scratch.center.set(ax, ay, az).applyMatrix4(flux.matrixWorld);
+        scratch.right.setFromMatrixColumn(this.camera.matrixWorld, 0).normalize().multiplyScalar(1.5 * unit);
+        scratch.up.setFromMatrixColumn(this.camera.matrixWorld, 1).normalize().multiplyScalar(1.5 * unit);
+        const project = (rx, uz) => {
+            scratch.point.copy(center);
+            if (rx) scratch.point.addScaledVector(scratch.right, rx);
+            if (uz) scratch.point.addScaledVector(scratch.up, uz);
+            scratch.point.project(this.camera);
+            return {
+                x: (scratch.point.x * 0.5 + 0.5) * viewWidth,
+                y: (-scratch.point.y * 0.5 + 0.5) * viewHeight,
+            };
+        };
+        const left = project(-1, 0);
+        const edge = project(1, 0);
+        const mid = project(0, 0);
+        const cap = project(0, 1);
+        let crown = Math.min(mid.y, cap.y);
+        for (const site of sites || []) crown = Math.min(crown, site.y - 56);
+        const sizes = flux.geometry?.getAttribute('size');
+        if (sizes) {
+            const depth = Math.max(-scratch.view.copy(center).applyMatrix4(this.camera.matrixWorldInverse).z, 0.1);
+            const focusPx = pointSpritePixels(sizes.getX(focus), depth);
+            crown = Math.min(crown, mid.y - focusPx / 2 - 20 - 96);
+        }
+        return {
+            x: (left.x + edge.x) / 2,
+            y: crown - 18,
+            width: Math.max(48, Math.hypot(edge.x - left.x, edge.y - left.y)),
+            value: wave.value,
+            min: wave.min,
+            max: wave.max,
+            samples: wave.samples,
+            area: wave.area,
+        };
+    }
+
+    _trackMooreEnergy(index, electronVolts) {
+        const ev = Number.isFinite(electronVolts) ? electronVolts : 0;
+        let trace = this._mooreEnergyTrace;
+        if (!trace || trace.index !== index) {
+            trace = this._mooreEnergyTrace = { index, min: ev, max: ev, last: ev, samples: [ev], generation: 1 };
+        } else if (ev !== trace.last) {
+            trace.samples.push(ev);
+            if (trace.samples.length > 48) trace.samples.shift();
+            trace.last = ev;
+            if (ev < trace.min) trace.min = ev;
+            if (ev > trace.max) trace.max = ev;
+            trace.generation += 1;
+        }
+        return trace;
     }
 
     _neighborEnergy(index, electronVolts) {
@@ -1469,7 +1989,7 @@ export class Viewport {
         if (!this._neighborTraces) this._neighborTraces = new Map();
         let trace = this._neighborTraces.get(index);
         if (!trace) {
-            trace = { min: ev, max: ev, last: ev, samples: [ev] };
+            trace = { min: ev, max: ev, last: ev, samples: [ev], generation: 1 };
             this._neighborTraces.set(index, trace);
         } else if (ev !== trace.last) {
             trace.samples.push(ev);
@@ -1477,12 +1997,13 @@ export class Viewport {
             trace.last = ev;
             if (ev < trace.min) trace.min = ev;
             if (ev > trace.max) trace.max = ev;
+            trace.generation += 1;
         }
         if (this._neighborTraces.size > 64) {
             const first = this._neighborTraces.keys().next().value;
             this._neighborTraces.delete(first);
         }
-        return { value: ev, min: trace.min, max: trace.max, samples: trace.samples };
+        return this._sealWave(trace, ev);
     }
 
     /** Recent energy of one voxel. The string spans that voxel's own min and max. */
@@ -1490,15 +2011,16 @@ export class Viewport {
         const ev = Number.isFinite(electronVolts) ? electronVolts : 0;
         let trace = this._voxelEnergyTrace;
         if (!trace || trace.index !== index) {
-            trace = this._voxelEnergyTrace = { index, min: ev, max: ev, last: ev, samples: [ev] };
+            trace = this._voxelEnergyTrace = { index, min: ev, max: ev, last: ev, samples: [ev], generation: 1 };
         } else if (ev !== trace.last) {
             trace.samples.push(ev);
             if (trace.samples.length > 48) trace.samples.shift();
             trace.last = ev;
             if (ev < trace.min) trace.min = ev;
             if (ev > trace.max) trace.max = ev;
+            trace.generation += 1;
         }
-        return { value: ev, min: trace.min, max: trace.max, samples: trace.samples };
+        return this._sealWave(trace, ev);
     }
 
     /** Lattice point nearest the orbit target. Holds that point while it stays under the view. */
@@ -1522,16 +2044,13 @@ export class Viewport {
             && this._pointDistance2(arr, index, local) < 0.75
             && (!visibility || visibility.getX(index) >= 0.5);
         if (!keep) {
-            let best = -1;
-            let bestD = Infinity;
-            for (let i = 0; i < count; i++) {
-                if (visibility && visibility.getX(i) < 0.5) continue;
-                const d = this._pointDistance2(arr, i, local);
-                if (d < bestD) {
-                    bestD = d;
-                    best = i;
-                }
-            }
+            // Nearest visible dot to the orbit target: a few shells of cells
+            // around the target on a dense grid, not every point.
+            const best = nearestVisiblePoint(
+                arr, geometry.getAttribute('sourcePosition')?.array || arr, count,
+                this.latticeSize || this._latticeSize || 0, visibility?.array ?? null,
+                local.x, local.y, local.z,
+            );
             if (best < 0) return null;
             index = best;
             this._attachedPoint = index;
@@ -1660,6 +2179,7 @@ export class Viewport {
         const w = rect.width;
         const h = rect.height;
         if (w === 0 || h === 0) return;
+        this._viewSize = { width: w, height: h };
         this.camera.aspect = w / h;
         this.camera.updateProjectionMatrix();
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -1673,6 +2193,9 @@ export class Viewport {
         this._scalarVolumes?.clear();
         if (this._disposed) return;
         this._disposed = true;
+        document.removeEventListener('keydown', this._onOrbitFineKey, true);
+        document.removeEventListener('keyup', this._onOrbitFineKey, true);
+        window.removeEventListener('blur', this._onOrbitFineBlur);
         this._liveRulers?.dispose();
         this._liveRulers = null;
         this._resizeObserver.disconnect();

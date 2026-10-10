@@ -6,6 +6,9 @@ import { createVoxelClocks } from './voxel-clocks.js';
 import { createMooreNeighborhood } from './neighborhood.js';
 import { createViewportRuler } from './viewport-ruler.js';
 
+const OBSTACLE_IDS = ['panel-area', 'viewport-overlay'];
+const LAYOUT_MAX_AGE_MS = 250;
+
 export function mountLiveRulers(container) {
     const root = document.createElement('div');
     root.className = 'live-rulers';
@@ -16,36 +19,80 @@ export function mountLiveRulers(container) {
     root.append(view.el, lattice.el, clocks.el, neighborhood.el);
     container.appendChild(root);
 
+    // A setting reaches the DOM only when its value changes. The last value
+    // written is kept here because inline-style getters do not return what
+    // was set (`0` reads back as `0px`, `hsl()` as `rgb()`).
+    const applied = new Map();
+    const once = (key, value) => {
+        if (applied.get(key) === value) return false;
+        applied.set(key, value);
+        return true;
+    };
+    const setVar = (name, value) => { if (once(name, value)) root.style.setProperty(name, value); };
+    const latticeValue = lattice.el.querySelector('.live-ruler-string-value');
+    const latticeWave = lattice.el.querySelector('.live-ruler-string path');
+
+    // The view rectangle and the panels covering it come from layout. They
+    // are re-read when something resizes or a panel shows or hides, and
+    // otherwise at most every LAYOUT_MAX_AGE_MS; a read on every frame
+    // forces a reflow on every frame.
+    let layout = null;
+    let layoutAt = 0;
+    const invalidateLayout = () => { layout = null; };
+    const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(invalidateLayout) : null;
+    const watched = new Set();
+    observer?.observe(container);
+    window.addEventListener('resize', invalidateLayout);
+    window.addEventListener('ftd:panel-visibility-change', invalidateLayout);
+    const readLayout = () => {
+        const now = performance.now();
+        if (layout && now - layoutAt < LAYOUT_MAX_AGE_MS) return layout;
+        const viewRect = container.getBoundingClientRect();
+        const obstacles = [];
+        for (const id of OBSTACLE_IDS) {
+            const el = document.getElementById(id);
+            if (!el) continue;
+            if (observer && !watched.has(el)) {
+                watched.add(el);
+                observer.observe(el);
+            }
+            if (el.hidden || el.getClientRects().length === 0) continue;
+            obstacles.push(el.getBoundingClientRect());
+        }
+        layout = { viewRect, obstacles };
+        layoutAt = now;
+        return layout;
+    };
+
     return {
         update(reading) {
             const measures = reading.measures || LIVE_MEASURE_DEFAULTS;
-            root.style.setProperty('--ruler-scale', String(measures.rulerScale ?? 1));
-            root.style.setProperty('--clock-size', `${measures.clockSize ?? 16}px`);
-            root.style.setProperty('--string-width', `${measures.stringWidth ?? 148}px`);
-            root.style.setProperty('--value-size', `${measures.valueSize ?? 16}px`);
-            root.style.setProperty('--line-thickness', `${measures.lineThickness ?? 1.5}px`);
-            root.style.setProperty('--bar-thickness', `${measures.barThickness ?? 8}px`);
-            const value = lattice.el.querySelector('.live-ruler-string-value');
-            if (value) value.style.fontSize = `${measures.valueSize ?? 16}px`;
-            const wave = lattice.el.querySelector('.live-ruler-string path');
-            if (wave) wave.style.strokeWidth = `${measures.lineThickness ?? 1.5}px`;
-            view.el.hidden = measures.viewRuler === false;
+            setVar('--ruler-scale', String(measures.rulerScale ?? 1));
+            setVar('--clock-size', `${measures.clockSize ?? 16}px`);
+            setVar('--string-width', `${measures.stringWidth ?? 148}px`);
+            setVar('--value-size', `${measures.valueSize ?? 16}px`);
+            setVar('--line-thickness', `${measures.lineThickness ?? 1.5}px`);
+            setVar('--bar-thickness', `${measures.barThickness ?? 8}px`);
+            const valueSize = `${measures.valueSize ?? 16}px`;
+            if (latticeValue && once('value-font', valueSize)) latticeValue.style.fontSize = valueSize;
+            const lineWidth = `${measures.lineThickness ?? 1.5}px`;
+            if (latticeWave && once('wave-stroke', lineWidth)) latticeWave.style.strokeWidth = lineWidth;
+            const viewHidden = measures.viewRuler === false;
+            if (once('view-hidden', viewHidden)) view.el.hidden = viewHidden;
             const gauge = lengthGauge(reading.engineMode);
             const metres = gauge.metresPerUnit;
             const format = (units, step) => formatLength(units, step, metres);
             const domain = gauge.domainUnits || Math.max(1, reading.latticeSize || 1);
             const span = visibleLatticeSpan(reading);
-            const viewRect = container.getBoundingClientRect();
-            const obstacles = ['panel-area', 'viewport-overlay']
-                .map((id) => document.getElementById(id))
-                .filter((el) => el && !el.hidden && el.getClientRects().length > 0)
-                .map((el) => el.getBoundingClientRect());
+            const { viewRect, obstacles } = readLayout();
             const insets = rulerInsets(viewRect, obstacles);
-            view.el.style.left = `${insets.left}px`;
-            view.el.style.right = `${insets.right}px`;
+            const insetLeft = `${insets.left}px`;
+            if (once('inset-left', insetLeft)) view.el.style.left = insetLeft;
+            const insetRight = `${insets.right}px`;
+            if (once('inset-right', insetRight)) view.el.style.right = insetRight;
             const openPx = Math.max(1, viewRect.width - insets.left - insets.right);
             const openSpan = span.latticeWidth * (openPx / Math.max(1, viewRect.width));
-            view.render(viewportScale(openSpan), format);
+            view.render(viewportScale(openSpan), format, metres);
             const anchor = anchorRuler({
                 domainUnits: domain,
                 pixelsPerUnit: span.pixelsPerVoxel,
@@ -82,10 +129,17 @@ export function mountLiveRulers(container) {
             lattice.render(anchor, format);
             const close = anchor.subject === 'voxel' && fluxOn;
             clocks.render(close && measures.voxelClocks !== false ? reading.voxelClocks : []);
-            const neighborhoodOn = measures.mooreBars !== false || measures.mooreWaves !== false || measures.mooreJoules !== false;
-            neighborhood.render(close && neighborhoodOn ? reading.mooreNeighborhood : []);
+            const pack = reading.mooreNeighborhood || { sites: [], energy: null };
+            const perSite = measures.mooreBars !== false || measures.mooreWaves !== false || measures.mooreJoules !== false;
+            neighborhood.render(
+                close && perSite ? pack.sites : [],
+                close && measures.mooreEnergy !== false ? pack.energy : null,
+            );
         },
         dispose() {
+            observer?.disconnect();
+            window.removeEventListener('resize', invalidateLayout);
+            window.removeEventListener('ftd:panel-visibility-change', invalidateLayout);
             root.remove();
         },
     };

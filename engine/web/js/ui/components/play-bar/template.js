@@ -3,7 +3,7 @@
  * viewport that hosts the primary playback controls.
  *
  * Layout (left to right):
- *   [play] [step] [reset] | [-] [speed] [+] | [settings]
+ *   [play] [step] [reset] | [-] [speed] [+] | [1] [10] [100] | [zoom]
  *
  * The ids below match the original toolbar wiring (`btn-play`,
  * `btn-step`, `btn-reset`, `ticks-per-frame`, `tpf-display`) so app.js
@@ -42,74 +42,37 @@ export function getPlayBarTemplate() {
                 data-speed-nudge="5" title="Faster" aria-label="Faster">+</button>
         </div>
 
+        <input type="range" class="play-bar-speed-input" id="ticks-per-frame"
+            min="0" max="100" step="0.001" value="50"
+            title="Simulation speed (ticks per animation frame)"
+            aria-label="Simulation speed" tabindex="-1">
+
         <div class="play-bar-divider" aria-hidden="true"></div>
 
-        <div class="play-bar-section play-bar-zoom" aria-label="Camera zoom">
-            <select id="play-bar-zoom" class="play-bar-zoom-select" aria-label="Zoom level">
-                <option value="">Zoom</option>
-                <option value="moore">Moore neighborhood</option>
-                <option value="neighborhood">Neighborhood zoomed out</option>
-                <option value="detail">Detailed lattice</option>
-                <option value="lattice">Full lattice</option>
-                <option value="lattice-out">Zoomed out lattice</option>
-                <option value="quasi">Zoomed out quasi-domain</option>
-            </select>
+        <div class="play-bar-section play-bar-steps" aria-label="Advance by ticks">
+            <button type="button" class="play-bar-step-count" data-step-by="1" title="Advance 1 tick">1</button>
+            <button type="button" class="play-bar-step-count" data-step-by="10" title="Advance 10 ticks">10</button>
+            <button type="button" class="play-bar-step-count" data-step-by="100" title="Advance 100 ticks">100</button>
         </div>
 
         <div class="play-bar-divider" aria-hidden="true"></div>
 
-        <div class="play-bar-section play-bar-actions">
-            <button class="play-bar-icon-btn play-bar-settings"
-                type="button" title="Playback settings" aria-label="Playback settings"
-                aria-expanded="false" aria-controls="play-bar-settings-popover">
-                &#9881;&#xFE0E;
+        <div class="play-bar-section play-bar-zoom" aria-label="Camera zoom">
+            <button type="button" class="play-bar-icon-btn play-bar-zoom-btn" id="play-bar-zoom-btn"
+                title="Zoom level" aria-label="Zoom level" aria-haspopup="listbox" aria-expanded="false"
+                aria-controls="play-bar-zoom-menu">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                    <path d="M4 8V5h3M17 5h3v3M20 16v3h-3M7 19H4v-3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 12h6M12 9v6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
             </button>
-            <div class="play-bar-settings-popover" id="play-bar-settings-popover"
-                 role="dialog" aria-label="Playback settings" hidden>
-                <!-- Speed presets — click a chip to snap ticks-per-frame to that
-                     multiplier. The existing slider still works for continuous
-                     tuning; chips are one-tap common values. -->
-                <div class="play-bar-settings-row">
-                    <span class="play-bar-settings-label">Speed</span>
-                    <div class="play-bar-settings-options" role="radiogroup" aria-label="Speed preset">
-                        <button type="button" class="play-bar-settings-chip" data-speed-preset="0.1"  role="radio">0.1&#215;</button>
-                        <button type="button" class="play-bar-settings-chip" data-speed-preset="0.5"  role="radio">0.5&#215;</button>
-                        <button type="button" class="play-bar-settings-chip is-active" data-speed-preset="1"  role="radio" aria-checked="true">1&#215;</button>
-                        <button type="button" class="play-bar-settings-chip" data-speed-preset="2"    role="radio">2&#215;</button>
-                        <button type="button" class="play-bar-settings-chip" data-speed-preset="5"    role="radio">5&#215;</button>
-                        <button type="button" class="play-bar-settings-chip" data-speed-preset="10"   role="radio">10&#215;</button>
-                    </div>
-                </div>
-                <div class="play-bar-settings-row">
-                    <span class="play-bar-settings-label">Zoom</span>
-                    <div class="play-bar-settings-options" role="radiogroup" aria-label="Zoom preset">
-                        <button type="button" class="play-bar-settings-chip" data-zoom-preset="0.2"  role="radio">0.2&#215;</button>
-                        <button type="button" class="play-bar-settings-chip" data-zoom-preset="0.5"  role="radio">0.5&#215;</button>
-                        <button type="button" class="play-bar-settings-chip is-active" data-zoom-preset="1"  role="radio" aria-checked="true">1&#215;</button>
-                        <button type="button" class="play-bar-settings-chip" data-zoom-preset="2"    role="radio">2&#215;</button>
-                        <button type="button" class="play-bar-settings-chip" data-zoom-preset="5"    role="radio">5&#215;</button>
-                        <button type="button" class="play-bar-settings-chip" data-zoom-preset="10"   role="radio">10&#215;</button>
-                    </div>
-                </div>
-                <div class="play-bar-settings-row">
-                    <span class="play-bar-settings-label">Fine</span>
-                    <input type="range" class="play-bar-slider" id="ticks-per-frame"
-                        min="0" max="100" step="0.001" value="50"
-                        title="Simulation speed (ticks per animation frame)"
-                        aria-label="Simulation speed">
-                </div>
-                <!-- Step-by-N buttons — step the simulation forward by a
-                     specific tick count without starting playback. Useful for
-                     careful frame-by-frame exploration. Each button fires
-                     bridge.tick() the requested number of times synchronously. -->
-                <div class="play-bar-settings-row">
-                    <span class="play-bar-settings-label">Step</span>
-                    <div class="play-bar-settings-options">
-                        <button type="button" class="play-bar-settings-chip" data-step-by="1"   title="Advance 1 tick">+1</button>
-                        <button type="button" class="play-bar-settings-chip" data-step-by="10"  title="Advance 10 ticks">+10</button>
-                        <button type="button" class="play-bar-settings-chip" data-step-by="100" title="Advance 100 ticks">+100</button>
-                    </div>
-                </div>
+            <div class="play-bar-zoom-menu" id="play-bar-zoom-menu" role="listbox" aria-label="Zoom level" hidden>
+                <button type="button" role="option" data-framed-view="moore">Moore neighborhood</button>
+                <button type="button" role="option" data-framed-view="neighborhood">Neighborhood zoomed out</button>
+                <button type="button" role="option" data-framed-view="detail">Detailed lattice</button>
+                <button type="button" role="option" data-framed-view="lattice">Full lattice</button>
+                <button type="button" role="option" data-framed-view="lattice-out">Zoomed out lattice</button>
+                <button type="button" role="option" data-framed-view="quasi">Zoomed out quasi-domain</button>
             </div>
         </div>
     `;

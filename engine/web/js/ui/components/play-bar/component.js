@@ -34,18 +34,9 @@ export class PlayBarComponent extends BaseLifecycleController {
         if (!this.el.parentElement) mountEl.appendChild(this.el);
         applyPanelMountClasses(document.documentElement.dataset.panelMount || 'left');
 
-        this.settingsBtn = this.el.querySelector('.play-bar-settings');
-        this.popoverEl   = this.el.querySelector('.play-bar-settings-popover');
+        this.zoomBtn = this.el.querySelector('#play-bar-zoom-btn');
+        this.zoomMenu = this.el.querySelector('#play-bar-zoom-menu');
         this.speedNudgeBtns = this.el.querySelectorAll('[data-speed-nudge]');
-
-        const zoomSelect = this.el.querySelector('#play-bar-zoom');
-        if (zoomSelect) {
-            this.bindEvent(zoomSelect, 'change', () => {
-                const id = zoomSelect.value;
-                if (!id) return;
-                appRegistry.get('viewport')?.setFramedView?.(id);
-            });
-        }
 
         for (const btn of this.speedNudgeBtns) {
             this.bindEvent(btn, 'click', () => {
@@ -53,93 +44,52 @@ export class PlayBarComponent extends BaseLifecycleController {
             });
         }
 
-        if (this.settingsBtn && this.popoverEl) {
-            this.bindEvent(this.settingsBtn, 'click', (e) => {
+        this._stepGen = this._stepGen | 0;
+        for (const chip of this.el.querySelectorAll('[data-step-by]')) {
+            this.bindEvent(chip, 'click', (e) => {
                 e.stopPropagation();
-                this._setPopoverOpen(this.popoverEl.hasAttribute('hidden'));
+                const n = parseInt(chip.dataset.stepBy, 10) || 1;
+                const stepBtn = document.getElementById('btn-step');
+                if (!stepBtn) return;
+                this.cancelPendingSteps();
+                const gen = this._stepGen;
+                let i = 0;
+                const tickOne = () => {
+                    if (gen !== this._stepGen) return;
+                    stepBtn.click();
+                    i++;
+                    if (i < n) this._stepTimer = setTimeout(tickOne, 0);
+                    else this._stepTimer = null;
+                };
+                tickOne();
             });
+        }
+        this.bindEvent(document, 'change', () => this.cancelPendingSteps());
+        this.bindEvent(document.getElementById('btn-reset'), 'click', () => this.cancelPendingSteps());
 
-            // Speed preset chips snap the existing ticks-per-frame slider. The
-            // slider's app.js wiring picks up the change, so we only dispatch the
-            // same input event a direct slider drag emits.
-            for (const chip of this.popoverEl.querySelectorAll('[data-speed-preset]')) {
-                this.bindEvent(chip, 'click', (e) => {
-                    e.stopPropagation();
-                    const mult = parseFloat(chip.dataset.speedPreset);
-                    if (!Number.isFinite(mult) || mult <= 0) return;
-                    const slider = document.getElementById('ticks-per-frame');
-                    if (slider) {
-                        // ticks-per-frame: min=0, max=100, step=0.1, value=50 ≡ 1×.
-                        slider.value = String(speedToSliderValue(mult));
-                        slider.dispatchEvent(new Event('input', { bubbles: true }));
-                    }
-                    this._setActiveSpeedPreset(chip);
-                });
-            }
-            const speedSlider = document.getElementById('ticks-per-frame');
-            this.bindEvent(speedSlider, 'input', () => {
-                this._syncSpeedPresetFromSlider(Number.parseFloat(speedSlider.value));
+        if (this.zoomBtn && this.zoomMenu) {
+            this.bindEvent(this.zoomBtn, 'click', (e) => {
+                e.stopPropagation();
+                const open = this.zoomMenu.hasAttribute('hidden');
+                this._setZoomMenu(open);
             });
-
-            // Zoom preset chips set the camera's zoom magnitude in the active viewport
-            for (const chip of this.popoverEl.querySelectorAll('[data-zoom-preset]')) {
-                this.bindEvent(chip, 'click', (e) => {
+            for (const item of this.zoomMenu.querySelectorAll('[data-framed-view]')) {
+                this.bindEvent(item, 'click', (e) => {
                     e.stopPropagation();
-                    const factor = parseFloat(chip.dataset.zoomPreset);
-                    if (!Number.isFinite(factor) || factor <= 0) return;
-                    const viewport = appRegistry.get('viewport');
-                    if (viewport) {
-                        viewport.setZoomMagnitude(factor);
-                    }
-                    this._setActiveZoomPreset(chip);
+                    appRegistry.get('viewport')?.setFramedView?.(item.dataset.framedView);
+                    this._setZoomMenu(false);
                 });
             }
-
-            // Step-by-N chips — advance the simulation by N ticks without starting
-            // continuous playback. Reuses btn-step (one tick) N times. The chain is
-            // generation-tagged: unmount / re-fire / scenario reload bumps the
-            // generation so a prior in-flight chain aborts cleanly.
-            this._stepGen = this._stepGen | 0;
-            for (const chip of this.popoverEl.querySelectorAll('[data-step-by]')) {
-                this.bindEvent(chip, 'click', (e) => {
-                    e.stopPropagation();
-                    const n = parseInt(chip.dataset.stepBy, 10) || 1;
-                    const stepBtn = document.getElementById('btn-step');
-                    if (!stepBtn) return;
-                    this.cancelPendingSteps();
-                    const gen = this._stepGen;
-                    let i = 0;
-                    const tickOne = () => {
-                        if (gen !== this._stepGen) return;   // aborted
-                        stepBtn.click();
-                        i++;
-                        if (i < n) {
-                            this._stepTimer = setTimeout(tickOne, 0);
-                        } else {
-                            this._stepTimer = null;
-                        }
-                    };
-                    tickOne();
-                });
-            }
-
-            // Click-outside + Escape close the popover.
             this._onDocClick = (e) => {
-                if (!this.popoverEl || this.popoverEl.hasAttribute('hidden')) return;
-                if (this.popoverEl.contains(e.target) || this.settingsBtn.contains(e.target)) return;
-                this._setPopoverOpen(false);
+                if (!this.zoomMenu || this.zoomMenu.hasAttribute('hidden')) return;
+                if (this.zoomMenu.contains(e.target) || this.zoomBtn.contains(e.target)) return;
+                this._setZoomMenu(false);
             };
             this._onDocKey = (e) => {
-                if (e.key === 'Escape') this._setPopoverOpen(false);
+                if (e.key === 'Escape') this._setZoomMenu(false);
             };
             this.bindEvent(document, 'click', this._onDocClick);
             this.bindEvent(document, 'keydown', this._onDocKey);
-
-            // Context changes invalidate an in-flight +N sequence. Without
-            // this, a +100 started on Scale 0 could continue clicking the
-            // global Step button after a scenario or engine-mode handoff.
-            this.bindEvent(document, 'change', () => this.cancelPendingSteps());
-            this.bindEvent(document.getElementById('btn-reset'), 'click', () => this.cancelPendingSteps());
         }
 
         return this;
@@ -220,6 +170,14 @@ export class PlayBarComponent extends BaseLifecycleController {
 
         const threshold = 0.25;
         this._setActiveZoomPreset(minDiff < threshold ? bestChip : null);
+    }
+
+    _setZoomMenu(open) {
+        if (!this.zoomMenu || !this.zoomBtn) return;
+        if (open) this.zoomMenu.removeAttribute('hidden');
+        else this.zoomMenu.setAttribute('hidden', '');
+        this.zoomBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        this.zoomBtn.classList.toggle('is-open', open);
     }
 
     _setPopoverOpen(open) {

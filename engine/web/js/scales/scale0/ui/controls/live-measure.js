@@ -16,6 +16,12 @@ export function createLiveMeasureCard() {
     <div class="toggle-row"><input type="checkbox" id="lm-moore-bars" checked><label for="lm-moore-bars">Neighborhood size bars</label></div>
     <div class="toggle-row"><input type="checkbox" id="lm-moore-waves" checked><label for="lm-moore-waves">Neighborhood wave lines</label></div>
     <div class="toggle-row"><input type="checkbox" id="lm-moore-joules" checked><label for="lm-moore-joules">Neighborhood joules</label></div>
+    <div class="toggle-row"><input type="checkbox" id="lm-moore-energy" checked><label for="lm-moore-energy">Neighborhood energy</label></div>
+    <div class="combo-section-label">Telemetry rate</div>
+    <div class="ctrl-slider-row">
+      <input type="range" class="pe-slider" id="lm-moore-hz" min="1" max="60" step="1" value="20">
+      <span class="pe-ctrl-value" id="lm-moore-hz-val">20/s</span>
+    </div>
     <div class="toggle-row"><input type="checkbox" id="lm-smooth-orbit" checked><label for="lm-smooth-orbit">Smooth orbit</label></div>
 
     <div class="combo-section-label">Ruler scale</div>
@@ -79,7 +85,17 @@ export function wireLiveMeasureCard(ctx) {
     bindCheck('lm-moore-bars', 'mooreBars');
     bindCheck('lm-moore-waves', 'mooreWaves');
     bindCheck('lm-moore-joules', 'mooreJoules');
+    bindCheck('lm-moore-energy', 'mooreEnergy');
     bindCheck('lm-smooth-orbit', 'smoothOrbit');
+    const hzInput = document.getElementById('lm-moore-hz');
+    const hzLabel = document.getElementById('lm-moore-hz-val');
+    if (hzInput) {
+        scope.on(hzInput, 'input', () => {
+            const value = Math.min(60, Math.max(1, Math.round(Number(hzInput.value) || 20)));
+            if (hzLabel) hzLabel.textContent = `${value}/s`;
+            viewport()?.setLiveMeasure?.({ mooreHz: value });
+        });
+    }
 
     const bindRange = (id, valueId, key, digits) => {
         const input = document.getElementById(id);

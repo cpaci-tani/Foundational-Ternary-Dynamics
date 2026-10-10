@@ -246,7 +246,7 @@ test.describe('Scale 0 scenario toolbar and epistemic disclosure audit gate', ()
                 selected: document.getElementById('scenario-select')?.value,
                 controls: document.querySelectorAll('#lattice-controls').length,
                 selects: document.querySelectorAll('#scenario-select').length,
-                optionCount: document.querySelectorAll('#scenario-select option').length,
+                optionCount: document.querySelectorAll('#scenario-select option:not([value^="record-"])').length,
                 registryCount: registry.SCALE0_SCENARIOS.length,
                 metadata: document.getElementById('lat-scenario-desc-text')?.textContent || '',
                 status,
