@@ -202,6 +202,14 @@ export const SCALE0_SCENARIO_PRESENTATION = Object.freeze({
         title: "Periodic Driving of a Field Reservoir",
         intent: "Source increments spaced by eight ticks inject more energy than consecutive increments at the measured constructive driving interval.",
     },
+    "s0-cell-loop-repair": {
+        title: "Gauss Projection Removes a Gradient Field and Keeps a Ring",
+        intent: "With projection as the only active term, a source-free gradient blob is removed while the neighbouring ring and the curl of the whole field are unchanged.",
+    },
+    "s0-cell-loop-pair": {
+        title: "Ring Circulation Reversal Beside a Zero-Circulation Control",
+        intent: "The free wave map reverses the coherent ring's circulation within three ticks while an equal-magnitude sign-alternated ring reads zero until the first ring's waves reach it.",
+    },
 
     // Collective Fields · Noise & Shear
     "flux-vacuum-foam": {

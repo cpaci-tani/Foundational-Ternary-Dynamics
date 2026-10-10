@@ -15,7 +15,7 @@ const record = {id: 'record-relation', backend: 'finite-records', category: 'Fin
 const scenarios = [...SCALE0_SCENARIOS, record];
 
 test('every native preset has a typed constructor disposition and a valid default v2 recipe', () => {
-    assert.equal(SCALE0_SCENARIOS.length, 143);
+    assert.equal(SCALE0_SCENARIOS.length, 145);
     for (const s of SCALE0_SCENARIOS) {
         const recipe = createRecipe(s, 33);
         assert.equal(recipe.version, RECIPE_VERSION);
@@ -25,9 +25,9 @@ test('every native preset has a typed constructor disposition and a valid defaul
     }
     const coverage = seedCoverage(scenarios);
     assert.equal(new Set(coverage.map(r => r.scenarioId)).size, scenarios.length);
-    assert.equal(coverage.filter(r => r.parameterAudit === 'typed-constructor-bindings').length, 143);
+    assert.equal(coverage.filter(r => r.parameterAudit === 'typed-constructor-bindings').length, 145);
     const recorded = JSON.parse(readFileSync(new URL('../../config/web_seeding_coverage.json', import.meta.url)));
-    assert.deepEqual(recorded.scenarios.filter(r => r.capability === 'native-preparation').map(({scenarioId,category,capability,parameterAudit})=>({scenarioId,category,capability,parameterAudit})), coverage.slice(0, 143));
+    assert.deepEqual(recorded.scenarios.filter(r => r.capability === 'native-preparation').map(({scenarioId,category,capability,parameterAudit})=>({scenarioId,category,capability,parameterAudit})), coverage.slice(0, 145));
 });
 
 test('the generated catalog exposes a default v2 recipe for a registered finite preparation', () => {

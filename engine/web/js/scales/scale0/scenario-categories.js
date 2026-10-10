@@ -31,6 +31,7 @@ const CATEGORY_MEMBERS = [
         's0-cell-capacitor', 's0-cell-torus', 's0-cell-torus-reverse',
         's0-cell-torus-scrambled', 's0-cell-torus-open', 's0-cell-torus-walled',
         's0-cell-triad', 's0-cell-torus-membrane',
+        's0-cell-loop-repair', 's0-cell-loop-pair',
     ]],
     ['Energy · Driving & Transfer', [
         's0-cell-torus-membrane-gated', 's0-cell-membrane-pumped',

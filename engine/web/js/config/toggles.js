@@ -153,6 +153,8 @@
  * 's0-cell-membrane-pumped' |
  * 's0-cell-membrane-transfer' |
  * 's0-cell-membrane-pumped-resonant' |
+ * 's0-cell-loop-repair' |
+ * 's0-cell-loop-pair' |
  * 's0-seed-de-broglie-clock')} ScenarioId
  */
 
@@ -585,6 +587,10 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-cell-membrane-pumped': isolatedScale0Profile('wave_propagation', 'de_broglie_clock'),
     's0-cell-membrane-transfer': isolatedScale0Profile('wave_propagation', 'de_broglie_clock'),
     's0-cell-membrane-pumped-resonant': isolatedScale0Profile('wave_propagation', 'de_broglie_clock'),
+    // Loop-content pair: the repair is the Gauss projection alone, so each
+    // tick is one projection pass; the ring pair is the bare wave map.
+    's0-cell-loop-repair': isolatedScale0Profile('gauss_projection'),
+    's0-cell-loop-pair': isolatedScale0Profile('wave_propagation'),
 };
 
 // Research / non-UI terms pinned per scenario. Keys here are NOT in
@@ -754,6 +760,8 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-cell-membrane-pumped': { mode: 0 },
     's0-cell-membrane-transfer': { mode: 0 },
     's0-cell-membrane-pumped-resonant': { mode: 0 },
+    's0-cell-loop-repair': { mode: 0 },
+    's0-cell-loop-pair': { mode: 0 },
 };
 
 // Explicit opt-in for the imposed absorbing sponge. The engine ignores it when

@@ -23,6 +23,8 @@
 //    s0-cell-membrane-pumped       empty membrane charged by the flux pump
 //    s0-cell-membrane-transfer     two tangent membranes, port between them
 //    s0-cell-membrane-pumped-resonant  pump increments spaced by the cell period
+//    s0-cell-loop-repair           gradient blob beside a ring, projection only
+//    s0-cell-loop-pair             coherent ring beside its scrambled control
 //
 //  The membrane, pump, and port mechanisms and their physics justification
 //  live in ftd/flux_cell.h. Every body registers its cell region so the
@@ -544,6 +546,144 @@ bool setup_cell_scenario(RenderBridge& rb, const std::string& name) {
         // The registered region is the receiver: the dashboard's Flux Cell
         // rows show energy arriving in B.
         rb.set_flux_cell_region({b.cx, b.cy, b.cz, r_out - 0.5});
+    }
+    else if (name == "s0-cell-loop-repair") {
+        // Scenario ID: s0-cell-loop-repair
+        // Physical Purpose: shows what the Gauss projection removes and what
+        // it leaves. A source-free pure-gradient blob J = D(phi) is seeded
+        // beside a flux-cell ring, and the projection is the only active
+        // term, so every tick is one repair pass and nothing else.
+        // Expected Behaviour: the blob is removed. Its centred curl vanishes
+        // by construction and, with no manifested charge, its divergence is
+        // constraint violation in full. The ring, and the centred curl of the
+        // whole field, are left unchanged.
+        // Discrepancy: this is the Hodge split of a real-valued field, not a
+        // vortex or a conserved loop charge; the same ring loses its
+        // circulation under the wave map (s0-cell-loop-pair).
+        configure_static_seed_terms(rb);
+        rb.toggles.gauss_projection = true;
+        rb.toggles.flux_boundary = FluxBoundaryMode::Periodic;
+
+        FluxCellTorusSpec ring;
+        ring.cx = seed::real("ring.x", 0.25 * (N - 1), 0.0, N - 1.0,
+            "Ring centre x", "Lattice x-coordinate of the flux-cell ring centre.");
+        ring.cy = seed::real("ring.y", midF, 0.0, N - 1.0,
+            "Ring centre y", "Lattice y-coordinate of the flux-cell ring centre.");
+        ring.cz = seed::real("ring.z", midF, 0.0, N - 1.0,
+            "Ring centre z", "Lattice z-coordinate of the flux-cell ring centre.");
+        ring.major_radius = seed::real("ring.majorRadius", std::max(2.0, (N - 1) / 8.0),
+            1.0, std::max(N * 2.0, 64.0),
+            "Ring major radius", "Distance (lattice sites) from the ring centre to the tube centreline.");
+        ring.tube_sigma = seed::real("ring.tubeSigma", std::max(1.0, (N - 1) / 25.6),
+            0.25, std::max(double(N), 64.0),
+            "Ring tube width", "Gaussian width sigma (lattice sites) of the ring's cross-sectional tube profile.");
+        ring.amplitude = seed::real("ring.amplitude", 0.3, 0.0, 20.0,
+            "Ring peak amplitude", "Peak |J| on the ring centreline.");
+        ring.cutoff_sigmas = seed::real("ring.cutoffSigmas", 3.0, 0.5, 12.0,
+            "Ring tube cutoff", "Support cutoff distance from the ring centreline, in multiples of the tube width.");
+        ring.circulation_sign = seed::choice("ring.circulation", 1, {{-1,"Clockwise"},{1,"Counterclockwise"}},
+            "Ring circulation", "Reverses the direction of the toroidal flux.");
+        seed_flux_cell_torus(rb, ring, 1.0);
+
+        const double bx = seed::real("source.x", 0.75 * (N - 1), 0.0, N - 1.0,
+            "Gradient blob centre x", "Lattice x-coordinate of the centre of the seeded potential.");
+        const double by = seed::real("source.y", midF, 0.0, N - 1.0,
+            "Gradient blob centre y", "Lattice y-coordinate of the centre of the seeded potential.");
+        const double bz = seed::real("source.z", midF, 0.0, N - 1.0,
+            "Gradient blob centre z", "Lattice z-coordinate of the centre of the seeded potential.");
+        const double blob_sigma = seed::real("geometry.sigma", std::max(1.25, (N - 1) / 16.0),
+            0.5, std::max(double(N), 64.0),
+            "Blob Gaussian width", "Gaussian width sigma (lattice sites) of the potential whose centred gradient is seeded.");
+        const double blob_amp = seed::real("packet.amplitude", 0.3, 0.0, 20.0,
+            "Blob peak amplitude", "Peak |J| of the gradient blob in the continuum profile, reached one width from its centre.");
+        const double blob_cut = seed::real("geometry.cutoffSigmas", 4.0, 0.5, 12.0,
+            "Blob support cutoff", "Radius beyond which the seeded potential is set to zero, in multiples of the blob width.");
+        // phi = -A sigma sqrt(e) exp(-r^2 / 2 sigma^2), so |grad phi| = A at
+        // r = sigma. J is the centred difference of phi sampled on the lattice
+        // with minimum-image distances: difference operators commute, so the
+        // centred curl of the blob is zero to rounding for every cutoff and
+        // box size. No per-site write floor is applied, because dropping
+        // small values would break that identity.
+        const double phi0 = blob_amp * blob_sigma * std::exp(0.5);
+        const double cut2 = blob_cut * blob_cut;
+        auto wrapped = [N](double d) {
+            while (d >  0.5 * N) d -= N;
+            while (d < -0.5 * N) d += N;
+            return d;
+        };
+        auto phi = [&](int x, int y, int z) {
+            const double dx = wrapped(x - bx), dy = wrapped(y - by), dz = wrapped(z - bz);
+            const double r2 = (dx*dx + dy*dy + dz*dz) / (blob_sigma * blob_sigma);
+            return r2 > cut2 ? 0.0 : -phi0 * std::exp(-0.5 * r2);
+        };
+        for (int z = 0; z < N; ++z)
+        for (int y = 0; y < N; ++y)
+        for (int x = 0; x < N; ++x) {
+            const double jx = 0.5 * (phi(x + 1, y, z) - phi(x - 1, y, z));
+            const double jy = 0.5 * (phi(x, y + 1, z) - phi(x, y - 1, z));
+            const double jz = 0.5 * (phi(x, y, z + 1) - phi(x, y, z - 1));
+            if (jx != 0.0 || jy != 0.0 || jz != 0.0) IF(rb, x, y, z, jx, jy, jz);
+        }
+        // The registered region is the ring: the dashboard's Flux Cell rows
+        // show the part of the field the projection leaves alone.
+        rb.set_flux_cell_region({ring.cx, ring.cy, ring.cz,
+                                 ring.major_radius + 3.0 * ring.tube_sigma});
+    }
+    else if (name == "s0-cell-loop-pair") {
+        // Scenario ID: s0-cell-loop-pair
+        // Physical Purpose: a coherent flux-cell ring beside its
+        // sign-alternated control in one box, on the periodic free wave map.
+        // The two rings share radius, tube width, amplitude and cutoff, so
+        // their pointwise |J| is equal; only the coherent one carries
+        // circulation.
+        // Expected Behaviour: the coherent ring's circulation is not held by
+        // the wave map and reverses sign within a few ticks. The control's
+        // circulation is zero by symmetry until the coherent ring's waves
+        // reach it.
+        // Discrepancy: after the two wave fronts meet the rings are no longer
+        // independent, so the comparison is valid only before then. No
+        // persistent current, vortex or winding number is implied.
+        configure_free_wave_terms(rb, false);
+        rb.toggles.flux_boundary = FluxBoundaryMode::Periodic;
+
+        FluxCellTorusSpec coherent;
+        coherent.major_radius = seed::real("geometry.majorRadius", std::max(2.0, (N - 1) / 8.0),
+            1.0, std::max(N * 2.0, 64.0),
+            "Ring major radius", "Distance (lattice sites) from each ring centre to its tube centreline; shared by both rings.");
+        coherent.tube_sigma = seed::real("geometry.tubeSigma", std::max(1.0, (N - 1) / 25.6),
+            0.25, std::max(double(N), 64.0),
+            "Tube Gaussian width", "Gaussian width sigma (lattice sites) of the cross-sectional tube profile; shared by both rings.");
+        coherent.amplitude = seed::real("packet.amplitude", 0.3, 0.0, 20.0,
+            "Ring peak amplitude", "Peak |J| on each ring centreline; shared by both rings.");
+        coherent.cutoff_sigmas = seed::real("geometry.cutoffSigmas", 3.0, 0.5, 12.0,
+            "Tube cutoff", "Support cutoff distance from each ring centreline, in multiples of the tube width; shared by both rings.");
+        FluxCellTorusSpec control = coherent;
+
+        coherent.cx = seed::real("coherent.x", 0.25 * (N - 1), 0.0, N - 1.0,
+            "Coherent ring centre x", "Lattice x-coordinate of the coherent ring centre.");
+        coherent.cy = seed::real("coherent.y", midF, 0.0, N - 1.0,
+            "Coherent ring centre y", "Lattice y-coordinate of the coherent ring centre.");
+        coherent.cz = seed::real("coherent.z", midF, 0.0, N - 1.0,
+            "Coherent ring centre z", "Lattice z-coordinate of the coherent ring centre.");
+        coherent.circulation_sign = seed::choice("coherent.circulation", 1, {{-1,"Clockwise"},{1,"Counterclockwise"}},
+            "Coherent ring circulation", "Reverses the direction of the coherent ring's toroidal flux.");
+        coherent.sign_sectors = 0;
+
+        control.cx = seed::real("control.x", 0.75 * (N - 1), 0.0, N - 1.0,
+            "Control ring centre x", "Lattice x-coordinate of the sign-alternated control ring centre.");
+        control.cy = seed::real("control.y", midF, 0.0, N - 1.0,
+            "Control ring centre y", "Lattice y-coordinate of the sign-alternated control ring centre.");
+        control.cz = seed::real("control.z", midF, 0.0, N - 1.0,
+            "Control ring centre z", "Lattice z-coordinate of the sign-alternated control ring centre.");
+        control.circulation_sign = +1;
+        control.sign_sectors = seed::integer("control.signSectors", 2, 1, 32,
+            "Control ring sectors", "Positive count of alternating flux-sign sectors round the control ring; zero would make it a second coherent ring and is excluded.");
+
+        seed_flux_cell_torus(rb, control, 1.0);
+        seed_flux_cell_torus(rb, coherent, 1.0);
+        // The registered region is the coherent ring.
+        rb.set_flux_cell_region({coherent.cx, coherent.cy, coherent.cz,
+                                 coherent.major_radius + 3.0 * coherent.tube_sigma});
     }
     else {
         return false;

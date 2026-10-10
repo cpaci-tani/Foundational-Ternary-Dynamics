@@ -910,4 +910,18 @@ export const SCALE0_SCENARIO_VALIDATION = Object.freeze({
         target: 'flux_cell_scenario_physics',
         assertion: 'A scan of the engine-booked work W_in over increment spacings 1–24 ticks on the empty membrane finds the constructive optimum at 8 ticks (W(8)/W(1)=1.37) and a destructive minimum at 3–4 ticks (W(3)/W(1)=0.10), the phase dependence of the −2J·Lδ term; with the 8-tick spacing the scenario books W_in=0.06742 equal to the Hamiltonian at disconnection (1e-9), applies exactly 20 increments, and holds with drift 4.5e-14; stored work versus increment count (5, 10, 20 at fixed amplitude) scales with exponent 1.16, far below the coherent N² of a closed single-mode oscillator because the cell is a leaky multi-mode reservoir.',
     }),
+    's0-cell-loop-repair': Object.freeze({
+        level: 'behavioral',
+        qualification: 'PROJECTION-ONLY REPAIR — a source-free pure-gradient blob beside a flux-cell ring with the Gauss projection as the only active term; the Hodge split of a real-valued field, not a vortex or a conserved loop charge',
+        test: 'engine/tests/test_flux_cell_scenario_physics.cpp',
+        target: 'flux_cell_scenario_physics',
+        assertion: 'At L=33 the blob (Σ|J|²=14.46) and the ring (Σ|J|²=11.10) have disjoint supports and the blob’s centred curl is zero to rounding (curl²/|J|²=1.8e-33, gate 1e-24). Five projection ticks leave 6.7e-5 of the blob’s Σ|J|² (gate 1e-2) and fifty leave 3.2e-9 (gate 1e-6); the whole field’s Σ(div J)² falls to 2.5e-9 of its start (gate 1e-6). Over the same fifty ticks the whole field’s Σ|curl J|² does not change in any digit (gate 1e-12), what remains equals the ring seeded alone to 4e-9 (gate 1e-6), the ring’s own Σ|J|² moves by 0.04% (gate 0.1%), and no site manifests. Ring circulation by the 64-point circle estimator moves from 7.315 to 7.303 (0.16%, gate 1%); that estimator is not an exact lattice loop sum and the exact statement is the unchanged curl.',
+    }),
+    's0-cell-loop-pair': Object.freeze({
+        level: 'behavioral',
+        qualification: 'COHERENT RING BESIDE ITS ZERO-CIRCULATION CONTROL — equal pointwise |J| in one periodic box on the bare wave map; the coherent circulation is not held and reverses, and the comparison is valid only until the two wave fronts meet',
+        test: 'engine/tests/test_flux_cell_scenario_physics.cpp',
+        target: 'flux_cell_scenario_physics',
+        assertion: 'At L=33 (ring centres x=8 and x=24, R=4, σ=1.25, cutoff 3σ) the two ring regions store U_J=5.551 identically to 1e-12. Circulation by the 64-point circle estimator: coherent 7.315, 4.677, 0.939, −1.982, −3.089, −2.707 at ticks 0–5 (pinned at ticks 0 and 4 within 5%), so the sign reverses between ticks 2 and 3; control below 2e-16 through tick 4 (gate 1e-3 of the coherent start) and 0.0146 at tick 8, which is 0.20% of the coherent start (gate 1%). The kick-drift Hamiltonian is conserved to 1.2e-14 over the eight ticks (gate 1e-9). Ticks beyond 8 are not asserted: the coherent ring’s waves have reached the control by then.',
+    }),
 });

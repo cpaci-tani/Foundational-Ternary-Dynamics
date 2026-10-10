@@ -1,0 +1,45 @@
+{
+  "format": "SeedRecipeV2",
+  "version": 2,
+  "schemaIdentity": "native-seed-2",
+  "title": "Loop pair — circulation under the free wave map, beside a zero-circulation control",
+  "description": "A coherent flux-cell ring at x = 8 and its sign-scrambled control at x = 24, on the periodic free wave map, authored for the default 33 lattice. The two rings have the same pointwise |J|; only the coherent one carries circulation. The coherent ring's circulation reverses sign between ticks 2 and 3. The control reads zero through tick 4 and stays below 0.5% of the coherent ring's starting value through tick 8; after that the coherent ring's waves have reached it and the two are no longer independent. All initial data is [IMPOSED]. View the mid-plane flux slice with the curlJ channel.",
+  "domain": { "kind": "native", "size": 33 },
+  "recipe": {
+    "version": 2,
+    "scenarioId": "s0-cell-torus-scrambled",
+    "size": 33,
+    "blank": true,
+    "randomSeed": 0,
+    "components": [
+      {
+        "id": "control-ring",
+        "kind": "native",
+        "enabled": true,
+        "scenarioId": "s0-cell-torus-scrambled",
+        "overrides": {
+          "source.x": 24,
+          "geometry.majorRadius": 4,
+          "geometry.tubeSigma": 1.25,
+          "geometry.cutoffSigmas": 3
+        }
+      },
+      {
+        "id": "coherent-ring",
+        "kind": "native",
+        "enabled": true,
+        "scenarioId": "s0-cell-torus",
+        "overrides": {
+          "source.x": 8,
+          "geometry.majorRadius": 4,
+          "geometry.tubeSigma": 1.25,
+          "geometry.cutoffSigmas": 3
+        }
+      }
+    ],
+    "overrides": {
+      "protocol.boundary": 0
+    }
+  },
+  "provenance": { "parentPreset": "s0-cell-torus-scrambled", "custom": true }
+}

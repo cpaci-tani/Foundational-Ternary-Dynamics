@@ -82,7 +82,7 @@ def inventory():
         ROOT/'engine/include/ftd/scenario_seed.h',ROOT/'scripts/phi_v2_lattice/web_seed_presets.py']
     hashes={str(p.relative_to(ROOT)).replace('\\','/'):sha256(p.read_text(encoding='utf8').encode('utf8')).hexdigest() for p in tracked_sources}
     return dict(schemaVersion=2,status='constructor-and-effect-bindings',
-        boundaries=['143 native constructor defaults checked at L=17,32,33 against pre-edit receipts; effects tested at L=17.',
+        boundaries=['145 native constructor defaults checked at L=17,32,33 against pre-edit receipts; effects tested at L=17.',
                     'All registered finite preparation/size variants compile through separate editable equivalents; frozen builders and evidence stay unchanged.',
                     'Direct and worker WASM use detached candidates. Native WebSocket requires advertised SeedRecipeV2 and commits with a source-epoch precondition.',
                     'Finite custom recipes and dynamic descriptions require the local preparation service.',
