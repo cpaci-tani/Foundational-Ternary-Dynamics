@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="css/ui/shell/z-layers.css?v=4">
     <link rel="stylesheet" href="css/ui/components/loading-overlay.css">
     <link rel="stylesheet" href="css/ui/components/gpu-server-card.css?v=3">
-    <link rel="stylesheet" href="css/ui/components/topbar.css?v=5">
+    <link rel="stylesheet" href="css/ui/components/topbar.css?v=6">
     <link rel="stylesheet" href="css/ui/components/validity-status.css?v=3">
     <link rel="stylesheet" href="css/ui/components/workspace-tabs.css?v=2">
     <link rel="stylesheet" href="css/ui/components/panel-dock.css?v=4">
@@ -359,7 +359,11 @@
         <!-- ── Toolbar ──────────────────────────────── -->
         <!-- Scale toolbar contributions are rendered by each scale's register-*-ui.js -->
         <nav id="toolbar" aria-label="Simulation controls">
-            <h1 class="brand">FTD Engine</h1>
+            <!-- The splash's lattice cube at bar size, drawn by js/ui/components/
+                 lattice-logo.js. The heading is still named "FTD Engine". -->
+            <h1 class="brand" aria-label="FTD Engine">
+                <canvas class="brand-lattice" width="84" height="84" aria-hidden="true"></canvas>
+            </h1>
             <!-- Playback controls (play / step / reset / speed) moved
                  to the floating play bar. See js/ui/components/play-bar/. -->
             <div class="tb-group">

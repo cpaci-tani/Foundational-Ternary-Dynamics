@@ -1,5 +1,6 @@
 import { getTopbarInlineTemplate, getTopbarActionButtons } from './template.js';
 import { createValidityIndicator } from '../validity-status.js';
+import { mountBarLatticeLogo } from '../lattice-logo.js';
 
 function htmlToFragment(markup) {
     const template = document.createElement('template');
@@ -39,6 +40,7 @@ export class TopbarComponent {
         this.validity ??= createValidityIndicator(this.toolbar.querySelector('[data-topbar-slot="actions"]'),
             { id: 'scale0-validity-status' });
         this.toolbar.dataset.topbar = 'enhanced';
+        this._stopBrandLogo ??= mountBarLatticeLogo(this.toolbar.querySelector('.brand-lattice'));
         this._bindInteractions();
         return this;
     }
