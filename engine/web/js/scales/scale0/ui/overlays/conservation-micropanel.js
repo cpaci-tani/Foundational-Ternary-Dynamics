@@ -1,12 +1,14 @@
 /**
  * Conservation-law audit micropanel.
  *
- * Always-on small overlay at the top-left of the lattice viewport; the
- * visualization inspector occupies the opposite side.
+ * Always mounted at the top-left of the lattice viewport on Scale 0, but not
+ * shown there: the root carries `.chart-card` for the fullscreen portal and
+ * rests at that class's unrevealed opacity 0, where its stylesheet also makes
+ * it inert to pointer input. It keeps sampling while unseen.
  *
  * Shows ΔE, Δp, ΔL, ΔQ over a rolling 100-tick window. Each value is
- * color-coded with hysteresis to prevent 4-Hz flicker. Clicking the panel
- * opens a fullscreen modal with full sparkline history.
+ * color-coded with hysteresis to prevent 4-Hz flicker. The fullscreen portal
+ * (`_ftdCard._enterFullscreen()`) shows the card with full sparkline history.
  *
  * Uses PhysicsHarness.getConservationTotals() (hub-first diag/audit) —
  * no direct bridge polling.
