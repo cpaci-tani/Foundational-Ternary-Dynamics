@@ -43,17 +43,24 @@ test.describe('Scale 0 contextual Standard Model overlay', () => {
         });
     });
 
-    test('is absent from generic fields and exposes an honest reference HUD on particle templates', async ({ page }) => {
+    test('is listed but dimmed on generic fields and exposes an honest reference HUD on particle templates', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
         const generic = await page.evaluate(() => {
-            const col = document.querySelector('[data-col="standard-model"]');
+            const col = document.querySelector('[data-col="reference"]');
+            const button = document.getElementById('toggle-sm-reference');
             return {
                 display: getComputedStyle(col).display,
+                dimmed: button.classList.contains('is-inapplicable') && button.getAttribute('aria-disabled') === 'true',
+                reason: button.dataset.uiTooltip.split('Not available here: ')[1],
+                card: getComputedStyle(document.getElementById('s0-sm-context-card')).display,
                 domain: document.getElementById('viewport-overlay')?.dataset.overlayDomains || '',
                 hudHidden: document.getElementById('s0-sm-reference-hud')?.hidden,
             };
         });
-        expect(generic.display).toBe('none');
+        expect(generic.display, 'the Reference group is always listed').not.toBe('none');
+        expect(generic.dimmed).toBe(true);
+        expect(generic.reason).toBe('this scenario is not an elementary particle.');
+        expect(generic.card, 'no particle, so no particle card').toBe('none');
         expect(generic.domain.split(/\s+/)).not.toContain('standardModel');
         expect(generic.hudHidden).toBe(true);
 
@@ -62,9 +69,10 @@ test.describe('Scale 0 contextual Standard Model overlay', () => {
             () => document.getElementById('viewport-overlay')?.dataset.scenarioId === 's0-vacuum-electron',
         );
         const electron = await page.evaluate(() => {
-            const col = document.querySelector('[data-col="standard-model"]');
+            const col = document.querySelector('[data-col="reference"]');
             const button = document.getElementById('toggle-sm-reference');
             const card = document.getElementById('s0-sm-context-card');
+            const hud = document.getElementById('s0-sm-reference-hud');
             return {
                 display: getComputedStyle(col).display,
                 applicable: !button.classList.contains('is-inapplicable'),
@@ -72,7 +80,8 @@ test.describe('Scale 0 contextual Standard Model overlay', () => {
                 spin: card.querySelector('[data-sm-field="spin"]').textContent,
                 charge: card.querySelector('[data-sm-field="charge"]').textContent,
                 chirality: card.querySelector('[data-sm-field="chirality"]').textContent,
-                statusDetail: card.title,
+                cardTitle: card.title || card.dataset.uiTooltip || '',
+                statusDetail: hud.title || hud.dataset.uiTooltip || '',
             };
         });
         expect(electron.display).not.toBe('none');
@@ -81,10 +90,17 @@ test.describe('Scale 0 contextual Standard Model overlay', () => {
         expect(electron.spin).toBe('½');
         expect(electron.charge).toBe('-1');
         expect(electron.chirality).toBe('L / R fields');
+        // The identity status rides with the card in the view; the panel card carries values only.
+        expect(electron.cardTitle).toBe('');
         expect(electron.statusDetail).toContain('[CLOSED NEGATIVE]');
 
-        await page.locator('[data-col="standard-model"] .s0-overlay-col-head').click();
-        await page.locator('#toggle-sm-reference').click();
+        // Reference is the last group; on a local server the GPU card can sit over the
+        // foot of the panel, so drive these two controls through the DOM.
+        await page.evaluate(() => {
+            const group = document.querySelector('[data-col="reference"]');
+            if (group.classList.contains('is-collapsed')) group.querySelector('.s0-overlay-col-head').click();
+            document.getElementById('toggle-sm-reference').click();
+        });
         const hud = page.locator('#s0-sm-reference-hud');
         await expect(hud).toBeVisible();
         await expect(hud.locator('[data-sm-field="name"]')).toHaveText('Electron');

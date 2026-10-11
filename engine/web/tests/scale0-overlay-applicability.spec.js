@@ -4,6 +4,8 @@
  *
  * These tests pin the distinction between a valid zero-valued diagnostic and
  * a diagnostic whose source quantity does not exist in the selected scenario.
+ * Every layer is always listed; one the scenario cannot draw is dimmed, says
+ * why in its tooltip, and cannot be switched on.
  */
 
 import { test, expect } from '@playwright/test';
@@ -19,6 +21,12 @@ async function waitForOverlayScenario(page, scenarioId) {
 }
 
 async function overlayState(page, ids) {
+    // Open every group first: a closed group hides its rows whatever their state.
+    await page.evaluate(() => {
+        for (const col of document.querySelectorAll('#viewport-overlay .s0-overlay-col.is-collapsed')) {
+            col.querySelector('.s0-overlay-col-head').click();
+        }
+    });
     return page.evaluate((buttonIds) => Object.fromEntries(buttonIds.map((id) => {
         const btn = document.getElementById(id);
         return [id, {
@@ -26,6 +34,10 @@ async function overlayState(page, ids) {
             applicable: !!btn && !btn.classList.contains('is-inapplicable'),
             active: !!btn?.classList.contains('active'),
             display: btn ? getComputedStyle(btn).display : null,
+            disabled: btn?.getAttribute('aria-disabled') || null,
+            pressed: btn?.getAttribute('aria-pressed') || null,
+            opacity: btn ? Number(getComputedStyle(btn).opacity) : null,
+            tooltip: btn?.dataset.uiTooltip || btn?.title || '',
         }];
     })), ids);
 }
@@ -36,7 +48,7 @@ test.beforeEach(async ({ page }) => {
     await waitForOverlayScenario(page, 'flux-pulse');
 });
 
-test('pure-wave scenario exposes field diagnostics but hides absent matter features', async ({ page }) => {
+test('pure-wave scenario exposes field diagnostics and dims absent matter features', async ({ page }) => {
     const states = await overlayState(page, [
         'toggle-flux-volume', 'toggle-e-field', 'toggle-vorticity',
         'toggle-state-field', 'toggle-force-em', 'toggle-force-gravity',
@@ -46,6 +58,9 @@ test('pure-wave scenario exposes field diagnostics but hides absent matter featu
 
     for (const id of ['toggle-flux-volume', 'toggle-e-field', 'toggle-vorticity']) {
         expect(states[id].applicable, `${id} should apply to a pure wave`).toBe(true);
+        expect(states[id].disabled, `${id} is not marked unavailable`).toBeNull();
+        expect(states[id].opacity).toBe(1);
+        expect(states[id].tooltip).not.toContain('Not available here');
     }
     for (const id of [
         'toggle-state-field', 'toggle-force-em', 'toggle-force-gravity',
@@ -53,8 +68,21 @@ test('pure-wave scenario exposes field diagnostics but hides absent matter featu
         'toggle-color-charge', 'toggle-confinement', 'toggle-latency', 'toggle-horizon',
     ]) {
         expect(states[id].applicable, `${id} should not apply to a pure wave`).toBe(false);
-        expect(states[id].display, `${id} should be hidden`).toBe('none');
+        expect(states[id].display, `${id} stays in the list`).not.toBe('none');
+        expect(states[id].disabled, `${id} reports itself unavailable`).toBe('true');
+        expect(states[id].pressed, `${id} reports itself off`).toBe('false');
+        expect(states[id].opacity, `${id} is dimmed`).toBeLessThan(0.7);
+        expect(states[id].tooltip, `${id} says what is missing`).toMatch(/ Not available here: .+\.$/);
     }
+
+    // A dimmed layer cannot be switched on.
+    const clicked = await page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const btn = document.getElementById('toggle-force-em');
+        btn.click();
+        return { active: btn.classList.contains('active'), flag: getScale0State().fieldFlags.showForceEM };
+    });
+    expect(clicked).toEqual({ active: false, flag: false });
 });
 
 test('canonical mixed seeds retain J and state channels independently of live terms or particles', async ({ page }) => {
@@ -229,23 +257,27 @@ test('matter, strong, and gravity scenarios expose only their native channels', 
     }
 });
 
-test('null control hides every category and reports why the panel is empty', async ({ page }) => {
+test('null control lists every layer, all of them dimmed', async ({ page }) => {
     await selectScale0Scenario(page, 'empty');
     await waitForOverlayScenario(page, 'empty');
 
     const result = await page.evaluate(() => {
-        const body = document.querySelector('.s0-overlay-body');
         const cols = [...document.querySelectorAll('.s0-overlay-col')];
+        const layers = [...document.querySelectorAll('.s0-overlay-body .view-toggle.field-toggle')];
         return {
-            empty: body?.classList.contains('is-applicability-empty'),
-            allColumnsHidden: cols.length > 0 && cols.every((col) => getComputedStyle(col).display === 'none'),
+            groupsShown: cols.length === 8 && cols.every((col) => getComputedStyle(col).display !== 'none'),
+            layers: layers.length,
+            allDimmed: layers.every((btn) => btn.classList.contains('is-inapplicable') && btn.getAttribute('aria-disabled') === 'true'),
+            reason: document.getElementById('toggle-e-field').dataset.uiTooltip.split('Not available here: ')[1],
             activeStripHidden: !!document.getElementById('s0-overlay-active')?.hidden,
             domains: document.getElementById('viewport-overlay')?.dataset.overlayDomains,
         };
     });
     expect(result).toEqual({
-        empty: true,
-        allColumnsHidden: true,
+        groupsShown: true,
+        layers: 37,
+        allDimmed: true,
+        reason: 'the empty scenario has nothing to draw.',
         activeStripHidden: true,
         domains: '',
     });

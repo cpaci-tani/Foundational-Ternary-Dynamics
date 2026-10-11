@@ -168,8 +168,10 @@ export function updateScale0StandardModelContext(scenarioId, scenario = null) {
             const target = root.querySelector(`[data-sm-field="${key}"]`);
             if (target && target.textContent !== value) target.textContent = value;
         }
-        if (context?.statusDetail) root.title = context.statusDetail;
     }
+    // The identity status belongs with the card in the view, which is what
+    // the Quantum numbers layer shows; the panel card carries the values only.
+    if (hud && context?.statusDetail) hud.title = context.statusDetail;
     if (hud) {
         const buttonActive = document.getElementById('toggle-sm-reference')?.classList.contains('active');
         hud.hidden = !(context && buttonActive);

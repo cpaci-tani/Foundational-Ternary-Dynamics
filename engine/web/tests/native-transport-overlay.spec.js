@@ -45,7 +45,7 @@ test('native transport overlay draws the exact link current on lattice links', a
     ).toBeGreaterThan(0);
 
     const legend = await page.locator('#native-transport-legend').textContent();
-    expect(legend).toContain('[REFERENCE ENGINE]');
+    expect(legend).toContain('Energy current of the wave step on the 18 lattice links.');
     expect(legend).toContain('closes at every site');
 
     const geometry = await page.evaluate(() => {

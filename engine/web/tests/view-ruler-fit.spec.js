@@ -129,7 +129,7 @@ test.describe('view ruler fits between the UI', () => {
                 buttonCovers: button.width >= rect.width - 4 && button.height >= rect.height - 4,
                 text: panel.querySelector('.s0-overlay-header').innerText.replace(/\s+/g, ' ').trim(),
                 summary: document.getElementById('s0-overlay-summary').textContent,
-                subtitle: shown('.s0-overlay-subtitle'), body: shown('.s0-overlay-body'),
+                body: shown('.s0-overlay-body'),
                 expanded: panel.querySelector('.s0-overlay-collapse').getAttribute('aria-expanded'),
             };
         });
@@ -137,7 +137,6 @@ test.describe('view ruler fits between the UI', () => {
         expect(pill.width).toBeLessThanOrEqual(240);
         expect(pill.text).toMatch(/^VISUALIZATION \d+$/i);
         expect(pill.summary, 'the full count is still in the document').toMatch(/^\d+ active$/);
-        expect(pill.subtitle).toBe(false);
         expect(pill.body).toBe(false);
         expect(pill.buttonCovers, 'the whole pill is the control').toBe(true);
         expect(pill.expanded).toBe('false');

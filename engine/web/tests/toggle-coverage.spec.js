@@ -191,13 +191,22 @@ test.describe('Scale-0 field toggle coverage', () => {
         expect(real, `console errors during toggle sweep:\n  ${real.join('\n  ')}`).toEqual([]);
     });
 
-    test('scenario-inapplicable buttons are hidden, untabbable, and no-op', async ({ page }) => {
+    // A layer the scenario cannot draw stays in the list, dimmed. It reports
+    // itself unavailable and off, stays reachable so its tooltip can be read,
+    // and a click changes nothing.
+    test('scenario-inapplicable buttons are listed, marked unavailable, and no-op', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
         await gotoAndReady(page);
 
         const inv = await buildInventory(page);
         expect(inv.inapplicableButtons.length,
             'default scenario should exercise the inapplicable-control contract').toBeGreaterThan(0);
+        // Open every group: a closed group hides its rows whatever their state.
+        await page.evaluate(() => {
+            for (const col of document.querySelectorAll('#viewport-overlay .s0-overlay-col.is-collapsed')) {
+                col.querySelector('.s0-overlay-col-head').click();
+            }
+        });
 
         const broken = [];
         for (const [buttonId, fieldKey] of inv.inapplicableButtons) {
@@ -215,6 +224,9 @@ test.describe('Scale-0 field toggle coverage', () => {
                     after,
                     hidden: btn.getAttribute('aria-hidden'),
                     tabIndex: btn.getAttribute('tabindex'),
+                    disabled: btn.getAttribute('aria-disabled'),
+                    pressed: btn.getAttribute('aria-pressed'),
+                    listed: getComputedStyle(btn).display !== 'none',
                     inapplicable: btn.classList.contains('is-inapplicable'),
                 };
             }, { buttonId, fieldKey });
@@ -223,7 +235,8 @@ test.describe('Scale-0 field toggle coverage', () => {
                 broken.push(`${result.buttonId} (${result.fieldKey}): ${result.fatal}`);
                 continue;
             }
-            if (!result.inapplicable || result.hidden !== 'true' || result.tabIndex !== '-1') {
+            if (!result.inapplicable || !result.listed || result.disabled !== 'true' || result.pressed !== 'false'
+                || result.hidden === 'true' || result.tabIndex === '-1') {
                 broken.push(`${result.buttonId}: applicability accessibility state is inconsistent`);
             }
             if (result.before !== false || result.after !== result.before) {

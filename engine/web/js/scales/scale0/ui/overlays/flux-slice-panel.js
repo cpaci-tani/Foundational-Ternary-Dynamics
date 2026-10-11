@@ -14,7 +14,7 @@
  *     helicity, kretschmann, latency, fisher, coherence, |∇×J|, s
  *     (ternary state), Gauss residual r.
  *   - 3 force-field rows: EM, gravity, strong (bridge.get{EM,Gravity,
- *     Strong}ForceField), color-matched to the 3D Forces column palette.
+ *     Strong}ForceField), color-matched to the 3D Forces layers' palette.
  *   - 9 derived Tier-1 overlay rows, each reusing the exact exported
  *     compute*Frame function from runtime/overlay-frames.js verbatim
  *     (no reimplemented formulas): |ψ|², phase φ, ℒ(x), entropy density,

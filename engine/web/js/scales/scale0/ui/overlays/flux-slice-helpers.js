@@ -261,7 +261,7 @@ export const FIELD_DRIVERS = [
 
     // ── Force-field rows — bridge.get{EM,Gravity,Strong}ForceField, same
     // sparse {positions,vectors,count} shape as e/b/poynting. Ramps reuse
-    // the exact FORCE_PALETTES used by the 3D Forces column. ────────────
+    // the exact FORCE_PALETTES used by the 3D Forces layers. ────────────
     {
         key: 'forceEm',
         label: 'EM',

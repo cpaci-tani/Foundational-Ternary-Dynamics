@@ -9,6 +9,7 @@ import {
 import {
     getScale0StandardModelContext, isScale0StandardModelScenario,
 } from '../js/scales/scale0/ui/overlays/standard-model.js';
+import { LAYERS } from '../js/scales/scale0/ui/overlays/layer-catalog.js';
 
 // Run the production classifier without mounting its browser-only panel shell.
 const source = readFileSync(new URL('../js/scales/scale0/ui/overlays/applicability.js', import.meta.url), 'utf8')
@@ -16,7 +17,7 @@ const source = readFileSync(new URL('../js/scales/scale0/ui/overlays/applicabili
     .replace(/export\s+/g, '');
 const classify = vm.runInNewContext(`${source}\ngetScale0OverlayApplicability`, {
     SCALE0_MASS_GRAVITY_SCENARIOS, SCALE0_SCENARIO_OVERRIDES, SCALE0_TOGGLES,
-    getScale0Scenario, isScale0StandardModelScenario, FIELD_TOGGLE_BINDINGS: [],
+    getScale0Scenario, isScale0StandardModelScenario, FIELD_TOGGLE_BINDINGS: [], LAYERS,
 });
 const waveOnly = Object.fromEntries(SCALE0_TOGGLES.map(([key]) => [key, key === 'wave_propagation']));
 

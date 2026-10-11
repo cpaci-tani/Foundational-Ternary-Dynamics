@@ -1,46 +1,48 @@
 /**
- * Scale-0 Visualization panel shell — accordion + active strip + filter.
+ * Scale 0 Visualization panel shell: what the panel does as a container.
  *
- * The panel's toggle buttons and their click handlers are wired elsewhere
- * (scale0/ui/bindings.js) and are NOT touched here. This module only adds the
- * "container" behaviours of the revamped panel:
+ * The layer switches and their click handlers are wired in
+ * scale0/ui/bindings.js and are not touched here. This module adds:
  *
- *   1. Per-category collapse — each `.s0-overlay-col` header is a clickable
- *      accordion row. Volume opens by default; the remaining categories start
- *      collapsed so the panel reads as an inspector instead of one long list.
- *      Multiple categories can still be open and state persists per category.
- *   2. Active-overlays strip — `#s0-overlay-active` shows a removable chip for
- *      every currently-active overlay, DERIVED from the buttons' `.active` state
- *      via a MutationObserver, so it can never drift. A chip's × re-fires that
- *      toggle off.
- *   3. Filter — `#s0-overlay-search` hides non-matching overlay buttons and
- *      auto-expands the categories that contain a match.
+ *   1. Group collapse. Each `.s0-overlay-col` header opens and closes its
+ *      group. Until the user chooses, Flux J and any group with a layer on
+ *      are open. Several groups can be open; the choice is kept per group.
+ *   2. The active strip. `#s0-overlay-active` shows a removable chip for every
+ *      layer that is on, derived from the buttons' `.active` state by a
+ *      MutationObserver so it cannot drift. A chip's × switches the layer off.
+ *   3. The Rendering rows. Scalar and Vector are shown only while a layer
+ *      they apply to is on.
+ *   4. The filter. `#s0-overlay-search` hides layers that do not match and
+ *      opens the groups that hold a match.
  *
  * Idempotent: a second call is a no-op (guarded by panel._shellInit).
  */
 
-import { COL_TO_TOGGLES } from './presets.js';
+import { COL_TO_TOGGLES, SCALAR_RENDER_TOGGLES, VECTOR_STYLE_TOGGLES } from './presets.js';
 import { initScale0StandardModelReferenceControl } from './standard-model.js?v=2';
 
-const lsKey = (col) => `ftd.s0overlay.inspector.v1.cat.${col}.collapsed`;
+// Under one prefix with the panel's own collapse key, ftd.overlay.scale0.collapsed.
+const lsKey = (col) => `ftd.overlay.scale0.group.${col}.collapsed`;
+const RETIRED_KEY_PREFIX = 'ftd.s0overlay.inspector.';
 let refreshFrame = null;
 
+/** On, and able to draw in the current scenario. */
+function isOn(id) {
+    const btn = document.getElementById(id);
+    return !!btn && btn.classList.contains('active') && !btn.classList.contains('is-inapplicable');
+}
+
 function activeSignature() {
-    const ids = [];
-    for (const toggles of Object.values(COL_TO_TOGGLES)) {
-        for (const id of toggles) {
-            const btn = document.getElementById(id);
-            if (btn?.classList.contains('active') && !btn.classList.contains('is-inapplicable')) ids.push(id);
-        }
-    }
-    return ids.join('|');
+    return Object.values(COL_TO_TOGGLES).flat().filter(isOn).join('|');
 }
 
 function readCollapsed(col) {
     try {
         const v = localStorage.getItem(lsKey(col));
-        return v === null ? col !== 'volume' : v === '1';
-    } catch { return false; }
+        if (v !== null) return v === '1';
+    } catch { /* fall through to the default */ }
+    // No stored choice: Flux J is open, and so is any group with a layer on.
+    return col !== 'flux' && !(COL_TO_TOGGLES[col] || []).some(isOn);
 }
 function writeCollapsed(col, collapsed) {
     try { localStorage.setItem(lsKey(col), collapsed ? '1' : '0'); } catch { /* ignore */ }
@@ -58,7 +60,6 @@ export function initOverlayPanelShell() {
     panel._shellInit = true;
 
     const body = panel.querySelector('.s0-overlay-body');
-    const strip = document.getElementById('s0-overlay-active');
     const search = document.getElementById('s0-overlay-search');
     const searchClear = document.getElementById('s0-overlay-search-clear');
     if (!body) return;
@@ -67,8 +68,14 @@ export function initOverlayPanelShell() {
         button.setAttribute('aria-pressed', button.classList.contains('active') ? 'true' : 'false');
     }
     initScale0StandardModelReferenceControl();
+    // The groups were renamed with the regrouping; drop choices stored under the old names.
+    try {
+        for (const key of Object.keys(localStorage)) {
+            if (key.startsWith(RETIRED_KEY_PREFIX)) localStorage.removeItem(key);
+        }
+    } catch { /* storage unavailable */ }
 
-    // ── 1. Accordion collapse (per category, persisted) ──────────────────────
+    // ── 1. Group collapse (per group, persisted) ─────────────────────────────
     for (const col of body.querySelectorAll('.s0-overlay-col')) {
         const head = col.querySelector('.s0-overlay-col-head');
         if (!head) continue;
@@ -173,20 +180,30 @@ export function refreshOverlayPanelShell() {
         summary.classList.toggle('is-empty', activeCount === 0);
     }
     refreshColumnCounts(body);
+    refreshRenderRows(panel);
     const search = document.getElementById('s0-overlay-search');
     applyFilter(body, search?.value || '');
     panel._activeSignature = activeSignature();
+}
+
+function setHidden(el, hidden) {
+    if (el && el.hidden !== hidden) el.hidden = hidden;
+}
+
+/** A Rendering row is shown only while a layer it applies to is on. */
+function refreshRenderRows(panel) {
+    const scalar = SCALAR_RENDER_TOGGLES.some(isOn);
+    const vector = VECTOR_STYLE_TOGGLES.some(isOn);
+    setHidden(panel.querySelector('[data-render-row="scalar"]'), !scalar);
+    setHidden(panel.querySelector('[data-render-row="vector"]'), !vector);
+    setHidden(panel.querySelector('.s0-overlay-render-deck'), !scalar && !vector);
 }
 
 function refreshColumnCounts(body) {
     for (const [colName, toggles] of Object.entries(COL_TO_TOGGLES)) {
         const badge = body.querySelector(`[data-count-for="${colName}"]`);
         if (!badge) continue;
-        let count = 0;
-        for (const id of toggles) {
-            const btn = document.getElementById(id);
-            if (btn?.classList.contains('active') && !btn.classList.contains('is-inapplicable')) count++;
-        }
+        const count = toggles.filter(isOn).length;
         const text = String(count);
         if (badge.textContent !== text) {
             const node = badge.firstChild;
@@ -199,14 +216,7 @@ function refreshColumnCounts(body) {
 
 function rebuildActiveStrip(strip) {
     if (!strip) return 0;
-    const desired = [];
-    for (const toggles of Object.values(COL_TO_TOGGLES)) {
-        for (const id of toggles) {
-            const btn = document.getElementById(id);
-            if (!btn || !btn.classList.contains('active') || btn.classList.contains('is-inapplicable')) continue;
-            desired.push(btn);
-        }
-    }
+    const desired = Object.values(COL_TO_TOGGLES).flat().filter(isOn).map((id) => document.getElementById(id));
     const wanted = new Set(desired.map((btn) => btn.id));
     const existing = new Map();
     for (const chip of [...strip.querySelectorAll(':scope > .s0-overlay-chip')]) {
@@ -278,7 +288,7 @@ function applyFilter(body, query) {
     let anyMatch = false;
     for (const col of body.querySelectorAll('.s0-overlay-col')) {
         let colMatch = false;
-        // Match/hide a trigger and its flux-slice-axis-mini sub-row as one unit
+        // Match/hide a layer and its sub-switch row as one unit
         // (a .s0-overlay-group), not independently — otherwise a query that matches
         // only a mini toggle's label (e.g. "glow", "xy") strands that toggle visible
         // with no trigger label above it, and the now-empty group wrapper is left
@@ -288,10 +298,10 @@ function applyFilter(body, query) {
             const isGroup = unit.classList.contains('s0-overlay-group');
             const btns = isGroup ? unit.querySelectorAll('.view-toggle') : [unit];
             let unitMatch = false;
+            // Dimmed layers match too: the list is the same in every scenario.
             for (const btn of btns) {
                 const searchable = `${btn.textContent} ${btn.dataset.search || ''}`.toLowerCase();
-                if (!btn.classList.contains('is-inapplicable')
-                    && searchable.includes(q)) { unitMatch = true; break; }
+                if (searchable.includes(q)) { unitMatch = true; break; }
             }
             for (const btn of btns) btn.classList.toggle('is-filtered-out', !unitMatch);
             if (isGroup) unit.classList.toggle('is-filtered-out', !unitMatch);

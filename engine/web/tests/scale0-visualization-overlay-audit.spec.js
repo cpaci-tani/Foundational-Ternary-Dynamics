@@ -101,8 +101,8 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '10px',
-                lineHeight: '10px',
+                fontSize: '16px',
+                lineHeight: '16px',
                 textAlign: 'center',
             });
         }
@@ -279,7 +279,7 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
             fieldBindings: 34, sheetSliders: 6, forceStyles: 3, sceneFlowButtons: 1, scalarStyles: 3,
             axes: 3, fluxStyles: 2, clearButtons: 8, missingPrimary: [],
             ungroupedBindings: [], nonStoreBindings: [],
-            standalonePrimary: ['toggle-sm-reference', 'toggle-flux-volume', 'toggle-flux-slice'],
+            standalonePrimary: ['toggle-flux-volume', 'toggle-flux-slice', 'toggle-sm-reference'],
         });
         expect(result.fieldAllocationsAfterFalse).toEqual({ sceneChildren: 0, objects: [] });
         expect(result.fieldIdempotent).toEqual({ children: 1, sameObject: true, visible: false });
@@ -350,7 +350,7 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
             const filterTruth = {
                 value: search.value,
                 vorticityVisible: !document.getElementById('toggle-vorticity').classList.contains('is-filtered-out'),
-                volumeHidden: panel.querySelector('[data-col="volume"]').classList.contains('is-filtered-out'),
+                volumeHidden: panel.querySelector('[data-col="flux"]').classList.contains('is-filtered-out'),
             };
             search.value = '';
             search.dispatchEvent(new Event('input', { bubbles: true }));
@@ -475,31 +475,31 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
             click('#toggle-flux-glow');
             const fluxStylesAfter = { organic: flux._fluxOrganic, glow: flux._fluxGlow };
 
-            for (const id of ['toggle-flux-volume', 'toggle-flux-slice', 'toggle-flux-lines', 'toggle-div-field']) {
+            for (const id of ['toggle-flux-volume', 'toggle-flux-slice', 'toggle-flux-lines', 'toggle-psi-squared']) {
                 const button = document.getElementById(id);
                 if (!button.classList.contains('is-inapplicable') && !button.classList.contains('active')) button.click();
             }
             state.latticeNeedsUpload = false;
-            click('.s0-overlay-col-clear[data-clear-col="volume"]');
+            click('.s0-overlay-col-clear[data-clear-col="flux"]');
             const clearImmediate = {
-                active: ['toggle-flux-volume', 'toggle-flux-slice', 'toggle-flux-lines', 'toggle-div-field', 'toggle-state-field']
+                active: ['toggle-flux-volume', 'toggle-flux-slice', 'toggle-native-transport', 'toggle-flux-lines', 'toggle-psi-squared', 'toggle-dark-halo', 'toggle-genesis-iso']
                     .filter((id) => !document.getElementById(id).classList.contains('is-inapplicable'))
                     .filter((id) => document.getElementById(id).classList.contains('active')),
                 fluxVolume: ctx.viewport._fluxRenderer.showFlux,
                 fluxSlice: ctx.viewport._fieldRenderer.showHeatmap,
                 showFluxLines: state.fieldFlags.showFluxLines,
-                showDivField: state.fieldFlags.showDivField,
+                showPsiSquared: state.fieldFlags.showPsiSquared,
                 upload: state.latticeNeedsUpload,
             };
             await new Promise((resolve) => requestAnimationFrame(resolve));
             await new Promise((resolve) => requestAnimationFrame(resolve));
             const clearShell = {
-                badge: document.querySelector('[data-count-for="volume"]').textContent,
+                badge: document.querySelector('[data-count-for="flux"]').textContent,
                 chipIds: [...document.querySelectorAll('#s0-overlay-active .s0-overlay-chip')]
                     .map((chip) => chip.dataset.overlayId),
             };
             state.latticeNeedsUpload = false;
-            click('.s0-overlay-col-clear[data-clear-col="volume"]');
+            click('.s0-overlay-col-clear[data-clear-col="flux"]');
             const emptyClearUpload = state.latticeNeedsUpload;
 
             function panelValues(selector, dataKey) {
@@ -530,10 +530,10 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
         });
         expect(result.clearImmediate).toEqual({
             active: [], fluxVolume: false, fluxSlice: false,
-            showFluxLines: false, showDivField: false, upload: true,
+            showFluxLines: false, showPsiSquared: false, upload: true,
         });
         expect(result.clearShell.badge).toBe('0');
-        for (const id of ['toggle-flux-volume', 'toggle-flux-slice', 'toggle-flux-lines', 'toggle-div-field']) {
+        for (const id of ['toggle-flux-volume', 'toggle-flux-slice', 'toggle-flux-lines', 'toggle-psi-squared']) {
             expect(result.clearShell.chipIds).not.toContain(id);
         }
         expect(result.emptyClearUpload).toBe(false);

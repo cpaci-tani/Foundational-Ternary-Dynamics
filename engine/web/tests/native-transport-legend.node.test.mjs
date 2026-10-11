@@ -7,8 +7,8 @@ const base = { status: 'ok', reason: '', closure: 1e-15, exchangeTerms: 0, drawn
 
 test('names the engine and says the balance closes on a pure wave step', () => {
     const text = describeNativeTransport(base);
-    assert.match(text, /\[REFERENCE ENGINE\]/);
-    assert.match(text, /v1 wave step/);
+    assert.match(text, /^Energy current of the wave step on the 18 lattice links\./);
+    assert.doesNotMatch(text, /\[[A-Z ]+\]/, 'the readout carries no status tag');
     assert.match(text, /1200 links drawn/);
     assert.match(text, /closes at every site/);
     assert.doesNotMatch(text, /does not close/);
