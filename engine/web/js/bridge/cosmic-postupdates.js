@@ -31,9 +31,10 @@ import { isGasType } from './cosmic-sph.js';
 import { createCosmicPassStats } from './cosmic-pass-stats.js';
 
 // Wave 2G (2026-04-26): M_CHANDRA_LATTICE / M_TOV_LATTICE migrated to
-// constants.js (single source of truth). Conversion to solar mass
-// (~50× — i.e. 70 lattice units ≈ 1.4 M☉) is undocumented; tracked as
-// follow-up to declare the lattice-mass-to-solar-mass scale factor.
+// constants.js (single source of truth). The solar-mass scale those anchors
+// imply (70 lattice units ≈ 1.4 M☉, so 50 lattice units per solar mass) is
+// declared there as LATTICE_MASS_PER_SOLAR_MASS; the `mass / 50` terms in the
+// stellar rules below are that same scale.
 
 export function postCosmicUpdates(TYPE) {
     const T = TYPE;

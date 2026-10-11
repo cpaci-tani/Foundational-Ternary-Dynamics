@@ -341,10 +341,16 @@ export const PLANCK_TEMP_K       = 1.416784e32;         // K
 export const H0_LATTICE        = 0.001;     // Hubble constant (lattice units)
 export const M_CHANDRA_LATTICE = 70.0;      // Chandrasekhar limit (lattice mass, ~1.4 M☉)
 export const M_TOV_LATTICE     = 150.0;     // TOV limit (lattice mass, ~3 M☉)
-// Lattice-mass to solar-mass conversion implied by M_CHANDRA_LATTICE/1.4
-// and M_TOV_LATTICE/3.0: both give 50.0. Exposed for cosmic-physics.js
-// to make the calibration explicit instead of buried in the anchors.
-export const LATTICE_TO_SOLAR_MASS = 50.0;
+// Lattice mass units per solar mass, implied by the two anchors above:
+// M_CHANDRA_LATTICE/1.4 and M_TOV_LATTICE/3.0 both give 50.0. Solar
+// masses are therefore lattice mass DIVIDED by this number: a 70-unit
+// star is about 1.4 M☉, not 3500. The stellar rules in
+// bridge/cosmic-postupdates.js pivot on the same 50 (temperature
+// 5800·(mass/50)^0.5, fuel rate ∝ (mass/50)^2.5). Exposed to make the
+// calibration explicit instead of buried in the anchors. Named
+// LATTICE_TO_SOLAR_MASS until 2026-10-10; that name read as a multiplier
+// and every M☉ display multiplied by it.
+export const LATTICE_MASS_PER_SOLAR_MASS = 50.0;
 // Heliocentric Newton constant: G ≈ 4π² in units where [length]=AU,
 // [mass]=M_sun, [time]=yr. Earth's 1-yr period at 1 AU requires this
 // value; G_N=0.01 above is the FTD lattice-natural constant and is NOT
