@@ -139,6 +139,8 @@ export class ObserverWorkspace {
 
     async initialize() { this.receive(await this.client.ready); }
     getAssistantMount() { return this.element; }
+    /** Where focus lands when JEV closes and its trigger button is hidden. */
+    getAssistantReturnFocus() { return this.renderer.canvas; }
     cancelAssistantCommands() { for (const request of this.assistantCommands) request.abort(); }
     /** Release gestures without changing playback or acquiring a new frame loop.
      * @param {boolean} [open]

@@ -35,7 +35,7 @@ const MARKUP=`
 <footer class="jev-buttons"><button type="button" data-jev="clear">Clear conversation</button><button type="button" data-jev="export">Export conversation</button></footer>`;
 
 export class AssistantConsole {
-    /** @param {{getMount:()=>HTMLElement,onVisibility:(open:boolean)=>void,activatePanel:(panel:string)=>void,dockFloat?:()=>void}} deps */
+    /** @param {{getMount:()=>HTMLElement,getReturnFocus?:()=>HTMLElement|null,onVisibility:(open:boolean)=>void,activatePanel:(panel:string)=>void,dockFloat?:()=>void}} deps */
     constructor(deps) {
         this.deps=deps;this.scope=new LifetimeScope();this.open=false;
         /** @type {any} */this.service=null;/** @type {any} */this.model=null;/** @type {any} */this.jev=null;/** @type {any} */this.knowledge=null;/** @type {any} */this.mcp=null;
@@ -111,7 +111,14 @@ export class AssistantConsole {
         this.deps.onVisibility(value);
         if(!value && !fromDock && this.deps.getMount().id!=='panel-jev')this.deps.activatePanel('controls');
         if(value){this.previousFocus=document.activeElement instanceof HTMLElement?document.activeElement:null;this.relocate();}
-        else if((!fromDock || this.element.classList.contains('jev-console--overlay')) && this.previousFocus?.isConnected && !this.previousFocus.closest('[inert]'))this.previousFocus.focus({preventScroll:true});
+        else if(!fromDock || this.element.classList.contains('jev-console--overlay'))this.restoreFocus();
+    }
+    /** A hidden or inert opener cannot take focus back; the mount's own target then keeps it off <body>. */
+    restoreFocus(){
+        const opener=this.previousFocus;
+        if(opener?.isConnected && !opener.closest('[inert]'))opener.focus({preventScroll:true});
+        const active=document.activeElement;
+        if(!active || active===document.body || this.element.contains(active))this.deps.getReturnFocus?.()?.focus({preventScroll:true});
     }
     relocate(){
         const mount=this.deps.getMount(),docked=mount.id==='panel-jev',floated=!!mount.closest('.floating-window');
