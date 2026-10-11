@@ -138,6 +138,69 @@ test.describe('Scale 0 zoom-out to the particle scale', () => {
         expect(interrupted.distance, 'stopped short of the electron').toBeLessThan(1e22);
     });
 
+    test('the way back is travelled too: Moore from the electron scale, and a short hop', async ({ page }) => {
+        const view = () => page.evaluate(() => {
+            const viewport = window.__ftdCtx.viewport;
+            const shown = (el) => !el.hidden && el.getClientRects().length > 0;
+            return {
+                flying: !!viewport._cameraFlight,
+                distance: viewport.camera.position.distanceTo(viewport.controls.target),
+                readouts: [...document.querySelectorAll('.moore-readout')].filter(shown).length,
+                bracket: document.querySelector('.live-ruler-lattice .live-ruler-label')?.textContent || '',
+            };
+        });
+        const pick = async (id) => {
+            await page.locator('#play-bar-zoom-btn').click();
+            await page.locator(`#play-bar-zoom-menu [data-framed-view="${id}"]`).click();
+        };
+        // Where the Moore stop ends up, taken without travelling.
+        const moore = await page.evaluate(() => {
+            const viewport = window.__ftdCtx.viewport;
+            viewport.setFramedView('moore');
+            return viewport.camera.position.distanceTo(viewport.controls.target);
+        });
+
+        await page.evaluate(() => window.__ftdCtx.viewport.setFramedView('electron'));
+        const far = await view();
+        expect(far.distance).toBeGreaterThan(1e22);
+
+        // From the electron scale the Moore stop flies in, monotonically.
+        await pick('moore');
+        const leaving = await view();
+        expect(leaving.flying, 'the camera travels back in').toBe(true);
+        await page.waitForTimeout(1200);
+        const midway = await view();
+        expect(midway.flying).toBe(true);
+        expect(midway.distance).toBeLessThan(leaving.distance);
+        expect(midway.distance).toBeGreaterThan(moore);
+        await page.waitForFunction(() => !window.__ftdCtx.viewport._cameraFlight, undefined, { timeout: 15_000 });
+        await expect.poll(async () => (await view()).readouts, { timeout: 5_000 }).toBeGreaterThan(0);
+        const arrived = await view();
+        expect(arrived.distance).toBeCloseTo(moore, 6);
+        expect(arrived.bracket).toMatch(/^(voxel|moore) /);
+
+        // A short hop travels as well, and is over quickly.
+        await pick('lattice');
+        expect((await view()).flying).toBe(true);
+        const started = Date.now();
+        await page.waitForFunction(() => !window.__ftdCtx.viewport._cameraFlight, undefined, { timeout: 5_000 });
+        expect(Date.now() - started).toBeLessThan(2_000);
+        const lattice = await view();
+        expect(lattice.distance).toBeGreaterThan(moore * 5);
+        expect(lattice.readouts).toBe(0);
+
+        // The view arrives looking at the lattice centre along the canned direction.
+        const pose = await page.evaluate(() => {
+            const viewport = window.__ftdCtx.viewport;
+            const centre = viewport._latticeCenterWorld();
+            const direction = viewport.camera.position.clone().sub(viewport.controls.target).normalize();
+            const canned = direction.clone().set(1, 0.62, 1.05).normalize();
+            return { offTarget: viewport.controls.target.distanceTo(centre), offDirection: direction.distanceTo(canned) };
+        });
+        expect(pose.offTarget).toBeLessThan(1e-6);
+        expect(pose.offDirection).toBeLessThan(1e-6);
+    });
+
     test('other scales keep their zoom limit', async ({ page }) => {
         const limits = await page.evaluate(() => {
             const viewport = window.__ftdCtx.viewport;

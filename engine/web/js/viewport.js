@@ -110,8 +110,10 @@ import { ViewportFieldRenderer } from './viewport/field-renderer.js?v=8';
 // sub-renderers), so they are not re-imported here.
 
 // A framed view reached by travelling takes this long per power of ten of
-// camera distance (clamped), so the empty range passes at a steady pace.
-const CAMERA_FLIGHT_MS_PER_DECADE = 380;
+// camera distance (clamped), so the empty range passes at a steady pace and
+// each reference ring stays on screen for a second or more as it goes by.
+const CAMERA_FLIGHT_MS_PER_DECADE = 520;
+const CAMERA_FLIGHT_MAX_MS = 12500;
 // Wheel zoom beyond the quasi-domain: gain per decade past the point where
 // the shell has shrunk away, and its ceiling (about four notches a decade).
 const FAR_ZOOM_GAIN_PER_DECADE = 6;
@@ -522,7 +524,6 @@ export class Viewport {
         this.camera.up.set(0, 1, 0);
         this._cancelCameraFlight();
         const from = this.camera.position.distanceTo(this.controls.target);
-        this.controls.target.copy(target);
         if (animate && from > 0 && typeof requestAnimationFrame === 'function') {
             this._flyCamera(target, view, from, distance);
             return true;
@@ -557,9 +558,11 @@ export class Viewport {
      * as steadily as two. Wheel, drag or another framed view cancels it.
      */
     _flyCamera(target, view, from, to) {
+            // The flight starts from the present target and direction.
         const decades = Math.abs(Math.log10(to / from));
-        const duration = Math.min(9000, Math.max(450, decades * CAMERA_FLIGHT_MS_PER_DECADE));
+        const duration = Math.min(CAMERA_FLIGHT_MAX_MS, Math.max(450, decades * CAMERA_FLIGHT_MS_PER_DECADE));
         const started = performance.now();
+        this.controls.target.copy(target);
         const flight = { cancelled: false, frame: 0 };
         this._cameraFlight = flight;
         const cancel = () => this._cancelCameraFlight();
@@ -575,7 +578,15 @@ export class Viewport {
             // Ease in and out in log-distance, so the start and the stop are soft.
             const eased = t * t * (3 - 2 * t);
             const distance = from * Math.pow(to / from, eased);
-            this.camera.position.copy(target).addScaledVector(view, distance);
+            if (swing && t < 1) {
+                aim.copy(startTarget).lerp(target, eased);
+                along.copy(startView).lerp(view, eased).normalize();
+            } else {
+                aim.copy(target);
+                along.copy(view);
+            }
+            this.controls.target.copy(aim);
+            this.camera.position.copy(aim).addScaledVector(along, distance);
             this.controls.update();
             if (t < 1) {
                 flight.frame = requestAnimationFrame(step);
@@ -595,6 +606,15 @@ export class Viewport {
         if (flight.frame && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(flight.frame);
         flight.release?.();
     }
+        // Where the flight starts: the look-at point and the direction to the
+        // camera. Both turn into the destination's along the way, so a hop
+        // between nearby views swings round instead of snapping. Opposite
+        // directions have no path between them and are taken at once.
+        const startTarget = this.controls.target.clone();
+        const startView = this.camera.position.clone().sub(startTarget).normalize();
+        const swing = startView.dot(view) > -0.99;
+        const aim = new THREE.Vector3();
+        const along = new THREE.Vector3();
 
     /**
      * How far the orbit may dolly out. In the lattice view that is far enough
