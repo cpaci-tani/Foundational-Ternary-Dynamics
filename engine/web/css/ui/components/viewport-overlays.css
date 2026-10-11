@@ -28,7 +28,7 @@
     z-index: var(--z-overlay);
 }
 
-/* ── Field swatches (inline color indicator + separator) ── */
+/* ── Field swatches (inline color indicator) ── */
 .field-swatch {
     display: inline-block;
     width: 8px;
@@ -38,34 +38,14 @@
     vertical-align: middle;
 }
 
-.field-sep {
-    display: inline-block;
-    width: 1px;
-    height: 18px;
-    background: var(--border);
-    margin: 0 4px;
-    vertical-align: middle;
-}
-
 /* ── Viewport overlay (top-right floating panel) ── */
-/* Scale 0 uses `.s0-overlay-panel` for its 4-column grouped layout.
-   Other scales that only contribute a handful of toggles inherit the
-   legacy flex-wrap sizing via `.viewport-overlay-panel`. */
+/* Scale 0's Visualization panel. Its look is owned by
+   scales/scale0/overlay-panel.css; only its position is set here. */
 #viewport-overlay {
     position: absolute;
     top: 8px;
     right: 12px;
     z-index: var(--z-overlay);
-}
-
-/* Default (single-row) overlay used by scales 1-5, 11 */
-#viewport-overlay:not(.s0-overlay-panel) {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    max-width: 520px;
-    align-items: center;
 }
 
 /* Generic collapse button injected into non-Scale-0 overlays */
@@ -96,22 +76,6 @@
     font-size: var(--fs-xs);
     line-height: 1;
     transition: transform var(--dur-base, 180ms) var(--ease-out, ease);
-}
-
-/* Legacy: non-s0 overlays without the scale-overlay-panel shell */
-.viewport-overlay-panel:not(.scale-overlay-panel):not(.s0-overlay-panel).is-collapsed > :not(.viewport-overlay-collapse) {
-    display: none !important;
-}
-.viewport-overlay-panel:not(.scale-overlay-panel):not(.s0-overlay-panel).is-collapsed .viewport-overlay-collapse-icon {
-    transform: rotate(180deg);
-}
-
-/* Collapsed state for legacy #viewport-overlay id (Scale 0 uses .s0-overlay-panel rules) */
-#viewport-overlay:not(.s0-overlay-panel):not(.scale-overlay-panel).is-collapsed > :not(.viewport-overlay-collapse) {
-    display: none !important;
-}
-#viewport-overlay:not(.s0-overlay-panel):not(.scale-overlay-panel).is-collapsed .viewport-overlay-collapse-icon {
-    transform: rotate(180deg);
 }
 
 /* ── Touch targets (coarse pointers / small viewports) ──────────────────────

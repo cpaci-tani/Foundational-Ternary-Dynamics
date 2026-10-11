@@ -100,11 +100,12 @@ export function setForceStyleButtons(style) {
     }
 }
 
-// Sibling of setForceStyleButtons for the volumetric-scalar render-mode
-// meta-toggle (Default / Heat Map). Buttons carry data-scalar-mode.
+// Sibling of setForceStyleButtons for the Scalar rendering row (Surface /
+// Heat map / Volume). Buttons carry data-scalar-mode. The opacity slider
+// belongs to Volume and is shown only with it.
 export function setScalarRenderButtons(mode) {
     const controls = getEl('scalar-volume-controls');
-    if (controls) controls.style.display = mode === 'volume' ? 'flex' : 'none';
+    if (controls) controls.hidden = mode !== 'volume';
     const row = getEl('scalar-render-row');
     if (!row) return;
     for (const btn of row.querySelectorAll('.style-btn')) {

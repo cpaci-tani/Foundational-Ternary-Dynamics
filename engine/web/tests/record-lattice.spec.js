@@ -40,6 +40,13 @@ test('registered records use the normal scenario menu, scene, field volume, insp
     await expect(page.locator('#record-observation-card')).toBeVisible();
     await expect(page.locator('#toggle-state-field')).not.toHaveClass(/is-inapplicable/);
     await expect(page.locator('#toggle-e-field')).toHaveClass(/is-inapplicable/);
+    // State s sits in Sources and matter, which starts closed. On a local
+    // server the GPU card can cover the foot of the panel, so it is dismissed.
+    await page.evaluate(() => {
+        document.getElementById('gpu-server-card')?.remove();
+        const group = document.querySelector('#viewport-overlay [data-col="sources"]');
+        if (group.classList.contains('is-collapsed')) group.querySelector('.s0-overlay-col-head').click();
+    });
     await page.click('#toggle-state-field');
     await page.selectOption('#record-quantity', 'incidence');
     const observed = await read(page);

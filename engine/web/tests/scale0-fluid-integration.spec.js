@@ -66,6 +66,8 @@ test('ordinary lattice scenarios share their owner with volume overlays and pass
 });
 
 test('physics controls change the active engine and field-energy layers belong to Visualization', async ({ page }) => {
+    // Reloads the scenario and waits on five volume uploads; well over the default minute.
+    test.setTimeout(240_000);
     page.setDefaultTimeout(15000);
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -74,6 +76,9 @@ test('physics controls change the active engine and field-energy layers belong t
     await page.waitForFunction(() => window.__ftdCtx?.bridge && window.__ftdFluidPanel);
     await page.locator('#scenario-select').selectOption('flux-thermalization');
     await page.waitForFunction(() => window.__ftdCtx.viewport._scalarVolumes?.get('emEnergy')?.group.visible);
+    // On a local server the GPU card floats over the foot of the Visualization
+    // panel, where the Energy rows are; this test is about the layers, not the card.
+    await page.evaluate(() => document.getElementById('gpu-server-card')?.remove());
     await page.locator('.tab[data-panel="controls"]').click();
     // Read authoritative worker publications rather than its optimistic setter cache.
     for (const [id, key, value] of [
@@ -99,8 +104,16 @@ test('physics controls change the active engine and field-energy layers belong t
         const read = key => owner.isWorker ? owner.getEngineTruthToggle(key) : owner.getToggle(key);
         return read('wave_propagation') === true && read('damping') === false && read('langevin') === false;
     });
-    const group = page.locator('.s0-overlay-col[data-col="stress-energy"]');
-    await expect(group.locator('.s0-overlay-col-label')).toHaveText('Field energy & flow');
+    // The energy layers sit in Energy; the flux curl sits with the other curl layers.
+    const group = page.locator('#viewport-overlay .s0-overlay-body');
+    const energy = page.locator('.s0-overlay-col[data-col="energy"]');
+    const curl = page.locator('.s0-overlay-col[data-col="curl"]');
+    await expect(energy.locator('.s0-overlay-col-label')).toHaveText('Energy');
+    await expect(curl.locator('.s0-overlay-col-label')).toHaveText('Curl, E and B');
+    for (const id of ['toggle-em-energy', 'toggle-poynting', 'toggle-e-pressure', 'toggle-b-pressure']) {
+        await expect(energy.locator(`#${id}`)).toHaveCount(1);
+    }
+    await expect(curl.locator('#toggle-vorticity')).toHaveCount(1);
     const layers = ['toggle-em-energy', 'toggle-poynting', 'toggle-vorticity', 'toggle-e-pressure', 'toggle-b-pressure'];
     for (const id of layers) {
         await expect(page.locator(`#${id}`)).toHaveCount(1);
@@ -120,13 +133,16 @@ test('physics controls change the active engine and field-energy layers belong t
         const button = group.locator(`#${id}`);
         if (await button.getAttribute('aria-pressed') !== 'true') await button.click();
     }
-    await expect(group.locator('[data-count-for="stress-energy"]')).toHaveText('5');
+    await expect(energy.locator('[data-count-for="energy"]')).toHaveText('4');
+    await expect(curl.locator('[data-count-for="curl"]')).toHaveText('1');
     await page.waitForFunction(() => ['emEnergy', 'vorticity', 'ePressure', 'bPressure'].every(key => {
         const volume = window.__ftdCtx.viewport._scalarVolumes.get(key);
         return volume?.group.visible && volume.uploadCount > 0;
     }));
-    await group.locator('[data-clear-col="stress-energy"]').click();
-    await expect(group.locator('[data-count-for="stress-energy"]')).toHaveText('0');
+    await energy.locator('[data-clear-col="energy"]').click();
+    await curl.locator('[data-clear-col="curl"]').click();
+    await expect(energy.locator('[data-count-for="energy"]')).toHaveText('0');
+    await expect(curl.locator('[data-count-for="curl"]')).toHaveText('0');
     for (const id of layers) await expect(group.locator(`#${id}`)).toHaveAttribute('aria-pressed', 'false');
     expect(await page.evaluate(() => {
         const c = window.__ftdCtx, owner = c.useFluxMock ? c.fluxMock : c.bridge;

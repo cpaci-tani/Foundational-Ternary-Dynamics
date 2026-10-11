@@ -142,7 +142,7 @@ export function createScale0ViewportAdapter(viewport) {
         },
         // Re-sync every volumetric scalar overlay's two render surfaces to the new
         // meta-mode: native sheet/cloud visible only in 'default', glow heat-map
-        // only in 'heatmap'. Mirrors syncForceStyle for the Forces column.
+        // only in 'heatmap'. Mirrors syncForceStyle for the vector layers.
         syncScalarRenderMode(mode, fieldState) {
             scalarOverlays.syncMode(mode, fieldState);
         },

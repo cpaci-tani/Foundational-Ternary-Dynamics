@@ -327,7 +327,8 @@ test('keeps null telemetry finite/zero while distinguishing unavailable data and
         dock.setCollapsed(true);
         await new Promise((resolve) => requestAnimationFrame(resolve));
         const demand = getScale0TelemetryDemand(window.__ftdCtx);
-        const body = document.querySelector('.s0-overlay-body');
+        // Every layer is always listed; in the empty scenario all of them are dimmed.
+        const layers = [...document.querySelectorAll('.s0-overlay-body .view-toggle.field-toggle')];
         const columns = [...document.querySelectorAll('.s0-overlay-col')];
         return {
             collapsed: document.getElementById('app')?.classList.contains('panels-collapsed'),
@@ -335,9 +336,10 @@ test('keeps null telemetry finite/zero while distinguishing unavailable data and
             wantLag: demand.wantLag,
             wantGravity: demand.wantGravity,
             diagnostics: demand.diagnostics,
-            applicabilityEmpty: body?.classList.contains('is-applicability-empty'),
-            allOverlayColumnsHidden: columns.length > 0
-                && columns.every((column) => getComputedStyle(column).display === 'none'),
+            everyLayerDimmed: layers.length === 37
+                && layers.every((button) => button.classList.contains('is-inapplicable')),
+            overlayGroupsListed: columns.length === 8
+                && columns.every((column) => getComputedStyle(column).display !== 'none'),
             overlayDomains: document.getElementById('viewport-overlay')?.dataset.overlayDomains ?? null,
         };
     });
@@ -347,8 +349,8 @@ test('keeps null telemetry finite/zero while distinguishing unavailable data and
         wantLag: false,
         wantGravity: false,
         diagnostics: true,
-        applicabilityEmpty: true,
-        allOverlayColumnsHidden: true,
+        everyLayerDimmed: true,
+        overlayGroupsListed: true,
         overlayDomains: '',
     });
     expect(realErrors(errors)).toEqual([]);

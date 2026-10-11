@@ -279,7 +279,7 @@ export function bindScale0UI(ctx, api) {
 
     // Per-axis flux-slice plane toggles (xy/xz/yz). Axis index: yz=0, xz=1, xy=2.
     // These modify which mid-planes the all-axis flux slice overlay renders; they
-    // default all-on and are independent of the volume-column badge/clear.
+    // default all-on and are independent of the Flux J group badge and clear.
     for (const [axisName, axisIdx] of [['xy', 2], ['xz', 1], ['yz', 0]]) {
         const btnId = `flux-slice-axis-${axisName}`;
         const axisBtn = getEl(btnId);
@@ -293,7 +293,7 @@ export function bindScale0UI(ctx, api) {
     }
 
     // Flux-volume style sub-toggles (organic scatter vs grid; additive glow on/off).
-    // These live with the Volume overlay controls so the status-bar Scene
+    // These live under the Flux volume layer so the status-bar Scene
     // menus only cover view, camera, environment, and boundary controls.
     const applyFluxOrganic = (on) => {
         setButtonActive('toggle-flux-organic', on);
@@ -345,7 +345,7 @@ export function bindScale0UI(ctx, api) {
         });
     }
 
-    // Rubber-sheet slice-height sliders (Topology / Stress-Energy overlays):
+    // Slice-height sliders of the layers drawn as a sheet:
     // each slides its sheet up/down and re-samples the field at that y-plane
     // (viewport.setTopologySheetHeight → TopologySheetRenderer.setHeight).
     const SHEET_HEIGHT_SLIDERS = [
@@ -367,7 +367,7 @@ export function bindScale0UI(ctx, api) {
         });
     }
 
-    // Per-column × clear buttons — turn off every toggle in one column.
+    // Per-group × clear buttons: turn off every layer in one group.
     for (const clearBtn of document.querySelectorAll('.s0-overlay-col-clear')) {
         const colName = clearBtn.getAttribute('data-clear-col');
         const toggles = COL_TO_TOGGLES[colName];

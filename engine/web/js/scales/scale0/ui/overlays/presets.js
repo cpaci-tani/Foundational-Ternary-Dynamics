@@ -1,23 +1,11 @@
 /**
- * Scale 0 Overlay column groupings.
- *
- * Maps each column name in the Scale 0 overlay panel to its list of
- * toggle button IDs. Used by the per-column clear (×) buttons and the
- * live overlay-count badges in the column headers.
+ * Scale 0 Visualization panel: which buttons belong to which group, and
+ * which layers each Rendering row applies to. All three are read from the
+ * layer table, so a layer is declared once.
  */
 
-export const COL_TO_TOGGLES = {
-    'standard-model': ['toggle-sm-reference'],
-    'volume':        ['toggle-flux-volume', 'toggle-flux-slice', 'toggle-native-transport', 'toggle-flux-lines', 'toggle-div-field', 'toggle-state-field'],
-    'fields':        ['toggle-e-field', 'toggle-b-field'],
-    'forces':        ['toggle-force-em', 'toggle-force-gravity', 'toggle-force-strong', 'toggle-force-weak'],
-    'quantum':       ['toggle-psi-squared', 'toggle-phase', 'toggle-lagrangian-density', 'toggle-entropy-density'],
-    'topology':      ['toggle-grav-potential', 'toggle-charge-density',
-                      'toggle-latency', 'toggle-gauss-residual',
-                      'toggle-proper-time', 'toggle-lapse', 'toggle-db-phase'],
-    'stress-energy': ['toggle-em-energy', 'toggle-poynting', 'toggle-vorticity',
-                      'toggle-e-pressure', 'toggle-b-pressure'],
-    'phenomena':     ['toggle-dual-substrate', 'toggle-chirality', 'toggle-dark-halo',
-                      'toggle-genesis-iso', 'toggle-color-charge', 'toggle-damping-zones',
-                      'toggle-confinement', 'toggle-horizon'],
-};
+export {
+    GROUP_TO_TOGGLES as COL_TO_TOGGLES,
+    SCALAR_RENDER_TOGGLES,
+    VECTOR_STYLE_TOGGLES,
+} from './layer-catalog.js';

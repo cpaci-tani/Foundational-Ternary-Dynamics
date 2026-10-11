@@ -1,9 +1,10 @@
 /**
- * Scenario-aware availability for Scale-0 visualization overlays.
+ * Scenario-aware availability for Scale-0 visualization layers.
  *
- * This is deliberately capability based, not value based: a legitimate zero
- * field remains inspectable. We only hide an overlay when the frozen scenario
- * cannot produce the quantity under its declared native term profile.
+ * Every layer is always listed. A layer the frozen scenario cannot produce
+ * under its declared native term profile is dimmed and cannot be switched on,
+ * and its tooltip says what is missing. This is capability based, not value
+ * based: a quantity that is legitimately zero stays available.
  */
 
 import {
@@ -20,6 +21,7 @@ import {
     getScale0State,
     setFieldToggle,
 } from '../../state/store.js';
+import { LAYERS, layerTooltip } from './layer-catalog.js';
 import { COL_TO_TOGGLES } from './presets.js';
 import { refreshOverlayPanelShell } from './panel-shell.js';
 import {
@@ -121,14 +123,26 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     const tags = scenario?.tags || [];
     const domainOverride = SCALE0_SCENARIO_DOMAIN_OVERRIDES[scenarioId] || {};
 
+    // Why each unavailable layer is unavailable, for its tooltip.
+    const reasons = new Map();
+    const blockRest = (applicable, reason) => {
+        for (const layer of LAYERS) {
+            if (!applicable.has(layer.id)) reasons.set(layer.id, reason);
+        }
+    };
+
     if (scenario?.backend === 'finite-records') {
+        const applicable = new Set(['toggle-flux-volume', 'toggle-state-field']);
+        blockRest(applicable, 'finite-record scenarios carry only the record and its state');
         return {scenarioId, terms: {},
             domains: {flux: false, state: true, finiteRecords: true, dual: false,
                 gravity: false, emForce: false, strong: false, standardModel: false, properTimeClock: false},
-            applicable: new Set(['toggle-flux-volume', 'toggle-state-field'])};
+            applicable, reasons};
     }
 
     if (!scenario || scenarioId === 'empty') {
+        const applicable = new Set();
+        blockRest(applicable, 'the empty scenario has nothing to draw');
         return {
             scenarioId,
             terms,
@@ -141,7 +155,8 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
                 strong: false,
                 standardModel: false,
             },
-            applicable: new Set(),
+            applicable,
+            reasons,
         };
     }
 
@@ -171,43 +186,63 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     const properTimeClock = state && !!(terms.latency_field || terms.de_broglie_clock);
 
     const applicable = new Set();
-    const allow = (condition, ...ids) => {
-        if (condition) ids.forEach((id) => applicable.add(id));
+    // A layer can be allowed by more than one rule; the first rule that
+    // refuses it supplies the reason, and any rule that allows it clears it.
+    const allow = (condition, reason, ...ids) => {
+        for (const id of ids) {
+            if (condition) {
+                applicable.add(id);
+                reasons.delete(id);
+            } else if (!applicable.has(id) && !reasons.has(id)) {
+                reasons.set(id, reason);
+            }
+        }
     };
 
-    allow(flux,
+    allow(flux, 'this scenario has no flux field',
         'toggle-flux-volume', 'toggle-flux-slice', 'toggle-native-transport', 'toggle-flux-lines', 'toggle-div-field',
         'toggle-e-field', 'toggle-b-field', 'toggle-poynting', 'toggle-force-weak',
         'toggle-psi-squared', 'toggle-lagrangian-density', 'toggle-entropy-density',
         'toggle-em-energy', 'toggle-charge-density', 'toggle-vorticity',
         'toggle-e-pressure', 'toggle-b-pressure', 'toggle-dark-halo');
-    allow(state, 'toggle-state-field');
-    allow(emForce, 'toggle-force-em');
-    allow(gravity, 'toggle-force-gravity', 'toggle-grav-potential', 'toggle-latency', 'toggle-horizon');
-    allow(strong, 'toggle-force-strong', 'toggle-color-charge', 'toggle-confinement');
-    allow(dual, 'toggle-dual-substrate', 'toggle-chirality', 'toggle-phase');
-    allow(genesis, 'toggle-genesis-iso', 'toggle-color-charge');
-    allow(state && domainOverride.color, 'toggle-color-charge');
-    allow(selectiveDamping, 'toggle-damping-zones');
-    allow(flux || state, 'toggle-gauss-residual');
-    allow(properTimeClock, 'toggle-proper-time', 'toggle-lapse', 'toggle-db-phase');
+    allow(state, 'this scenario has no manifested matter', 'toggle-state-field');
+    allow(emForce, 'it needs manifested matter and an electric force term', 'toggle-force-em');
+    allow(gravity, 'gravity is off in this scenario',
+        'toggle-force-gravity', 'toggle-grav-potential', 'toggle-latency', 'toggle-horizon');
+    allow(strong, 'it needs manifested matter and a colour or strong force term',
+        'toggle-force-strong', 'toggle-color-charge', 'toggle-confinement');
+    allow(dual, 'Dual Substrate is off in this scenario', 'toggle-dual-substrate', 'toggle-chirality', 'toggle-phase');
+    allow(genesis, 'genesis is off in this scenario', 'toggle-genesis-iso', 'toggle-color-charge');
+    allow(state && domainOverride.color, 'it needs axis labels from genesis or a quark seed', 'toggle-color-charge');
+    allow(selectiveDamping, 'selective damping is off in this scenario', 'toggle-damping-zones');
+    allow(flux || state, 'this scenario has neither flux nor matter', 'toggle-gauss-residual');
+    allow(properTimeClock, 'it needs manifested matter and the latency field or de Broglie clock',
+        'toggle-proper-time', 'toggle-lapse', 'toggle-db-phase');
     // Static catalog context only. This deliberately does not depend on a live
     // field value and does not make the overlay scheduler sample anything.
-    allow(standardModel, 'toggle-sm-reference');
+    allow(standardModel, 'this scenario is not an elementary particle', 'toggle-sm-reference');
 
     return {
         scenarioId,
         terms,
         domains: { flux, state, dual, gravity, emForce, strong, standardModel, properTimeClock },
         applicable,
+        reasons,
     };
+}
+
+// Built on first use: the classifier above is also run on its own, without the panel.
+let tooltipById = null;
+function baseTooltip(buttonId) {
+    tooltipById ||= new Map(LAYERS.map((layer) => [layer.id, layerTooltip(layer)]));
+    return tooltipById.get(buttonId);
 }
 
 /**
  * Apply a scenario's capability mask without discarding user preferences.
- * Hidden active buttons retain their `.active` class so switching back restores
- * the selection, while their runtime/store flags and renderer visibility are
- * forced off for the incompatible scenario.
+ * A dimmed button that was on keeps its `.active` class so switching back
+ * restores the selection, while it reports itself as off and its runtime
+ * flag and renderer visibility are forced off for the incompatible scenario.
  */
 export function applyScale0OverlayApplicability(scenarioId, viewportAdapter, engineTerms = null) {
     const profile = getScale0OverlayApplicability(scenarioId, engineTerms);
@@ -222,9 +257,20 @@ export function applyScale0OverlayApplicability(scenarioId, viewportAdapter, eng
             if (!btn) continue;
             const isApplicable = profile.applicable.has(buttonId);
             btn.classList.toggle('is-inapplicable', !isApplicable);
-            btn.setAttribute('aria-hidden', isApplicable ? 'false' : 'true');
-            if (isApplicable) btn.removeAttribute('tabindex');
-            else btn.setAttribute('tabindex', '-1');
+            // Still listed and focusable, so its tooltip can be read.
+            if (isApplicable) btn.removeAttribute('aria-disabled');
+            else btn.setAttribute('aria-disabled', 'true');
+            btn.setAttribute('aria-pressed', isApplicable && btn.classList.contains('active') ? 'true' : 'false');
+            const tooltip = baseTooltip(buttonId);
+            if (tooltip) {
+                const reason = profile.reasons?.get(buttonId);
+                const text = isApplicable || !reason ? tooltip : `${tooltip} Not available here: ${reason}.`;
+                if (btn.dataset.uiTooltip !== text) {
+                    btn.removeAttribute('title');
+                    btn.dataset.uiTooltip = text;
+                    btn.dataset.uiTooltipSource = 'title';
+                }
+            }
 
             if (!isApplicable) {
                 const fieldKey = FIELD_KEY_BY_BUTTON.get(buttonId);
@@ -239,37 +285,18 @@ export function applyScale0OverlayApplicability(scenarioId, viewportAdapter, eng
         }
     }
 
-    const fluxVolumeApplicable = profile.applicable.has('toggle-flux-volume');
-    const fluxSliceApplicable = profile.applicable.has('toggle-flux-slice');
-    body.querySelector('[aria-label="Flux volume style"]')
-        ?.classList.toggle('is-inapplicable', !fluxVolumeApplicable);
-    body.querySelector('[aria-label="Flux slice planes"]')
-        ?.classList.toggle('is-inapplicable', !fluxSliceApplicable);
-    body.querySelector('.force-style-row')?.classList.toggle(
-        'is-inapplicable',
-        !COL_TO_TOGGLES.forces.some((id) => profile.applicable.has(id)),
-    );
-
-    if (!fluxVolumeApplicable && viewportAdapter?.isFluxVolumeVisible?.()) {
+    // A dimmed layer's own controls (sub-switches, slice height) are kept away
+    // by the stylesheet, keyed on the layer's own class.
+    if (!profile.applicable.has('toggle-flux-volume') && viewportAdapter?.isFluxVolumeVisible?.()) {
         viewportAdapter.setFluxVolumeVisible(false);
     }
-    if (!fluxSliceApplicable && viewportAdapter?.isFluxSliceVisible?.()) {
+    if (!profile.applicable.has('toggle-flux-slice') && viewportAdapter?.isFluxSliceVisible?.()) {
         viewportAdapter.setFluxSliceVisible(false);
     }
+    // The particle card has nothing to show outside an elementary-particle scenario.
+    document.getElementById('s0-sm-context-card')
+        ?.classList.toggle('is-inapplicable', !profile.domains.standardModel);
 
-    for (const [colName, toggles] of Object.entries(COL_TO_TOGGLES)) {
-        const col = body.querySelector(`.s0-overlay-col[data-col="${colName}"]`);
-        const colApplicable = colName === 'standard-model'
-            ? profile.domains.standardModel
-            : toggles.some((id) => profile.applicable.has(id));
-        col?.classList.toggle('is-inapplicable', !colApplicable);
-        col?.setAttribute('aria-hidden', colApplicable ? 'false' : 'true');
-    }
-
-    body.classList.toggle(
-        'is-applicability-empty',
-        profile.applicable.size === 0 && !profile.domains.standardModel,
-    );
     panel.dataset.scenarioId = scenarioId;
     panel.dataset.overlayDomains = Object.entries(profile.domains)
         .filter(([, enabled]) => enabled)
