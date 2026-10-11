@@ -68,13 +68,20 @@ export function updateCosmicFields(target) {
     else massStr = `${solarMass.toFixed(1)} M\u2609`;
 
     if (target.cosmicFields.mass) target.cosmicFields.mass.textContent = massStr;
-    if (target.cosmicFields.radius) target.cosmicFields.radius.textContent = `${body.radius.toFixed(2)} R\u2609`;
-    if (target.cosmicFields.age) target.cosmicFields.age.textContent = body.age > 0 ? `${(body.age * 0.1).toFixed(1)} Myrs` : '--';
+    // Radius, speed and age are the bridge's raw values (mock-scale5.js
+    // cosmicInspectBody): a lattice length, a lattice speed and a count of
+    // stellar-evolution ticks. No conversion is applied and the cosmic lattice
+    // has no documented SI calibration (constants.js "Cosmic-Lattice
+    // Anchors"), so they carry the Scale 5 diagnostics units. The earlier
+    // solar-radius, km/s and (age * 0.1) Myr labels claimed units the readout
+    // does not compute, as audit P0-10 found for the Scale 2 kelvin label.
+    if (target.cosmicFields.radius) target.cosmicFields.radius.textContent = `${body.radius.toFixed(2)} lu`;
+    if (target.cosmicFields.age) target.cosmicFields.age.textContent = body.age > 0 ? `${Math.round(body.age).toLocaleString()} ticks` : '--';
     if (target.cosmicFields.temp) target.cosmicFields.temp.textContent = body.temperature > 0 ? `${Math.round(body.temperature).toLocaleString()} K` : '--';
     if (target.cosmicFields.lum) target.cosmicFields.lum.textContent = body.luminosity > 0 ? `${body.luminosity.toExponential(2)} L\u2609` : '--';
     if (target.cosmicFields.pos) target.cosmicFields.pos.textContent = `(${body.x.toFixed(1)}, ${body.y.toFixed(1)}, ${body.z.toFixed(1)})`;
     if (target.cosmicFields.vel) target.cosmicFields.vel.textContent = `(${body.vx.toFixed(2)}, ${body.vy.toFixed(2)}, ${body.vz.toFixed(2)})`;
-    if (target.cosmicFields.speed) target.cosmicFields.speed.textContent = `${body.speed.toFixed(2)} km/s`;
+    if (target.cosmicFields.speed) target.cosmicFields.speed.textContent = `${body.speed.toFixed(2)} (sim)`;
     if (target.cosmicFields.fuelFrac) target.cosmicFields.fuelFrac.textContent = `${(body.fuel_fraction * 100).toFixed(1)}%`;
 
     const phaseNames = ['Protostar', 'Red Giant', 'Core He Burn', 'AGB', 'Pre-SN', 'Core Collapse'];

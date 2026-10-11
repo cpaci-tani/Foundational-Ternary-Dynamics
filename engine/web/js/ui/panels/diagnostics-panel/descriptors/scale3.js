@@ -1,4 +1,16 @@
-/** Scale 3 live molecule diagnostics. Every row is runtime-derived. */
+/**
+ * Scale 3 live molecule diagnostics. Every row is runtime-derived.
+ *
+ * Units: lengths are raw AtomEngine simulation units, which that engine
+ * declares as Bohr radii (mock-atom-engine.js softening, the Scale 2
+ * softening row, units.js formatLength(value, 2)), so the unit column says
+ * "a₀" and never "lu". The inspector shows the same lengths in ångströms
+ * through that one factor. Reading one simulation unit as one Bohr radius is
+ * an input, and the spacings themselves are simulation-tuned (molecules.js,
+ * atomic-props.js), not measured.
+ */
+
+const BOHR_UNIT_NOTE = ' Unit a₀: one simulation unit taken as one Bohr radius, the atom engine\'s declared convention (an input). Spacings are simulation-tuned, not measured.';
 
 export const sections = [
     {
@@ -34,11 +46,11 @@ export const sections = [
         id: 'mol-geometry',
         title: 'Live Geometry',
         rows: [
-            { id: 'mol-radius', label: 'Radius of Gyration', unit: 'lu', source: 's2.molecule.radiusOfGyration', trend: 'aeMolRadius', tooltip: 'Mass-weighted RMS distance from each component center of mass.' },
-            { id: 'mol-dipole', label: 'Dipole Magnitude', unit: 'e·lu', source: 's2.molecule.dipoleMagnitude', trend: 'aeMolDipole', tooltip: 'Magnitude of effective-charge displacement about component centers; charge transfer is empirical when enabled.' },
-            { id: 'mol-bond-mean', label: 'Mean Bond Length', unit: 'lu', source: 's2.molecule.meanBondLength', tooltip: 'Arithmetic mean of current lengths over live graph edges.' },
-            { id: 'mol-bond-min', label: 'Minimum Bond Length', unit: 'lu', source: 's2.molecule.minBondLength', tooltip: 'Shortest current live bond length.' },
-            { id: 'mol-bond-max', label: 'Maximum Bond Length', unit: 'lu', source: 's2.molecule.maxBondLength', tooltip: 'Longest current live bond length.' },
+            { id: 'mol-radius', label: 'Radius of Gyration', unit: 'a₀', source: 's2.molecule.radiusOfGyration', trend: 'aeMolRadius', tooltip: 'Mass-weighted RMS distance from each component center of mass.' + BOHR_UNIT_NOTE },
+            { id: 'mol-dipole', label: 'Dipole Magnitude', unit: 'e·a₀', source: 's2.molecule.dipoleMagnitude', trend: 'aeMolDipole', tooltip: 'Magnitude of effective-charge displacement about component centers; charge transfer is empirical when enabled.' + BOHR_UNIT_NOTE },
+            { id: 'mol-bond-mean', label: 'Mean Bond Length', unit: 'a₀', source: 's2.molecule.meanBondLength', tooltip: 'Arithmetic mean of current lengths over live graph edges.' + BOHR_UNIT_NOTE },
+            { id: 'mol-bond-min', label: 'Minimum Bond Length', unit: 'a₀', source: 's2.molecule.minBondLength', tooltip: 'Shortest current live bond length.' + BOHR_UNIT_NOTE },
+            { id: 'mol-bond-max', label: 'Maximum Bond Length', unit: 'a₀', source: 's2.molecule.maxBondLength', tooltip: 'Longest current live bond length.' + BOHR_UNIT_NOTE },
             { id: 'mol-bond-strain', label: 'RMS Relative Bond Strain', unit: 'frac', source: 's2.molecule.bondRmsStrain', trend: 'aeMolBondStrain', tooltip: 'Root-mean-square of (length minus equilibrium length) divided by equilibrium length over live bonds.' },
         ],
     },
