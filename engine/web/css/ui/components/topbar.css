@@ -195,7 +195,7 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
 .topbar-slot-actions {
     position: sticky;
     right: 0;
-    z-index: 1;
+    z-index: var(--z-local-base);
     margin-left: auto;
     padding-left: 8px;
     justify-content: flex-end;

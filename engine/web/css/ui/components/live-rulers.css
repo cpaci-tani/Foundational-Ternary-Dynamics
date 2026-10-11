@@ -1,7 +1,7 @@
 .live-rulers {
     position: absolute;
     inset: 0;
-    z-index: 4;
+    z-index: var(--z-live-rulers);
     pointer-events: none;
     color: #d7dde6;
     font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
@@ -198,7 +198,7 @@
 
 .live-ruler-cap {
     position: relative;
-    z-index: 1;
+    z-index: var(--z-local-base);
     flex: 0 0 1px;
     width: 1px;
     background: #e8eef5;
@@ -207,7 +207,6 @@
 
 .live-ruler-bar {
     position: relative;
-    z-index: 0;
     flex: 1 1 auto;
     min-width: 0;
     border-top: 1px solid #e8eef5;

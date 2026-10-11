@@ -1,11 +1,14 @@
 import { energyStringPath, formatEnergy } from './measure.js';
 
-/** Bracket whose length is a whole number of voxels and follows lattice size. */
+/**
+ * Bracket whose length is a whole number of voxels and follows lattice size.
+ * Off the lattice it spans the body of the active scale, in that scale's unit.
+ * The tooltip is set per scale by mount.js.
+ */
 
 export function createLatticeRuler() {
     const el = document.createElement('div');
     el.className = 'live-ruler live-ruler-lattice';
-    el.title = 'Absolute lattice length. One voxel is the electron-primary Planck length.';
     const string = document.createElement('div');
     string.className = 'live-ruler-string';
     string.hidden = true;
@@ -40,7 +43,8 @@ export function createLatticeRuler() {
 
     return {
         el,
-        render(scale, formatLength) {
+        /** `gaugeKey` names the scale behind `formatLength`; the label depends on it. */
+        render(scale, formatLength, gaugeKey = '') {
             if (put('hidden', !!scale.hidden)) el.hidden = !!scale.hidden;
             const opacity = String(scale.opacity ?? 1);
             if (put('opacity', opacity)) el.style.opacity = opacity;
@@ -81,7 +85,7 @@ export function createLatticeRuler() {
                 if (put('width', '')) el.style.width = '';
             }
             const title = scale.name || scale.subject;
-            const next = `${title}|${scale.units}|${scale.px.toFixed(1)}|${scale.fill || ''}|${pinned ? pinned.left.toFixed(1) : ''}|${pinned ? pinned.top.toFixed(1) : ''}`;
+            const next = `${gaugeKey}|${title}|${scale.units}|${scale.px.toFixed(1)}|${scale.fill || ''}|${pinned ? pinned.left.toFixed(1) : ''}|${pinned ? pinned.top.toFixed(1) : ''}`;
             if (next === signature) return;
             signature = next;
             bracket.style.width = `${Math.max(2, pinned ? pinned.width : scale.px)}px`;

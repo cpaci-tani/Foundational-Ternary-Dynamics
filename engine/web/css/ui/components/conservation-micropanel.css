@@ -23,6 +23,14 @@
     background: var(--bg-raised);
 }
 
+/* The view does not show this card: it carries `.chart-card` for the
+ * fullscreen portal and so rests at that class's opacity 0, which only
+ * `.is-mounted` or the portal lifts. While unseen it must not take pointer
+ * input meant for the lattice view. */
+.conservation-micropanel:not(.is-mounted):not(.is-fs) {
+    pointer-events: none;
+}
+
 .cons-header {
     display: flex;
     justify-content: space-between;

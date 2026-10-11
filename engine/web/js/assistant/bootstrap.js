@@ -60,6 +60,7 @@ export async function createAssistant(deps){
         },
     };
     const view=new AssistantConsole({getMount:()=>deps.host.active?deps.registry.get('observerWorkspace').getAssistantMount():/** @type {HTMLElement} */(deps.app.querySelector('#panel-jev')),
+        getReturnFocus:()=>deps.host.active?deps.registry.get('observerWorkspace').getAssistantReturnFocus():null,
         activatePanel:deps.activatePanel,
         dockFloat:()=>floatingWindowManager.getWindow('jev')?.dock(),
         onVisibility:open=>{deps.registry.get('observerWorkspace')?.releaseAssistantInput(open && deps.host.active);if(open){const observation=router.observe();if(observation)view.event({type:'observation',observation});}}});

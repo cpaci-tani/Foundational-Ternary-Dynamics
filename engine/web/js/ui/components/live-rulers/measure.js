@@ -1,4 +1,5 @@
-import { E_REST, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M, J_PER_EV, K_B } from '../../../constants.js';
+import { BOHR_RADIUS_M, E_REST, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M, J_PER_EV, K_B } from '../../../constants.js';
+import { PE_VIS_BOUNDARY_R } from '../../../viewport/constants.js';
 
 /**
  * One voxel is the electron-primary lattice spacing a_phys = ℓ_P
@@ -206,22 +207,82 @@ function superscript(exp) {
 
 const AU_M = 1.495978707e11;
 
-/** World-unit length and the name of the body drawn at this engine scale. */
+/** Radius the atom engine reflects free atoms into (mock-atom-engine.js, drift step). */
+const ATOM_CONTAINMENT_R = 35;
+
+/** Reference box the cosmic bridge starts with (mock-scale5.js). Scenarios may set their own. */
+const COSMIC_REFERENCE_BOX = 200;
+
+const ATOM_VIEW_TITLE = 'Visible width in metres. One simulation unit is taken as one Bohr radius (a₀), '
+    + 'the atom engine\'s declared length convention: an input. Spacings are tuned for the simulation, not measured.';
+const ATOM_BODY_TITLE = 'Diameter of the atom engine\'s containment boundary, in metres. '
+    + 'One simulation unit is taken as one Bohr radius (a₀): an input.';
+
+/**
+ * What one world unit is on each engine scale, and the body its bracket spans.
+ *
+ * `metresPerUnit` is set only where the engine itself declares a metre length
+ * for its unit, and each such value is a calibration input. Where it is null
+ * the rulers read in the engine's own unit and show no metres.
+ *
+ *   lattice    one voxel, the electron-primary lattice spacing (FTD-0137 §4.5).
+ *   particles  lattice units (lu): particle_engine.h positions and the Scale 1
+ *              formatter in units.js. No Scale 1 readout converts lu to metres.
+ *   atoms,     Bohr-scaled simulation units: mock-atom-engine.js softening,
+ *   molecules  molecules.js positions, and the Scale 2 formatter in units.js,
+ *              which turns one unit into one Bohr radius.
+ *   planetary  astronomical units (mock-scale4.js).
+ *   cosmic     lattice units (lu): mock-scale5.js scales distances for visible
+ *              dynamics, and constants.js records no SI calibration for them.
+ *
+ * `domainUnits` is an extent the engine defines: the Scale 1 display reference
+ * shell, the atom engine's containment sphere, the cosmic bridge's default
+ * reference box. Null follows the lattice size.
+ */
+const GAUGES = Object.freeze({
+    lattice: Object.freeze({
+        mode: 'lattice', metresPerUnit: VOXEL_LENGTH_M, unit: 'voxel', unitSubject: 'voxel',
+        subject: 'lattice', domainUnits: null,
+        viewTitle: 'Visible width in metres. One voxel is the electron-primary Planck length.',
+        bodyTitle: 'Absolute lattice length. One voxel is the electron-primary Planck length.',
+    }),
+    particles: Object.freeze({
+        mode: 'particles', metresPerUnit: null, unit: 'lu', unitSubject: 'lattice unit',
+        subject: 'reference shell', domainUnits: 2 * PE_VIS_BOUNDARY_R,
+        viewTitle: 'Visible width in lattice units (lu), the particle engine\'s own length unit. '
+            + 'The engine declares no metre length for it, so no metre reading is shown.',
+        bodyTitle: 'Diameter of the display reference shell, in lattice units (lu). '
+            + 'The particle engine is unbounded and declares no metre length for its unit.',
+    }),
+    atoms: Object.freeze({
+        mode: 'atoms', metresPerUnit: BOHR_RADIUS_M, unit: 'a₀', unitSubject: 'Bohr radius',
+        subject: 'boundary', domainUnits: 2 * ATOM_CONTAINMENT_R,
+        viewTitle: ATOM_VIEW_TITLE, bodyTitle: ATOM_BODY_TITLE,
+    }),
+    molecules: Object.freeze({
+        mode: 'molecules', metresPerUnit: BOHR_RADIUS_M, unit: 'a₀', unitSubject: 'Bohr radius',
+        subject: 'boundary', domainUnits: 2 * ATOM_CONTAINMENT_R,
+        viewTitle: ATOM_VIEW_TITLE, bodyTitle: ATOM_BODY_TITLE,
+    }),
+    planetary: Object.freeze({
+        mode: 'planetary', metresPerUnit: AU_M, unit: 'AU', unitSubject: 'AU',
+        subject: 'system', domainUnits: 30,
+        viewTitle: 'Visible width in metres. One unit is one astronomical unit (AU).',
+        bodyTitle: 'Bracket length in metres. One unit is one astronomical unit (AU).',
+    }),
+    cosmic: Object.freeze({
+        mode: 'cosmic', metresPerUnit: null, unit: 'lu', unitSubject: 'lattice unit',
+        subject: 'cosmic', domainUnits: COSMIC_REFERENCE_BOX,
+        viewTitle: 'Visible width in lattice units (lu), the cosmic engine\'s own length unit. '
+            + 'Distances are scaled for visible dynamics and have no metre calibration, so no metre reading is shown.',
+        bodyTitle: 'The cosmic engine\'s default reference box, in lattice units (lu). '
+            + 'A scenario may use a different box. The unit has no metre calibration.',
+    }),
+});
+
+/** Length unit, tooltips, and drawn body for an engine scale. Unknown modes read as the lattice. */
 export function lengthGauge(engineMode) {
-    switch (engineMode) {
-        case 'particles':
-            return { metresPerUnit: VOXEL_LENGTH_M, subject: 'cloud', domainUnits: 64 };
-        case 'atoms':
-            return { metresPerUnit: VOXEL_LENGTH_M, subject: 'atom', domainUnits: 64 };
-        case 'molecules':
-            return { metresPerUnit: VOXEL_LENGTH_M, subject: 'molecule', domainUnits: 64 };
-        case 'planetary':
-            return { metresPerUnit: AU_M, subject: 'system', domainUnits: 30 };
-        case 'cosmic':
-            return { metresPerUnit: VOXEL_LENGTH_M, subject: 'cosmic', domainUnits: 200 };
-        default:
-            return { metresPerUnit: VOXEL_LENGTH_M, subject: 'lattice', domainUnits: null };
-    }
+    return Object.hasOwn(GAUGES, engineMode) ? GAUGES[engineMode] : GAUGES.lattice;
 }
 
 /** True once the drawn body is too small to see and the view is the space around it. */
@@ -233,8 +294,9 @@ export function outerWorldActive(domainUnits, pixelsPerVoxel) {
 /**
  * One bracket. Zoomed in it matches the nearest voxel, then the whole body,
  * then the quasi-domain. The domain fades out as its screen size falls away.
+ * Off the lattice the closest stage is one engine unit, named by `unitSubject`.
  */
-export function anchorRuler({ domainUnits, pixelsPerUnit, viewPx, subject = 'lattice', quasiUnits }) {
+export function anchorRuler({ domainUnits, pixelsPerUnit, viewPx, subject = 'lattice', unitSubject = 'voxel', quasiUnits }) {
     const domain = Math.max(1, domainUnits);
     const ppv = Math.max(0, pixelsPerUnit);
     const cap = Math.max(1, viewPx) * 0.92;
@@ -244,7 +306,7 @@ export function anchorRuler({ domainUnits, pixelsPerUnit, viewPx, subject = 'lat
     const quasiUnitsResolved = shell;
     const quasiPx = quasiUnitsResolved * ppv;
     if (voxelPx >= 80) {
-        return { subject: 'voxel', units: 1, px: Math.min(cap, voxelPx), opacity: 1, hidden: false };
+        return { subject: unitSubject, units: 1, px: Math.min(cap, voxelPx), opacity: 1, hidden: false };
     }
     // The environment is the outer shell. Hand off as soon as that sphere fits
     // in the view, while the lattice is still drawn.
@@ -289,6 +351,25 @@ export function formatLength(units, step = 1, metresPerUnit = VOXEL_LENGTH_M) {
         }
     }
     return `${mant.toFixed(places)}×10${superscript(exp)} m`;
+}
+
+/** A length in an engine's own unit, for a scale with no declared metre length. */
+export function formatUnitLength(units, symbol) {
+    if (!Number.isFinite(units)) return '—';
+    if (Math.abs(units) < 1e-15) return '0';
+    const abs = Math.abs(units);
+    if (abs >= 1e6 || abs < 1e-3) {
+        const exp = Math.floor(Math.log10(abs));
+        return `${(units / 10 ** exp).toFixed(3)}×10${superscript(exp)} ${symbol}`;
+    }
+    return `${Number(units.toPrecision(4))} ${symbol}`;
+}
+
+/** A length on a scale's gauge: metres where the engine declares them, otherwise its own unit. */
+export function formatGaugeLength(gauge, units, step = 1) {
+    return gauge.metresPerUnit > 0
+        ? formatLength(units, step, gauge.metresPerUnit)
+        : formatUnitLength(units, gauge.unit);
 }
 
 /**

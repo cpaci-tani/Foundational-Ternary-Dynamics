@@ -16,6 +16,8 @@ The handler adds `Cache-Control: no-store, must-revalidate` to every
 response, plus `Pragma: no-cache` and `Expires: 0` for the older browsers.
 The local strict-fluid laboratory has narrow static/runtime routes and an
 availability endpoint; other assets retain the public engine/web root.
+`GET /api/server-info` (loopback only) reports that root and the process id,
+so a test run can tell which checkout a server on a shared port belongs to.
 
 Threading + allow_reuse_address are enabled so the server survives
 parent-process detachment (the common case under preview managers
@@ -212,6 +214,8 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
             return self._record_lattice(route)
         if route == "/api/strict-hydro/status":
             return self._strict_hydro_status()
+        if route == "/api/server-info":
+            return self._server_info()
         if route == "/api/gpu-server/status":
             return self._gpu_status()
         if route == "/api/gpu-server/download":
@@ -264,6 +268,14 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
             available = False
         self._send_json({"available": available,
                          "url": STRICT_HYDRO_URL if available else None})
+
+    def _server_info(self):
+        # Which checkout this process serves. Several worktrees share one
+        # machine and one port convention; the Playwright globalSetup
+        # (tests/_test-server.js) reads this before trusting a reused server.
+        if not self._client_is_local():
+            return self._send_json({"error": "forbidden (loopback only)"}, 403)
+        self._send_json({"webRoot": os.path.realpath(_WEB_ROOT), "pid": os.getpid()})
 
     def do_POST(self):
         route = self.path.split("?", 1)[0]

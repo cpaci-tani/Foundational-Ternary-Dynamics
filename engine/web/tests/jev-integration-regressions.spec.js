@@ -77,6 +77,18 @@ test('closing JEV in Observer restores focus within the active workspace', async
     expect(state.selected !== 'jev' || state.visible).toBe(true);
 });
 
+test('closing JEV in Observer returns focus to its trigger when the JEV button is shown', async ({ page }) => {
+    await ready(page);
+    await openObserverWorkspace(page);
+    await page.locator('[data-observer-panel-tab="help"]').click();
+    await page.getByLabel('Show JEV button', { exact: true }).check();
+    await page.getByRole('button', { name: 'Close controls', exact: true }).click();
+    await page.locator('[data-observer-assistant]').click();
+    await expect(page.locator('#observer-workspace .jev-console')).toBeVisible();
+    await page.getByRole('button', { name: 'Close JEV console' }).click();
+    await expect(page.locator('[data-observer-assistant]')).toBeFocused();
+});
+
 test('Observer input remains available when the assistant listener is absent', async ({ page }) => {
     await ready(page);
     await openObserverWorkspace(page);

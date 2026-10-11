@@ -688,15 +688,15 @@ export function getInspectorPanelTemplate() {
                             <dl class="inspector-grid">
                                 <dt>Body ID</dt>
                                 <dd id="cosmic-insp-id">--</dd>
-                                <dt>Mass</dt>
+                                <dt title="Lattice mass divided by 50, the imposed anchor that puts 70 lattice mass units at about 1.4 solar masses.">Mass</dt>
                                 <dd id="cosmic-insp-mass">--</dd>
                                 <dt>Radius</dt>
                                 <dd id="cosmic-insp-radius">--</dd>
                                 <dt>Age</dt>
                                 <dd id="cosmic-insp-age">--</dd>
-                                <dt>Temp (K)</dt>
+                                <dt title="Stars and remnants: the kelvin-scale value set by the stellar rules (an input). Gas: 1000 times the internal energy in engine units, with no kelvin conversion.">Temp</dt>
                                 <dd id="cosmic-insp-temp">--</dd>
-                                <dt>Luminosity</dt>
+                                <dt title="Engine units. Stars: mass to the power 3.5 in lattice mass units. Black holes: the jet-intensity gauge. No conversion to solar luminosities is declared.">Luminosity</dt>
                                 <dd id="cosmic-insp-lum">--</dd>
                             </dl>
                         </div>

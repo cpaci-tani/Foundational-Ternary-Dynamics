@@ -13,11 +13,19 @@
  * scaled so v_circular ~ O(1) for visual dynamics.
  *
  * Mass-unit note: body masses on this scale are stored in lattice units,
- * not solar masses. For UI display ("M = X M_sun") multiply by
- * `LATTICE_TO_SOLAR_MASS` (= 50, constants.js). As of the 2026-05-27
- * audit (P0-6) every `M☉`-labelled telemetry string in `_updateTelemetry`
- * applies this factor at the point of formatting; the raw `b.mass` values
- * elsewhere (forces, getCosmicData) remain in lattice units by design.
+ * not solar masses. For UI display ("M = X M_sun") DIVIDE by
+ * `LATTICE_MASS_PER_SOLAR_MASS` (= 50, constants.js): the declared anchors
+ * put 70 lattice units at about 1.4 M☉. The 2026-05-27 audit (P0-6) made
+ * every `M☉`-labelled telemetry string in `_updateTelemetry` apply the
+ * factor at the point of formatting, but as a multiplier, following an
+ * earlier wording of this note; corrected to a division on 2026-10-10.
+ * The raw `b.mass` values elsewhere (forces, getCosmicData) remain in
+ * lattice units by design.
+ *
+ * Luminosity-unit note: `b.luminosity` has no declared conversion. It is
+ * mass^3.5 in lattice mass units for stars (addBody, cosmic-postupdates.js)
+ * and a jet-intensity gauge for black holes (getCosmicData), so telemetry
+ * labels it "(sim)", never watts, EJ/s or solar luminosities.
  *
  * Refactor note (MS5-1..3): scenario data generation moved to
  * ./cosmic-scenarios/, the force kernel to ./cosmic-physics.js, and
@@ -45,7 +53,7 @@
  */
 
 import {
-    OMEGA_LAMBDA, OMEGA_MATTER, H0_LATTICE, LATTICE_TO_SOLAR_MASS,
+    OMEGA_LAMBDA, OMEGA_MATTER, H0_LATTICE, LATTICE_MASS_PER_SOLAR_MASS,
 } from '../constants.js';
 
 import { runCosmicScenario } from './cosmic-scenarios/index.js';
@@ -486,11 +494,11 @@ export class CosmicMockBridge {
                 const sep = Math.sqrt(dx * dx + dy * dy + dz * dz);
                 tel['Core Separation'] = sep.toFixed(2) + ' lu';
                 if (name === 'cosmic-binary-agn') {
-                    tel['Peak Jet Power'] = Math.max(bhs[0].luminosity || 0, bhs[1].luminosity || 0).toExponential(2) + ' EJ/s';
+                    tel['Peak Jet Power'] = Math.max(bhs[0].luminosity || 0, bhs[1].luminosity || 0).toExponential(2) + ' (sim)';
                 }
             } else if (bhs.length === 1) {
                 tel['Status'] = 'Merger Complete';
-                tel['Singularity Mass'] = (bhs[0].mass * LATTICE_TO_SOLAR_MASS).toFixed(1) + ' M⊙';
+                tel['Singularity Mass'] = (bhs[0].mass / LATTICE_MASS_PER_SOLAR_MASS).toFixed(1) + ' M⊙';
             }
         } else if (name === 'cosmic-cartwheel-collision') {
             const bhs = this._bodies.filter(b => isBH(b.type));
@@ -512,7 +520,7 @@ export class CosmicMockBridge {
                 }
             }
             tel['Core Population (r<10)'] = coreStars;
-            tel['Core Density'] = ((M_core * LATTICE_TO_SOLAR_MASS) / (4 / 3 * Math.PI * 1000)).toExponential(2) + ' M⊙/lu³';
+            tel['Core Density'] = ((M_core / LATTICE_MASS_PER_SOLAR_MASS) / (4 / 3 * Math.PI * 1000)).toExponential(2) + ' M⊙/lu³';
         } else if (name === 'cosmic-stellar-lifecycle') {
             const wd = this._bodies.filter(b => b.type === T.WHITE_DWARF || b.type === T.NEUTRON_STAR).length;
             const bh = this._bodies.filter(b => b.type === T.BLACK_HOLE).length;
@@ -521,14 +529,14 @@ export class CosmicMockBridge {
         } else if (name === 'cosmic-black-hole') {
             const bh = this._bodies.find(b => isBH(b.type));
             if (bh) {
-                tel['BH Mass'] = (bh.mass * LATTICE_TO_SOLAR_MASS).toFixed(2) + ' M⊙';
-                tel['Accretion Disk Lum'] = (bh.luminosity || 0).toExponential(2) + ' W';
+                tel['BH Mass'] = (bh.mass / LATTICE_MASS_PER_SOLAR_MASS).toFixed(2) + ' M⊙';
+                tel['Accretion Disk Lum'] = (bh.luminosity || 0).toExponential(2) + ' (sim)';
             }
         } else if (name === 'cosmic-ftd-collapse') {
             const bh = this._bodies.find(b => isBH(b.type));
             if (bh) {
                 tel['Status'] = 'Collapsed (Singularity Born)';
-                tel['BH Mass'] = (bh.mass * LATTICE_TO_SOLAR_MASS).toFixed(1) + ' M⊙';
+                tel['BH Mass'] = (bh.mass / LATTICE_MASS_PER_SOLAR_MASS).toFixed(2) + ' M⊙';
             } else {
                 tel['Status'] = 'Pre-Collapse (Increasing Density)';
             }

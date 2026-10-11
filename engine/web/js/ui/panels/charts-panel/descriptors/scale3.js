@@ -32,9 +32,9 @@ export const charts = [
     {
         id: 'mol-geometry', title: 'Molecular Geometry', xLabel: 'tick', yLabel: 'relative', defaultActive: true,
         series: [
-            { key: 'radius', label: 'Radius of gyration', color: '#22d3ee', buffer: 'aeMolRadius', unit: 'lu' },
+            { key: 'radius', label: 'Radius of gyration', color: '#22d3ee', buffer: 'aeMolRadius', unit: 'a₀' },
             { key: 'strain', label: 'RMS bond strain', color: '#f97316', buffer: 'aeMolBondStrain', unit: 'frac' },
-            { key: 'dipole', label: 'Dipole magnitude', color: '#e879f9', buffer: 'aeMolDipole', unit: 'e·lu' },
+            { key: 'dipole', label: 'Dipole magnitude', color: '#e879f9', buffer: 'aeMolDipole', unit: 'e·a₀' },
         ],
     },
     {
