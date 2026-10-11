@@ -12,6 +12,7 @@ import { PerfFlags } from '../../../config/perf-flags.js';
 import {
     isCurrentScale0AuditEnergy,
     isCurrentScale0TelemetryMeta,
+    readScale0LatticeEnergy,
     readScale0TotalEnergy,
 } from '../../../telemetry/scale0-read.js';
 
@@ -84,6 +85,7 @@ export function updateDiagnosticsAndPanels(ctx, state) {
         ctx.dom.statusParticles.textContent = diag ? String(diag.manifested) : '—';
         ctx.dom.statusEnergy.textContent = '—';
         ctx.dom.statusEnergy.title = 'No energy identification for the finite-record law';
+        ctx.viewport?.setLatticeEnergy?.(null);
         ctx.dom.statusState.textContent = recordOwner.failed ? 'Failed · paused' : !recordOwner.ready ? 'Loading' : ctx.running ? 'Running' : 'Idle';
         ctx.dom.statusDot.classList.toggle('idle', !ctx.running);
         const clock = document.getElementById('global-clock-readout');
@@ -161,6 +163,12 @@ export function updateDiagnosticsAndPanels(ctx, state) {
         && !statusUsesAlignedAudit
         && isCurrentScale0TelemetryMeta(auditMeta)
         && Number.isFinite(telemetryHub.s0?.audit?.dynamicEnergy);
+    // The joules figure above the lattice bracket is the lattice total: the
+    // dynamic channel plus rest energy, never mixed across ticks.
+    ctx.viewport?.setLatticeEnergy?.(readScale0LatticeEnergy(diag, telemetryHub.s0?.audit, {
+        diagMeta,
+        auditMeta,
+    }));
     ctx.dom.statusEnergy.textContent = Number.isFinite(statusEnergy)
         ? formatEnergySim(statusEnergy).text : '—';
     ctx.dom.statusEnergy.dataset.sampleHeld = sampleHeld ? 'true' : 'false';

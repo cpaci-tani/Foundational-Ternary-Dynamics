@@ -3,6 +3,7 @@
  * CONTRACTS.md §5: panels/overlays read hub first; bridge only when hub empty.
  */
 
+import { E_REST } from '../constants.js';
 import { telemetryHub } from '../telemetry-hub.js';
 
 /**
@@ -69,6 +70,37 @@ export function readScale0TotalEnergy(diag, audit, {
         && isCurrentScale0TelemetryMeta(auditMeta)
         && Number.isFinite(audit?.dynamicEnergy)) {
         return audit.dynamicEnergy;
+    }
+    return null;
+}
+
+/**
+ * Total accounted energy of the lattice: the dynamic channel plus the rest
+ * energy of every manifested site. This is the engine audit's `total_energy`
+ * (diagnostics_compute.cpp). A current audit of the same tick is used as it
+ * is; between audits the same sum is formed from the per-tick ledger and the
+ * manifested count, which belong to one diagnostics tick.
+ *
+ * `diag.totalEnergy` is not this quantity (see readScale0TotalEnergy).
+ * Returns `{ value, tick, epoch, source }` in engine energy units, or null.
+ */
+export function readScale0LatticeEnergy(diag, audit, { diagMeta = null, auditMeta = null } = {}) {
+    if (isCurrentScale0AuditEnergy(diagMeta, auditMeta) && Number.isFinite(audit?.totalEnergy)) {
+        return {
+            value: audit.totalEnergy,
+            tick: auditMeta.tick,
+            epoch: auditMeta.sourceEpoch ?? auditMeta.epoch ?? null,
+            source: 'same-tick-audit',
+        };
+    }
+    if (isCurrentScale0TelemetryMeta(diagMeta)
+        && Number.isFinite(diag?.dynamicEnergy) && Number.isFinite(diag?.manifested)) {
+        return {
+            value: diag.dynamicEnergy + diag.manifested * E_REST,
+            tick: diagMeta.tick,
+            epoch: diagMeta.sourceEpoch ?? diagMeta.epoch ?? null,
+            source: diag.energySampleSource || 'diagnostics',
+        };
     }
     return null;
 }

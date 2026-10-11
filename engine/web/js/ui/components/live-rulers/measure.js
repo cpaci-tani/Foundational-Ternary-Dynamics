@@ -112,14 +112,21 @@ export function pointSpritePixels(size, depth) {
 }
 
 /**
- * Voxel activation is sqrt(2 epsilon). Lattice rest energy E_REST = K_B/3
- * is the electron rest energy K_B MeV, so one lattice energy unit is 3 MeV.
+ * Engine energy units to electron-volts. Lattice rest energy E_REST = K_B/3
+ * is the electron rest energy K_B MeV, so one engine energy unit is 3 MeV:
+ * the electron-mass calibration, an input.
  */
+export function latticeEnergyEv(latticeEnergy) {
+    const energy = Number(latticeEnergy);
+    if (!Number.isFinite(energy)) return 0;
+    return energy * (K_B / E_REST) * 1e6;
+}
+
+/** Voxel activation is sqrt(2 epsilon); this is epsilon in electron-volts. */
 export function activationEnergyEv(activation) {
     const amplitude = Number(activation);
     if (!Number.isFinite(amplitude)) return 0;
-    const latticeEnergy = amplitude * amplitude * 0.5;
-    return latticeEnergy * (K_B / E_REST) * 1e6;
+    return latticeEnergyEv(amplitude * amplitude * 0.5);
 }
 
 /** String path of one voxel's energy. The top of the string is that voxel's max, the bottom its min. */
@@ -324,7 +331,59 @@ export function anchorRuler({ domainUnits, pixelsPerUnit, viewPx, subject = 'lat
     };
 }
 
-/** Voxel energy in joules, the SI unit paired with the metre labels. */
+/** What the joules figure above the bracket is, for each thing the bracket spans. */
+export const ENERGY_TITLES = Object.freeze({
+    lattice: 'Total energy of the lattice, in joules: ½Σ|J|² (flux) + ½Σ|w|² (wave velocity) '
+        + '+ particle kinetic energy + rest energy of every manifested site, read from the engine each tick. '
+        + 'One engine energy unit is taken as 3 MeV (the electron-mass calibration, an input). '
+        + 'The line is its recent history between the lowest and highest value seen.',
+    voxel: 'Display energy of this voxel, in joules: its own ½|J|², the mean ½|J|² of its Moore neighbours, '
+        + 'and its rest energy if manifested. It sets the point\'s size and colour and is not a share of the lattice total. '
+        + 'One engine energy unit is taken as 3 MeV (the electron-mass calibration, an input).',
+});
+
+/** The bracket's column starts this far above the top of the body it spans. */
+export const BRACKET_RISE_PX = 28;
+
+/** Layout of the figure's strip (live-rulers.css): gap after the line, the value's box, and its inked part. */
+const STRING_GAP_PX = 18;
+const STRING_BOX_EM = 10;
+const STRING_INK_EM = 7;
+
+/**
+ * Where the figure's strip goes: `{ shift, compact }`.
+ *
+ * The strip is centred on `centre` with its top at `top`. `shift` is the
+ * sideways move in pixels that keeps it inside a view `viewWidth` wide and,
+ * where there is room, clear of the clock face `disc`: to the left of the
+ * disc first, else to its right. Staying inside the view comes first.
+ * `compact` drops the history line when the view is too narrow to carry it.
+ */
+export function placeString({ centre, top, lineWidth = 148, valueSize = 16, viewWidth = Infinity }, disc = null, gap = 10) {
+    if (!Number.isFinite(centre)) return { shift: 0, compact: false };
+    const margin = 8;
+    const full = lineWidth + STRING_GAP_PX + STRING_BOX_EM * valueSize;
+    const compact = viewWidth < full + 2 * margin;
+    // Compact: the value alone, in a box no wider than its ink.
+    const box = compact ? STRING_INK_EM * valueSize : full;
+    const ink = compact ? box : lineWidth + STRING_GAP_PX + STRING_INK_EM * valueSize;
+    const left = centre - box / 2;
+    const inside = (shift) => left + shift >= margin && left + shift + box <= viewWidth - margin;
+    // The nearest position that is inside the view.
+    const kept = Math.min(Math.max(0, margin - left), Math.max(margin - left, viewWidth - margin - box - left));
+    const rows = disc && disc.r > 0 && top + 24 >= disc.y - disc.r && top <= disc.y + disc.r;
+    const crosses = (shift) => rows && left + shift + ink >= disc.x - disc.r - gap && left + shift <= disc.x + disc.r + gap;
+    let shift = Number.isFinite(kept) ? kept : 0;
+    if (crosses(shift)) {
+        const toLeft = (disc.x - disc.r - gap) - (left + ink);
+        const toRight = (disc.x + disc.r + gap) - left;
+        if (inside(toLeft)) shift = toLeft;
+        else if (inside(toRight)) shift = toRight;
+    }
+    return { shift: Math.round(shift), compact };
+}
+
+/** Energy in joules, the SI unit paired with the metre labels. */
 export function formatEnergy(electronVolts) {
     if (!Number.isFinite(electronVolts)) return '—';
     const joules = electronVolts * J_PER_EV;

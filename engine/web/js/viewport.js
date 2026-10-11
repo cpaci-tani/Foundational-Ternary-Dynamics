@@ -3,7 +3,7 @@ import { DEFAULT_FLUX_THRESHOLD } from './viewport/flux-threshold.js';
 import { fluxCellIndex, mooreCellIndices, nearestVisiblePoint } from './viewport/flux-point-grid.js';
 import { OUTERMOST_LANDMARK_M, framedLandmarkVoxels, metresToVoxels } from './ui/components/live-rulers/scale-landmarks.js';
 import { mountLiveRulers } from './ui/components/live-rulers/mount.js';
-import { activationEnergyEv, clockEnvironmentStep, energyAreaPath, energyStringPath, globalClockPhase, LIVE_MEASURE_DEFAULTS, manifestedSiteName, pointAttributeSize, pointSpritePixels, relativeClockEnvironment, spectrumColor, voxelClockPhase } from './ui/components/live-rulers/measure.js';
+import { activationEnergyEv, clockEnvironmentStep, energyAreaPath, energyStringPath, globalClockPhase, latticeEnergyEv, LIVE_MEASURE_DEFAULTS, manifestedSiteName, pointAttributeSize, pointSpritePixels, relativeClockEnvironment, spectrumColor, voxelClockPhase } from './ui/components/live-rulers/measure.js';
 /**
  * @file viewport.js
  * @brief Three.js 3D Viewport — renders particles and fields from the simulation bridge.
@@ -369,6 +369,39 @@ export class Viewport {
     }
 
     /**
+     * Total energy of the lattice, `{ value, tick, epoch }` in engine energy
+     * units, or null when there is no current reading. It is drawn in joules
+     * above the lattice bracket with one history sample per tick.
+     */
+    setLatticeEnergy(reading) {
+        const value = Number(reading?.value);
+        if (!reading || !Number.isFinite(value)) {
+            this._latticeEnergyTrace = null;
+            return;
+        }
+        const ev = latticeEnergyEv(value);
+        const tick = Number.isFinite(reading.tick) ? reading.tick : null;
+        const epoch = reading.epoch ?? null;
+        const trace = this._latticeEnergyTrace;
+        // A new source or a tick that ran backwards is a new run.
+        if (!trace || trace.epoch !== epoch || (tick !== null && trace.tick !== null && tick < trace.tick)) {
+            this._latticeEnergyTrace = { epoch, tick, min: ev, max: ev, last: ev, samples: [ev], generation: 1 };
+            return;
+        }
+        if (tick === trace.tick && ev === trace.last) return;
+        if (tick === trace.tick) trace.samples[trace.samples.length - 1] = ev;
+        else {
+            trace.samples.push(ev);
+            if (trace.samples.length > 48) trace.samples.shift();
+            trace.tick = tick;
+        }
+        trace.last = ev;
+        if (ev < trace.min) trace.min = ev;
+        if (ev > trace.max) trace.max = ev;
+        trace.generation += 1;
+    }
+
+    /**
      * Test whether a point (normalized -1..1 from center) is inside the
      * current boundary. Delegated to viewport/boundary-geometry.js.
      * Stays on the orchestrator so flux/particle/field renderers all
@@ -525,9 +558,11 @@ export class Viewport {
         this._cancelCameraFlight();
         const from = this.camera.position.distanceTo(this.controls.target);
         if (animate && from > 0 && typeof requestAnimationFrame === 'function') {
+            // The flight starts from the present target and direction.
             this._flyCamera(target, view, from, distance);
             return true;
         }
+        this.controls.target.copy(target);
         this.camera.position.copy(target).addScaledVector(view, distance);
         this.controls.update();
         this._updateLiveRulers();
@@ -558,13 +593,20 @@ export class Viewport {
      * as steadily as two. Wheel, drag or another framed view cancels it.
      */
     _flyCamera(target, view, from, to) {
-            // The flight starts from the present target and direction.
         const decades = Math.abs(Math.log10(to / from));
         const duration = Math.min(CAMERA_FLIGHT_MAX_MS, Math.max(450, decades * CAMERA_FLIGHT_MS_PER_DECADE));
         const started = performance.now();
-        this.controls.target.copy(target);
         const flight = { cancelled: false, frame: 0 };
         this._cameraFlight = flight;
+        // Where the flight starts: the look-at point and the direction to the
+        // camera. Both turn into the destination's along the way, so a hop
+        // between nearby views swings round instead of snapping. Opposite
+        // directions have no path between them and are taken at once.
+        const startTarget = this.controls.target.clone();
+        const startView = this.camera.position.clone().sub(startTarget).normalize();
+        const swing = startView.dot(view) > -0.99;
+        const aim = new THREE.Vector3();
+        const along = new THREE.Vector3();
         const cancel = () => this._cancelCameraFlight();
         this.controls.addEventListener('start', cancel);
         this.renderer?.domElement?.addEventListener('wheel', cancel, { passive: true });
@@ -606,15 +648,6 @@ export class Viewport {
         if (flight.frame && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(flight.frame);
         flight.release?.();
     }
-        // Where the flight starts: the look-at point and the direction to the
-        // camera. Both turn into the destination's along the way, so a hop
-        // between nearby views swings round instead of snapping. Opposite
-        // directions have no path between them and are taken at once.
-        const startTarget = this.controls.target.clone();
-        const startView = this.camera.position.clone().sub(startTarget).normalize();
-        const swing = startView.dot(view) > -0.99;
-        const aim = new THREE.Vector3();
-        const along = new THREE.Vector3();
 
     /**
      * How far the orbit may dolly out. In the lattice view that is far enough
@@ -1589,6 +1622,8 @@ export class Viewport {
             projectDiameter: (units) => this._projectDiameter(units, rect.width, rect.height),
             shellDiameter: this._shellDiameterUnits(),
             pointSprite: this._pointSprite(rect.width, rect.height, refresh),
+            latticeEnergy: this._latticeEnergyReading(),
+            clockDisc: this._sceneCore?.clockDisc?.(rect.width, rect.height) ?? null,
             voxelClocks: this._voxelClocks(rect.width, rect.height, refresh),
             mooreNeighborhood: this._mooreNeighborhood(rect.width, rect.height, refresh),
             latticeCentre: this._latticeCentreOnScreen(rect.width, rect.height),
@@ -2166,6 +2201,13 @@ export class Viewport {
             this._neighborTraces.delete(first);
         }
         return this._sealWave(trace, ev);
+    }
+
+    /** The lattice total and its history, on the lattice scale only. */
+    _latticeEnergyReading() {
+        const trace = this._latticeEnergyTrace;
+        if (!trace || (this._engineMode && this._engineMode !== 'lattice')) return null;
+        return this._sealWave(trace, trace.last);
     }
 
     /** Recent energy of one voxel. The string spans that voxel's own min and max. */
