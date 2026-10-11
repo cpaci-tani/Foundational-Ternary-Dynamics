@@ -1,8 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { E_REST, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M, K_B } from '../js/constants.js';
+import { readFileSync } from 'node:fs';
+import { BOHR_RADIUS_M, E_REST, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M, K_B } from '../js/constants.js';
+import { formatLength as engineLength } from '../js/units.js';
+import { PE_VIS_BOUNDARY_R } from '../js/viewport/constants.js';
+import { CosmicMockBridge } from '../js/bridge/mock-scale5.js';
 import {
     formatLength,
+    formatGaugeLength,
     formatEnergy,
     pointAttributeSize,
     pointSpritePixels,
@@ -201,4 +206,107 @@ test('one voxel is the electron-primary Planck length, written in scientific not
     const fine = viewportScale(0.04);
     const labels = fine.ticks.map((value) => formatLength(value, fine.step));
     assert.equal(new Set(labels).size, labels.length);
+});
+
+const OFF_LATTICE = ['particles', 'atoms', 'molecules', 'planetary', 'cosmic'];
+
+test('each scale reads in the length unit its own engine declares', () => {
+    const lattice = lengthGauge('lattice');
+    assert.equal(lattice.metresPerUnit, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M);
+    assert.equal(lengthGauge(undefined), lattice);
+    // Scales 2 and 3 run one atom engine. Its unit layer turns a simulation
+    // unit into ångströms through the Bohr radius, so the ruler must agree.
+    const engineAtomUnit = engineLength(1, 2);
+    assert.equal(engineAtomUnit.unit, 'Å');
+    for (const mode of ['atoms', 'molecules']) {
+        const gauge = lengthGauge(mode);
+        assert.equal(gauge.metresPerUnit, BOHR_RADIUS_M);
+        assert.ok(Math.abs(gauge.metresPerUnit - engineAtomUnit.value * 1e-10) / BOHR_RADIUS_M < 1e-12);
+        assert.equal(gauge.unit, 'a₀');
+    }
+    assert.equal(lengthGauge('planetary').metresPerUnit, 1.495978707e11);
+    assert.equal(lengthGauge('planetary').unit, 'AU');
+    // Scales 1 and 5 report lengths in lattice units and convert them to
+    // metres nowhere, so the ruler carries no metre length for them either.
+    assert.equal(engineLength(1, 1).unit, 'lu');
+    for (const mode of ['particles', 'cosmic']) {
+        const gauge = lengthGauge(mode);
+        assert.equal(gauge.metresPerUnit, null);
+        assert.equal(gauge.unit, 'lu');
+    }
+});
+
+test('the drawn body on each scale is an extent its engine defines', () => {
+    assert.equal(lengthGauge('lattice').domainUnits, null);
+    assert.equal(lengthGauge('particles').domainUnits, 2 * PE_VIS_BOUNDARY_R);
+    assert.equal(lengthGauge('particles').subject, 'reference shell');
+    const atomEngine = readFileSync(new URL('../js/bridge/mock-atom-engine.js', import.meta.url), 'utf8');
+    const containment = atomEngine.match(/_reflectIntoBoundary\(a, 0, 0, 0, (\d+(?:\.\d+)?)\)/);
+    assert.ok(containment, 'the atom engine reflects atoms into an origin-centred sphere');
+    for (const mode of ['atoms', 'molecules']) {
+        assert.equal(lengthGauge(mode).domainUnits, 2 * Number(containment[1]));
+        assert.equal(lengthGauge(mode).subject, 'boundary');
+    }
+    assert.equal(lengthGauge('cosmic').domainUnits, new CosmicMockBridge().getRuntimeParams().boxSize);
+    assert.equal(lengthGauge('planetary').domainUnits, 30);
+});
+
+test('a length is written in metres only where the engine declares a metre length', () => {
+    assert.equal(formatGaugeLength(lengthGauge('lattice'), 33, 1), '5.323×10⁻³⁴ m');
+    assert.equal(formatGaugeLength(lengthGauge('atoms'), 1, 1), '5.292×10⁻¹¹ m');
+    assert.equal(formatGaugeLength(lengthGauge('molecules'), 70, 70), '3.704×10⁻⁹ m');
+    assert.equal(formatGaugeLength(lengthGauge('planetary'), 1, 1), '1.496×10¹¹ m');
+    for (const mode of ['particles', 'cosmic']) {
+        const gauge = lengthGauge(mode);
+        assert.equal(formatGaugeLength(gauge, 0, 5), '0');
+        assert.equal(formatGaugeLength(gauge, 5, 5), '5 lu');
+        assert.equal(formatGaugeLength(gauge, 46.2371, 5), '46.24 lu');
+        assert.equal(formatGaugeLength(gauge, 0.015, 0.005), '0.015 lu');
+        assert.equal(formatGaugeLength(gauge, 2.5e7, 5e6), '2.500×10⁷ lu');
+        assert.equal(formatGaugeLength(gauge, 4e-5, 5e-6), '4.000×10⁻⁵ lu');
+        assert.equal(formatGaugeLength(gauge, NaN), '—');
+        const fine = viewportScale(0.04);
+        const labels = fine.ticks.map((value) => formatGaugeLength(gauge, value, fine.step));
+        assert.equal(new Set(labels).size, labels.length);
+        assert.ok(labels.every((label) => !/ m$/.test(label)));
+    }
+});
+
+test('each ruler tooltip states its own scale and marks the unit as an input', () => {
+    const lattice = lengthGauge('lattice');
+    assert.match(lattice.viewTitle, /One voxel is the electron-primary Planck length/);
+    assert.match(lattice.bodyTitle, /One voxel is the electron-primary Planck length/);
+    for (const mode of OFF_LATTICE) {
+        const gauge = lengthGauge(mode);
+        for (const title of [gauge.viewTitle, gauge.bodyTitle]) {
+            assert.doesNotMatch(title, /voxel|Planck/, `${mode} is not drawn in voxels`);
+            assert.doesNotMatch(title, /deriv/i, `${mode} unit is not presented as derived`);
+        }
+    }
+    for (const mode of ['atoms', 'molecules']) {
+        assert.match(lengthGauge(mode).viewTitle, /in metres/);
+        assert.match(lengthGauge(mode).viewTitle, /Bohr radius/);
+        assert.match(lengthGauge(mode).viewTitle, /input/);
+    }
+    assert.match(lengthGauge('planetary').viewTitle, /astronomical unit/);
+    for (const mode of ['particles', 'cosmic']) {
+        assert.match(lengthGauge(mode).viewTitle, /lattice units \(lu\)/);
+        assert.match(lengthGauge(mode).viewTitle, /no metre/);
+    }
+    assert.notEqual(lengthGauge('particles').viewTitle, lengthGauge('cosmic').viewTitle);
+});
+
+test('off the lattice the closest bracket is one engine unit, not a voxel', () => {
+    for (const mode of OFF_LATTICE) {
+        const gauge = lengthGauge(mode);
+        const close = anchorRuler({
+            domainUnits: gauge.domainUnits, pixelsPerUnit: 100, viewPx: 1000,
+            subject: gauge.subject, unitSubject: gauge.unitSubject,
+        });
+        assert.equal(close.units, 1);
+        assert.equal(close.subject, gauge.unitSubject);
+        assert.notEqual(close.subject, 'voxel');
+    }
+    assert.equal(lengthGauge('lattice').unitSubject, 'voxel');
+    assert.equal(lengthGauge('atoms').unitSubject, 'Bohr radius');
 });

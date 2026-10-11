@@ -1,5 +1,5 @@
 import {
-    anchorRuler, formatLength, lengthGauge, LIVE_MEASURE_DEFAULTS, OUTER_WORLD_PX, RULER_END_LABEL_PX, RULER_TICK_SPACING_PX,
+    anchorRuler, formatGaugeLength, lengthGauge, LIVE_MEASURE_DEFAULTS, OUTER_WORLD_PX, RULER_END_LABEL_PX, RULER_TICK_SPACING_PX,
     rulerInsets, viewportScale, visibleLatticeSpan,
 } from './measure.js';
 import { createLatticeRuler } from './lattice-ruler.js';
@@ -46,6 +46,9 @@ export function mountLiveRulers(container) {
         return true;
     };
     const setVar = (name, value) => { if (once(name, value)) root.style.setProperty(name, value); };
+    // The tooltip layer reads data-ui-tooltip. Each scale has its own text,
+    // so it is written here when the scale changes.
+    const setTooltip = (key, el, text) => { if (once(key, text)) el.dataset.uiTooltip = text; };
     const latticeValue = lattice.el.querySelector('.live-ruler-string-value');
     const latticeWave = lattice.el.querySelector('.live-ruler-string path');
 
@@ -97,8 +100,9 @@ export function mountLiveRulers(container) {
             const lineWidth = `${measures.lineThickness ?? 1.5}px`;
             if (latticeWave && once('wave-stroke', lineWidth)) latticeWave.style.strokeWidth = lineWidth;
             const gauge = lengthGauge(reading.engineMode);
-            const metres = gauge.metresPerUnit;
-            const format = (units, step) => formatLength(units, step, metres);
+            const format = (units, step) => formatGaugeLength(gauge, units, step);
+            setTooltip('view-tooltip', view.el, gauge.viewTitle);
+            setTooltip('body-tooltip', lattice.el, gauge.bodyTitle);
             const domain = gauge.domainUnits || Math.max(1, reading.latticeSize || 1);
             const span = visibleLatticeSpan(reading);
             const { viewRect, obstacles } = readLayout();
@@ -115,12 +119,13 @@ export function mountLiveRulers(container) {
             const openSpan = span.latticeWidth * (openPx / Math.max(1, viewRect.width));
             // As many ticks as the width can label, and none under the end label.
             const divisions = Math.max(2, Math.min(8, Math.floor(openPx / RULER_TICK_SPACING_PX)));
-            view.render(viewportScale(openSpan, divisions, RULER_END_LABEL_PX / openPx), format, metres);
+            view.render(viewportScale(openSpan, divisions, RULER_END_LABEL_PX / openPx), format, gauge);
             const anchor = anchorRuler({
                 domainUnits: domain,
                 pixelsPerUnit: span.pixelsPerVoxel,
                 viewPx: openPx,
                 subject: gauge.subject,
+                unitSubject: gauge.unitSubject,
                 quasiUnits: reading.shellDiameter,
             });
             const fluxOn = reading.fluxVisible !== false;
@@ -149,7 +154,7 @@ export function mountLiveRulers(container) {
                     }
                 }
             }
-            lattice.render(anchor, format);
+            lattice.render(anchor, format, gauge.mode);
             const close = anchor.subject === 'voxel' && fluxOn;
             clocks.render(close && measures.voxelClocks !== false ? reading.voxelClocks : []);
             const pack = reading.mooreNeighborhood || { sites: [], energy: null };
