@@ -10,7 +10,7 @@ export function createLiveMeasureCard() {
 
     <div class="toggle-row"><input type="checkbox" id="lm-view-ruler" checked><label for="lm-view-ruler">View ruler</label></div>
     <div class="toggle-row"><input type="checkbox" id="lm-lattice-ruler" checked><label for="lm-lattice-ruler">Lattice ruler</label></div>
-    <div class="toggle-row"><input type="checkbox" id="lm-energy-string" checked><label for="lm-energy-string">Voxel energy string</label></div>
+    <div class="toggle-row"><input type="checkbox" id="lm-energy-string" checked><label for="lm-energy-string" title="The joules figure and its history line above the bracket: one voxel when zoomed in, the lattice total when the bracket spans the lattice.">Energy string</label></div>
     <div class="toggle-row"><input type="checkbox" id="lm-spectrum" checked><label for="lm-spectrum">Point-size color</label></div>
     <div class="toggle-row"><input type="checkbox" id="lm-voxel-clocks" checked><label for="lm-voxel-clocks">Voxel clocks</label></div>
     <div class="toggle-row"><input type="checkbox" id="lm-moore-bars" checked><label for="lm-moore-bars">Neighborhood size bars</label></div>

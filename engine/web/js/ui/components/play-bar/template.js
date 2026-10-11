@@ -67,12 +67,12 @@ export function getPlayBarTemplate() {
                 </svg>
             </button>
             <div class="play-bar-zoom-menu" id="play-bar-zoom-menu" role="listbox" aria-label="Zoom level" hidden>
-                <button type="button" role="option" data-framed-view="moore">Moore neighborhood</button>
-                <button type="button" role="option" data-framed-view="neighborhood">Neighborhood zoomed out</button>
-                <button type="button" role="option" data-framed-view="detail">Detailed lattice</button>
-                <button type="button" role="option" data-framed-view="lattice">Full lattice</button>
-                <button type="button" role="option" data-framed-view="lattice-out">Zoomed out lattice</button>
-                <button type="button" role="option" data-framed-view="quasi">Zoomed out quasi-domain</button>
+                <button type="button" role="option" data-framed-view="moore" data-travel>Moore neighborhood</button>
+                <button type="button" role="option" data-framed-view="neighborhood" data-travel>Neighborhood zoomed out</button>
+                <button type="button" role="option" data-framed-view="detail" data-travel>Detailed lattice</button>
+                <button type="button" role="option" data-framed-view="lattice" data-travel>Full lattice</button>
+                <button type="button" role="option" data-framed-view="lattice-out" data-travel>Zoomed out lattice</button>
+                <button type="button" role="option" data-framed-view="quasi" data-travel>Zoomed out quasi-domain</button>
                 <div class="play-bar-zoom-note" role="presentation">Beyond the lattice: reference lengths, nothing simulated</div>
                 <button type="button" role="option" data-framed-view="lhc" data-travel>LHC resolution</button>
                 <button type="button" role="option" data-framed-view="electroweak" data-travel>W, Z, Higgs, top</button>

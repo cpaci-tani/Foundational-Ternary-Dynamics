@@ -76,7 +76,7 @@ export class PlayBarComponent extends BaseLifecycleController {
             for (const item of this.zoomMenu.querySelectorAll('[data-framed-view]')) {
                 this.bindEvent(item, 'click', (e) => {
                     e.stopPropagation();
-                    // Stops beyond the lattice are travelled to, so the empty range is seen.
+                    // Every stop is travelled to, outward or back in, so the range between is seen.
                     appRegistry.get('viewport')?.setFramedView?.(
                         item.dataset.framedView, { animate: item.hasAttribute('data-travel') },
                     );

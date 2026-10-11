@@ -787,6 +787,32 @@ export class ViewportSceneCore {
         return Math.max(0, needed - depth);
     }
 
+    /**
+     * Screen disc of the clock face, `{ x, y, r }` in view pixels, or null
+     * when it is not drawn. The face always turns to the camera, so its
+     * outline on screen is a circle.
+     */
+    clockDisc(viewWidth, viewHeight) {
+        const clock = this.globalClock;
+        if (!clock || !clock.visible || !(viewWidth > 0) || !(viewHeight > 0)) return null;
+        const camera = this._camera;
+        camera.updateMatrixWorld();
+        clock.updateWorldMatrix(true, false);
+        const scratch = this._clockScratch
+            || (this._clockScratch = { eye: new THREE.Vector3(), scale: new THREE.Vector3(), axis: new THREE.Vector3() });
+        const eye = scratch.eye.setFromMatrixPosition(clock.matrixWorld).applyMatrix4(camera.matrixWorldInverse);
+        const depth = -eye.z;
+        if (!(depth > 0)) return null;
+        // Half the view's height in world units at the clock's depth.
+        const half = Math.tan((camera.fov * Math.PI) / 360) * depth;
+        const radius = (clock.userData.radius || 0) * clock.getWorldScale(scratch.scale).y;
+        return {
+            x: (eye.x / (half * (viewWidth / viewHeight)) * 0.5 + 0.5) * viewWidth,
+            y: (-eye.y / half * 0.5 + 0.5) * viewHeight,
+            r: (radius / half) * (viewHeight / 2),
+        };
+    }
+
     /** Dolly the camera back just far enough for the clock to clear the view ruler. */
     clearViewRulerRow() {
         const extra = this.clockClearance();

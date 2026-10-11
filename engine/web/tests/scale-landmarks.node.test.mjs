@@ -189,6 +189,11 @@ test('source contract: the view, the zoom menu and the context ruler share one t
     for (const id of Object.keys(LANDMARK_FRAMED_VIEWS)) {
         assert.match(template, new RegExp(`data-framed-view="${id}" data-travel`), `zoom menu offers ${id}`);
     }
+    // The stops at and inside the lattice travel too, so the way back in is seen.
+    for (const id of ['moore', 'neighborhood', 'detail', 'lattice', 'lattice-out', 'quasi']) {
+        assert.match(template, new RegExp(`data-framed-view="${id}" data-travel`), `${id} is travelled to`);
+    }
+    assert.equal(template.match(/data-framed-view="/g).length, template.match(/data-travel/g).length, 'every stop travels');
     assert.match(template, /nothing simulated/);
     const context = read('scales/scale0/ui/overlays/scale-context-panel.js');
     assert.match(context, /SCALE_LANDMARKS\.filter/);

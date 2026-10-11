@@ -162,6 +162,20 @@
     margin-bottom: 0;
 }
 
+/* `display: flex` above outranks the browser's own rule for `hidden`. */
+.live-ruler-string[hidden] {
+    display: none;
+}
+
+/* A view too narrow for the history line shows the figure alone. */
+.live-ruler-string.is-compact svg {
+    display: none;
+}
+
+.live-ruler-string.is-compact .live-ruler-string-value {
+    min-width: 0;
+}
+
 .live-ruler-string svg {
     display: block;
     width: var(--string-width, 148px);
@@ -183,7 +197,14 @@
     line-height: 1;
     letter-spacing: 0.02em;
     color: rgba(240, 244, 248, 0.92);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+    /* The figure can cross the clock face or bright flux. A dark halo keeps
+       every glyph whole. */
+    text-shadow:
+        0 0 2px rgba(4, 8, 20, 0.95),
+        0 0 2px rgba(4, 8, 20, 0.95),
+        0 0 5px rgba(4, 8, 20, 0.95),
+        0 0 5px rgba(4, 8, 20, 0.95),
+        0 1px 2px rgba(0, 0, 0, 0.85);
     white-space: nowrap;
     min-width: 10em;
     text-align: left;

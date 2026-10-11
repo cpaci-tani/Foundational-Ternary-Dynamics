@@ -88,7 +88,7 @@ const DEFAULT_TOGGLES = SCALE0_TOGGLES;
 const PHYSICS_UI_TOGGLES = [...SCALE0_TOGGLES, ...SCALE0_ADVANCED_TOGGLES];
 
 function setPhysicsToggleCardPending(pending) {
-    const card = getEl('physics-profile-warning')?.closest('.card');
+    const card = getEl('physics-toggles-card');
     if (!card) return;
     const busyValue = pending ? 'true' : 'false';
     if (card.getAttribute('aria-busy') !== busyValue) {

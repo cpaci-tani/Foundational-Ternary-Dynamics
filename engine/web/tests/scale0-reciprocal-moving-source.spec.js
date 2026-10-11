@@ -61,7 +61,7 @@ test('driven polarity exposes the selected sub-voxel response without promoting 
             },
             scenarioLabel: document.querySelector('#scenario-select option:checked')?.textContent ?? '',
             description: document.getElementById('lat-scenario-desc-text')?.textContent ?? '',
-            warningHidden: !!document.getElementById('physics-profile-warning')?.hidden,
+            profileState: document.getElementById('physics-toggles-card')?.dataset.profileState ?? null,
         };
     });
 
@@ -96,7 +96,7 @@ test('driven polarity exposes the selected sub-voxel response without promoting 
         't-larmor': false,
         't-dual': false,
     });
-    expect(result.warningHidden).toBe(true);
+    expect(result.profileState).toBe('registered');
     expect(result.scenarioLabel).toContain('A Nudged Charge Responds');
     expect(result.description).toContain('no integer hop');
     for (const [name, state] of Object.entries(result.overlays)) {

@@ -23,8 +23,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
                 && !!lifecycle?.workerRuntimeId
                 && lifecycle.appliedConfigurationToken === lifecycle.configurationToken
                 && getScale0QualificationState().status === 'within-contract'
-                && document.getElementById('physics-profile-warning')
-                    ?.closest('.card')?.getAttribute('aria-busy') === 'false';
+                && document.getElementById('physics-toggles-card')?.getAttribute('aria-busy') === 'false';
         });
     });
 
@@ -47,11 +46,11 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
                         ? [[key, owner.getToggle(key), input.checked]]
                         : [];
                 }),
-                cardCount: document.querySelectorAll('#physics-profile-warning').length,
+                cardCount: document.querySelectorAll('#physics-toggles-card').length,
                 checkboxCount: document.querySelectorAll(
-                    '#physics-profile-warning ~ .combo-section-label, '
-                    + '#physics-profile-warning ~ .toggle-row input[type="checkbox"], '
-                    + '#physics-profile-warning ~ details input[type="checkbox"]',
+                    '#physics-toggles-card > .combo-section-label, '
+                    + '#physics-toggles-card > .toggle-row input[type="checkbox"], '
+                    + '#physics-toggles-card > details input[type="checkbox"]',
                 ).length,
                 evaporationLabel: document.querySelector('label[for="t-evaporation"]')?.textContent,
                 genesisLabel: document.querySelector('label[for="t-genesis"]')?.textContent,
@@ -69,8 +68,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
         await selectScale0Scenario(page, 'flux-pair-production');
         await page.waitForFunction(() => {
             return window.__ftdCtx?.fluxMock?.hasEngineToggles === true
-                && document.getElementById('physics-profile-warning')
-                    ?.closest('.card')?.getAttribute('aria-busy') === 'false';
+                && document.getElementById('physics-toggles-card')?.getAttribute('aria-busy') === 'false';
         });
         const pair = await page.evaluate(async () => {
             const { SCALE0_TOGGLES, SCALE0_ADVANCED_TOGGLES } =
@@ -217,8 +215,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
                         .every(([term, prerequisite]) => (
                             !owner.getToggle(term) || owner.getToggle(prerequisite)
                         )),
-                    warning: document.getElementById('physics-profile-warning')?.textContent,
-                    warningHidden: document.getElementById('physics-profile-warning')?.hidden,
+                    profileState: document.getElementById('physics-toggles-card')?.dataset.profileState ?? null,
                     buttonText: document.getElementById('btn-enable-all-physics')?.textContent
                         ?.replace(/\s+/g, ' ').trim(),
                 };
@@ -249,8 +246,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
         expect(result.engineExcluded.every(([, value]) => value === false)).toBe(true);
         expect(result.uiParity.every(([, expected, actual]) => expected === actual)).toBe(true);
         expect(result.requirementsSatisfied).toBe(true);
-        expect(result.warningHidden).toBe(false);
-        expect(result.warning).toContain('modified');
+        expect(result.profileState).toMatch(/modified$/);
         expect(result.buttonText).toContain('Enable all physics');
         expect(realErrors(consoleErrors)).toEqual([]);
     });
@@ -344,8 +340,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
                 const lifecycle = worker?.lifecycleDebug;
                 const currentGeneration = window.__ftdCtx?._loadGeneration || 0;
                 const qualification = getScale0QualificationState();
-                const busy = document.getElementById('physics-profile-warning')
-                    ?.closest('.card')?.getAttribute('aria-busy');
+                const busy = document.getElementById('physics-toggles-card')?.getAttribute('aria-busy');
                 lastSnapshot = {
                     currentGeneration,
                     currentScenarioId: getScale0State().currentScenarioId,
@@ -388,7 +383,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
             const ownerOriginal = owner.setToggle;
             const mainCalls = [];
             const ownerCalls = [];
-            const card = document.getElementById('physics-profile-warning').closest('.card');
+            const card = document.getElementById('physics-toggles-card');
             const before = {
                 nodes: card.querySelectorAll('*').length,
                 inputs: card.querySelectorAll('input[type="checkbox"]').length,
@@ -430,8 +425,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
                     initial,
                     controlState,
                     final: { gauss: gauss.checked, knot: knot.checked },
-                    warningHidden: document.getElementById('physics-profile-warning').hidden,
-                    warningText: document.getElementById('physics-profile-warning').textContent,
+                    profileState: card.dataset.profileState,
                     after: {
                         nodes: card.querySelectorAll('*').length,
                         inputs: card.querySelectorAll('input[type="checkbox"]').length,
@@ -450,8 +444,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
         expect(result.ownerCalls.filter(([key]) => key === 'gauss_projection')).toHaveLength(20);
         expect(result.ownerCalls.filter(([key]) => key === 'knot_tracking')).toHaveLength(20);
         expect(result.final).toEqual(result.initial);
-        expect(result.warningHidden).toBe(false);
-        expect(result.warningText).toContain('modified');
+        expect(result.profileState).toMatch(/modified$/);
         expect(result.after).toEqual(result.before);
         expect(realErrors(consoleErrors)).toEqual([]);
     });
@@ -461,7 +454,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
         const immediate = await page.evaluate(() => {
             const select = document.getElementById('scenario-select');
             const pair = document.getElementById('t-pair-production');
-            const card = document.getElementById('physics-profile-warning').closest('.card');
+            const card = document.getElementById('physics-toggles-card');
             select.value = 'flux-pair-production';
             select.dispatchEvent(new Event('change', { bubbles: true }));
             const pending = {
@@ -478,8 +471,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
 
         await page.waitForFunction(() => {
             return window.__ftdCtx?.fluxMock?.hasEngineToggles === true
-                && document.getElementById('physics-profile-warning')
-                    ?.closest('.card')?.getAttribute('aria-busy') === 'false';
+                && document.getElementById('physics-toggles-card')?.getAttribute('aria-busy') === 'false';
         });
         const loaded = await page.evaluate(async () => {
             const { getScale0State } = await import('/js/scales/scale0/state/store.js');
@@ -493,9 +485,8 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
                     .dataset.scale0PendingDisabled ?? null,
                 profileValue: document.getElementById('t-pair-production')
                     .dataset.scale0ProfileValue ?? null,
-                busy: document.getElementById('physics-profile-warning')
-                    .closest('.card').getAttribute('aria-busy'),
-                warningHidden: document.getElementById('physics-profile-warning').hidden,
+                busy: document.getElementById('physics-toggles-card').getAttribute('aria-busy'),
+                profileState: document.getElementById('physics-toggles-card').dataset.profileState,
             };
         });
         expect(loaded).toEqual({
@@ -506,7 +497,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
             pendingMarker: null,
             profileValue: '1',
             busy: 'false',
-            warningHidden: true,
+            profileState: 'registered',
         });
         expect(realErrors(consoleErrors)).toEqual([]);
     });
@@ -525,10 +516,10 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
                 generation: window.__ftdCtx._loadGeneration,
                 workers: window.__ftdWasmWorkers(),
                 lifecycle: getScale0State().fluxMock?.lifecycleDebug ?? null,
-                warningVisible: !document.getElementById('physics-profile-warning').hidden,
+                profileState: document.getElementById('physics-toggles-card').dataset.profileState,
             };
         });
-        expect(before.warningVisible).toBe(true);
+        expect(before.profileState).toMatch(/modified$/);
 
         const immediate = await page.evaluate(() => {
             const button = document.getElementById('btn-reset-physics-toggles');
@@ -563,7 +554,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
                 qualification: getScale0QualificationState(),
                 enginePair: state.fluxMock.getToggle('pair_production'),
                 uiPair: document.getElementById('t-pair-production').checked,
-                warningHidden: document.getElementById('physics-profile-warning').hidden,
+                profileState: document.getElementById('physics-toggles-card').dataset.profileState,
             };
         });
         expect(after.generation - before.generation).toBe(1);
@@ -581,7 +572,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
         expect(after.qualification.anchor.source).toBe('worker-configuration-applied');
         expect(after.enginePair).toBe(true);
         expect(after.uiPair).toBe(true);
-        expect(after.warningHidden).toBe(true);
+        expect(after.profileState).toBe('registered');
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 });

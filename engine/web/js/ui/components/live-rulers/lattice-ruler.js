@@ -1,4 +1,4 @@
-import { energyStringPath, formatEnergy } from './measure.js';
+import { BRACKET_RISE_PX, energyStringPath, formatEnergy } from './measure.js';
 
 /**
  * Bracket whose length is a whole number of voxels and follows lattice size.
@@ -34,7 +34,7 @@ export function createLatticeRuler() {
     let signature = '';
     // Last values written. The element is not compared against: inline-style
     // getters do not return what was set (`0` reads back as `0px`).
-    const shown = { hidden: null, opacity: null, stringHidden: null, d: null, value: NaN, place: null, width: null };
+    const shown = { hidden: null, opacity: null, stringHidden: null, d: null, value: NaN, place: null, width: null, shift: null, compact: null };
     const put = (key, value) => {
         if (shown[key] === value) return false;
         shown[key] = value;
@@ -61,11 +61,14 @@ export function createLatticeRuler() {
                     shown.value = waveReading.value;
                     waveValue.textContent = formatEnergy(waveReading.value);
                 }
+                const shift = scale.stringShift ? `translateX(${scale.stringShift}px)` : '';
+                if (put('shift', shift)) string.style.transform = shift;
+                if (put('compact', !!scale.stringCompact)) string.classList.toggle('is-compact', !!scale.stringCompact);
             }
             const pinned = scale.screen;
             if (pinned) {
                 const x = pinned.left;
-                const y = pinned.placed ? pinned.top : pinned.top - 28;
+                const y = pinned.placed ? pinned.top : pinned.top - BRACKET_RISE_PX;
                 const place = pinned.placed
                     ? `translate3d(${x}px, ${y}px, 0) translate(-50%, -100%)`
                     : `translate3d(${x}px, ${y}px, 0)`;

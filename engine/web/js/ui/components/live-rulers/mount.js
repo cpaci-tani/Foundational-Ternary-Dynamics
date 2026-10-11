@@ -1,6 +1,6 @@
 import {
-    anchorRuler, formatGaugeLength, lengthGauge, LIVE_MEASURE_DEFAULTS, OUTER_WORLD_PX, RULER_END_LABEL_PX, RULER_TICK_SPACING_PX,
-    rulerInsets, viewportScale, visibleLatticeSpan,
+    anchorRuler, BRACKET_RISE_PX, ENERGY_TITLES, formatGaugeLength, lengthGauge, LIVE_MEASURE_DEFAULTS, OUTER_WORLD_PX, RULER_END_LABEL_PX,
+    placeString, RULER_TICK_SPACING_PX, rulerInsets, viewportScale, visibleLatticeSpan,
 } from './measure.js';
 import { createLatticeRuler } from './lattice-ruler.js';
 import { createVoxelClocks } from './voxel-clocks.js';
@@ -49,6 +49,7 @@ export function mountLiveRulers(container) {
     // The tooltip layer reads data-ui-tooltip. Each scale has its own text,
     // so it is written here when the scale changes.
     const setTooltip = (key, el, text) => { if (once(key, text)) el.dataset.uiTooltip = text; };
+    const latticeString = lattice.el.querySelector('.live-ruler-string');
     const latticeValue = lattice.el.querySelector('.live-ruler-string-value');
     const latticeWave = lattice.el.querySelector('.live-ruler-string path');
 
@@ -138,6 +139,14 @@ export function mountLiveRulers(container) {
                 anchor.wave = measures.energyString === false ? null : reading.pointSprite.wave;
                 if (reading.pointSprite.screen) anchor.screen = reading.pointSprite.screen;
                 anchor.name = reading.pointSprite.name || '';
+            } else if (anchor.subject === 'lattice') {
+                // The bracket spans the whole lattice, so the figure above it
+                // is the lattice total. Beyond the lattice nothing is shown.
+                anchor.wave = measures.energyString === false ? null : (reading.latticeEnergy || null);
+            }
+            if (latticeString) {
+                setTooltip('energy-tooltip', latticeString,
+                    anchor.subject === 'voxel' ? ENERGY_TITLES.voxel : ENERGY_TITLES.lattice);
             }
             if (measures.latticeRuler === false) anchor.hidden = true;
             const project = anchor.subject === 'quasi-domain' ? reading.projectDiameter
@@ -154,6 +163,19 @@ export function mountLiveRulers(container) {
                     }
                 }
             }
+            // The lattice figure stays inside the view and, where the clock
+            // face stands over the bracket, steps aside from it.
+            const placed = anchor.wave && anchor.subject === 'lattice' && anchor.screen
+                ? placeString({
+                    centre: anchor.screen.left + anchor.screen.width / 2,
+                    top: anchor.screen.top - BRACKET_RISE_PX,
+                    lineWidth: measures.stringWidth ?? 148,
+                    valueSize: measures.valueSize ?? 16,
+                    viewWidth: viewRect.width,
+                }, reading.clockDisc)
+                : null;
+            anchor.stringShift = placed ? placed.shift : 0;
+            anchor.stringCompact = placed ? placed.compact : false;
             lattice.render(anchor, format, gauge.mode);
             const close = anchor.subject === 'voxel' && fluxOn;
             clocks.render(close && measures.voxelClocks !== false ? reading.voxelClocks : []);

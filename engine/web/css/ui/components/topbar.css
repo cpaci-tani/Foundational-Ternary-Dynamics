@@ -20,21 +20,20 @@
 }
 #toolbar::-webkit-scrollbar { display: none; }
 
+/* The brand is the splash's lattice cube at bar size (lattice-logo.js). */
 #toolbar .brand {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: var(--fs-xl);
-    letter-spacing: 0.5px;
-    color: var(--accent-text);
-    margin-right: 8px;
-    text-shadow: 0 0 10px var(--accent-glow);
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    margin: 0 4px 0 0;
+    line-height: 0;
 }
 
-#toolbar .brand span {
-    color: var(--text-muted);
-    font-weight: 400;
-    font-size: var(--fs-base);
-    font-family: var(--font-body);
+#toolbar .brand-lattice {
+    display: block;
+    /* No taller than the controls beside it, so the bar keeps its height. */
+    width: calc(42px * var(--ui-scale));
+    height: calc(42px * var(--ui-scale));
 }
 
 #toolbar .separator {

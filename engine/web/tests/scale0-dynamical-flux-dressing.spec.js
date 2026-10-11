@@ -59,7 +59,7 @@ test('native source builds the visualized field from zero initial flux', async (
             domProfile: Object.fromEntries(toggleIds.map((id) => [
                 id, !!document.getElementById(id)?.checked,
             ])),
-            profileWarningHidden: !!document.getElementById('physics-profile-warning')?.hidden,
+            profileState: document.getElementById('physics-toggles-card')?.dataset.profileState ?? null,
         };
     });
 
@@ -87,7 +87,7 @@ test('native source builds the visualized field from zero initial flux', async (
         't-larmor': false,
         't-dual': false,
     });
-    expect(result.profileWarningHidden, 'registered profile starts qualified').toBe(true);
+    expect(result.profileState, 'registered profile starts qualified').toBe('registered');
     for (const key of ['fluxLines', 'stateField', 'divergence']) {
         expect(result[key].applicable, `${key} overlay applies`).toBe(true);
         expect(result[key].active, `${key} overlay is enabled by the visual profile`).toBe(true);
@@ -101,7 +101,7 @@ test('native source builds the visualized field from zero initial flux', async (
         gauss?.click();
         const modified = {
             gauss: !!gauss?.checked,
-            warningVisible: !document.getElementById('physics-profile-warning')?.hidden,
+            profileState: document.getElementById('physics-toggles-card')?.dataset.profileState ?? null,
             metadata: document.getElementById('lat-scenario-desc-text')?.textContent ?? '',
         };
         restore?.click();
@@ -111,19 +111,19 @@ test('native source builds the visualized field from zero initial flux', async (
                 wave: !!document.getElementById('t-wave')?.checked,
                 coupling: !!document.getElementById('t-coupling')?.checked,
                 gauss: !!gauss?.checked,
-                warningHidden: !!document.getElementById('physics-profile-warning')?.hidden,
+                profileState: document.getElementById('physics-toggles-card')?.dataset.profileState ?? null,
                 metadata: document.getElementById('lat-scenario-desc-text')?.textContent ?? '',
             },
         };
     });
     expect(profileGuard.modified.gauss).toBe(true);
-    expect(profileGuard.modified.warningVisible).toBe(true);
+    expect(profileGuard.modified.profileState).toMatch(/modified$/);
     expect(profileGuard.modified.metadata).toContain('QUALIFICATION SUSPENDED');
     expect(profileGuard.restored).toMatchObject({
         wave: true,
         coupling: true,
         gauss: false,
-        warningHidden: true,
+        profileState: 'registered',
     });
     expect(profileGuard.restored.metadata).not.toContain('QUALIFICATION SUSPENDED');
 });
