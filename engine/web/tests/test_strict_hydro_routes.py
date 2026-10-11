@@ -68,6 +68,15 @@ def test_local_status_requires_all_three_runtime_artifacts(local_server):
     assert json.loads(request("/api/strict-hydro/status")[2]) == {"available": False, "url": None}
 
 
+def test_server_info_reports_the_served_web_root(local_server):
+    _, web, request = local_server
+    status, _, body = request("/api/server-info")
+    assert status == 200
+    info = json.loads(body)
+    assert Path(info["webRoot"]) == web.resolve()
+    assert info["pid"] == serve.os.getpid()
+
+
 def test_module_requests_reuse_connection_and_rejected_post_closes_it(local_server):
     connection = local_server[2].connection()
     try:
