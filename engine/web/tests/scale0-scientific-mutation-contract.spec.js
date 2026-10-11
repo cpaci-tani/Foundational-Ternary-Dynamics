@@ -56,7 +56,7 @@ test.describe.serial('Scale 0 authoritative scientific-mutation contract', () =>
                 before,
                 afterVisual,
                 afterClear,
-                warning: document.getElementById('physics-profile-warning')?.textContent || '',
+                profileState: document.getElementById('physics-toggles-card')?.dataset.profileState ?? null,
                 metadata: document.getElementById('lat-scenario-desc-text')?.textContent || '',
             };
         });
@@ -71,7 +71,7 @@ test.describe.serial('Scale 0 authoritative scientific-mutation contract', () =>
             source: 'controls.substrate',
             dispatchStatus: 'unknown',
         });
-        expect(result.warning).toContain('qualification suspended');
+        expect(result.profileState).toBe('record-modified');
         expect(result.metadata).toContain('LIVE SCIENTIFIC RECORD MODIFIED — QUALIFICATION SUSPENDED');
         expect(result.metadata).toContain('Reason: clear-field; source: controls.substrate');
         expect(result.metadata).toContain('engine application is not acknowledged');
@@ -149,7 +149,7 @@ test.describe.serial('Scale 0 authoritative scientific-mutation contract', () =>
                 failedGeneration,
                 oldAnchor,
                 qualification: store.getScale0QualificationState(),
-                warning: document.getElementById('physics-profile-warning')?.textContent || '',
+                profileState: document.getElementById('physics-toggles-card')?.dataset.profileState ?? null,
                 metadata: document.getElementById('lat-scenario-desc-text')?.textContent || '',
             };
         });
@@ -163,7 +163,7 @@ test.describe.serial('Scale 0 authoritative scientific-mutation contract', () =>
             failureReason: 'test-setup-failure',
         });
         expect(result.qualification.anchor).toEqual(result.oldAnchor);
-        expect(result.warning).toContain('Authoritative scenario load failed');
+        expect(result.profileState).toBe('load-failed');
         expect(result.metadata).toContain('AUTHORITATIVE SCENARIO LOAD FAILED — QUALIFICATION SUSPENDED');
         expect(result.metadata).toContain('Failure: test-setup-failure');
         expect(result.metadata).not.toContain('Reason: clear-field');

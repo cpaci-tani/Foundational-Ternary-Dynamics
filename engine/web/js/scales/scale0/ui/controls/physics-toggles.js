@@ -5,11 +5,12 @@
 export function createPhysicsTogglesCard() {
   const card = document.createElement('div');
   card.className = 'card scale0-only';
+  // The card's qualification state is carried as data, not as a banner:
+  // registered, profile-modified, record-modified, load-pending or load-failed.
+  card.id = 'physics-toggles-card';
+  card.dataset.profileState = 'registered';
   card.innerHTML = `
     <div class="card-title">Physics Toggles</div>
-    <div id="physics-profile-warning" class="physics-profile-warning" hidden>
-      Modified physics profile — scenario qualification suspended.
-    </div>
     <div class="combo-section-label">Wave & Field</div>
     <div class="toggle-row"><input type="checkbox" id="t-wave" checked><label for="t-wave" title="Enables the discrete Laplacian wave drive c²∇²J. Existing wave velocity can still change J while this term is off; use Pause to freeze evolution.">Wave Propagation</label></div>
     <div class="toggle-row"><input type="checkbox" id="t-coupling" checked><label for="t-coupling" title="Manifested particles source flux via coupling term g_c * grad(s)">State-Flux Coupling</label></div>

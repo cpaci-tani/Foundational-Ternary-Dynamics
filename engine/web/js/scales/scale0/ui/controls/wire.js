@@ -151,22 +151,17 @@ function wirePhysicsToggles(ctx, api) {
     };
     let qualificationState = getScale0QualificationState();
     const renderProfileStatus = (modified = profileIsModified()) => {
-        const warning = getEl('physics-profile-warning');
         const pending = qualificationState.status === 'pending';
         const suspended = qualificationState.status === 'suspended';
-        if (warning) {
-            const show = pending || suspended || modified;
-            warning.hidden = !show;
-            warning.textContent = pending
-                ? 'Authoritative scenario load pending — qualification suspended.'
-                : (suspended
-                    ? (qualificationState.authoritativeLoad?.status === 'failed'
-                        ? 'Authoritative scenario load failed — qualification suspended.'
-                        : 'Live scientific record modified — qualification suspended.')
-                    : 'Modified physics profile — qualification suspended.');
-        }
-        const card = warning?.closest('.card');
+        const card = getEl('physics-toggles-card');
         if (card) {
+            // No banner is shown; the state is on the card, and the scenario's
+            // status text carries the wording.
+            const profileState = pending ? 'load-pending'
+                : (suspended
+                    ? (qualificationState.authoritativeLoad?.status === 'failed' ? 'load-failed' : 'record-modified')
+                    : (modified ? 'profile-modified' : 'registered'));
+            if (card.dataset.profileState !== profileState) card.dataset.profileState = profileState;
             card.setAttribute('aria-busy', pending ? 'true' : 'false');
             const pendingControls = [
                 ...card.querySelectorAll('input[type="checkbox"]'),

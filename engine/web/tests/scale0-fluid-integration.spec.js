@@ -97,7 +97,7 @@ test('physics controls change the active engine and field-energy layers belong t
             return (owner.isWorker ? owner.getEngineTruthToggle(key) : owner.getToggle(key)) === value;
         }, { key, value });
     }
-    await expect(page.locator('#physics-profile-warning')).toBeVisible();
+    await expect(page.locator('#physics-toggles-card')).toHaveAttribute('data-profile-state', /modified$/);
     await page.locator('#btn-reset-physics-toggles').click();
     await page.waitForFunction(() => {
         const c = window.__ftdCtx, owner = c.useFluxMock ? c.fluxMock : c.bridge;
